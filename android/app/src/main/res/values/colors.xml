@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- DRS AI brand palette -->
+    <color name="drsai_violet">#7C3AED</color>
+    <color name="drsai_violet_deep">#6D28D9</color>
+    <color name="drsai_blue">#2563EB</color>
+    <color name="drsai_indigo">#4F46E5</color>
+    <color name="drsai_dark_bg">#0B0714</color>
+</resources>

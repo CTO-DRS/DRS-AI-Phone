@@ -2,7 +2,12 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
-        <!-- Customize your theme here. -->
+        <!-- DRS AI brand: gradient splash while React loads -->
+        <item name="android:windowBackground">@drawable/bg_splash</item>
+        <item name="android:statusBarColor">@color/drsai_violet_deep</item>
+        <item name="android:navigationBarColor">@color/drsai_dark_bg</item>
+        <!-- Keep white status-bar icons on the violet bar -->
+        <item name="android:windowLightStatusBar">false</item>
         <item name="android:editTextBackground">@drawable/rn_edit_text_material</item>
     </style>
 
