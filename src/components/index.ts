@@ -1,6 +1,7 @@
 export * from './AssistantTurnFooter';
 export * from './AttachmentButton';
 export * from './Avatar';
+export * from './BrandGradient';
 export * from './Bubble';
 export * from './ChatGenerationSettingsSheet';
 export * from './ChatInput';

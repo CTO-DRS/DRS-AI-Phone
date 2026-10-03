@@ -83,7 +83,12 @@ export const createStyles = ({
     inputContainer: {
       flex: 1,
       flexDirection: 'column',
-      borderRadius: 12,
+      // Floating "composer" look: pill radius, hairline border and a subtle
+      // raised surface so the bar reads as its own element above the chat.
+      borderRadius: 24,
+      borderWidth: 1,
+      borderColor: theme.colors.outline,
+      backgroundColor: theme.colors.surfaceContainerLow,
       overflow: 'hidden',
     },
     textInputArea: {
@@ -121,8 +126,8 @@ export const createStyles = ({
       alignItems: 'center',
       justifyContent: 'space-between',
       paddingHorizontal: 12,
-      borderTopLeftRadius: 12,
-      borderTopRightRadius: 12,
+      borderTopLeftRadius: 24,
+      borderTopRightRadius: 24,
       borderBottomWidth: 1,
       borderBottomColor: theme.colors.outlineVariant,
       zIndex: 10, // Ensure edit bar stays above other elements

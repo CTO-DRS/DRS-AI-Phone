@@ -6,6 +6,7 @@ import {
   TouchableOpacityProps,
 } from 'react-native';
 
+import {BrandGradient} from '../BrandGradient';
 import {useTheme} from '../../hooks';
 
 import {L10nContext} from '../../utils';
@@ -42,11 +43,9 @@ export const SendButton = ({
       onPress={handlePress}
       style={styles.sendButton}>
       {theme.icons?.sendButtonIcon?.() ?? (
-        <SendIcon
-          stroke={color ?? theme.colors.inverseOnSurface}
-          width={24}
-          height={24}
-        />
+        <BrandGradient circle={36} style={styles.gradient}>
+          <SendIcon stroke={color ?? '#FFFFFF'} width={22} height={22} />
+        </BrandGradient>
       )}
     </TouchableOpacity>
   );
@@ -60,5 +59,13 @@ const styles = StyleSheet.create({
     minWidth: 40,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  gradient: {
+    // Soft elevation so the gradient chip reads as a raised action.
+    shadowColor: '#7C3AED',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.35,
+    shadowRadius: 4,
+    elevation: 3,
   },
 });

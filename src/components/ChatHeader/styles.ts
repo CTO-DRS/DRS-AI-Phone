@@ -40,5 +40,8 @@ export const createStyles = ({
     },
     headerWithDivider: {
       backgroundColor: theme.colors.background,
+      // Hairline separation so the header reads as its own layer over chat.
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border,
     },
   });
