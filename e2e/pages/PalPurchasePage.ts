@@ -152,8 +152,7 @@ export class PalPurchasePage extends BasePage {
 
   private static readonly CHROME_FG =
     /CustomTab|com\.android\.chrome|org\.chromium/i;
-  private static readonly APP_FG =
-    /com\.drsai\.e2e\/com\.drsai\.MainActivity/;
+  private static readonly APP_FG = /com\.drsai\.e2e\/com\.drsai\.MainActivity/;
 
   /**
    * Once the checkout Custom Tab takes the foreground, dismiss it with hardware

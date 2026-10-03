@@ -232,9 +232,7 @@ describe('PalDetailSheet', () => {
 
       // Verify download was called
       await waitFor(() => {
-        expect(palStore.downloadDrshubPal).toHaveBeenCalledWith(
-          mockDrshubPal,
-        );
+        expect(palStore.downloadDrshubPal).toHaveBeenCalledWith(mockDrshubPal);
       });
 
       // Verify success alert was shown

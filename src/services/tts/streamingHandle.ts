@@ -1,6 +1,4 @@
-import Speech, {
-  type SpeechStreamOptions,
-} from '@drsai/react-native-speech';
+import Speech, {type SpeechStreamOptions} from '@drsai/react-native-speech';
 
 import {ttsRuntime} from './runtime';
 import type {Engine, StreamingHandle} from './types';

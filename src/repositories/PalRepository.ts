@@ -179,8 +179,7 @@ class PalRepository {
             record.isOwned = palData.is_owned;
             // Save generation settings (prefer local over Drshub)
             const generationSettings =
-              palData.completionSettings ||
-              palData.rawDrshubGenerationSettings;
+              palData.completionSettings || palData.rawDrshubGenerationSettings;
             record.generationSettings =
               LocalPal.safeStringify(generationSettings);
             record.pact = LocalPal.safeStringify(palData.pact);
@@ -285,8 +284,7 @@ class PalRepository {
           ) {
             // Update generation settings (prefer local over Drshub)
             record.generationSettings = LocalPal.safeStringify(
-              updates.completionSettings ||
-                updates.rawDrshubGenerationSettings,
+              updates.completionSettings || updates.rawDrshubGenerationSettings,
             );
           }
           if (updates.pact !== undefined) {

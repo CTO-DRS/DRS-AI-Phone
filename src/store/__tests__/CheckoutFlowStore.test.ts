@@ -368,9 +368,7 @@ describe('CheckoutFlowStore', () => {
   });
 
   it('openAuth resolves a success callback -> reconcile -> owned', async () => {
-    openAuth.mockResolvedValue(
-      'drsai://checkout/success?purchase_id=pur_1',
-    );
+    openAuth.mockResolvedValue('drsai://checkout/success?purchase_id=pur_1');
     checkPalOwnership.mockResolvedValueOnce({owned: true});
     await checkoutFlowStore.start('pal-1');
     await flushMicrotasks();

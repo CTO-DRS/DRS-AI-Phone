@@ -99,7 +99,10 @@ describe('Benchmark Matrix', () => {
       if (typeof s === 'string') {
         lastObserved = s;
       }
-      if (s === 'complete' || (typeof s === 'string' && s.startsWith('error:'))) {
+      if (
+        s === 'complete' ||
+        (typeof s === 'string' && s.startsWith('error:'))
+      ) {
         terminal = s;
         break;
       }

@@ -240,9 +240,7 @@ describe('DrshubErrorHandler', () => {
         retryable: true,
       };
 
-      expect(DrshubErrorHandler.shouldTriggerOfflineMode(errorInfo)).toBe(
-        true,
-      );
+      expect(DrshubErrorHandler.shouldTriggerOfflineMode(errorInfo)).toBe(true);
     });
 
     it('should trigger offline mode for 503 server errors', () => {
@@ -254,9 +252,7 @@ describe('DrshubErrorHandler', () => {
         retryable: true,
       };
 
-      expect(DrshubErrorHandler.shouldTriggerOfflineMode(errorInfo)).toBe(
-        true,
-      );
+      expect(DrshubErrorHandler.shouldTriggerOfflineMode(errorInfo)).toBe(true);
     });
 
     it('should not trigger offline mode for other server errors', () => {
@@ -472,9 +468,7 @@ describe('DrshubErrorHandler', () => {
         retryable: false,
       };
 
-      expect(DrshubErrorHandler.insufficientPermissions(errorInfo)).toBe(
-        false,
-      );
+      expect(DrshubErrorHandler.insufficientPermissions(errorInfo)).toBe(false);
     });
 
     it('should return false for non-auth errors', () => {
@@ -486,9 +480,7 @@ describe('DrshubErrorHandler', () => {
         retryable: true,
       };
 
-      expect(DrshubErrorHandler.insufficientPermissions(errorInfo)).toBe(
-        false,
-      );
+      expect(DrshubErrorHandler.insufficientPermissions(errorInfo)).toBe(false);
     });
   });
 });

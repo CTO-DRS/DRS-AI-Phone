@@ -54,12 +54,12 @@ DRS AI is a four-layer stack, from the silicon up to the chat UI. Each layer has
   <img src="assets/images and logos/stack-diagram-dark.png" alt="DRS AI on-device stack — UI & Tool Use → Bridging → Engine → Hardware" width="100%">
 </div>
 
-| Layer | What runs here |
-| --- | --- |
+| Layer             | What runs here                                                                                                                                                                                                                                                                                                                                                          |
+| ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **UI & Tool Use** | The React Native app (UI via React Native Paper, state via MobX, chat history in WatermelonDB). The **`AgentRunner`** drives each chat turn — streaming tokens, dispatching **Talents** (tools) when the model calls them, and feeding results back for follow-up reasoning. **Pals** are configurable personas; **Drshub** is the in-app marketplace for sharing them. |
-| **Bridging** | Native modules that connect JavaScript to the engines. [`llama.rn`](https://github.com/mybigday/llama.rn) bridges LLM inference over JSI; [`@drsai/react-native-speech`](vendors/react-native-speech) and `onnxruntime-react-native` bridge text-to-speech. |
-| **Engine** | The inference engines. **llama.cpp** runs language models in the quantized **GGUF** format. **ONNX Runtime** runs TTS voice models in the **ONNX** format. |
-| **Hardware** | Where the math actually happens. DRS AI targets **CPU** (universal fallback), **GPU** (Metal on iOS, OpenCL on Qualcomm Adreno for Android), and **NPU** (Qualcomm Hexagon) — falling back gracefully and offloading partial layers when a full backend isn't available. |
+| **Bridging**      | Native modules that connect JavaScript to the engines. [`llama.rn`](https://github.com/mybigday/llama.rn) bridges LLM inference over JSI; [`@drsai/react-native-speech`](vendors/react-native-speech) and `onnxruntime-react-native` bridge text-to-speech.                                                                                                             |
+| **Engine**        | The inference engines. **llama.cpp** runs language models in the quantized **GGUF** format. **ONNX Runtime** runs TTS voice models in the **ONNX** format.                                                                                                                                                                                                              |
+| **Hardware**      | Where the math actually happens. DRS AI targets **CPU** (universal fallback), **GPU** (Metal on iOS, OpenCL on Qualcomm Adreno for Android), and **NPU** (Qualcomm Hexagon) — falling back gracefully and offloading partial layers when a full backend isn't available.                                                                                                |
 
 ## Using the app
 
@@ -96,6 +96,7 @@ DRS AI is a four-layer stack, from the silicon up to the chat UI. Each layer has
 <br/>
 
 Create personalized assistants:
+
 - **Assistant Pal** — pick a default model, set a system prompt (write it yourself or have the app generate one), and customize the chat input color.
 - **Roleplay Pal** — everything above, plus location, the AI's role, and other contextual parameters.
 
@@ -202,6 +203,7 @@ src/
 ├── locales/        # i18n JSON + lazy loader (index.ts is the registry)
 └── hooks/  api/  theme/  utils/  config/  specs/
 ```
+
 </details>
 
 <details>
@@ -211,16 +213,16 @@ src/
 
 Versions are pinned in [`package.json`](package.json); the highlights:
 
-| Area | Choice |
-| --- | --- |
-| Framework | React Native `0.82.1`, React `19.1.1` (New Architecture) |
-| Language | TypeScript `5.0.4` |
-| UI | React Native Paper `5.14.5`, React Navigation |
-| State | MobX `6` (`mobx`, `mobx-react`, `mobx-persist-store`) |
+| Area        | Choice                                                                   |
+| ----------- | ------------------------------------------------------------------------ |
+| Framework   | React Native `0.82.1`, React `19.1.1` (New Architecture)                 |
+| Language    | TypeScript `5.0.4`                                                       |
+| UI          | React Native Paper `5.14.5`, React Navigation                            |
+| State       | MobX `6` (`mobx`, `mobx-react`, `mobx-persist-store`)                    |
 | Persistence | WatermelonDB (chat history), AsyncStorage (settings), Keychain (secrets) |
-| LLM | `llama.rn` `0.13.0-rc.5` → llama.cpp · GGUF |
-| TTS | `react-native-speech` + `onnxruntime-react-native` · ONNX |
-| Tooling | Yarn 1 (Classic), ESLint, Prettier, Jest, Husky + Commitlint |
+| LLM         | `llama.rn` `0.13.0-rc.5` → llama.cpp · GGUF                              |
+| TTS         | `react-native-speech` + `onnxruntime-react-native` · ONNX                |
+| Tooling     | Yarn 1 (Classic), ESLint, Prettier, Jest, Husky + Commitlint             |
 
 </details>
 
@@ -231,13 +233,14 @@ Versions are pinned in [`package.json`](package.json); the highlights:
 
 A **Talent** is a tool the model can call mid-conversation. Engines are registered in a `TalentRegistry`, exposed to the model as tool schemas; the `AgentRunner` detects a call, runs the engine, and returns the result for the next turn.
 
-| Talent | Engine | Does |
-| --- | --- | --- |
-| `calculate` | `CalculateEngine` | Arithmetic / expression evaluation |
-| `datetime` | `DatetimeEngine` | Current date / time |
+| Talent        | Engine             | Does                                |
+| ------------- | ------------------ | ----------------------------------- |
+| `calculate`   | `CalculateEngine`  | Arithmetic / expression evaluation  |
+| `datetime`    | `DatetimeEngine`   | Current date / time                 |
 | `render_html` | `RenderHtmlEngine` | Renders model-produced HTML in chat |
 
 Good first contributions:
+
 - A new **Talent** — implement a `TalentEngine` and register it in `src/services/talents/`.
 - A new **TTS engine** — add it under `src/services/tts/engines/`.
 - A new **locale** — add a JSON file in `src/locales/`.

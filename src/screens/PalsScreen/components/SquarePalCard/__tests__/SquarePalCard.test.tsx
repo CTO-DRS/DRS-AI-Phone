@@ -53,9 +53,7 @@ describe('SquarePalCard', () => {
   });
 
   // Create a Drshub pal fixture
-  const createDrshubPal = (
-    overrides: Partial<DrshubPal> = {},
-  ): DrshubPal => ({
+  const createDrshubPal = (overrides: Partial<DrshubPal> = {}): DrshubPal => ({
     type: 'drshub',
     id: 'ph-pal-1',
     title: 'Drshub Test Pal',
