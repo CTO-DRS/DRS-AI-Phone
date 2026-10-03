@@ -112,6 +112,14 @@ jobs:
           echo "Declared allowlist: $VARIANTS"
           echo "ORG_GRADLE_PROJECT_rnllamaVariants=$VARIANTS" >> "$GITHUB_ENV"
 
+      - name: Decode signing keystore
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > android/app/drsai-release-key.keystore
+          test -s android/app/drsai-release-key.keystore
+          ls -la android/app/drsai-release-key.keystore
+
       - name: Build signed release APK
         working-directory: android
         env:
