@@ -1,0 +1,378 @@
+/**
+ * TTS Engine types and interfaces
+ */
+export declare enum TTSEngine {
+    /**
+     * Use the native OS TTS engine
+     * - iOS: AVSpeechSynthesizer
+     * - Android: Android TextToSpeech API
+     */
+    OS_NATIVE = "os-native",
+    /**
+     * Use Kokoro neural TTS engine (offline, ONNX-based)
+     * - High-quality neural voice synthesis
+     * - Runs entirely on-device
+     * - Requires model files
+     */
+    KOKORO = "kokoro",
+    /**
+     * Use Supertonic neural TTS engine (offline, ONNX-based)
+     * - Ultra-fast neural voice synthesis (167× faster than real-time)
+     * - Lightweight (66M parameters)
+     * - Runs entirely on-device
+     * - Requires model files
+     */
+    SUPERTONIC = "supertonic",
+    /**
+     * Use Kitten neural TTS engine (offline, ONNX-based)
+     * - 15M parameter StyleTTS 2-based TTS
+     * - Single ONNX model, 24kHz mono output
+     * - 8 built-in voices, English only
+     * - GPL-free dictionary-based phonemization + character-level IPA tokenization
+     * - Requires 1 ONNX model file + voice embeddings JSON
+     */
+    KITTEN = "kitten"
+}
+export interface EngineStatus {
+    /** Whether the engine is initialized and ready to use */
+    isReady: boolean;
+    /** Whether the engine is currently loading/initializing */
+    isLoading: boolean;
+    /** Error message if engine failed to initialize */
+    error?: string;
+}
+export interface AudioBuffer {
+    /** Audio samples (PCM float32, range -1.0 to 1.0) */
+    samples: Float32Array;
+    /** Sample rate in Hz (e.g., 24000 for Kokoro) */
+    sampleRate: number;
+    /** Number of audio channels (1 = mono, 2 = stereo) */
+    channels: number;
+    /** Duration in seconds */
+    duration: number;
+}
+export interface SynthesisOptions {
+    /** Voice identifier (engine-specific) */
+    voiceId?: string;
+    /** Speech rate multiplier (0.5 - 2.0) */
+    speed?: number;
+    /** Pitch multiplier (0.5 - 2.0) */
+    pitch?: number;
+    /** Volume (0.0 - 1.0) */
+    volume?: number;
+    /** Language code (e.g., 'en-US') */
+    language?: string;
+    /**
+     * Number of inference/diffusion steps for neural TTS engines.
+     * Higher values = better quality but slower synthesis.
+     * - Supertonic: 2-16 steps (default: 5)
+     * @platform neural-engines
+     */
+    inferenceSteps?: number;
+    /**
+     * If `true`, audio from other apps will be temporarily lowered (ducked) while speech is active.
+     * This is for critical announcements (e.g., navigation) and takes priority over `silentMode` on iOS.
+     * @default false
+     */
+    ducking?: boolean;
+    /**
+     * Determines how speech audio interacts with the device's silent (ringer) switch.
+     * This option is ignored if `ducking` is `true`.
+     * @platform iOS
+     *
+     * - `obey`: (Default) Speech plays through the device's silent switch using the Playback audio category. Use `respect` to honor the ringer switch.
+     * - `respect`: Speech will be silenced by the ringer switch. Use for non-critical audio.
+     * - `ignore`: Speech will play even if the ringer is off. Use for critical audio when ducking is not desired.
+     */
+    silentMode?: 'obey' | 'respect' | 'ignore';
+    /**
+     * If `true` (default), markdown syntax (`**bold**`, headers, tables, code
+     * fences, lists, links, etc.) is stripped before phonemization so the
+     * TTS doesn't read asterisks / pipes / hashes aloud. Set `false` to pass
+     * text through verbatim — useful when consumer has already cleaned the
+     * input or when preserving source-text offsets for highlighting.
+     * @platform neural-engines
+     * @default true
+     */
+    stripMarkdown?: boolean;
+    /**
+     * Called for each synthesized audio chunk after any volume adjustment
+     * and before playback. Useful for capturing audio offline — e.g. saving
+     * a WAV for ASR round-trip verification or sharing a bug-report clip.
+     *
+     * The callback runs synchronously on the synthesis thread, so keep it
+     * fast (push the buffer onto an array and process later). The engine
+     * may reuse the underlying sample buffer after the callback returns —
+     * copy `samples` if you need to retain it past this tick.
+     *
+     * @platform neural-engines
+     */
+    onAudioChunk?: (buffer: AudioBuffer) => void;
+}
+/**
+ * Phoneme input: the caller supplies IPA directly, so the engine skips
+ * its grapheme-domain stages (markdown stripping, text normalization /
+ * preprocessing, and g2p phonemization) and tokenizes the string as-is.
+ *
+ * Only the IPA-pipeline neural engines (Kokoro, Kitten) accept this.
+ * The OS and Supertonic engines have no IPA-in path and reject it with
+ * a clear error.
+ *
+ * Unlike text input, a phoneme string is NOT sentence-chunked — pass
+ * one already-segmented utterance per call. The engine still applies
+ * its model token-limit safety net (Kitten splits oversized input;
+ * Kokoro warns).
+ */
+export interface PhonemeInput {
+    /** IPA phoneme string, tokenized directly without g2p. */
+    phonemes: string;
+}
+/**
+ * Input accepted by `Speech.speak` / `TTSEngineInterface.synthesize`.
+ *
+ * - `string` — text; runs the engine's full pipeline (g2p included).
+ *   Behaviour is identical to before phoneme input existed.
+ * - `PhonemeInput` — pre-phonemized IPA; short-circuits g2p.
+ */
+export type SpeechInput = string | PhonemeInput;
+/**
+ * Narrows a `SpeechInput` to `PhonemeInput`. A plain string is text;
+ * an object carrying an own string `phonemes` field is pre-phonemized
+ * IPA. Inherited or non-string `phonemes` (possible from untyped JS
+ * callers) is not treated as phoneme input.
+ */
+export declare function isPhonemeInput(input: SpeechInput): input is PhonemeInput;
+/**
+ * Error details for a failed release operation on a specific component
+ */
+export interface ReleaseError {
+    /** Component that failed to release (e.g., 'session', 'voiceLoader', 'tokenizer') */
+    component: string;
+    /** The error that occurred */
+    error: Error;
+}
+/**
+ * Result of a release operation
+ */
+export interface ReleaseResult {
+    /** Whether all resources were released successfully */
+    success: boolean;
+    /** Whether some resources were released but others failed */
+    partialRelease: boolean;
+    /** List of errors that occurred during release */
+    errors: ReleaseError[];
+}
+/**
+ * Handle returned by `TTSEngineInterface.synthesizeStream()`. The
+ * caller pushes text in via `append()` and the engine pulls chunks
+ * from an internal streaming chunker, pipelining synth + play so
+ * there is no gap between chunks.
+ */
+export interface EngineStreamHandle {
+    append(text: string): void;
+    finalize(): Promise<void>;
+    cancel(): Promise<void>;
+}
+export interface TTSEngineInterface<TConfig = void> {
+    /** Unique engine identifier */
+    readonly name: TTSEngine;
+    /**
+     * Initialize the engine.
+     *
+     * `TConfig` is the per-engine configuration object (e.g. `KokoroConfig`).
+     * Engines that take no config use `void`.
+     */
+    initialize(config?: TConfig): Promise<void>;
+    /** Check if engine is ready to use */
+    isReady(): Promise<boolean>;
+    /**
+     * Synthesize text — or pre-phonemized IPA — to audio.
+     *
+     * Passing a plain `string` runs the full pipeline (text input,
+     * unchanged behaviour). Passing a `PhonemeInput` short-circuits g2p
+     * on the IPA engines; engines without an IPA-in path reject it.
+     */
+    synthesize(input: SpeechInput, options?: SynthesisOptions): Promise<AudioBuffer | void>;
+    /**
+     * Start a streaming synthesis session. Text is pushed incrementally
+     * via `append()` and the engine pulls chunks as they become ready,
+     * synthesizing the next chunk while the current one plays.
+     *
+     * Optional — only neural engines implement this. `SpeechStream`
+     * falls back to the Tier 1 adaptive batcher when this is absent.
+     */
+    synthesizeStream?(options?: SynthesisOptions): EngineStreamHandle;
+    /** Get available voices for this engine */
+    getAvailableVoices(language?: string): Promise<string[]>;
+    /** Stop any ongoing synthesis */
+    stop(): Promise<void>;
+    /** Clean up engine resources */
+    destroy(): Promise<void>;
+    /**
+     * Release model resources from memory while keeping engine instance reusable.
+     * After calling release(), initialize() must be called before synthesize().
+     * Unlike destroy(), the engine instance remains valid for re-initialization.
+     *
+     * @returns ReleaseResult with success status and any errors encountered
+     *
+     * @example
+     * // Free memory when app goes to background
+     * await engine.release();
+     *
+     * // Later, when needed again
+     * await engine.initialize(config);
+     */
+    release(): Promise<ReleaseResult>;
+}
+export interface ProgressEvent {
+    /** Utterance ID */
+    id: number;
+    /** Current position in text */
+    location: number;
+    /** Total text length */
+    length: number;
+    /** Progress percentage (0-100) */
+    progress: number;
+}
+/**
+ * Event emitted when a new chunk (sentence) starts being spoken.
+ * Used by neural TTS engines that process text in chunks.
+ */
+export interface ChunkProgressEvent {
+    /** Utterance ID */
+    id: number;
+    /** Current chunk index (0-based) */
+    chunkIndex: number;
+    /** Total number of chunks */
+    totalChunks: number;
+    /** The text content of the current chunk */
+    chunkText: string;
+    /**
+     * Character range of the chunk.
+     *
+     * - When `SynthesisOptions.stripMarkdown` is `true` (the default for
+     *   neural engines), this range refers to the **post-strip** text —
+     *   i.e. positions in the markdown-cleaned input that the engine
+     *   chunked, NOT the consumer's original input. Highlighting the
+     *   original input directly will be misaligned wherever stripping
+     *   removed or rewrote characters (e.g. `### Header` → `Header.`).
+     * - When `stripMarkdown` is `false`, the range refers to the original
+     *   text the consumer passed in.
+     *
+     * Pass `stripMarkdown: false` if you need stable original-text offsets
+     * for highlighting and have already cleaned the markdown yourself.
+     *
+     * For `PhonemeInput`, the range indexes the supplied IPA string (a
+     * single chunk spanning the whole input), not any original text.
+     */
+    textRange: {
+        start: number;
+        end: number;
+    };
+    /** Overall progress percentage (0-100) */
+    progress: number;
+}
+/**
+ * Callback type for chunk progress events
+ */
+export type ChunkProgressCallback = (event: ChunkProgressEvent) => void;
+/**
+ * Options for `Speech.createSpeechStream`.
+ * Extends `SynthesisOptions` — all regular speak options apply to each batch.
+ */
+export interface SpeechStreamOptions extends SynthesisOptions {
+    /**
+     * Target size (in characters) for batches flushed after the first
+     * sentence. Larger values produce more natural prosody across sentence
+     * boundaries at the cost of higher latency before each batch starts.
+     *
+     * The first batch always flushes as soon as a complete sentence is
+     * available (for low time-to-first-audio), regardless of this value.
+     *
+     * @default 300
+     */
+    targetChars?: number;
+    /**
+     * Called when synthesis of a batch fails. Errors from individual batches
+     * do not reject `append()` (which is synchronous). `finalize()` rejects
+     * with the first error encountered if any batch failed.
+     */
+    onError?: (error: Error) => void;
+}
+/**
+ * Progress event emitted by a `SpeechStream` as each chunk starts
+ * playing.
+ *
+ * Offsets are relative to the **total text appended to the stream so
+ * far** (sum of all `append()` arguments, in order). Whether they map
+ * one-to-one to the consumer's input depends on `stripMarkdown`:
+ *
+ * - With `stripMarkdown: true` (default for neural engines), markdown
+ *   is stripped from the appended text before chunking, so the range
+ *   refers to the post-strip stream — not the consumer's original
+ *   appends. Highlighting the original input directly will drift
+ *   wherever stripping removed or rewrote characters.
+ * - With `stripMarkdown: false`, the range maps directly to the
+ *   accumulated original text. Use this if you need stable original-
+ *   text offsets for highlighting and have already cleaned the
+ *   markdown yourself.
+ */
+export interface StreamProgressEvent {
+    /** Text of the chunk currently being spoken. */
+    chunkText: string;
+    /**
+     * Absolute character range within the accumulated stream text. See
+     * the parent docstring for stripMarkdown semantics. Monotonically
+     * non-decreasing across a stream's lifetime.
+     */
+    streamRange: {
+        start: number;
+        end: number;
+    };
+    /** Chunk index within the current batch (0-based). */
+    chunkIndex: number;
+    /**
+     * Batch index across the whole stream (0-based). For engines that
+     * support incremental streaming synth (neural engines), the entire
+     * stream is a single batch and this is always 0.
+     */
+    batchIndex: number;
+}
+/**
+ * Streaming input handle returned by `Speech.createSpeechStream`.
+ *
+ * Feed text incrementally (e.g. LLM tokens) via `append()`; the stream
+ * decides when to flush batches to the underlying engine so that the
+ * audio sounds continuous instead of like a sequence of per-sentence
+ * utterances.
+ */
+export interface SpeechStream {
+    /**
+     * Append text to the buffer. Non-blocking and never throws. Safe to
+     * call at any rate — the stream batches internally. Calls after
+     * `finalize()` or `cancel()` are silently ignored.
+     */
+    append(text: string): void;
+    /**
+     * Flush any remaining buffered text (including a trailing incomplete
+     * sentence) and resolve once all queued audio has finished playing.
+     * Rejects if any batch failed to synthesize.
+     */
+    finalize(): Promise<void>;
+    /**
+     * Abort immediately. Clears the buffer + queue and stops any in-flight
+     * synthesis. Further `append()` calls are no-ops.
+     */
+    cancel(): Promise<void>;
+    /**
+     * Subscribe to per-chunk progress events with stream-absolute offsets.
+     * Returns an unsubscribe function. No events fire after `finalize()`
+     * resolves or `cancel()` is called.
+     *
+     * Use this instead of `Speech.onChunkProgress` when you need to
+     * highlight text in the accumulated consumer buffer — batch-local
+     * offsets from `Speech.onChunkProgress` would not map there.
+     */
+    onProgress(cb: (event: StreamProgressEvent) => void): () => void;
+}
+//# sourceMappingURL=Engine.d.ts.map

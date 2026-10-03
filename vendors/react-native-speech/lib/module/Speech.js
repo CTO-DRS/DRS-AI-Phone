@@ -1,0 +1,527 @@
+"use strict";
+
+/**
+ * React Native Speech - Multi-Engine TTS Library
+ *
+ * Unified API that supports multiple TTS engines:
+ * - OS Native (iOS AVSpeechSynthesizer, Android TextToSpeech)
+ * - Kokoro (Neural TTS - high quality, multi-language)
+ * - Supertonic (Neural TTS - ultra-fast, lightweight)
+ * - Kitten (Neural TTS - lightweight StyleTTS 2, English)
+ *
+ * @example
+ * // Initialize with Kokoro
+ * await Speech.initialize({
+ *   engine: TTSEngine.KOKORO,
+ *   modelPath: 'file://...',
+ *   voicesPath: 'file://...',
+ * });
+ *
+ * // Speak with any engine
+ * await Speech.speak('Hello world', 'af_bella', { speed: 1.0 });
+ */
+
+import TurboSpeech from "./NativeSpeech.js";
+import { engineManager } from "./engines/EngineManager.js";
+import { OSEngine } from "./engines/OSEngine.js";
+import { KokoroEngine } from "./engines/kokoro/index.js";
+import { SupertonicEngine } from "./engines/supertonic/index.js";
+import { KittenEngine } from "./engines/kitten/index.js";
+import { neuralAudioPlayer } from "./engines/NeuralAudioPlayer.js";
+import { SpeechStreamImpl } from "./engines/SpeechStream.js";
+import { createComponentLogger } from "./utils/logger.js";
+const log = createComponentLogger('Speech', 'Api');
+
+// Initialize OS engine
+const osEngine = new OSEngine();
+engineManager.registerEngine(osEngine);
+
+// Neural engines will be lazy-loaded
+let kokoroEngine = null;
+let supertonicEngine = null;
+let kittenEngine = null;
+
+// Store pending chunk progress callback (set before engine is initialized)
+let pendingChunkProgressCallback = null;
+
+/**
+ * Default synthesis-option fields that can also be provided at init time
+ * (applied on the native side for audio-session configuration).
+ * These mirror the subset of `SynthesisOptions` relevant at initialization.
+ */
+
+/**
+ * Discriminated union of engine init configs.
+ * `engine` is the discriminant; the remaining fields are engine-specific.
+ */
+
+export default class Speech {
+  /**
+   * The maximum number of characters allowed in a single call to the speak methods.
+   */
+  static maxInputLength = TurboSpeech.getConstants().maxInputLength ?? Number.MAX_VALUE;
+
+  // Track current engine
+  static currentEngine = 'os-native';
+
+  /**
+   * Initialize Speech with a specific engine
+   * @param config - Configuration object with engine and engine-specific settings
+   * @example
+   * // Initialize with Kokoro
+   * await Speech.initialize({
+   *   engine: 'kokoro',
+   *   modelPath: '...',
+   *   voicesPath: '...',
+   *   // ... other Kokoro config
+   * });
+   *
+   * // Initialize with OS native (default)
+   * await Speech.initialize({
+   *   engine: 'os-native'
+   * });
+   */
+  static async initialize(config) {
+    const {
+      engine,
+      ...engineConfig
+    } = config;
+    log.info(`Initializing engine: ${engine}`);
+    // Store current engine
+    Speech.currentEngine = engine;
+    log.debug(`currentEngine set to: ${Speech.currentEngine}`);
+
+    // Initialize the specific engine
+    if (engine === 'kokoro') {
+      if (!kokoroEngine) {
+        kokoroEngine = new KokoroEngine();
+        engineManager.registerEngine(kokoroEngine);
+        // First time: use regular initialization
+        await engineManager.initializeEngine(engine, engineConfig);
+      } else {
+        // Already initialized: force re-initialization to apply new config
+        // This is important when switching execution providers (gpu/ane/cpu)
+        await engineManager.reinitializeEngine(engine, engineConfig);
+      }
+      engineManager.setDefaultEngine(engine);
+
+      // Apply pending chunk progress callback if one was set before initialization
+      if (pendingChunkProgressCallback) {
+        kokoroEngine.setChunkProgressCallback(pendingChunkProgressCallback);
+      }
+    } else if (engine === 'supertonic') {
+      if (!supertonicEngine) {
+        supertonicEngine = new SupertonicEngine();
+        engineManager.registerEngine(supertonicEngine);
+        // First time: use regular initialization
+        await engineManager.initializeEngine(engine, engineConfig);
+      } else {
+        // Already initialized: force re-initialization to apply new config
+        // This is important when switching execution providers (gpu/ane/cpu)
+        await engineManager.reinitializeEngine(engine, engineConfig);
+      }
+      engineManager.setDefaultEngine(engine);
+
+      // Apply pending chunk progress callback if one was set before initialization
+      if (pendingChunkProgressCallback) {
+        supertonicEngine.setChunkProgressCallback(pendingChunkProgressCallback);
+      }
+    } else if (engine === 'kitten') {
+      if (!kittenEngine) {
+        kittenEngine = new KittenEngine();
+        engineManager.registerEngine(kittenEngine);
+        await engineManager.initializeEngine(engine, engineConfig);
+      } else {
+        await engineManager.reinitializeEngine(engine, engineConfig);
+      }
+      engineManager.setDefaultEngine(engine);
+      if (pendingChunkProgressCallback) {
+        kittenEngine.setChunkProgressCallback(pendingChunkProgressCallback);
+      }
+    } else if (engine === 'os-native') {
+      // OS engine is already initialized
+      await engineManager.initializeEngine(engine);
+      engineManager.setDefaultEngine(engine);
+    } else {
+      throw new Error(`Unknown engine: ${engine}`);
+    }
+  }
+
+  /**
+   * Speak text — or pre-phonemized IPA — using the current engine.
+   *
+   * @param input - Either a text string (runs the full pipeline,
+   *   including g2p) or `{ phonemes }` to feed IPA directly and
+   *   short-circuit g2p. Phoneme input is supported only by the IPA
+   *   neural engines (Kokoro, Kitten); the OS and Supertonic engines
+   *   reject it with a clear error.
+   * @param voiceId - Voice identifier (engine-specific)
+   * @param options - Synthesis options
+   * @example
+   * // Text (unchanged behaviour — g2p runs)
+   * await Speech.speak('Hello world', 'af_bella', { speed: 1.0 });
+   *
+   * // Pre-phonemized IPA — skips the engine's g2p
+   * await Speech.speak({ phonemes: 'həˈloʊ wˈɜːld' }, 'af_bella');
+   */
+  static async speak(input, voiceId, options) {
+    const engine = Speech.currentEngine;
+    if (!engineManager.isEngineInitialized(engine)) {
+      throw new Error(`Engine '${engine}' not initialized. Call Speech.initialize() first.`);
+    }
+    const engineInstance = engineManager.getEngine(engine);
+    await engineInstance.synthesize(input, {
+      voiceId,
+      ...options
+    });
+  }
+
+  /**
+   * Create a streaming input handle for incremental TTS.
+   *
+   * Feed text to the returned stream as it becomes available (e.g. from
+   * an LLM token stream). The stream internally buffers and batches
+   * text so that playback sounds like one continuous utterance — the
+   * first sentence flushes as soon as it's complete (low latency) and
+   * subsequent batches are packed up to `targetChars` characters.
+   *
+   * **Engine support**: designed for the neural engines (Kokoro,
+   * Supertonic, Kitten), where each `speak()` resolves only after the
+   * batch finishes playing so the stream can pack large batches while
+   * earlier ones play. The OS engine's native `speak()` resolves on
+   * dispatch, which makes the adaptive batching effectively a no-op —
+   * the stream still works (the OS queues utterances natively) but
+   * sounds roughly the same as per-sentence `speak()`.
+   *
+   * @param voiceId - Voice identifier for the active engine
+   * @param options - Synthesis options + stream-specific tuning
+   * @returns A handle with `append()`, `finalize()`, and `cancel()`
+   *
+   * @example
+   * const stream = Speech.createSpeechStream('af_bella');
+   * for await (const token of llmStream) {
+   *   stream.append(token);
+   * }
+   * await stream.finalize();
+   */
+  static createSpeechStream(voiceId, options) {
+    // `SpeechStreamOptions` extends `SynthesisOptions`; engines ignore the
+    // stream-only fields (`targetChars`, `onError`) since they only read
+    // the properties they care about.
+    const synthesisOptions = options;
+
+    // Detect whether the active engine supports streaming. Neural engines
+    // expose synthesizeStream(), which eliminates cross-batch gaps by
+    // keeping the pipelined synth+play loop alive for the stream's
+    // lifetime. OS engine doesn't — fall back to the adaptive batcher.
+    const engine = Speech.currentEngine;
+    let engineStreamFactory;
+    const streamVoiceOpt = voiceId ? {
+      voiceId
+    } : {};
+    if (engine === 'kokoro' && kokoroEngine) {
+      engineStreamFactory = opts => kokoroEngine.synthesizeStream({
+        ...streamVoiceOpt,
+        ...opts
+      });
+    } else if (engine === 'supertonic' && supertonicEngine) {
+      engineStreamFactory = opts => supertonicEngine.synthesizeStream({
+        ...streamVoiceOpt,
+        ...opts
+      });
+    } else if (engine === 'kitten' && kittenEngine) {
+      engineStreamFactory = opts => kittenEngine.synthesizeStream({
+        ...streamVoiceOpt,
+        ...opts
+      });
+    }
+    return new SpeechStreamImpl({
+      synthesize: text => Speech.speak(text, voiceId, synthesisOptions),
+      stop: () => Speech.stop(),
+      subscribeProgress: cb => Speech.onChunkProgress(cb),
+      engineStreamFactory,
+      options
+    });
+  }
+
+  /**
+   * Get available voices for the current engine
+   * @param language - Optional language filter
+   * @returns Array of voice identifiers
+   */
+  static async getVoices(language) {
+    const engine = Speech.currentEngine;
+    if (!engineManager.isEngineInitialized(engine)) {
+      throw new Error(`Engine '${engine}' not initialized. Call Speech.initialize() first.`);
+    }
+    const engineInstance = engineManager.getEngine(engine);
+    return engineInstance.getAvailableVoices(language);
+  }
+
+  /**
+   * Get detailed voice information (Neural engines only)
+   * @param language - Optional language filter
+   * @returns Array of voice objects with metadata
+   */
+  static async getVoicesWithMetadata(language) {
+    const engine = Speech.currentEngine;
+    log.debug(`getVoicesWithMetadata currentEngine: ${engine}, kokoroEngine: ${!!kokoroEngine}, supertonicEngine: ${!!supertonicEngine}, kittenEngine: ${!!kittenEngine}`);
+    if (engine === 'kokoro') {
+      if (!kokoroEngine) {
+        throw new Error('Kokoro engine not initialized');
+      }
+      return kokoroEngine.getVoicesWithMetadata(language);
+    } else if (engine === 'supertonic') {
+      if (!supertonicEngine) {
+        throw new Error('Supertonic engine not initialized');
+      }
+      return supertonicEngine.getVoicesWithMetadata(language);
+    } else if (engine === 'kitten') {
+      if (!kittenEngine) {
+        throw new Error('Kitten engine not initialized');
+      }
+      return kittenEngine.getVoicesWithMetadata();
+    } else {
+      throw new Error('getVoicesWithMetadata() is only available for neural engines (Kokoro, Supertonic, Kitten)');
+    }
+  }
+
+  /**
+   * Check if the current engine is ready
+   */
+  static async isReady() {
+    const engine = Speech.currentEngine;
+    if (!engineManager.hasEngine(engine)) {
+      return false;
+    }
+    const status = await engineManager.getEngineStatus(engine);
+    return status.isReady;
+  }
+
+  /**
+   * Get the current engine name
+   */
+  static getCurrentEngine() {
+    return Speech.currentEngine;
+  }
+
+  /**
+   * Get list of available engines
+   */
+  static getAvailableEngines() {
+    return engineManager.getAvailableEngines();
+  }
+
+  // ============================================================
+  // CHUNK PROGRESS (Neural TTS only)
+  // ============================================================
+
+  /**
+   * Set callback for chunk progress events (Neural TTS only)
+   * This is called when each sentence/chunk starts being spoken
+   *
+   * @param callback - Function to call on chunk progress, or null to remove
+   * @example
+   * Speech.setChunkProgressCallback((event) => {
+   *   console.log(`Speaking chunk ${event.chunkIndex + 1}/${event.totalChunks}`);
+   *   console.log(`Current sentence: "${event.chunkText}"`);
+   *   console.log(`Progress: ${event.progress}%`);
+   *   // Highlight current text in UI
+   *   highlightText(event.textRange.start, event.textRange.end);
+   * });
+   */
+  static setChunkProgressCallback(callback) {
+    // Store the callback for later if engine not yet initialized
+    pendingChunkProgressCallback = callback;
+
+    // Apply immediately if engines are already initialized
+    if (kokoroEngine) {
+      kokoroEngine.setChunkProgressCallback(callback);
+    }
+    if (supertonicEngine) {
+      supertonicEngine.setChunkProgressCallback(callback);
+    }
+    if (kittenEngine) {
+      kittenEngine.setChunkProgressCallback(callback);
+    }
+  }
+
+  /**
+   * Convenience method to add a chunk progress listener
+   * Returns an unsubscribe function
+   *
+   * @param callback - Function to call on chunk progress
+   * @returns Function to unsubscribe the listener
+   * @example
+   * const unsubscribe = Speech.onChunkProgress((event) => {
+   *   console.log(`Chunk ${event.chunkIndex + 1}/${event.totalChunks}: ${event.chunkText}`);
+   * });
+   *
+   * // Later, to stop listening:
+   * unsubscribe();
+   */
+  static onChunkProgress(callback) {
+    Speech.setChunkProgressCallback(callback);
+    return () => Speech.setChunkProgressCallback(null);
+  }
+
+  // ============================================================
+  // OS NATIVE TTS HELPERS (for backward compatibility)
+  // ============================================================
+
+  /**
+   * Gets a list of all available OS voices on the device
+   * Only works when using OS native engine
+   */
+  static getAvailableVoices(language) {
+    return TurboSpeech.getAvailableVoices(language);
+  }
+
+  /**
+   * Gets a list of all available text-to-speech engines on the device
+   * @platform Android
+   */
+  static getEngines() {
+    return TurboSpeech.getEngines();
+  }
+
+  /**
+   * Sets the Android text-to-speech engine
+   * @platform Android
+   */
+  static setEngine(engineName) {
+    return TurboSpeech.setEngine(engineName);
+  }
+
+  /**
+   * Opens the system UI to install or update TTS voice data
+   * @platform Android
+   */
+  static openVoiceDataInstaller() {
+    return TurboSpeech.openVoiceDataInstaller();
+  }
+
+  /**
+   * Resets all speech options to their default values (OS TTS only)
+   */
+  static reset() {
+    TurboSpeech.reset();
+  }
+
+  /**
+   * Immediately stops any ongoing synthesis.
+   * Sets the stop flag synchronously, then fires native stops concurrently.
+   * Works for both OS native and neural TTS engines.
+   */
+  static async stop() {
+    const engine = Speech.currentEngine;
+
+    // Set stop flag synchronously — takes effect in synthesis loop immediately
+    if (engine === 'kokoro' && kokoroEngine) {
+      kokoroEngine.stop();
+    } else if (engine === 'supertonic' && supertonicEngine) {
+      supertonicEngine.stop();
+    } else if (engine === 'kitten' && kittenEngine) {
+      kittenEngine.stop();
+    }
+
+    // Fire native stops (OS TTS stop is always safe to call)
+    await TurboSpeech.stop();
+  }
+
+  /**
+   * Release the current neural engine's resources from memory.
+   * The engine can be re-initialized later with initialize().
+   * OS native engine does not need releasing.
+   *
+   * Use this when:
+   * - App goes to background and won't use TTS
+   * - Switching between engines and want to free previous engine's memory
+   * - Memory pressure situations
+   *
+   * After release(), call initialize() before using speak().
+   *
+   * @returns ReleaseResult with success status and any errors
+   *
+   * @example
+   * // Free memory when app goes to background
+   * AppState.addEventListener('change', async (state) => {
+   *   if (state === 'background') {
+   *     await Speech.release();
+   *   }
+   * });
+   *
+   * // Later, when needed again
+   * await Speech.initialize({ engine: 'kokoro', ... });
+   */
+  static async release() {
+    const engine = Speech.currentEngine;
+    log.info(`Releasing engine: ${engine}`);
+    if (engine === 'kokoro' && kokoroEngine) {
+      return kokoroEngine.release();
+    } else if (engine === 'supertonic' && supertonicEngine) {
+      return supertonicEngine.release();
+    } else if (engine === 'kitten' && kittenEngine) {
+      return kittenEngine.release();
+    }
+
+    // OS engine doesn't need releasing
+    return {
+      success: true,
+      partialRelease: false,
+      errors: []
+    };
+  }
+
+  /**
+   * Pauses the current speech.
+   * For neural engines, pauses audio playback (synthesis loop waits naturally).
+   * For OS native engine, pauses the system synthesizer.
+   */
+  static async pause() {
+    const engine = Speech.currentEngine;
+    if (engine === 'kokoro' && kokoroEngine || engine === 'supertonic' && supertonicEngine || engine === 'kitten' && kittenEngine) {
+      return neuralAudioPlayer.pause();
+    }
+    return TurboSpeech.pause();
+  }
+
+  /**
+   * Resumes previously paused speech.
+   * For neural engines, resumes audio playback.
+   * For OS native engine, resumes the system synthesizer.
+   */
+  static async resume() {
+    const engine = Speech.currentEngine;
+    if (engine === 'kokoro' && kokoroEngine || engine === 'supertonic' && supertonicEngine || engine === 'kitten' && kittenEngine) {
+      return neuralAudioPlayer.resume();
+    }
+    return TurboSpeech.resume();
+  }
+
+  /**
+   * Checks if speech is currently being synthesized
+   */
+  static isSpeaking() {
+    return TurboSpeech.isSpeaking();
+  }
+
+  /**
+   * Speaks text with custom options (OS TTS)
+   */
+  static speakWithOptions(text, options) {
+    return TurboSpeech.speakWithOptions(text, options);
+  }
+
+  // Event listeners - unified for all engines (OS TTS and neural audio use the same events)
+  static onError = TurboSpeech.onError;
+  static onStart = TurboSpeech.onStart;
+  static onFinish = TurboSpeech.onFinish;
+  static onPause = TurboSpeech.onPause;
+  static onResume = TurboSpeech.onResume;
+  static onStopped = TurboSpeech.onStopped;
+  static onProgress = TurboSpeech.onProgress;
+}
+
+// Re-export types
+//# sourceMappingURL=Speech.js.map
