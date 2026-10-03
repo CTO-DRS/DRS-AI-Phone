@@ -111,8 +111,8 @@ export const lightColors: TokenColors = {
   menuText: LIGHT_ON_SURFACE,
   menuDangerText: LIGHT_ERROR,
 
-  // Messages
-  authorBubbleBackground: '#f2f2f2',
+  // Messages — user bubble carries a soft violet wash (brand identity)
+  authorBubbleBackground: '#F1EBFE',
   receivedMessageDocumentIcon: LIGHT_PRIMARY,
   sentMessageDocumentIcon: LIGHT_ON_SURFACE,
   userAvatarImageBackground: 'transparent',
@@ -198,7 +198,7 @@ export const darkColors: TokenColors = {
   surfaceVariant: '#2A2440',
   onSurfaceVariant: '#B8B2CC',
   outline: '#3A3352',
-  outlineVariant: '#a1a1a1',
+  outlineVariant: '#5E5480',
   mutedLight: '#241E33',
   // Figma `Color/Secondary/Default` — dark binding from canonical file.
   secondaryDefault: '#221B33',

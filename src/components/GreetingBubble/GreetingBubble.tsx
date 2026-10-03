@@ -22,10 +22,10 @@ export const GreetingBubble: React.FC<GreetingBubbleProps> = ({text}) => {
   const styles = useMemo(
     () =>
       createStyles({
-        background: theme.colors.surfaceVariant,
+        background: theme.colors.surfaceContainerLow,
         border: theme.colors.outline,
-        text: theme.colors.onSurfaceVariant,
-        accent: theme.colors.primary,
+        text: theme.colors.onSurface,
+        accent: theme.colors.secondary,
       }),
     [theme],
   );
