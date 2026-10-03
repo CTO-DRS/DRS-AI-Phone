@@ -19,8 +19,7 @@ type NeuralEngineId = Exclude<EngineId, 'system'>;
 
 const STATUS_FILENAME = 'tts-command-status.json';
 
-const SAMPLE_TEXT =
-  'DRS AI runs language models on your phone, fully offline.';
+const SAMPLE_TEXT = 'DRS AI runs language models on your phone, fully offline.';
 
 interface TtsStatus {
   cmd: string;

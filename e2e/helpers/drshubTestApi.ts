@@ -30,7 +30,10 @@ export const drshubTestConfig = {
 const ENSURE_USER_PATH = '/api/test/e2e/users/ensure';
 const RESET_OWNERSHIP_PATH = '/api/test/e2e/purchases/reset';
 
-async function post(path: string, body: Record<string, unknown>): Promise<void> {
+async function post(
+  path: string,
+  body: Record<string, unknown>,
+): Promise<void> {
   if (!drshubTestConfig.testKey) {
     throw new Error(
       'E2E_API_KEY is not set — cannot call Drshub test endpoints',

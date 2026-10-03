@@ -232,9 +232,7 @@ describe('AssistantDetailSheet', () => {
 
       // Verify download was called
       await waitFor(() => {
-        expect(assistantStore.downloadDrshubAssistant).toHaveBeenCalledWith(
-          mockDrshubAssistant,
-        );
+        expect(assistantStore.downloadDrshubAssistant).toHaveBeenCalledWith(mockDrshubAssistant);
       });
 
       // Verify success alert was shown
