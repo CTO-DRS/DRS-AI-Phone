@@ -92,6 +92,8 @@ jobs:
         env:
           APP_RELEASE_STORE_PASSWORD: ${{ secrets.APP_RELEASE_STORE_PASSWORD }}
           APP_RELEASE_KEY_PASSWORD: ${{ secrets.APP_RELEASE_KEY_PASSWORD }}
+          # Metro (JS bundler) needs more heap than Node's ~2GB default
+          NODE_OPTIONS: --max-old-space-size=6144
         run: |
           set -uo pipefail
           ./gradlew assembleProdRelease --no-daemon --stacktrace 2>&1 | tee android-build.log
