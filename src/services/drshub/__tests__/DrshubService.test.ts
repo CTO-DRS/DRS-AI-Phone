@@ -55,9 +55,7 @@ describe('DrshubService', () => {
       authService: {isAuthenticated: true, user: {id: 'u1'}},
     }));
     const {drshubApiService} = require('../DrshubApiService');
-    (drshubApiService.getAssistant as jest.Mock).mockRejectedValue(
-      new Error('boom'),
-    );
+    (drshubApiService.getAssistant as jest.Mock).mockRejectedValue(new Error('boom'));
     const {drshubService, DrshubError} = require('../DrshubService');
 
     await expect(drshubService.checkAssistantOwnership('assistant-1')).rejects.toThrow(

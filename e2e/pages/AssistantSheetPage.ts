@@ -46,10 +46,7 @@ export class LegacySheetPage extends BasePage {
    * Scroll down within the sheet to reach the talent section
    */
   async scrollToTalents(): Promise<void> {
-    await Gestures.scrollInSheetToElement(
-      Selectors.assistantSheet.talentSection,
-      10,
-    );
+    await Gestures.scrollInSheetToElement(Selectors.assistantSheet.talentSection, 10);
   }
 
   /**

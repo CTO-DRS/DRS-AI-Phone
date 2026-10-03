@@ -159,9 +159,7 @@ export function compareReports(
   // captured at nr:1 before the CLI/spec unified on nr:3) keep loading.
   const baseB = baseline.bench;
   const curB = current.bench;
-  let benchMismatch:
-    | {baseline: BenchParams; current: BenchParams}
-    | undefined;
+  let benchMismatch: {baseline: BenchParams; current: BenchParams} | undefined;
   if (baseB && curB) {
     if (
       baseB.pp !== curB.pp ||
@@ -172,7 +170,8 @@ export function compareReports(
       benchMismatch = {baseline: baseB, current: curB};
     }
   } else {
-    const missingFrom = !baseB && !curB ? 'both' : !baseB ? 'baseline' : 'current';
+    const missingFrom =
+      !baseB && !curB ? 'both' : !baseB ? 'baseline' : 'current';
     // eslint-disable-next-line no-console
     console.error(
       `WARN: ${missingFrom} report missing \`bench\` params; protocol comparison disabled.`,
@@ -336,8 +335,7 @@ function main(): void {
 
   const result = compareReports(baseline, current, {pct});
 
-  const savePath =
-    outputPath || curPath.replace(/\.json$/, '-comparison.json');
+  const savePath = outputPath || curPath.replace(/\.json$/, '-comparison.json');
   fs.writeFileSync(savePath, JSON.stringify(result, null, 2));
 
   console.error(

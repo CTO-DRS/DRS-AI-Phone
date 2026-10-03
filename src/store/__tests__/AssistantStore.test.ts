@@ -691,9 +691,7 @@ describe('LegacyStore', () => {
           has_more: false,
         };
 
-        (drshubService.getLibrary as jest.Mock).mockResolvedValue(
-          mockResponse,
-        );
+        (drshubService.getLibrary as jest.Mock).mockResolvedValue(mockResponse);
 
         const result = await assistantStore.loadUserLibrary();
 

@@ -179,8 +179,7 @@ class AssistantRepository {
             record.isOwned = assistantData.is_owned;
             // Save generation settings (prefer local over Drshub)
             const generationSettings =
-              assistantData.completionSettings ||
-              assistantData.rawDrshubGenerationSettings;
+              assistantData.completionSettings || assistantData.rawDrshubGenerationSettings;
             record.generationSettings =
               LocalAssistant.safeStringify(generationSettings);
             record.pact = LocalAssistant.safeStringify(assistantData.pact);
@@ -285,8 +284,7 @@ class AssistantRepository {
           ) {
             // Update generation settings (prefer local over Drshub)
             record.generationSettings = LocalAssistant.safeStringify(
-              updates.completionSettings ||
-                updates.rawDrshubGenerationSettings,
+              updates.completionSettings || updates.rawDrshubGenerationSettings,
             );
           }
           if (updates.pact !== undefined) {

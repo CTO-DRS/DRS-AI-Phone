@@ -139,9 +139,9 @@ describe('Onboarding flow', () => {
     expect(
       await onboarding.assistantModel(CODIE_BALANCED_MODEL_ID).isExisting(),
     ).toBe(true);
-    expect(
-      await onboarding.assistantModel(PIP_BALANCED_MODEL_ID).isExisting(),
-    ).toBe(false);
+    expect(await onboarding.assistantModel(PIP_BALANCED_MODEL_ID).isExisting()).toBe(
+      false,
+    );
 
     await onboarding.tapAssistantModel(CODIE_BALANCED_MODEL_ID);
     await onboarding.tapPrimary();

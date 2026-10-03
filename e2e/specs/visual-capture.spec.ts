@@ -60,9 +60,7 @@ interface VisualCaptureAssistant {
 }
 
 const capturesJson = process.env.VISUAL_CAPTURES;
-const captures: VisualCapture[] = capturesJson
-  ? JSON.parse(capturesJson)
-  : [];
+const captures: VisualCapture[] = capturesJson ? JSON.parse(capturesJson) : [];
 
 const assistantJson = process.env.VISUAL_CAPTURE_PAL;
 const assistantConfig: VisualCaptureAssistant | null = assistantJson ? JSON.parse(assistantJson) : null;
@@ -97,8 +95,10 @@ describe('Visual Capture', () => {
     // Optional: create a Assistant with talents enabled, then re-load the model
     // and select the Assistant so the captures below exercise tool calls.
     if (assistantConfig) {
-      console.log(`Creating Assistant "${assistantConfig.name}" with talents:`,
-        assistantConfig.talents);
+      console.log(
+        `Creating Assistant "${assistantConfig.name}" with talents:`,
+        assistantConfig.talents,
+      );
       const drawerPage = new DrawerPage();
       const assistantSheetPage = new LegacySheetPage();
 
@@ -138,7 +138,9 @@ describe('Visual Capture', () => {
 
       const modelsPage = new ModelsPage();
       await modelsPage.waitForReady();
-      const cardSelector = Selectors.modelCard.cardContainer(model.downloadFile);
+      const cardSelector = Selectors.modelCard.cardContainer(
+        model.downloadFile,
+      );
       const modelCard = browser.$(cardSelector);
       await modelCard.waitForDisplayed({timeout: 30000});
       const loadBtn = modelCard.$(Selectors.modelCard.loadButtonElement);
@@ -173,7 +175,10 @@ describe('Visual Capture', () => {
           path.join(VISUAL_DIR, `failure-${testName}-${timestamp}.png`),
         );
       } catch (e) {
-        console.error('Failed to capture failure screenshot:', (e as Error).message);
+        console.error(
+          'Failed to capture failure screenshot:',
+          (e as Error).message,
+        );
       }
     }
   });

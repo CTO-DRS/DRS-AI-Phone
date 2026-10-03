@@ -53,9 +53,7 @@ describe('SquareAssistantCard', () => {
   });
 
   // Create a Drshub assistant fixture
-  const createDrshubAssistant = (
-    overrides: Partial<DrshubAssistant> = {},
-  ): DrshubAssistant => ({
+  const createDrshubAssistant = (overrides: Partial<DrshubAssistant> = {}): DrshubAssistant => ({
     type: 'drshub',
     id: 'ph-assistant-1',
     title: 'Drshub Test Assistant',
