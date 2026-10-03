@@ -72,7 +72,7 @@ export function parseDrshubTemplate(template: string): ParsedMustacheTemplate {
   const cleanSystemPrompt = cleanTemplate(template);
 
   // Convert schema to DRS AI format
-  const parameterSchema = schema ? convertJsonSchemaToDRS AI(schema) : [];
+  const parameterSchema = schema ? convertJsonSchemaToDRSAI(schema) : [];
   const defaultParameters = schema
     ? extractDefaultParametersFromSchema(schema)
     : {};
@@ -87,7 +87,7 @@ export function parseDrshubTemplate(template: string): ParsedMustacheTemplate {
 /**
  * Converts JSON schema to DRS AI ParameterDefinition format
  */
-function convertJsonSchemaToDRS AI(
+function convertJsonSchemaToDRSAI(
   schema: Record<string, MustacheSchemaDefinition>,
 ): ParameterDefinition[] {
   const parameterSchema: ParameterDefinition[] = [];
