@@ -28,6 +28,8 @@ def getExtOrIntegerDefault(name) {
 android {
   namespace "com.drsai.speech"
 
+  ndkVersion rootProject.ext.ndkVersion
+
   compileSdkVersion getExtOrIntegerDefault("compileSdkVersion")
 
   defaultConfig {
@@ -46,7 +48,9 @@ android {
     }
 
     ndk {
-      abiFilters 'arm64-v8a', 'armeabi-v7a', 'x86', 'x86_64'
+      // Follow the app-level ABI selection (reactNativeArchitectures property)
+      def archs = project.getProperties().get("reactNativeArchitectures")
+      abiFilters(*(archs ? archs.split(",") : ["arm64-v8a", "x86_64"]))
     }
   }
 

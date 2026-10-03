@@ -1224,6 +1224,11 @@
     buffer "^6.0.3"
     http-status-codes "^2.3.0"
 
+"@drsai/react-native-speech@file:./vendors/react-native-speech":
+  version "2.5.0"
+  dependencies:
+    phonemize "^1.1.0"
+
 "@egjs/hammerjs@^2.0.17":
   version "2.0.17"
   resolved "https://registry.yarnpkg.com/@egjs/hammerjs/-/hammerjs-2.0.17.tgz#5dc02af75a6a06e4c2db0202cae38c9263895124"
@@ -2152,12 +2157,6 @@
   version "0.2.9"
   resolved "https://registry.yarnpkg.com/@pkgr/core/-/core-0.2.9.tgz#d229a7b7f9dac167a156992ef23c7f023653f53b"
   integrity sha512-QNqXyfVS2wm9hweSYD2O7F0G06uurj9kZ96TRQE5Y9hU7+tgdZwIkbAKc5Ocy1HxEY2kuDQa6cQ1WRs/O5LFKA==
-
-"@drsai/react-native-speech@file:./vendors/react-native-speech":
-  version "2.5.0"
-  resolved "@drsai/react-native-speech@file:./vendors/react-native-speech"
-  dependencies:
-    phonemize "^1.1.0"
 
 "@protobufjs/aspromise@^1.1.1", "@protobufjs/aspromise@^1.1.2":
   version "1.1.2"
