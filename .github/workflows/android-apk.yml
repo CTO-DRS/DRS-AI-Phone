@@ -93,8 +93,19 @@ jobs:
           APP_RELEASE_STORE_PASSWORD: ${{ secrets.APP_RELEASE_STORE_PASSWORD }}
           APP_RELEASE_KEY_PASSWORD: ${{ secrets.APP_RELEASE_KEY_PASSWORD }}
         run: |
-          set -euo pipefail
-          ./gradlew assembleProdRelease --no-daemon --stacktrace 2>&1 | tee android-build.log | tail -40
+          set -uo pipefail
+          ./gradlew assembleProdRelease --no-daemon --stacktrace 2>&1 | tee android-build.log
+          EXIT=$?
+          tail -200 android-build.log || true
+          exit $EXIT
+
+      - name: Upload build log (diagnostics)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-build-log
+          path: android/android-build.log
+          retention-days: 14
 
       - name: Verify APK signature
         run: |
