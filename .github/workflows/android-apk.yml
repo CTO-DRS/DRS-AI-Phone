@@ -27,6 +27,31 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Free disk space
+        run: |
+          set -euo pipefail
+          echo "Disk before cleanup:"
+          df -h / | tail -1
+          # NDK: keep only the version this build aligns on
+          if [ -d /usr/local/lib/android/sdk/ndk ]; then
+            for d in /usr/local/lib/android/sdk/ndk/*/; do
+              case "$(basename "$d")" in
+                27.3.13750724) ;;
+                *) sudo rm -rf "$d" ;;
+              esac
+            done
+          fi
+          # Emulator/system images/tools are not needed for APK packaging
+          sudo rm -rf /usr/local/lib/android/sdk/emulator
+          sudo rm -rf /usr/local/lib/android/sdk/system-images
+          sudo rm -rf /usr/local/lib/android/sdk/extras
+          sudo rm -rf /usr/local/lib/android/sdk/tools
+          sudo rm -rf /usr/share/dotnet /usr/local/share/boost
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          sudo docker image prune --all --force >/dev/null 2>&1 || true
+          echo "Disk after cleanup:"
+          df -h / | tail -1
+
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
