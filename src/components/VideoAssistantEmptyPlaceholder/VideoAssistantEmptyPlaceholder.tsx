@@ -21,7 +21,7 @@ export const VideoAssistantEmptyPlaceholder = observer(
       <View
         style={[styles.container, {paddingBottom: bottomComponentHeight + 20}]}>
         <Image
-          source={require('../../assets/drsai-dark-v2.png')}
+          source={require('../../assets/drs-ai-dark.png')}
           style={styles.logo}
           resizeMode="contain"
         />
