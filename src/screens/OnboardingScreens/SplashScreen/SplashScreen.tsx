@@ -1,8 +1,8 @@
 import React, {useContext} from 'react';
-import {View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 
 import {SplashMark} from '../../../assets/onboarding/illustrations';
+import {BrandGradient} from '../../../components';
 import {useTheme} from '../../../hooks';
 import {L10nContext} from '../../../utils';
 import {ROUTES} from '../../../utils/navigationConstants';
@@ -29,13 +29,17 @@ export const SplashScreen: React.FC = () => {
   }, [navigation]);
 
   return (
-    <View testID="onboarding-splash" style={styles.root}>
+    <BrandGradient
+      testID="onboarding-splash"
+      style={styles.root}
+      start={{x: 0, y: 0}}
+      end={{x: 1, y: 1}}>
       <SplashMark
         width={112}
         height={112}
         accessibilityLabel={l10n.onboarding.splash.brand}
         accessibilityRole="image"
       />
-    </View>
+    </BrandGradient>
   );
 };

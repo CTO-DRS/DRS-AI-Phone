@@ -125,7 +125,8 @@ describe('typography tokens', () => {
 
     it('resolveTokens("dark") returns darkColors bound', () => {
       const t = resolveTokens('dark');
-      expect(t.colors.background).toBe('#000000');
+      // DRS AI "violet space" canvas — see colors.ts.
+      expect(t.colors.background).toBe('#0B0714');
     });
 
     it('typography binding is shared across modes (locale swap is in builder)', () => {
