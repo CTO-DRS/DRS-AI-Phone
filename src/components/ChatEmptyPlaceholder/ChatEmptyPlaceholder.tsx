@@ -85,7 +85,7 @@ export const ChatEmptyPlaceholder = observer(
       <View
         style={[styles.container, {marginBottom: bottomComponentHeight + 100}]}>
         <Image
-          source={require('../../assets/drsai-dark-v2.png')}
+          source={require('../../assets/drs-ai-dark.png')}
           style={styles.logo}
           resizeMode="contain"
         />
