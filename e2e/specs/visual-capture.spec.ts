@@ -31,7 +31,7 @@ import * as path from 'path';
 import {ChatPage} from '../pages/ChatPage';
 import {DrawerPage} from '../pages/DrawerPage';
 import {ModelsPage} from '../pages/ModelsPage';
-import {PalSheetPage} from '../pages/PalSheetPage';
+import {AssistantSheetPage} from '../pages/AssistantSheetPage';
 import {Selectors, byText} from '../helpers/selectors';
 import {
   downloadAndLoadModel,
@@ -53,7 +53,7 @@ interface VisualCapture {
   description?: string;
 }
 
-interface VisualCapturePal {
+interface VisualCaptureAssistant {
   name: string;
   systemPrompt?: string;
   talents: string[];
@@ -62,8 +62,8 @@ interface VisualCapturePal {
 const capturesJson = process.env.VISUAL_CAPTURES;
 const captures: VisualCapture[] = capturesJson ? JSON.parse(capturesJson) : [];
 
-const palJson = process.env.VISUAL_CAPTURE_PAL;
-const palConfig: VisualCapturePal | null = palJson ? JSON.parse(palJson) : null;
+const assistantJson = process.env.VISUAL_CAPTURE_ASSISTANT;
+const assistantConfig: VisualCaptureAssistant | null = assistantJson ? JSON.parse(assistantJson) : null;
 
 const models = getModelsToTest(true);
 const model = models[0] || QUICK_TEST_MODEL;
@@ -92,20 +92,20 @@ describe('Visual Capture', () => {
     console.log(`Loading model: ${model.id}`);
     await downloadAndLoadModel(model);
 
-    // Optional: create a Pal with talents enabled, then re-load the model
-    // and select the Pal so the captures below exercise tool calls.
-    if (palConfig) {
+    // Optional: create a Assistant with talents enabled, then re-load the model
+    // and select the Assistant so the captures below exercise tool calls.
+    if (assistantConfig) {
       console.log(
-        `Creating Pal "${palConfig.name}" with talents:`,
-        palConfig.talents,
+        `Creating Assistant "${assistantConfig.name}" with talents:`,
+        assistantConfig.talents,
       );
       const drawerPage = new DrawerPage();
-      const palSheetPage = new PalSheetPage();
+      const assistantSheetPage = new AssistantSheetPage();
 
       await chatPage.openDrawer();
-      await drawerPage.navigateToPals();
+      await drawerPage.navigateToAssistants();
 
-      const addBtn = browser.$(Selectors.palsScreen.addButton);
+      const addBtn = browser.$(Selectors.assistantsScreen.addButton);
       await addBtn.waitForDisplayed({timeout: 15000});
       await addBtn.click();
       await browser.pause(500);
@@ -115,17 +115,17 @@ describe('Visual Capture', () => {
       await assistantItem.click();
       await browser.pause(500);
 
-      await palSheetPage.setName(palConfig.name);
-      if (palConfig.systemPrompt) {
-        await palSheetPage.setSystemPrompt(palConfig.systemPrompt);
+      await assistantSheetPage.setName(assistantConfig.name);
+      if (assistantConfig.systemPrompt) {
+        await assistantSheetPage.setSystemPrompt(assistantConfig.systemPrompt);
       }
-      for (const talent of palConfig.talents) {
-        await palSheetPage.enableTalent(talent);
+      for (const talent of assistantConfig.talents) {
+        await assistantSheetPage.enableTalent(talent);
       }
-      await palSheetPage.submit();
+      await assistantSheetPage.submit();
 
-      // Restart the app so we land back on Chat reliably; the Pal
-      // persists in the DB. Then re-load the model and select the Pal.
+      // Restart the app so we land back on Chat reliably; the Assistant
+      // persists in the DB. Then re-load the model and select the Assistant.
       await browser.pause(1000);
       await driver.terminateApp(getAppBundleId());
       await browser.pause(1000);
@@ -149,8 +149,8 @@ describe('Visual Capture', () => {
       await dismissPerformanceWarningIfPresent();
       await chatPage.waitForReady();
 
-      await chatPage.openPalPicker();
-      await chatPage.selectPal(palConfig.name);
+      await chatPage.openAssistantPicker();
+      await chatPage.selectAssistant(assistantConfig.name);
     }
 
     // Ensure screenshot output directory exists

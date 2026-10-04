@@ -5,5 +5,5 @@ export {ModelsPage} from './ModelsPage';
 export {SettingsPage} from './SettingsPage';
 export {HFSearchSheet} from './HFSearchSheet';
 export {ModelDetailsSheet} from './ModelDetailsSheet';
-export {PalSheetPage} from './PalSheetPage';
-export {PalPurchasePage} from './PalPurchasePage';
+export {AssistantSheetPage} from './AssistantSheetPage';
+export {AssistantPurchasePage} from './AssistantPurchasePage';

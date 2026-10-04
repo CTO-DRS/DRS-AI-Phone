@@ -8,7 +8,7 @@ import {runSnapshotMatrix} from '../../__tests__/helpers/snapshotMatrix';
 
 const items = [
   {value: 'chat', label: 'Chat', icon: <Text>C</Text>},
-  {value: 'pals', label: 'Pals', icon: <Text>P</Text>},
+  {value: 'assistants', label: 'Assistants', icon: <Text>P</Text>},
   {value: 'models', label: 'Models', icon: <Text>M</Text>},
 ];
 
@@ -24,10 +24,15 @@ describe('BottomNavBar', () => {
 
   it('templates testID per item and marks selected', () => {
     const {getByTestId} = render(
-      <BottomNavBar items={items} selectedValue="pals" onSelect={() => {}} />,
+      <BottomNavBar
+        items={items}
+        selectedValue="assistants"
+        onSelect={() => {}}
+      />,
     );
     expect(
-      getByTestId('ui-bottom-nav-item-pals').props.accessibilityState?.selected,
+      getByTestId('ui-bottom-nav-item-assistants').props.accessibilityState
+        ?.selected,
     ).toBe(true);
   });
 

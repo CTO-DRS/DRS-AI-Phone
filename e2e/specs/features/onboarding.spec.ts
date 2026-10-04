@@ -10,7 +10,7 @@
  *   - Screen 5:     no Skip, no primary, back-only bottom bar; chip-tap
  *                   auto-advances to screen 6.
  *   - Screen 6:     no Skip, back + primary in the bottom bar, models
- *                   resolved from the pal mapped to the topic chosen
+ *                   resolved from the assistant mapped to the topic chosen
  *                   on screen 5 (`else` and null both fall back to Pip).
  *
  * Usage:
@@ -27,7 +27,7 @@ declare const browser: WebdriverIO.Browser;
 
 const TIMEOUT = 15000;
 
-// Pal-balanced model IDs come from src/store/onboarding/onboardingPals.ts;
+// Assistant-balanced model IDs come from src/store/onboarding/onboardingAssistants.ts;
 // each entry id is `${repo}/${filename}`. Picked by topic on screen 5;
 // the matching model is the one ModelRadioGroup renders on screen 6 with
 // the Recommended badge.
@@ -82,7 +82,7 @@ describe('Onboarding flow', () => {
     expect(await onboarding.skip.isDisplayed()).toBe(true);
     expect(await onboarding.primary.isDisplayed()).toBe(true);
     expect(await onboarding.back.isDisplayed()).toBe(true);
-    await onboarding.tapPalModel(PIP_BALANCED_MODEL_ID);
+    await onboarding.tapAssistantModel(PIP_BALANCED_MODEL_ID);
     await onboarding.tapPrimary();
 
     await chat.waitForReady(TIMEOUT);
@@ -121,7 +121,7 @@ describe('Onboarding flow', () => {
     await chat.waitForReady(TIMEOUT);
   });
 
-  it('topic=coding renders Codie pal models (Qwen3.5 2B set)', async () => {
+  it('topic=coding renders Codie assistant models (Qwen3.5 2B set)', async () => {
     await onboarding.waitForScreen(1, TIMEOUT);
     await onboarding.tapPrimary();
     await onboarding.waitForScreen(2);
@@ -135,15 +135,15 @@ describe('Onboarding flow', () => {
     await onboarding.waitForScreen(6);
 
     // Screen 6 must show Codie's balanced model (Qwen3.5 2B), not
-    // Pip's Llama. This is the pal-per-topic guarantee.
+    // Pip's Llama. This is the assistant-per-topic guarantee.
     expect(
-      await onboarding.palModel(CODIE_BALANCED_MODEL_ID).isExisting(),
+      await onboarding.assistantModel(CODIE_BALANCED_MODEL_ID).isExisting(),
     ).toBe(true);
-    expect(await onboarding.palModel(PIP_BALANCED_MODEL_ID).isExisting()).toBe(
+    expect(await onboarding.assistantModel(PIP_BALANCED_MODEL_ID).isExisting()).toBe(
       false,
     );
 
-    await onboarding.tapPalModel(CODIE_BALANCED_MODEL_ID);
+    await onboarding.tapAssistantModel(CODIE_BALANCED_MODEL_ID);
     await onboarding.tapPrimary();
     await chat.waitForReady(TIMEOUT);
   });

@@ -55,8 +55,8 @@ describe('dispatch error paths produce talentResults entries', () => {
   it('error TalentResult has required fields', () => {
     const errorResult = {
       type: 'error' as const,
-      summary: 'Talent "foo" is not enabled for this Pal',
-      errorMessage: 'Talent "foo" is not enabled for this Pal',
+      summary: 'Talent "foo" is not enabled for this Assistant',
+      errorMessage: 'Talent "foo" is not enabled for this Assistant',
     };
     expect(errorResult.type).toBe('error');
     expect(errorResult.summary).toBeTruthy();
@@ -65,7 +65,7 @@ describe('dispatch error paths produce talentResults entries', () => {
 
   it('pact-miss error message includes talent name', () => {
     const fnName = 'web_search';
-    const summary = `Talent "${fnName}" is not enabled for this Pal`;
+    const summary = `Talent "${fnName}" is not enabled for this Assistant`;
     expect(summary).toContain(fnName);
   });
 

@@ -7,7 +7,7 @@
  * designs hit:
  *
  *   1. Cold-launch auto-load shadowing — when the bench shared the store,
- *      `ChatView`'s `selectModel(palDefaultModel)` could load the model
+ *      `ChatView`'s `selectModel(assistantDefaultModel)` could load the model
  *      with default devices BEFORE the matrix could call `setDevices(...)`,
  *      and `initContext`'s "already loaded → skip" path silently dropped
  *      the runner's per-cell intent.

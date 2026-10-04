@@ -96,7 +96,7 @@ export default appSchema({
         {name: 'updated_at', type: 'number'},
       ],
     }),
-    // Local Pals table for unified pal storage
+    // Local Assistants table for unified assistant storage
     tableSchema({
       name: 'local_pals',
       columns: [
@@ -111,7 +111,7 @@ export default appSchema({
         {name: 'prompt_generation_model', type: 'string', isOptional: true}, // JSON stringified
         {name: 'generating_prompt', type: 'string', isOptional: true},
         {name: 'color', type: 'string', isOptional: true}, // JSON stringified [string, string]
-        {name: 'capabilities', type: 'string'}, // JSON stringified PalCapabilities
+        {name: 'capabilities', type: 'string'}, // JSON stringified AssistantCapabilities
         {name: 'parameters', type: 'string'}, // JSON stringified Record<string, any>
         {name: 'parameter_schema', type: 'string'}, // JSON stringified ParameterDefinition[]
         {name: 'source', type: 'string'}, // 'local' | 'drshub'
@@ -126,7 +126,7 @@ export default appSchema({
         {name: 'is_owned', type: 'boolean', isOptional: true},
         {name: 'generation_settings', type: 'string', isOptional: true}, // JSON stringified
         {name: 'pact', type: 'string', isOptional: true}, // JSON stringified { talents: TalentRef[] }
-        {name: 'greeting', type: 'string', isOptional: true}, // JSON stringified Pal['greeting']
+        {name: 'greeting', type: 'string', isOptional: true}, // JSON stringified Assistant['greeting']
         {name: 'created_at', type: 'number'},
         {name: 'updated_at', type: 'number'},
       ],

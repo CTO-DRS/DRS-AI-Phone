@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 /**
  * JsDictSource — in-memory dict backed by a plain object.

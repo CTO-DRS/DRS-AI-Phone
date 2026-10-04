@@ -17,7 +17,7 @@ import {isReadUrlAllowed} from '../../services/talents';
 import {
   chatSessionStore,
   modelStore,
-  palStore,
+  assistantStore,
   serverStore,
   ttsStore,
   uiStore,
@@ -36,7 +36,7 @@ beforeEach(() => {
   jest.clearAllMocks();
 
   // Reset mock stores to a known baseline between tests
-  palStore.pals = [] as any;
+  assistantStore.assistants = [] as any;
   chatSessionStore.sessions = sessionFixtures as any;
   chatSessionStore.activeSessionId = 'session-1';
 
@@ -288,12 +288,12 @@ describe('useChatSession', () => {
     },
   );
 
-  it('should render parametrized system prompt when pal has parameters', async () => {
-    // Create a mock pal with parametrized system prompt
-    const mockPal = {
-      id: 'test-pal-id',
+  it('should render parametrized system prompt when assistant has parameters', async () => {
+    // Create a mock assistant with parametrized system prompt
+    const mockAssistant = {
+      id: 'test-assistant-id',
       type: 'local' as const,
-      name: 'Test Pal',
+      name: 'Test Assistant',
       systemPrompt: 'You are {{name}}, a {{role}} in {{setting}}.',
       parameters: {
         name: 'Gandalf',
@@ -315,13 +315,13 @@ describe('useChatSession', () => {
       source: 'local' as const,
     };
 
-    // Mock palStore to return our test pal
-    palStore.pals = [mockPal];
+    // Mock assistantStore to return our test assistant
+    assistantStore.assistants = [mockAssistant];
 
-    // Create a mock session with the pal
+    // Create a mock session with the assistant
     const mockSession = {
       id: 'test-session-id',
-      activePalId: 'test-pal-id',
+      activeAssistantId: 'test-assistant-id',
       title: 'Test Session',
       date: new Date().toISOString().split('T')[0], // Format: YYYY-MM-DD
       messages: [],
@@ -434,12 +434,12 @@ describe('useChatSession', () => {
     });
   });
 
-  it('should use system prompt as-is when pal has no parameters', async () => {
-    // Create a mock pal without parameters
-    const mockPal = {
-      id: 'test-pal-id-no-params',
+  it('should use system prompt as-is when assistant has no parameters', async () => {
+    // Create a mock assistant without parameters
+    const mockAssistant = {
+      id: 'test-assistant-id-no-params',
       type: 'local' as const,
-      name: 'Test Pal No Params',
+      name: 'Test Assistant No Params',
       systemPrompt: 'You are a helpful assistant.',
       parameters: {},
       parameterSchema: [],
@@ -448,13 +448,13 @@ describe('useChatSession', () => {
       source: 'local' as const,
     };
 
-    // Mock palStore to return our test pal
-    palStore.pals = [mockPal];
+    // Mock assistantStore to return our test assistant
+    assistantStore.assistants = [mockAssistant];
 
-    // Create a mock session with the pal
+    // Create a mock session with the assistant
     const mockSession = {
       id: 'test-session-id-no-params',
-      activePalId: 'test-pal-id-no-params',
+      activeAssistantId: 'test-assistant-id-no-params',
       title: 'Test Session No Params',
       date: new Date().toISOString().split('T')[0], // Format: YYYY-MM-DD
       messages: [],
@@ -505,11 +505,11 @@ describe('useChatSession', () => {
       ).mockResolvedValueOnce({...baseSettings, tools: [webSearchTool]});
     };
 
-    const useSessionWithPal = (systemPrompt: string) => {
-      const pal = {
-        id: 'search-pal-id',
+    const useSessionWithAssistant = (systemPrompt: string) => {
+      const assistant = {
+        id: 'search-assistant-id',
         type: 'local' as const,
-        name: 'Search Pal',
+        name: 'Search Assistant',
         systemPrompt,
         parameters: {},
         parameterSchema: [],
@@ -517,11 +517,11 @@ describe('useChatSession', () => {
         useAIPrompt: false,
         source: 'local' as const,
       };
-      palStore.pals = [pal];
+      assistantStore.assistants = [assistant];
       chatSessionStore.sessions = [
         {
           id: 'search-session-id',
-          activePalId: pal.id,
+          activeAssistantId: assistant.id,
           title: 'Search Session',
           date: new Date().toISOString().split('T')[0],
           messages: [],
@@ -530,7 +530,7 @@ describe('useChatSession', () => {
         },
       ];
       chatSessionStore.activeSessionId = 'search-session-id';
-      return pal;
+      return assistant;
     };
 
     const captureMessages = () => {
@@ -556,9 +556,11 @@ describe('useChatSession', () => {
     };
 
     // Strict templates reject a second system message ("must be at the
-    // beginning"), so grounding folds into the pal's system message.
-    it('sends exactly one system message carrying both the pal prompt and the grounding', async () => {
-      const pal = useSessionWithPal('You are a research assistant.');
+    // beginning"), so grounding folds into the assistant's system message.
+    it('sends exactly one system message carrying both the assistant prompt and the grounding', async () => {
+      const assistant = useSessionWithAssistant(
+        'You are a research assistant.',
+      );
       await activateSearchTools();
       const captured = captureMessages();
 
@@ -577,11 +579,11 @@ describe('useChatSession', () => {
       expect(systemMessages[0].content).toContain('web_search');
 
       // Composition happens at assembly time only.
-      expect(pal.systemPrompt).toBe('You are a research assistant.');
+      expect(assistant.systemPrompt).toBe('You are a research assistant.');
     });
 
-    it('sends the grounding as the sole system message when the pal has no system prompt', async () => {
-      useSessionWithPal('');
+    it('sends the grounding as the sole system message when the assistant has no system prompt', async () => {
+      useSessionWithAssistant('');
       await activateSearchTools();
       const captured = captureMessages();
 
@@ -597,8 +599,8 @@ describe('useChatSession', () => {
       expect(systemMessages[0].content).toContain('web_search');
     });
 
-    it('leaves the pal system message alone when no search tools are active', async () => {
-      useSessionWithPal('You are a research assistant.');
+    it('leaves the assistant system message alone when no search tools are active', async () => {
+      useSessionWithAssistant('You are a research assistant.');
       const captured = captureMessages();
 
       await send();
@@ -611,7 +613,7 @@ describe('useChatSession', () => {
     });
 
     it('seeds the read_url allowlist from URLs the user wrote', async () => {
-      useSessionWithPal('');
+      useSessionWithAssistant('');
       await activateSearchTools();
       captureMessages();
 

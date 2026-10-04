@@ -256,8 +256,8 @@ describe('Remote Server Features', () => {
     await selectModelBtn.click();
     await browser.pause(1000);
 
-    // The model picker opens on the Pals tab.
-    // Swipe LEFT to navigate from Pals tab to Models tab.
+    // The model picker opens on the Assistants tab.
+    // Swipe LEFT to navigate from Assistants tab to Models tab.
     const {width, height} = await driver.getWindowSize();
     await driver
       .action('pointer', {parameters: {pointerType: 'touch'}})
@@ -273,7 +273,7 @@ describe('Remote Server Features', () => {
     await browser.pause(1000);
 
     // Select the remote model from the Models tab.
-    // NOTE: ChatPalModelPickerSheet needs accessible={false} on its BottomSheet
+    // NOTE: ChatAssistantModelPickerSheet needs accessible={false} on its BottomSheet
     // component, otherwise @gorhom/bottom-sheet collapses all children from the
     // accessibility tree and no selector can find the model items.
     if (REMOTE_MODEL_HINT) {

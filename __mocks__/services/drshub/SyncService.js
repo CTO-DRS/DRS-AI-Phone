@@ -25,9 +25,9 @@ const mockSyncService = {
   // Methods
   syncAll: jest.fn().mockResolvedValue(undefined),
   needsSync: jest.fn().mockResolvedValue(false),
-  syncPals: jest.fn().mockResolvedValue(undefined),
+  syncAssistants: jest.fn().mockResolvedValue(undefined),
   syncUserLibrary: jest.fn().mockResolvedValue(undefined),
-  syncUserCreatedPals: jest.fn().mockResolvedValue(undefined),
+  syncUserCreatedAssistants: jest.fn().mockResolvedValue(undefined),
   clearSyncError: jest.fn(),
   forceSyncAll: jest.fn().mockResolvedValue(undefined),
 
@@ -35,9 +35,9 @@ const mockSyncService = {
   updateSyncStatus: jest.fn().mockResolvedValue(undefined),
   getSyncStatus: jest.fn().mockResolvedValue(null),
   createSyncStatus: jest.fn().mockResolvedValue(undefined),
-  syncPalsFromHub: jest.fn().mockResolvedValue(undefined),
+  syncAssistantsFromHub: jest.fn().mockResolvedValue(undefined),
   syncLibraryFromHub: jest.fn().mockResolvedValue(undefined),
-  syncCreatedPalsFromHub: jest.fn().mockResolvedValue(undefined),
+  syncCreatedAssistantsFromHub: jest.fn().mockResolvedValue(undefined),
   updateProgress: jest.fn(),
   resetProgress: jest.fn(),
 };

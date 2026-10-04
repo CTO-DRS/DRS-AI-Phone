@@ -78,7 +78,7 @@ export default schemaMigrations({
             {name: 'prompt_generation_model', type: 'string', isOptional: true}, // JSON stringified
             {name: 'generating_prompt', type: 'string', isOptional: true},
             {name: 'color', type: 'string', isOptional: true}, // JSON stringified [string, string]
-            {name: 'capabilities', type: 'string'}, // JSON stringified PalCapabilities
+            {name: 'capabilities', type: 'string'}, // JSON stringified AssistantCapabilities
             {name: 'parameters', type: 'string'}, // JSON stringified Record<string, any>
             {name: 'parameter_schema', type: 'string'}, // JSON stringified ParameterDefinition[]
             {name: 'source', type: 'string'}, // 'local' | 'drshub'
@@ -138,7 +138,7 @@ export default schemaMigrations({
           table: 'local_pals',
           columns: [
             {name: 'pact', type: 'string', isOptional: true}, // JSON stringified { talents: TalentRef[] }
-            {name: 'greeting', type: 'string', isOptional: true}, // JSON stringified Pal['greeting']
+            {name: 'greeting', type: 'string', isOptional: true}, // JSON stringified Assistant['greeting']
           ],
         }),
       ],

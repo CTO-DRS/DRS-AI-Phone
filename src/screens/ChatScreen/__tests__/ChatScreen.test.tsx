@@ -239,9 +239,9 @@ describe('ChatScreen', () => {
   });
 
   describe('thinking toggle in no-session chat', () => {
-    const palStore = require('../../../store').palStore;
-    const thinkingPal = {
-      id: 'pal-thinking',
+    const assistantStore = require('../../../store').assistantStore;
+    const thinkingAssistant = {
+      id: 'assistant-thinking',
       type: 'assistant' as const,
       name: 'Thinker',
       systemPrompt: '',
@@ -277,14 +277,14 @@ describe('ChatScreen', () => {
         modelStore.activeModelId = 'thinking-model-id';
         modelStore.context = new LlamaContext(mockLlamaContextParams);
         chatSessionStore.activeSessionId = null;
-        chatSessionStore.newChatPalId = thinkingPal.id;
+        chatSessionStore.newChatAssistantId = thinkingAssistant.id;
         chatSessionStore.newChatThinkingOverride = undefined;
       });
       modelStore.engine = {
         completion: jest.fn(),
         stopCompletion: jest.fn(),
       };
-      palStore.pals = [thinkingPal];
+      assistantStore.assistants = [thinkingAssistant];
     });
 
     afterEach(() => {
@@ -320,13 +320,13 @@ describe('ChatScreen', () => {
   });
 
   describe('tool-compatibility banner', () => {
-    const palStore = require('../../../store').palStore;
+    const assistantStore = require('../../../store').assistantStore;
     const uiStore = require('../../../store').uiStore;
 
-    const palWithTalents = {
-      id: 'pal-with-talents',
+    const assistantWithTalents = {
+      id: 'assistant-with-talents',
       type: 'assistant' as const,
-      name: 'Tool Pal',
+      name: 'Tool Assistant',
       systemPrompt: '',
       parameters: {},
       parameterSchema: [],
@@ -370,15 +370,19 @@ describe('ChatScreen', () => {
       return ctx;
     };
 
-    const renderWithToolPal = (ctx: LlamaContext) => {
+    const renderWithToolAssistant = (ctx: LlamaContext) => {
       runInAction(() => {
         modelStore.activeModelId = 'tool-model-id';
         modelStore.context = ctx;
       });
-      palStore.pals = [palWithTalents];
+      assistantStore.assistants = [assistantWithTalents];
       jest
-        .spyOn(require('../../../store').chatSessionStore, 'activePalId', 'get')
-        .mockReturnValue(palWithTalents.id);
+        .spyOn(
+          require('../../../store').chatSessionStore,
+          'activeAssistantId',
+          'get',
+        )
+        .mockReturnValue(assistantWithTalents.id);
       return render(<ChatScreen />, {withNavigation: true});
     };
 
@@ -388,27 +392,27 @@ describe('ChatScreen', () => {
     });
 
     it('does NOT warn when defaultCaps.tools is true (Ministral-style)', () => {
-      renderWithToolPal(buildContextWithCaps({defaultTools: true}));
+      renderWithToolAssistant(buildContextWithCaps({defaultTools: true}));
       expect(uiStore.setChatWarning).not.toHaveBeenCalled();
     });
 
     it('does NOT warn when defaultCaps.toolCalls is true', () => {
-      renderWithToolPal(buildContextWithCaps({defaultToolCalls: true}));
+      renderWithToolAssistant(buildContextWithCaps({defaultToolCalls: true}));
       expect(uiStore.setChatWarning).not.toHaveBeenCalled();
     });
 
     it('does NOT warn when toolUse is true (Qwen3-style)', () => {
-      renderWithToolPal(buildContextWithCaps({toolUse: true}));
+      renderWithToolAssistant(buildContextWithCaps({toolUse: true}));
       expect(uiStore.setChatWarning).not.toHaveBeenCalled();
     });
 
     it('does NOT warn when toolUseCaps object is present', () => {
-      renderWithToolPal(buildContextWithCaps({toolUseCaps: true}));
+      renderWithToolAssistant(buildContextWithCaps({toolUseCaps: true}));
       expect(uiStore.setChatWarning).not.toHaveBeenCalled();
     });
 
     it('warns once when all four capability slots are absent', () => {
-      renderWithToolPal(buildContextWithCaps({}));
+      renderWithToolAssistant(buildContextWithCaps({}));
       expect(uiStore.setChatWarning).toHaveBeenCalledTimes(1);
       expect(uiStore.markToolCompatWarned).toHaveBeenCalledWith(
         'tool-model-id',

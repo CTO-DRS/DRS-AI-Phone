@@ -9,20 +9,20 @@ import {
   ErrorSnackbar,
   ModelErrorReportSheet,
 } from '../../components';
-import {PalSheet} from '../../components/PalsSheets';
+import {AssistantSheet} from '../../components/AssistantSheets';
 
 import {useChatSession} from '../../hooks';
 import {usePendingMessage} from '../../hooks/useDeepLinking';
-import {Pal} from '../../types/pal';
+import {Assistant} from '../../types/assistant';
 
 import {
   modelStore,
   chatSessionStore,
-  palStore,
+  assistantStore,
   serverStore,
   uiStore,
 } from '../../store';
-import {hasVideoCapability} from '../../utils/pal-capabilities';
+import {hasVideoCapability} from '../../utils/assistant-capabilities';
 
 import {L10nContext} from '../../utils';
 import {resolveReasoningCapability} from '../../utils/reasoningCapability';
@@ -30,7 +30,7 @@ import {MessageType} from '../../utils/types';
 import {ErrorState} from '../../utils/errors';
 import {user, assistant} from '../../utils/chat';
 
-import {VideoPalScreen} from './VideoPalScreen';
+import {VideoAssistantScreen} from './VideoAssistantScreen';
 
 const renderBubble = ({
   child,
@@ -59,14 +59,15 @@ export const ChatScreen: React.FC = observer(() => {
   } | null>(null);
   const l10n = React.useContext(L10nContext);
 
-  const activePalId = chatSessionStore.activePalId;
-  const activePal = activePalId
-    ? palStore.pals.find(p => p.id === activePalId)
+  const activeAssistantId = chatSessionStore.activeAssistantId;
+  const activeAssistant = activeAssistantId
+    ? assistantStore.assistants.find(p => p.id === activeAssistantId)
     : undefined;
-  const isVideoPal = activePal && hasVideoCapability(activePal);
+  const isVideoAssistant =
+    activeAssistant && hasVideoCapability(activeAssistant);
 
-  // State for pal sheet
-  const [isPalSheetVisible, setIsPalSheetVisible] = useState(false);
+  // State for assistant sheet
+  const [isAssistantSheetVisible, setIsAssistantSheetVisible] = useState(false);
 
   // State for model error report sheet
   const [isErrorReportVisible, setIsErrorReportVisible] = useState(false);
@@ -81,13 +82,16 @@ export const ChatScreen: React.FC = observer(() => {
   // Handle deep linking for message prefill
   const {pendingMessage, clearPendingMessage} = usePendingMessage();
 
-  // Callback handler for opening pal sheet
-  const handleOpenPalSheet = React.useCallback((_pal: Pal) => {
-    setIsPalSheetVisible(true);
-  }, []);
+  // Callback handler for opening assistant sheet
+  const handleOpenAssistantSheet = React.useCallback(
+    (_assistant: Assistant) => {
+      setIsAssistantSheetVisible(true);
+    },
+    [],
+  );
 
-  const handleClosePalSheet = React.useCallback(() => {
-    setIsPalSheetVisible(false);
+  const handleCloseAssistantSheet = React.useCallback(() => {
+    setIsAssistantSheetVisible(false);
   }, []);
 
   // Handlers for model error report
@@ -142,18 +146,18 @@ export const ChatScreen: React.FC = observer(() => {
     chatSessionStore.newChatCompletionSettings,
     chatSessionStore.newChatThinkingOverride,
     chatSessionStore.newChatReasoningEffort,
-    activePalId,
+    activeAssistantId,
   ]);
 
-  // Tool-compatibility one-time banner: when the active Pal declares
+  // Tool-compatibility one-time banner: when the active Assistant declares
   // tools but the loaded model's jinja metadata signals no tool support
   // in any of its slots (see below), surface an inline warning.
   // Persisted per model id so the warning fires at most once.
   React.useEffect(() => {
-    const palDeclaresTools =
-      activePal?.pact?.talents !== undefined &&
-      activePal.pact.talents.length > 0;
-    if (!palDeclaresTools) {
+    const assistantDeclaresTools =
+      activeAssistant?.pact?.talents !== undefined &&
+      activeAssistant.pact.talents.length > 0;
+    if (!assistantDeclaresTools) {
       return;
     }
     const model = (modelStore.context as any)?.model;
@@ -188,12 +192,12 @@ export const ChatScreen: React.FC = observer(() => {
     });
     uiStore.markToolCompatWarned(modelId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activePalId, modelStore.activeModelId, modelStore.context]);
+  }, [activeAssistantId, modelStore.activeModelId, modelStore.context]);
 
   // Persist the on/off intent (and optional effort) onto both the local
   // enable_thinking flag and the reasoning carrier so the remote wire path
   // (openai.ts, gated per serverType) and the local hook both see it.
-  // Preserves pal overrides. No active session: stage on the new-chat
+  // Preserves assistant overrides. No active session: stage on the new-chat
   // override field — the resolver applies it as the last layer and session
   // creation bakes it in, without touching newChatCompletionSettings.
   const persistReasoning = async (enabled: boolean, effort?: string) => {
@@ -248,9 +252,9 @@ export const ChatScreen: React.FC = observer(() => {
     await persistReasoning(nextEnabled, nextEffort);
   };
 
-  // If the active pal is a video pal, show the video pal screen
-  if (isVideoPal) {
-    return <VideoPalScreen activePal={activePal} />;
+  // If the active assistant is a video assistant, show the video assistant screen
+  if (isVideoAssistant) {
+    return <VideoAssistantScreen activeAssistant={activeAssistant} />;
   }
 
   // Otherwise, show the regular chat view
@@ -259,10 +263,10 @@ export const ChatScreen: React.FC = observer(() => {
       <ChatView
         renderBubble={renderBubble}
         messages={chatSessionStore.currentSessionMessages}
-        activePal={activePal}
+        activeAssistant={activeAssistant}
         onSendPress={handleSendPress}
         onStopPress={handleStopPress}
-        onPalSettingsSelect={handleOpenPalSheet}
+        onAssistantSettingsSelect={handleOpenAssistantSheet}
         user={user}
         isStopVisible={modelStore.inferencing}
         isStreaming={modelStore.isStreaming}
@@ -306,11 +310,11 @@ export const ChatScreen: React.FC = observer(() => {
         onClose={handleCloseErrorReport}
         error={errorToReport}
       />
-      {activePal && (
-        <PalSheet
-          isVisible={isPalSheetVisible}
-          onClose={handleClosePalSheet}
-          pal={activePal}
+      {activeAssistant && (
+        <AssistantSheet
+          isVisible={isAssistantSheetVisible}
+          onClose={handleCloseAssistantSheet}
+          assistant={activeAssistant}
         />
       )}
     </>

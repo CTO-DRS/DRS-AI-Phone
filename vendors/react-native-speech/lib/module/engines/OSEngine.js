@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 /**
  * OS Native TTS Engine Wrapper
@@ -7,8 +7,8 @@
  * to conform to the TTSEngineInterface
  */
 
-import NativeSpeech from "../NativeSpeech.js";
-import { isPhonemeInput } from "../types/index.js";
+import NativeSpeech from '../NativeSpeech.js';
+import {isPhonemeInput} from '../types/index.js';
 export class OSEngine {
   name = 'os-native';
 
@@ -34,7 +34,10 @@ export class OSEngine {
    */
   async synthesize(input, options) {
     if (isPhonemeInput(input)) {
-      throw new Error('OS engine has no phoneme path; phoneme input requires the ' + 'Kokoro or Kitten engine.');
+      throw new Error(
+        'OS engine has no phoneme path; phoneme input requires the ' +
+          'Kokoro or Kitten engine.',
+      );
     }
     const text = input;
     if (options) {
@@ -45,7 +48,7 @@ export class OSEngine {
         pitch: options.pitch,
         rate: options.speed,
         // Map speed to rate
-        volume: options.volume
+        volume: options.volume,
       });
     } else {
       // Use simple speak
@@ -87,7 +90,7 @@ export class OSEngine {
     return {
       success: true,
       partialRelease: false,
-      errors: []
+      errors: [],
     };
   }
 }

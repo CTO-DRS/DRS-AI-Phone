@@ -9,7 +9,7 @@ import {l10n} from '../../../locales';
 import {UserContext} from '../../../utils';
 import {ChatInput} from '../ChatInput';
 import {render} from '../../../../jest/test-utils';
-import {palStore, chatSessionStore, modelStore} from '../../../store';
+import {assistantStore, chatSessionStore, modelStore} from '../../../store';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 
 // Mock react-native-image-picker
@@ -309,36 +309,36 @@ describe('input', () => {
     expect(plusButton.props.accessibilityState.disabled).toBe(false);
   });
 
-  it('shows pal selector button', () => {
+  it('shows assistant selector button', () => {
     expect.assertions(1);
     const onSendPress = jest.fn();
-    const onPalBtnPress = jest.fn();
+    const onAssistantBtnPress = jest.fn();
     const {getByLabelText} = render(
       <UserContext.Provider value={user}>
         <ChatInput
           {...{
             onSendPress,
-            onPalBtnPress,
+            onAssistantBtnPress,
             sendButtonVisibilityMode: 'editing',
           }}
         />
       </UserContext.Provider>,
     );
 
-    const palButton = getByLabelText('Select Pal');
-    fireEvent.press(palButton);
-    expect(onPalBtnPress).toHaveBeenCalledTimes(1);
+    const assistantButton = getByLabelText('Select Assistant');
+    fireEvent.press(assistantButton);
+    expect(onAssistantBtnPress).toHaveBeenCalledTimes(1);
   });
 
-  it('shows video button for video pal type', async () => {
+  it('shows video button for video assistant type', async () => {
     expect.assertions(1);
 
-    // Create a video pal and set it as active
-    const videoPal = await palStore.createPal({
+    // Create a video assistant and set it as active
+    const videoAssistant = await assistantStore.createAssistant({
       type: 'local',
-      name: 'Test Video Pal',
-      systemPrompt: 'Test video pal',
-      originalSystemPrompt: 'Test video pal',
+      name: 'Test Video Assistant',
+      systemPrompt: 'Test video assistant',
+      originalSystemPrompt: 'Test video assistant',
       isSystemPromptChanged: false,
       useAIPrompt: false,
       parameters: {captureInterval: '3000'},
@@ -354,13 +354,13 @@ describe('input', () => {
       capabilities: {video: true},
     });
 
-    // Mock the activePalId getter to return our video pal's ID
-    const originalActivePalId = Object.getOwnPropertyDescriptor(
+    // Mock the activeAssistantId getter to return our video assistant's ID
+    const originalActiveAssistantId = Object.getOwnPropertyDescriptor(
       chatSessionStore,
-      'activePalId',
+      'activeAssistantId',
     );
-    Object.defineProperty(chatSessionStore, 'activePalId', {
-      get: jest.fn(() => videoPal.id),
+    Object.defineProperty(chatSessionStore, 'activeAssistantId', {
+      get: jest.fn(() => videoAssistant.id),
       configurable: true,
     });
 
@@ -382,26 +382,26 @@ describe('input', () => {
     fireEvent.press(videoButton);
     expect(onStartCamera).toHaveBeenCalledTimes(1);
 
-    // Cleanup: restore original activePalId mock
+    // Cleanup: restore original activeAssistantId mock
     unmount();
-    if (originalActivePalId) {
+    if (originalActiveAssistantId) {
       Object.defineProperty(
         chatSessionStore,
-        'activePalId',
-        originalActivePalId,
+        'activeAssistantId',
+        originalActiveAssistantId,
       );
     }
   });
 
-  it('handles prompt text change for video pal', async () => {
+  it('handles prompt text change for video assistant', async () => {
     expect.assertions(1);
 
-    // Create a video pal and set it as active
-    const videoPal = await palStore.createPal({
+    // Create a video assistant and set it as active
+    const videoAssistant = await assistantStore.createAssistant({
       type: 'local',
-      name: 'Test Video Pal',
-      systemPrompt: 'Test video pal',
-      originalSystemPrompt: 'Test video pal',
+      name: 'Test Video Assistant',
+      systemPrompt: 'Test video assistant',
+      originalSystemPrompt: 'Test video assistant',
       isSystemPromptChanged: false,
       useAIPrompt: false,
       parameters: {captureInterval: '3000'},
@@ -417,13 +417,13 @@ describe('input', () => {
       capabilities: {video: true},
     });
 
-    // Mock the activePalId getter to return our video pal's ID
-    const originalActivePalId = Object.getOwnPropertyDescriptor(
+    // Mock the activeAssistantId getter to return our video assistant's ID
+    const originalActiveAssistantId = Object.getOwnPropertyDescriptor(
       chatSessionStore,
-      'activePalId',
+      'activeAssistantId',
     );
-    Object.defineProperty(chatSessionStore, 'activePalId', {
-      get: jest.fn(() => videoPal.id),
+    Object.defineProperty(chatSessionStore, 'activeAssistantId', {
+      get: jest.fn(() => videoAssistant.id),
       configurable: true,
     });
 
@@ -446,13 +446,13 @@ describe('input', () => {
     fireEvent.changeText(textInput, 'new text');
     expect(onPromptTextChange).toHaveBeenCalledWith('new text');
 
-    // Cleanup: restore original activePalId mock
+    // Cleanup: restore original activeAssistantId mock
     unmount();
-    if (originalActivePalId) {
+    if (originalActiveAssistantId) {
       Object.defineProperty(
         chatSessionStore,
-        'activePalId',
-        originalActivePalId,
+        'activeAssistantId',
+        originalActiveAssistantId,
       );
     }
   });

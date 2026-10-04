@@ -13,8 +13,8 @@ import {chatSessionRepository} from '../repositories/ChatSessionRepository';
 import {MessageType} from './types';
 import {CompletionParams} from './completionTypes';
 import {migrateCompletionSettings} from './completionSettingsVersions';
-import {palStore} from '../store';
-import type {Pal, ParameterDefinition} from '../types/pal';
+import {assistantStore} from '../store';
+import type {Assistant, ParameterDefinition} from '../types/assistant';
 
 /**
  * Interface for imported chat session data
@@ -25,7 +25,7 @@ export interface ImportedChatSession {
   date: string;
   messages: ImportedMessage[];
   completionSettings: CompletionParams;
-  activePalId?: string;
+  activeAssistantId?: string;
 }
 
 /**
@@ -233,7 +233,7 @@ const importSingleSession = async (
       session.title,
       messages,
       session.completionSettings,
-      session.activePalId,
+      session.activeAssistantId,
     );
   } catch (error) {
     console.error('Error importing single session:', error);
@@ -242,9 +242,9 @@ const importSingleSession = async (
 };
 
 /**
- * Interface (Data Transfer Object (DTO)) for imported pal data (format v2.0)
+ * Interface (Data Transfer Object (DTO)) for imported assistant data (format v2.0)
  */
-export interface ImportedPal {
+export interface ImportedAssistant {
   version: string;
   id: string;
   name: string;
@@ -263,8 +263,8 @@ export interface ImportedPal {
   // Talent set + greeting; round-tripped from exportUtils since migration v7+
   // promoted them to first-class persisted state. Optional on read so legacy
   // exports without these fields still validate.
-  pact?: Pal['pact'];
-  greeting?: Pal['greeting'];
+  pact?: Assistant['pact'];
+  greeting?: Assistant['greeting'];
   parameters: Record<string, any>;
   parameterSchema: ParameterDefinition[];
   source: 'local' | 'drshub';
@@ -283,9 +283,9 @@ export interface ImportedPal {
 }
 
 /**
- * Import pals from a JSON file (single or multiple)
+ * Import assistants from a JSON file (single or multiple)
  */
-export const importPals = async (): Promise<number> => {
+export const importAssistants = async (): Promise<number> => {
   try {
     // Pick a JSON file
     const fileUri = await pickJsonFile();
@@ -294,83 +294,83 @@ export const importPals = async (): Promise<number> => {
     }
 
     const data = await readJsonFile(fileUri);
-    const validatedData = validateImportedPalData(data);
+    const validatedData = validateImportedAssistantData(data);
 
     if (Array.isArray(validatedData)) {
       let importedCount = 0;
-      for (const pal of validatedData) {
-        await importSinglePal(pal);
+      for (const assistant of validatedData) {
+        await importSingleAssistant(assistant);
         importedCount++;
       }
       return importedCount;
     } else {
-      await importSinglePal(validatedData);
+      await importSingleAssistant(validatedData);
       return 1;
     }
   } catch (error) {
-    console.error('Error importing pals:', error);
+    console.error('Error importing assistants:', error);
     throw error;
   }
 };
 
 /**
- * Validate imported pal data (handles both legacy and modern formats)
+ * Validate imported assistant data (handles both legacy and modern formats)
  */
-export const validateImportedPalData = (
+export const validateImportedAssistantData = (
   data: any,
-): ImportedPal | ImportedPal[] => {
+): ImportedAssistant | ImportedAssistant[] => {
   // Check if it's an array or a single object
   if (Array.isArray(data)) {
-    // Validate each pal in the array
-    return data.map(pal => validateSinglePal(pal));
+    // Validate each assistant in the array
+    return data.map(assistant => validateSingleAssistant(assistant));
   } else {
-    // Validate a single pal
-    return validateSinglePal(data);
+    // Validate a single assistant
+    return validateSingleAssistant(data);
   }
 };
 
 /**
- * Validate a single pal (modern format v2.0+ only)
+ * Validate a single assistant (modern format v2.0+ only)
  */
-const validateSinglePal = (pal: any): ImportedPal => {
+const validateSingleAssistant = (assistant: any): ImportedAssistant => {
   // Check required fields
-  if (!pal.name || typeof pal.name !== 'string') {
-    throw new Error('Import failed: Invalid pal data');
+  if (!assistant.name || typeof assistant.name !== 'string') {
+    throw new Error('Import failed: Invalid assistant data');
   }
 
-  if (!pal.systemPrompt || typeof pal.systemPrompt !== 'string') {
-    throw new Error('Import failed: Invalid pal data');
+  if (!assistant.systemPrompt || typeof assistant.systemPrompt !== 'string') {
+    throw new Error('Import failed: Invalid assistant data');
   }
 
-  if (!pal.version || !pal.version.startsWith('2.')) {
+  if (!assistant.version || !assistant.version.startsWith('2.')) {
     throw new Error('Import failed: Unsupported format');
   }
 
-  if (typeof pal.useAIPrompt !== 'boolean') {
-    pal.useAIPrompt = false;
+  if (typeof assistant.useAIPrompt !== 'boolean') {
+    assistant.useAIPrompt = false;
   }
 
-  if (typeof pal.isSystemPromptChanged !== 'boolean') {
-    pal.isSystemPromptChanged = false;
+  if (typeof assistant.isSystemPromptChanged !== 'boolean') {
+    assistant.isSystemPromptChanged = false;
   }
 
-  if (!pal.parameters || typeof pal.parameters !== 'object') {
-    pal.parameters = {};
+  if (!assistant.parameters || typeof assistant.parameters !== 'object') {
+    assistant.parameters = {};
   }
 
-  if (!pal.parameterSchema || !Array.isArray(pal.parameterSchema)) {
-    pal.parameterSchema = [];
+  if (!assistant.parameterSchema || !Array.isArray(assistant.parameterSchema)) {
+    assistant.parameterSchema = [];
   }
 
-  if (!pal.source) {
-    pal.source = 'local';
+  if (!assistant.source) {
+    assistant.source = 'local';
   }
 
-  if (!pal.id) {
-    pal.id = uuidv4();
+  if (!assistant.id) {
+    assistant.id = uuidv4();
   }
 
-  return pal as ImportedPal;
+  return assistant as ImportedAssistant;
 };
 
 /**
@@ -378,7 +378,7 @@ const validateSinglePal = (pal: any): ImportedPal => {
  */
 const saveBase64Image = async (
   base64Data: string,
-  palId: string,
+  assistantId: string,
 ): Promise<string> => {
   // Extract extension and base64 content from data URL
   const extensionMatch = base64Data.match(/^data:image\/([a-z]+);base64,/);
@@ -387,7 +387,7 @@ const saveBase64Image = async (
 
   // Use same directory and naming convention as imageUtils.ts
   const PAL_IMAGES_DIR = `${RNFS.DocumentDirectoryPath}/pal-images`;
-  const fileName = `${palId}_thumbnail.${fileExtension}`;
+  const fileName = `${assistantId}_thumbnail.${fileExtension}`;
   const filePath = `${PAL_IMAGES_DIR}/${fileName}`;
 
   // Ensure directory exists (same as imageUtils.ts)
@@ -404,19 +404,22 @@ const saveBase64Image = async (
 };
 
 /**
- * Transform imported pal to the format expected by palStore.createPal
+ * Transform imported assistant to the format expected by assistantStore.createAssistant
  */
-const transformImportPal = async (
-  pal: ImportedPal,
-): Promise<Omit<Pal, 'id' | 'created_at' | 'updated_at'>> => {
+const transformImportAssistant = async (
+  assistant: ImportedAssistant,
+): Promise<Omit<Assistant, 'id' | 'created_at' | 'updated_at'>> => {
   // Handle thumbnail image - save base64 data as local file if present
-  let thumbnailUrl = pal.thumbnail_url;
+  let thumbnailUrl = assistant.thumbnail_url;
 
-  if (pal.thumbnail_data) {
+  if (assistant.thumbnail_data) {
     try {
-      // Generate new ID for this imported pal to avoid conflicts
-      const newPalId = uuidv4();
-      thumbnailUrl = await saveBase64Image(pal.thumbnail_data, newPalId);
+      // Generate new ID for this imported assistant to avoid conflicts
+      const newAssistantId = uuidv4();
+      thumbnailUrl = await saveBase64Image(
+        assistant.thumbnail_data,
+        newAssistantId,
+      );
     } catch (error) {
       console.warn('Failed to save imported thumbnail:', error);
       thumbnailUrl = undefined; // Fall back to no thumbnail
@@ -425,50 +428,52 @@ const transformImportPal = async (
 
   return {
     type: 'local',
-    name: pal.name,
-    description: pal.description,
+    name: assistant.name,
+    description: assistant.description,
     thumbnail_url: thumbnailUrl,
-    systemPrompt: pal.systemPrompt,
-    originalSystemPrompt: pal.originalSystemPrompt,
-    isSystemPromptChanged: pal.isSystemPromptChanged,
-    useAIPrompt: pal.useAIPrompt,
-    defaultModel: pal.defaultModel,
-    promptGenerationModel: pal.promptGenerationModel,
-    generatingPrompt: pal.generatingPrompt,
-    color: pal.color,
-    capabilities: pal.capabilities || {},
-    pact: pal.pact,
-    greeting: pal.greeting,
-    parameters: pal.parameters,
-    parameterSchema: pal.parameterSchema,
-    source: pal.source,
-    drshub_id: pal.drshub_id,
-    creator_info: pal.creator_info,
-    categories: pal.categories,
-    tags: pal.tags,
-    rating: pal.rating,
-    review_count: pal.review_count,
-    protection_level: pal.protection_level as
+    systemPrompt: assistant.systemPrompt,
+    originalSystemPrompt: assistant.originalSystemPrompt,
+    isSystemPromptChanged: assistant.isSystemPromptChanged,
+    useAIPrompt: assistant.useAIPrompt,
+    defaultModel: assistant.defaultModel,
+    promptGenerationModel: assistant.promptGenerationModel,
+    generatingPrompt: assistant.generatingPrompt,
+    color: assistant.color,
+    capabilities: assistant.capabilities || {},
+    pact: assistant.pact,
+    greeting: assistant.greeting,
+    parameters: assistant.parameters,
+    parameterSchema: assistant.parameterSchema,
+    source: assistant.source,
+    drshub_id: assistant.drshub_id,
+    creator_info: assistant.creator_info,
+    categories: assistant.categories,
+    tags: assistant.tags,
+    rating: assistant.rating,
+    review_count: assistant.review_count,
+    protection_level: assistant.protection_level as
       | 'public'
       | 'reveal_on_purchase'
       | 'private'
       | undefined,
-    price_cents: pal.price_cents,
-    is_owned: pal.is_owned,
-    completionSettings: pal.generation_settings,
+    price_cents: assistant.price_cents,
+    is_owned: assistant.is_owned,
+    completionSettings: assistant.generation_settings,
   };
 };
 
 /**
- * Import a single pal
+ * Import a single assistant
  */
-const importSinglePal = async (pal: ImportedPal): Promise<void> => {
+const importSingleAssistant = async (
+  assistant: ImportedAssistant,
+): Promise<void> => {
   try {
-    const palData = await transformImportPal(pal);
+    const assistantData = await transformImportAssistant(assistant);
 
-    await palStore.createPal(palData);
+    await assistantStore.createAssistant(assistantData);
   } catch (error) {
-    console.error('Error importing single pal:', error);
+    console.error('Error importing single assistant:', error);
     throw error;
   }
 };

@@ -197,7 +197,7 @@
     "increaseContextReloading": "正在以較大的內容長度重新載入模型…",
     "increaseContextSuccess": "內容長度已增加至 {{target}} 詞元。",
     "increaseContextFailure": "無法增加內容長度。您的先前設定已恢復。",
-    "palLoadHint": "此夥伴傾向於需要超過目前內容長度所允許的空間。",
+    "assistantLoadHint": "此夥伴傾向於需要超過目前內容長度所允許的空間。",
     "webSearch": {
       "searched": "已搜尋：{{query}}",
       "noResults": "沒有結果",
@@ -317,7 +317,7 @@
         "title": "成功",
         "message": "這些設定將應用於所有未來會話"
       },
-      "palSettings": "Pal 設定",
+      "assistantSettings": "助手 設定",
       "settingsSource": "設定來源"
     },
     "modelsHeaderRight": {
@@ -331,7 +331,12 @@
       "confirmReset": "確認重置"
     },
     "usageStats": {
-      "byteSizes": ["位元組", "KB", "MB", "GB"],
+      "byteSizes": [
+        "位元組",
+        "KB",
+        "MB",
+        "GB"
+      ],
       "tooltip": {
         "usage": "使用率： ",
         "total": "總計： ",
@@ -365,7 +370,7 @@
         "appInfo": "應用程式資訊",
         "settings": "設定",
         "benchmark": "基準測試",
-        "pals": "Pal",
+        "assistants": "助手",
         "models": "模型",
         "chat": "聊天"
       },
@@ -408,19 +413,19 @@
       },
       "generatingPrompt": {
         "label": "目的與情境",
-        "placeholder": "請描述這個 Pal 的角色、目的或情境…"
+        "placeholder": "請描述這個 助手 的角色、目的或情境…"
       }
     },
-    "chatPalModelPickerSheet": {
-      "palsTab": "Pal",
+    "chatAssistantModelPickerSheet": {
+      "assistantsTab": "助手",
       "modelsTab": "模型",
-      "noPal": "沒 Pal",
-      "disablePal": "停用活躍 pal",
+      "noAssistant": "沒 助手",
+      "disableAssistant": "停用活躍 assistant",
       "noDescription": "未提供描述",
       "assistantType": "助手",
       "roleplayType": "角色扮演",
       "confirmationTitle": "確認",
-      "modelSwitchMessage": "此 pal 的預設模型不同 ({{modelName}})。您是否想切換到 Pal 的預設模型？",
+      "modelSwitchMessage": "此 assistant 的預設模型不同 ({{modelName}})。您是否想切換到 助手 的預設模型？",
       "keepButton": "保持",
       "switchButton": "切換",
       "videoType": "影片"
@@ -456,13 +461,13 @@
       "supportsEffort": "支援漸進式強度",
       "effortValues": "此模型支援的強度層級"
     },
-    "assistantPalSheet": {
+    "assistantPersonaSheet": {
       "title": {
-        "create": "新建助理 Pal",
-        "edit": "編輯助理 Pal"
+        "create": "新建助理 助手",
+        "edit": "編輯助理 助手"
       },
-      "palName": "Pal 名稱",
-      "palNamePlaceholder": "名稱",
+      "assistantName": "助手 名稱",
+      "assistantNamePlaceholder": "名稱",
       "defaultModel": "預設模型",
       "defaultModelPlaceholder": "選擇模型",
       "validation": {
@@ -474,19 +479,19 @@
     "modelNotAvailable": {
       "noModelsDownloaded": "您尚未下載任何模型。請先下載一個模型。",
       "downloadAModel": "下載模型",
-      "defaultModelNotDownloaded": "此 pal 推薦一個需要下載的特定模型，或者您可以選擇不同的模型。",
+      "defaultModelNotDownloaded": "此 assistant 推薦一個需要下載的特定模型，或者您可以選擇不同的模型。",
       "cancelDownload": "取消下載",
       "download": "下載",
       "modelNotDownloadedShort": "模型未下載",
       "recommendedModel": "推薦模型"
     },
-    "roleplayPalSheet": {
+    "roleplayPersonaSheet": {
       "title": {
-        "create": "新建角色扮演 Pal",
-        "edit": "編輯角色扮演 Pal"
+        "create": "新建角色扮演 助手",
+        "edit": "編輯角色扮演 助手"
       },
-      "palName": "Pal 名稱",
-      "palNamePlaceholder": "名稱",
+      "assistantName": "助手 名稱",
+      "assistantNamePlaceholder": "名稱",
       "defaultModel": "預設模型",
       "defaultModelPlaceholder": "選擇模型",
       "descriptionSection": "描述",
@@ -560,19 +565,19 @@
         "message": "傳送報告失敗。請稍後再試。"
       }
     },
-    "palGenerationSettingsSheet": {
+    "assistantGenerationSettingsSheet": {
       "ok": "確定",
       "error": "錯誤",
-      "clearPalSettings": "清除 Pal 設定",
-      "title": "生成設定 - {{palName}}",
+      "clearAssistantSettings": "清除 助手 設定",
+      "title": "生成設定 - {{assistantName}}",
       "invalidValues": "無效值",
       "invalidNumericValuesMessage": "必須是有效數字",
       "pleaseCorrect": "請更正以下內容：",
-      "failedToSave": "儲存 pal 設定失敗",
+      "failedToSave": "儲存 assistant 設定失敗",
       "resetToGlobal": "還原為一般預設值",
       "resetToSystem": "還原為系統預設值",
-      "customSettingsFor": "{{palName}} 的自訂設定",
-      "inheritedSettingsFor": "{{palName}} 的繼承設定"
+      "customSettingsFor": "{{assistantName}} 的自訂設定",
+      "inheritedSettingsFor": "{{assistantName}} 的繼承設定"
     },
     "downloadErrorDialog": {
       "downloadFailedTitle": "無法下載",
@@ -629,14 +634,14 @@
       "searchErrorHint": "您的 Hugging Face API token 無效或已過期。若要繼續搜尋，請移除 token 或在設定中停用 token 驗證。",
       "disableAndRetry": "停用 Token 並重試"
     },
-    "palSheet": {
+    "assistantSheet": {
       "title": {
-        "edit": "編輯 Pal",
-        "newPal": "新建 Pal",
-        "newVideoPal": "新建影片 Pal"
+        "edit": "編輯 助手",
+        "newAssistant": "新建 助手",
+        "newVideoAssistant": "新建影片 助手"
       },
       "description": "描述",
-      "descriptionPlaceholder": "輸入您 pal 的簡短描述",
+      "descriptionPlaceholder": "輸入您 assistant 的簡短描述",
       "parameters": "參數",
       "generationSettings": "生成設定",
       "configureGenerationSettings": "配置生成設定",
@@ -663,7 +668,7 @@
       "greeting": {
         "sectionLabel": "問候語",
         "textLabel": "問候訊息",
-        "textPlaceholder": "此 pal 在空聊天室中該說什麼？",
+        "textPlaceholder": "此 assistant 在空聊天室中該說什麼？",
         "suggestedPromptsLabel": "建議提示詞",
         "addPromptButton": "新增提示詞",
         "promptPlaceholder": "針對此建議指令（Chip）編寫簡短提示詞",
@@ -679,15 +684,15 @@
         "reportContent": "報告內容"
       }
     },
-    "lookiePalSheet": {
-      "palName": "Pal 名稱",
+    "lookiePersonaSheet": {
+      "assistantName": "助手 名稱",
       "visionModel": "視覺模型",
       "visionModelPlaceholder": "選擇視覺模型",
       "title": {
-        "create": "新建 Lookie Pal",
-        "edit": "編輯 Lookie Pal"
+        "create": "新建 Lookie 助手",
+        "edit": "編輯 Lookie 助手"
       },
-      "palNamePlaceholder": "輸入您 Lookie Pal 的名稱",
+      "assistantNamePlaceholder": "輸入您 Lookie 助手 的名稱",
       "requiredModelsSection": "所需模型",
       "captureInterval": "捕捉間隔",
       "captureIntervalHelper": "自動捕捉之間的時間（毫秒）",
@@ -735,11 +740,11 @@
         "message": "傳送報告失敗。請再試一次。"
       }
     },
-    "palHeaderRight": {
-      "exportAllPals": "匯出所有 Pal",
-      "importPals": "匯入 pal",
-      "importSuccess": "已成功匯入 {{count}} 個 pal。",
-      "importError": "匯入 pal 失敗。請檢查檔案格式。"
+    "assistantHeaderRight": {
+      "exportAllAssistants": "匯出所有 助手",
+      "importAssistants": "匯入 assistant",
+      "importSuccess": "已成功匯入 {{count}} 個 assistant。",
+      "importError": "匯入 assistant 失敗。請檢查檔案格式。"
     },
     "pendingIndicator": {
       "preparingTool": "正在準備工具",
@@ -1054,7 +1059,7 @@
   "screenTitles": {
     "chat": "聊天",
     "models": "模型",
-    "pals": "Pal (實驗)",
+    "assistants": "助手 (實驗)",
     "benchmark": "基準測試",
     "settings": "設定",
     "appInfo": "應用程式資訊",
@@ -1142,11 +1147,11 @@
     "useHfTokenLabel": "使用 HF Token",
     "useHfTokenDescription": "請啟用此 Token 以用於 API 請求。如果該 Token 引發了身份驗證問題，則應停用它。",
     "cacheStorageTitle": "快取與儲存",
-    "clearPalCaches": "清除捷徑快取",
-    "clearPalCachesDescription": "清除用來加速捷徑的快取資料。這不會影響您的 Pal 或聊天記錄。",
+    "clearAssistantCaches": "清除捷徑快取",
+    "clearAssistantCachesDescription": "清除用來加速捷徑的快取資料。這不會影響您的 助手 或聊天記錄。",
     "clearCachesButton": "清除快取",
     "clearCachesConfirmTitle": "要清除捷徑快取嗎？",
-    "clearCachesConfirmMessage": "這將清除所有快取會話資料（{{fileCount}} 個檔案，大小為 {{size}}）。清除後第一次使用捷徑可能會變慢。這不會影響您的 Pal 或聊天記錄。",
+    "clearCachesConfirmMessage": "這將清除所有快取會話資料（{{fileCount}} 個檔案，大小為 {{size}}）。清除後第一次使用捷徑可能會變慢。這不會影響您的 助手 或聊天記錄。",
     "clearCachesSuccess": "成功清除 {{count}} 個快取檔案。",
     "clearCachesError": "清除快取失敗。請再試一次。",
     "noCachesToClear": "沒有需要清除的快取。",
@@ -1193,7 +1198,7 @@
     "serverTypeHelp": "自動偵測；若有誤請修改。",
     "internetSearch": {
       "title": "網路搜尋",
-      "description": "讓 Pals 用自己的工具搜尋網路。請自備 API 金鑰 — DRS AI 絕不會保存你的金鑰，也不會轉送你的查詢。",
+      "description": "讓 助手 用自己的工具搜尋網路。請自備 API 金鑰 — DRS AI 絕不會保存你的金鑰，也不會轉送你的查詢。",
       "providerLabel": "搜尋服務供應商",
       "providerGated": "即將推出",
       "keyLabel": "API 金鑰",
@@ -1209,7 +1214,7 @@
       "resultCountLabel": "每次搜尋的結果數",
       "resultCountDescription": "結果越少，模型的上下文就能保留更多空間。",
       "consentTitle": "搜尋會離開你的裝置",
-      "consentDescription": "當 Pal 搜尋網路時，你的查詢會透過網際網路傳送給所選的供應商。當 Pal 讀取網頁時，若所選供應商沒有內建的閱讀器，網址與頁面內容可能會改為傳送給預設的閱讀器服務（r.jina.ai）。金鑰與查詢絕不會傳送給 DRS AI。",
+      "consentDescription": "當 助手 搜尋網路時，你的查詢會透過網際網路傳送給所選的供應商。當 助手 讀取網頁時，若所選供應商沒有內建的閱讀器，網址與頁面內容可能會改為傳送給預設的閱讀器服務（r.jina.ai）。金鑰與查詢絕不會傳送給 DRS AI。",
       "consentAccept": "我了解",
       "consentRequired": "請接受上方的說明，以設定金鑰並啟用搜尋。",
       "consentGivenTitle": "網路搜尋已啟用",
@@ -1293,7 +1298,7 @@
       "step1": "• 可選：編輯提示詞以引導分析",
       "step2": "• 點擊相機按鈕開始即時影片分析",
       "step3": "• 調整相機運作時的快照頻率",
-      "step4": "• 切換到其他 pal 以進行正常文字聊天"
+      "step4": "• 切換到其他 assistant 以進行正常文字聊天"
     }
   },
   "camera": {
@@ -1310,8 +1315,8 @@
     "analyzing": "正在分析影像...",
     "promptPlaceholder": "你想知道這張圖片的什麼內容？"
   },
-  "palsScreen": {
-    "palDetailSheet": {
+  "assistantsScreen": {
+    "assistantDetailSheet": {
       "downloaded": "已下載",
       "success": "成功",
       "error": "錯誤",
@@ -1325,21 +1330,21 @@
       "categories": "類別",
       "tags": "標籤",
       "systemPrompt": "系統提示詞",
-      "palAddedToCollection": "Pal 已新增至您的收藏！",
-      "failedToLoadDetails": "載入 pal 詳情失敗",
-      "failedToDownload": "下載 pal 失敗",
-      "premiumPalMessage": "這是高級 Pal。\n• 如果您已使用您的 Drshub 帳戶解鎖它，只需登入即可存取完整詳細資訊。\n• 還未解鎖？請前往 hub.drsai.app 應用程式了解更多。",
+      "assistantAddedToCollection": "助手 已新增至您的收藏！",
+      "failedToLoadDetails": "載入 assistant 詳情失敗",
+      "failedToDownload": "下載 assistant 失敗",
+      "premiumAssistantMessage": "這是高級 助手。\n• 如果您已使用您的 Drshub 帳戶解鎖它，只需登入即可存取完整詳細資訊。\n• 還未解鎖？請前往 hub.drsai.app 應用程式了解更多。",
       "notAvailable": "不適用",
       "buyOnDrshub": "在 Drshub 上購買",
       "finalizingPurchase": "正在完成您的購買…",
       "processingPurchase": "處理中 — 稍後將解鎖。",
       "checkoutSessionExpired": "您的連線已過期。請重新登入以繼續。",
       "signInAgain": "重新登入",
-      "palNotAvailable": "此 pal 目前無法購買。",
+      "assistantNotAvailable": "此 assistant 目前無法購買。",
       "checkoutFailed": "發生錯誤。請重試。"
     },
     "filters": {
-      "myPals": "我的 Pal",
+      "myAssistants": "我的 助手",
       "all": "全部",
       "video": "影片",
       "local": "本地",
@@ -1347,13 +1352,13 @@
       "premium": "高級"
     },
     "video": "影片",
-    "addPal": "新增 Pal",
+    "addAssistant": "新增 助手",
     "systemPrompt": "系統提示詞",
-    "deletePal": "刪除 Pal",
+    "deleteAssistant": "刪除 助手",
     "sectionTitles": {
-      "myPalsLocal": "我的 Pal（本地）",
+      "myAssistantsLocal": "我的 助手（本地）",
       "myLibrary": "我的資料庫（hub.drsai.app）",
-      "discoverPals": "探索 Pal（hub.drsai.app）"
+      "discoverAssistants": "探索 助手（hub.drsai.app）"
     },
     "videoAnalysis": "影片分析",
     "videoAnalysisDescription": "這是一個基於影片的 AI 助理，可從您裝置相機的影片流中提供即時評論。",
@@ -1366,9 +1371,9 @@
     "prompt": "提示詞",
     "assistant": "助理",
     "roleplay": "角色扮演",
-    "deletePalMessage": "您確定要刪除此 pal 嗎？",
+    "deleteAssistantMessage": "您確定要刪除此 assistant 嗎？",
     "missingModel": "缺少模型",
-    "missingModelMessage": "此 pal 的預設模型 \"{{modelName}}\" 無法使用。請在編輯表單中下載它或選擇不同的模型。",
+    "missingModelMessage": "此 assistant 的預設模型 \"{{modelName}}\" 無法使用。請在編輯表單中下載它或選擇不同的模型。",
     "search": "搜尋",
     "profile": "個人資料",
     "signIn": "登入",
@@ -1378,9 +1383,9 @@
     "signOutError": "登出失敗。請再試一次。",
     "account": "帳戶",
     "signInToDrshub": "登入 Drshub",
-    "signInDescription": "存取您的資料庫、建立私人 Pal 並在裝置間同步",
-    "searchAllPals": "搜尋所有 Pal...",
-    "deletePalConfirmation": "您確定要刪除 \"{{palName}}\" 嗎？",
+    "signInDescription": "存取您的資料庫、建立私人 助手 並在裝置間同步",
+    "searchAllAssistants": "搜尋所有 助手...",
+    "deleteAssistantConfirmation": "您確定要刪除 \"{{assistantName}}\" 嗎？",
     "labels": {
       "free": "免費",
       "premium": "高級",
@@ -1388,8 +1393,8 @@
       "download": "下載",
       "getFree": "獲得免費版本"
     },
-    "premiumPalDescription": "來自 hub.drsai.app 社群的高級 pal",
-    "premiumInfoText": "前往 hub.drsai.app 探索更多 pal",
+    "premiumAssistantDescription": "來自 hub.drsai.app 社群的高級 assistant",
+    "premiumInfoText": "前往 hub.drsai.app 探索更多 assistant",
     "sortOptions": {
       "newest": "最新",
       "oldest": "最舊的",
@@ -1498,9 +1503,9 @@
         "best": "最佳"
       },
       "subtitleTemplate": "{{name}} 透過手機上的小型 AI 模型進行推理——請選擇適合的選項。",
-      "pal": {
+      "assistant": {
         "pip": {
-          "body": "我們為您找到了完美的 Pal - 一位親切的日常伴侶。它足夠聰明以應對大多數需求，且運作輕巧，適合任何手機使用。"
+          "body": "我們為您找到了完美的 助手 - 一位親切的日常伴侶。它足夠聰明以應對大多數需求，且運作輕巧，適合任何手機使用。"
         },
         "codie": {
           "body": "認識 Codie — 您的本地配對程式設計師。它能讀取與編寫程式碼，並在不離開手機的情況下解釋各種棘手的細節。"
@@ -1525,15 +1530,15 @@
       "brand": "DRS AI"
     },
     "screen1": {
-      "title": "認識您的 pal。",
-      "titleAccent": "pal。",
+      "title": "認識您的 assistant。",
+      "titleAccent": "assistant。",
       "body": "住在您手機裡的聰明小夥伴。\n讓我們開始設定吧——只需花一點時間即可。",
       "cta": "帶我導覽",
       "eyebrow": "歡迎來到 DRS AI"
     },
     "screen2": {
       "title": "隨時，\n隨地。",
-      "body": "您的 pal 住在您的手機裡。\n即使沒有網路或訊號，它們也能在飛機上、離線環境或偏遠村莊中運作。",
+      "body": "您的 assistant 住在您的手機裡。\n即使沒有網路或訊號，它們也能在飛機上、離線環境或偏遠村莊中運作。",
       "highlight": "無需網路，無需訊號",
       "cta": "下一步",
       "eyebrow": "概念",
@@ -1542,7 +1547,7 @@
     "screen3": {
       "title": "更小，\n但屬於你。",
       "titleAccent": "更小，",
-      "body": "手機上的 Pal 快速且具備隱私性——但比雲端 AI 更輕量。將它們想像成隨身伴侶，而非無所不知的神諭。",
+      "body": "手機上的 助手 快速且具備隱私性——但比雲端 AI 更輕量。將它們想像成隨身伴侶，而非無所不知的神諭。",
       "highlight": "快速且保有隱私",
       "cta": "了解",
       "eyebrow": "事先告知"
@@ -1556,8 +1561,8 @@
       "eyebrow": "承諾隱私"
     },
     "screen5": {
-      "title": "您的 Pal 是為了什麼用途？",
-      "body": "選擇您想要討論的主題 - 我們將為您配對一個適合您手機的 Pal。",
+      "title": "您的 助手 是為了什麼用途？",
+      "body": "選擇您想要討論的主題 - 我們將為您配對一個適合您手機的 助手。",
       "topic": {
         "smartchat": "智慧對話",
         "coding": "程式開發",
@@ -1572,12 +1577,12 @@
         "education": "學習、解釋、測驗",
         "roleplay": "角色、場景",
         "creative_writing": "故事、創意、草稿",
-        "else": "稍後可在應用程式中瀏覽所有 Pal"
+        "else": "稍後可在應用程式中瀏覽所有 助手"
       }
     }
   },
   "downloadBanner": {
-    "titleByPal": "{{name}} 正在下載中",
+    "titleByAssistant": "{{name}} 正在下載中",
     "titleByModel": "{{name}} 正在下載中",
     "extraInProgress": "還有 {{count}} 個正在處理中"
   }

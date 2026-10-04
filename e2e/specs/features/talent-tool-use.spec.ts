@@ -1,7 +1,7 @@
 /**
  * Talent Tool-Use E2E Test
  *
- * Tests the full talent pipeline: create a Pal with render_html enabled,
+ * Tests the full talent pipeline: create a Assistant with render_html enabled,
  * send a prompt, and verify the HTML preview bubble appears.
  *
  * Uses Qwen3-1.7B for tool-use capability with temperature=0 and seed=1
@@ -17,7 +17,7 @@ import * as path from 'path';
 import {ChatPage} from '../../pages/ChatPage';
 import {DrawerPage} from '../../pages/DrawerPage';
 import {ModelsPage} from '../../pages/ModelsPage';
-import {PalSheetPage} from '../../pages/PalSheetPage';
+import {AssistantSheetPage} from '../../pages/AssistantSheetPage';
 import {Selectors, byTestId, byText} from '../../helpers/selectors';
 import {
   downloadAndLoadModel,
@@ -41,7 +41,7 @@ const TOOL_USE_MODEL = {
   prompts: [{input: 'Hi', description: 'Basic greeting'}],
 };
 
-const PAL_NAME = 'E2E Code Companion';
+const ASSISTANT_NAME = 'E2E Code Companion';
 const getAppBundleId = (): string =>
   (driver as any).isAndroid ? 'com.drsai.app.e2e' : 'com.drsai.app';
 
@@ -55,7 +55,7 @@ const HTML_PROMPT = 'Create a simple hello world webpage with a blue heading';
 describe('Talent Tool-Use Pipeline', () => {
   let chatPage: ChatPage;
   let drawerPage: DrawerPage;
-  let palSheetPage: PalSheetPage;
+  let assistantSheetPage: AssistantSheetPage;
 
   before(async function (this: Mocha.Context) {
     // Qwen3-1.7B (~1 GB) is re-downloaded every run on Android (fullReset) and
@@ -65,7 +65,7 @@ describe('Talent Tool-Use Pipeline', () => {
 
     chatPage = new ChatPage();
     drawerPage = new DrawerPage();
-    palSheetPage = new PalSheetPage();
+    assistantSheetPage = new AssistantSheetPage();
 
     await chatPage.waitForReady(TIMEOUTS.appReady);
 
@@ -96,15 +96,15 @@ describe('Talent Tool-Use Pipeline', () => {
     }
   });
 
-  it('should create pal with talent, chat, and verify html preview', async () => {
-    // === Phase 1: Create a Pal with render_html talent ===
+  it('should create assistant with talent, chat, and verify html preview', async () => {
+    // === Phase 1: Create a Assistant with render_html talent ===
 
-    // Navigate to Pals screen from Chat
+    // Navigate to Assistants screen from Chat
     await chatPage.openDrawer();
-    await drawerPage.navigateToPals();
+    await drawerPage.navigateToAssistants();
 
-    // Wait for PalsScreen to fully load
-    const addBtn = browser.$(Selectors.palsScreen.addButton);
+    // Wait for AssistantsScreen to fully load
+    const addBtn = browser.$(Selectors.assistantsScreen.addButton);
     await addBtn.waitForDisplayed({timeout: 15000});
     await addBtn.click();
     await browser.pause(500);
@@ -115,21 +115,21 @@ describe('Talent Tool-Use Pipeline', () => {
     await assistantItem.click();
     await browser.pause(500);
 
-    // Fill in the PalSheet
-    await palSheetPage.setName(PAL_NAME);
-    await palSheetPage.setSystemPrompt(SYSTEM_PROMPT);
+    // Fill in the AssistantSheet
+    await assistantSheetPage.setName(ASSISTANT_NAME);
+    await assistantSheetPage.setSystemPrompt(SYSTEM_PROMPT);
 
     // Scroll to talents and enable render_html
-    await palSheetPage.enableTalent('render_html');
+    await assistantSheetPage.enableTalent('render_html');
 
-    // Submit the pal
-    await palSheetPage.submit();
+    // Submit the assistant
+    await assistantSheetPage.submit();
 
     // === Phase 2: Return to Chat ===
 
-    // After submit we're on PalsScreen. Opening the drawer from PalsScreen
+    // After submit we're on AssistantsScreen. Opening the drawer from AssistantsScreen
     // is unreliable (gesture conflicts with BottomActionBar/sheet dismiss).
-    // Restart the app — it always opens on Chat, the Pal persists in DB.
+    // Restart the app — it always opens on Chat, the Assistant persists in DB.
     await browser.pause(1000);
     await driver.terminateApp(getAppBundleId());
     await browser.pause(1000);
@@ -158,18 +158,18 @@ describe('Talent Tool-Use Pipeline', () => {
     await dismissPerformanceWarningIfPresent();
     await chatPage.waitForReady();
 
-    // === Phase 3: Select Pal and chat ===
+    // === Phase 3: Select Assistant and chat ===
 
-    // Select the new pal via pal picker
-    await chatPage.openPalPicker();
-    await chatPage.selectPal(PAL_NAME);
+    // Select the new assistant via assistant picker
+    await chatPage.openAssistantPicker();
+    await chatPage.selectAssistant(ASSISTANT_NAME);
 
     // Reset chat to start fresh
     await chatPage.resetChat();
     await browser.pause(500);
 
-    // Send the HTML creation prompt. A pal that needs more room than the
-    // current context pops the pal-load-hint snackbar over the input; its "More
+    // Send the HTML creation prompt. A assistant that needs more room than the
+    // current context pops the assistant-load-hint snackbar over the input; its "More
     // room" action sits under the send button and can intercept the send tap
     // (opening the increase-context sheet) so the message never posts. Clear
     // overlays, send, and confirm the user message actually posted — retry the
@@ -177,7 +177,7 @@ describe('Talent Tool-Use Pipeline', () => {
     await chatPage.typeInInput(HTML_PROMPT);
     for (let attempt = 0; attempt < 2; attempt++) {
       await dismissContextRoomSheetIfPresent();
-      const hint = browser.$(Selectors.contextBanner.palLoadHint);
+      const hint = browser.$(Selectors.contextBanner.assistantLoadHint);
       if (await hint.isDisplayed().catch(() => false)) {
         // Wait out the snackbar (auto-dismisses) so it can't intercept the tap.
         await hint

@@ -44,7 +44,7 @@ import {
 import {getRecommendedProjectionModel} from '../utils/multimodalHelpers';
 import {isDraftOnlyModel} from '../utils/mtp';
 import {getOriginalModelName} from '../utils/formatters';
-import type {OnboardingPalModelEntry} from './onboarding/onboardingPals';
+import type {OnboardingAssistantModelEntry} from './onboarding/onboardingAssistants';
 
 import {downloadManager, DownloadCancelledError} from '../services/downloads';
 import {classify, ClassifyPlatform} from '../services/deviceRules/classify';
@@ -1246,7 +1246,7 @@ class ModelStore {
    * - HF: Uses DocumentDirectoryPath/models/hf/author/filename
    *
    * IMPORTANT: This logic is duplicated in native Swift code for iOS Shortcuts
-   * See: ios/DRS AI/AppIntents/PalDataProvider.swift - parseModelPath() method
+   * See: ios/DRS AI/AppIntents/AssistantDataProvider.swift - parseModelPath() method
    * If we modify this function, we need to update the Swift version as well.
    *
    * @param model - The model object containing necessary metadata (origin, filename, author, etc.)
@@ -1355,7 +1355,7 @@ class ModelStore {
    *
    * IMPORTANT: this re-anchoring is duplicated in native Swift for iOS
    * Shortcuts — see the LOCAL branch of parseModelPath() in
-   * ios/DRS AI/AppIntents/PalDataProvider.swift. Keep the two in sync; the
+   * ios/DRS AI/AppIntents/AssistantDataProvider.swift. Keep the two in sync; the
    * shared '/models/local/' marker must match on both sides.
    */
   resolveLocalModelPath = async (model: Model): Promise<string> => {
@@ -2888,15 +2888,15 @@ class ModelStore {
   };
 
   /**
-   * Lazy-register a curated onboarding-pal HF entry into `models`.
+   * Lazy-register a curated onboarding-assistant HF entry into `models`.
    * Single writer for HF-origin onboarding picks; only call site is
    * `useOnboardingHandlers.finish`. Synthesizes the minimal
    * `{hfModel, modelFile}` pair and delegates to `addHFModel`, which
    * provides idempotency. `siblings: []` keeps `isVisionRepo` false so
    * no projection model materializes (text-only by design).
    */
-  registerOnboardingPalModel = async (
-    entry: OnboardingPalModelEntry,
+  registerOnboardingAssistantModel = async (
+    entry: OnboardingAssistantModelEntry,
   ): Promise<Model | undefined> => {
     const modelFile: ModelFile = {
       rfilename: entry.filename,

@@ -16,7 +16,7 @@ import {
 import {chatSessionRepository} from '../repositories/ChatSessionRepository';
 import {defaultCompletionParams} from '../utils/completionSettingsVersions';
 import {derivedText} from '../utils/chat';
-import {palStore} from './PalStore';
+import {assistantStore} from './AssistantStore';
 import {deriveToolSchemas} from '../services/talents';
 import {AgentUiState, initialAgentUiState} from '../services/agent';
 
@@ -42,9 +42,9 @@ export interface SessionMetaData {
   date: string;
   messages: MessageType.Any[];
   completionSettings: CompletionParams;
-  activePalId?: string;
+  activeAssistantId?: string;
   pinned?: boolean;
-  settingsSource: 'pal' | 'custom'; // Explicit choice: use pal settings or custom settings
+  settingsSource: 'pal' | 'custom'; // Explicit choice: use assistant settings or custom settings
   messagesLoaded?: boolean; // Track if messages are loaded for lazy loading
 }
 
@@ -91,10 +91,10 @@ class ChatSessionStore {
    */
   isStopping: boolean = false;
   newChatCompletionSettings: CompletionParams = defaultCompletionSettings;
-  newChatPalId: string | undefined = undefined;
+  newChatAssistantId: string | undefined = undefined;
   newChatSettingsSource: 'pal' | 'custom' = 'pal';
   // User's manual thinking toggle in the no-session chat path. When set,
-  // the resolver applies it as the last layer (after pal) so the toggle
+  // the resolver applies it as the last layer (after assistant) so the toggle
   // persists; cleared on session creation, new-chat reset, and session
   // switch.
   newChatThinkingOverride: boolean | undefined = undefined;
@@ -129,11 +129,11 @@ class ChatSessionStore {
   // Banner state for the context-limit warning. All ephemeral (MobX-only,
   // no DB column). The snapshot is mirrored from the newest finished turn's
   // metadata.completionResult; the rest track per-draft dismissals, the run
-  // of back-to-back full turns, and which pal-load hints have already shown.
+  // of back-to-back full turns, and which assistant-load hints have already shown.
   lastCompletionResult: CompletionResultSnapshot | undefined = undefined;
   dismissedBannerVariants: Set<BannerVariant> = new Set();
   consecutiveFullFailures: number = 0;
-  palLoadHintSeen: Set<string> = new Set();
+  assistantLoadHintSeen: Set<string> = new Set();
 
   constructor() {
     makeAutoObservable(this);
@@ -251,13 +251,13 @@ class ChatSessionStore {
     this.dismissedBannerVariants = next;
   }
 
-  markPalLoadHintSeen(signature: string) {
-    if (this.palLoadHintSeen.has(signature)) {
+  markAssistantLoadHintSeen(signature: string) {
+    if (this.assistantLoadHintSeen.has(signature)) {
       return;
     }
-    const next = new Set(this.palLoadHintSeen);
+    const next = new Set(this.assistantLoadHintSeen);
     next.add(signature);
-    this.palLoadHintSeen = next;
+    this.assistantLoadHintSeen = next;
   }
 
   /**
@@ -304,7 +304,7 @@ class ChatSessionStore {
           date: session.date,
           messages,
           completionSettings,
-          activePalId: session.activePalId,
+          activeAssistantId: session.activeAssistantId,
           settingsSource: (session.settingsSource as 'pal' | 'custom') || 'pal',
           pinned: session.pinned || false,
           messagesLoaded: false, // Mark as not loaded for lazy loading
@@ -363,7 +363,7 @@ class ChatSessionStore {
 
   resetActiveSession() {
     runInAction(() => {
-      this.newChatPalId = this.activePalId;
+      this.newChatAssistantId = this.activeAssistantId;
       this.newChatSettingsSource = 'pal'; // Reset to default for new chat
       this.newChatThinkingOverride = undefined;
       this.newChatReasoningEffort = undefined;
@@ -374,7 +374,7 @@ class ChatSessionStore {
       this.lastCompletionResult = undefined;
       this.dismissedBannerVariants = new Set();
       this.consecutiveFullFailures = 0;
-      this.palLoadHintSeen = new Set();
+      this.assistantLoadHintSeen = new Set();
     });
   }
 
@@ -415,15 +415,15 @@ class ChatSessionStore {
       this.exitEditMode();
       this.activeSessionId = sessionId;
       // Don't modify global settings when changing sessions
-      this.newChatPalId = undefined;
+      this.newChatAssistantId = undefined;
       this.newChatSettingsSource = 'pal'; // Reset for consistency
       this.newChatThinkingOverride = undefined;
       this.newChatReasoningEffort = undefined;
       this.lastCompletionResult = this.hydrateCompletionSnapshot(session);
       this.dismissedBannerVariants = new Set();
       this.consecutiveFullFailures = 0;
-      // palLoadHintSeen is intentionally NOT cleared here: it's an
-      // app-lifetime, per-(pal,n_ctx,talents) one-shot suppressor, so it must
+      // assistantLoadHintSeen is intentionally NOT cleared here: it's an
+      // app-lifetime, per-(assistant,n_ctx,talents) one-shot suppressor, so it must
       // survive session switches. Only resetActiveSession clears it.
     });
   }
@@ -507,11 +507,13 @@ class ChatSessionStore {
     } else {
       // Resolve settings using the selected settings source so the
       // session snapshot matches what the model actually receives
-      const palIdForSettings =
-        this.newChatSettingsSource === 'pal' ? this.newChatPalId : undefined;
+      const assistantIdForSettings =
+        this.newChatSettingsSource === 'pal'
+          ? this.newChatAssistantId
+          : undefined;
       const settings = await this.resolveCompletionSettings(
         undefined,
-        palIdForSettings,
+        assistantIdForSettings,
       );
       await this.createNewSession(NEW_SESSION_TITLE, [message], settings);
     }
@@ -557,7 +559,7 @@ class ChatSessionStore {
       // the resolved snapshot in `completionSettings` already carries it
       // (applied last in `resolveCompletionSettings`). Birth the session as
       // 'custom' so the resolver returns that snapshot verbatim on every
-      // subsequent inference — pal-derived params survive (merged before
+      // subsequent inference — assistant-derived params survive (merged before
       // the override) and the user's choice is preserved.
       const birthSource: 'pal' | 'custom' =
         this.newChatThinkingOverride !== undefined
@@ -569,7 +571,7 @@ class ChatSessionStore {
         title,
         initialMessages,
         completionSettings,
-        this.newChatPalId,
+        this.newChatAssistantId,
         birthSource,
       );
 
@@ -605,8 +607,8 @@ class ChatSessionStore {
         messagesLoaded: true, // Mark as loaded since we have the messages
       };
 
-      if (this.newChatPalId) {
-        metaData.activePalId = this.newChatPalId;
+      if (this.newChatAssistantId) {
+        metaData.activeAssistantId = this.newChatAssistantId;
       }
 
       await this.updateSessionTitle(metaData);
@@ -614,7 +616,7 @@ class ChatSessionStore {
       runInAction(() => {
         this.sessions.push(metaData);
         this.activeSessionId = newSession.id;
-        this.newChatPalId = undefined;
+        this.newChatAssistantId = undefined;
         this.newChatThinkingOverride = undefined;
         this.newChatReasoningEffort = undefined;
       });
@@ -1097,14 +1099,14 @@ class ChatSessionStore {
     });
   }
 
-  // Called when the active pal changes in a session
-  async updateSessionActivePal(palId: string) {
+  // Called when the active assistant changes in a session
+  async updateSessionActiveAssistant(assistantId: string) {
     if (this.activeSessionId) {
       const session = this.sessions.find(s => s.id === this.activeSessionId);
       if (session) {
         runInAction(() => {
-          session.activePalId = palId;
-          session.settingsSource = 'pal'; // Switch to pal settings when changing pal
+          session.activeAssistantId = assistantId;
+          session.settingsSource = 'pal'; // Switch to assistant settings when changing assistant
         });
       }
     }
@@ -1309,12 +1311,12 @@ class ChatSessionStore {
     }
   }
 
-  get activePalId(): string | undefined {
+  get activeAssistantId(): string | undefined {
     if (this.activeSessionId) {
       const session = this.sessions.find(s => s.id === this.activeSessionId);
-      return session?.activePalId;
+      return session?.activeAssistantId;
     }
-    return this.newChatPalId;
+    return this.newChatAssistantId;
   }
 
   // Selection mode computed properties
@@ -1432,23 +1434,23 @@ class ChatSessionStore {
     this.sessionDrafts.delete(sessionId);
   }
 
-  async setActivePal(palId: string | undefined): Promise<void> {
+  async setActiveAssistant(assistantId: string | undefined): Promise<void> {
     if (this.activeSessionId) {
       const session = this.sessions.find(s => s.id === this.activeSessionId);
       if (session) {
         // Update in database
-        await chatSessionRepository.setSessionActivePal(
+        await chatSessionRepository.setSessionActiveAssistant(
           this.activeSessionId,
-          palId,
+          assistantId,
         );
 
         // Update local state
         runInAction(() => {
-          session.activePalId = palId;
+          session.activeAssistantId = assistantId;
         });
       }
     } else {
-      this.newChatPalId = palId;
+      this.newChatAssistantId = assistantId;
     }
   }
 
@@ -1472,11 +1474,11 @@ class ChatSessionStore {
 
   /**
    * Resolves completion settings according to the precedence hierarchy:
-   * System Defaults → Global User Settings → Pal-Specific Settings → Session-Specific Settings (only if explicitly modified)
+   * System Defaults → Global User Settings → Assistant-Specific Settings → Session-Specific Settings (only if explicitly modified)
    */
   async resolveCompletionSettings(
     sessionId?: string,
-    palId?: string,
+    assistantId?: string,
   ): Promise<CompletionParams> {
     // Start with system defaults
     let resolvedSettings: CompletionParams = {...defaultCompletionSettings};
@@ -1487,21 +1489,23 @@ class ChatSessionStore {
       ...this.newChatCompletionSettings,
     };
 
-    // Apply pal-specific settings if available
-    if (palId) {
-      // Use in-memory pal store as the source of truth (avoids cache invalidation issues)
-      const pal = palStore.pals.find(p => p.id === palId);
-      const palSettings = pal?.completionSettings;
+    // Apply assistant-specific settings if available
+    if (assistantId) {
+      // Use in-memory assistant store as the source of truth (avoids cache invalidation issues)
+      const assistant = assistantStore.assistants.find(
+        p => p.id === assistantId,
+      );
+      const assistantSettings = assistant?.completionSettings;
 
-      if (palSettings) {
+      if (assistantSettings) {
         resolvedSettings = {
           ...resolvedSettings,
-          ...palSettings,
+          ...assistantSettings,
         };
       }
 
       // Inject tool schemas from pact.talents (PACT → completionSettings.tools)
-      const talentNames = pal?.pact?.talents?.map(t => t.name);
+      const talentNames = assistant?.pact?.talents?.map(t => t.name);
       if (talentNames && talentNames.length > 0) {
         const tools = deriveToolSchemas(talentNames);
         if (tools.length > 0) {
@@ -1514,7 +1518,7 @@ class ChatSessionStore {
     }
 
     // No-session-only: apply user's explicit thinking override last so it
-    // wins over pal's enable_thinking. Overlays the local enable_thinking flag
+    // wins over assistant's enable_thinking. Overlays the local enable_thinking flag
     // AND the reasoning carrier (so the remote wire path honors the on/off
     // intent for the first message of the new chat, not just local thinking).
     // Does NOT touch any other field, and does NOT affect tool availability.
@@ -1554,13 +1558,14 @@ class ChatSessionStore {
    * Gets the effective completion settings for the current context
    */
   async getCurrentCompletionSettings(): Promise<CompletionParams> {
-    const activePalId = this.activeSessionId
-      ? this.sessions.find(s => s.id === this.activeSessionId)?.activePalId
-      : this.newChatPalId;
+    const activeAssistantId = this.activeSessionId
+      ? this.sessions.find(s => s.id === this.activeSessionId)
+          ?.activeAssistantId
+      : this.newChatAssistantId;
 
     return this.resolveCompletionSettings(
       this.activeSessionId || undefined,
-      activePalId,
+      activeAssistantId,
     );
   }
 }

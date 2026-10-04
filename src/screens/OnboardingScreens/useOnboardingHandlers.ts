@@ -1,21 +1,21 @@
 import {useCallback, useContext, useEffect, useRef, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 
-import {uiStore, palStore, modelStore} from '../../store';
+import {uiStore, assistantStore, modelStore} from '../../store';
 import {L10nContext} from '../../utils';
 import {ROUTES} from '../../utils/navigationConstants';
 import {
   entryId,
-  resolvePalForTopic,
-} from '../../store/onboarding/onboardingPals';
-import type {Pal} from '../../types/pal';
+  resolveAssistantForTopic,
+} from '../../store/onboarding/onboardingAssistants';
+import type {Assistant} from '../../types/assistant';
 import type {OnboardingStep, TopicKey} from '../../store/onboarding/types';
 
 /**
  * Per-screen onboarding helpers: mark `currentStep` on mount, expose
  * `goNext` / `goBack` / `skip` / `finish` / `selectTopic` that route through
  * the single-writer methods on `uiStore` (and, on finish, materialise the
- * topic-matched local pal, bind the picked model, and kick off the download
+ * topic-matched local assistant, bind the picked model, and kick off the download
  * via `modelStore`).
  */
 export const useOnboardingHandlers = (step: OnboardingStep) => {
@@ -89,49 +89,52 @@ export const useOnboardingHandlers = (step: OnboardingStep) => {
         uiStore.completeOnboarding({topic, modelId: null});
         return;
       }
-      const palDef = resolvePalForTopic(topic);
-      const entry = palDef.models.find(m => entryId(m) === modelId);
+      const assistantDef = resolveAssistantForTopic(topic);
+      const entry = assistantDef.models.find(m => entryId(m) === modelId);
       const picked = entry
-        ? await modelStore.registerOnboardingPalModel(entry)
+        ? await modelStore.registerOnboardingAssistantModel(entry)
         : undefined;
-      const greeting = palDef.greeting
+      const greeting = assistantDef.greeting
         ? {
-            text: palDef.greeting.text,
-            suggestedPrompts: [...palDef.greeting.suggestedPrompts],
+            text: assistantDef.greeting.text,
+            suggestedPrompts: [...assistantDef.greeting.suggestedPrompts],
           }
         : undefined;
-      const existing = palStore.pals.find(
-        p => p.name === palDef.name && p.source === 'local',
+      const existing = assistantStore.assistants.find(
+        p => p.name === assistantDef.name && p.source === 'local',
       );
       if (existing) {
-        // Pip is auto-created at boot (back-compat); other topic pals
+        // Pip is auto-created at boot (back-compat); other topic assistants
         // may already exist if the user replays onboarding. In both
         // cases, rebind the picked model and refresh the curated
-        // greeting if the pal has one.
+        // greeting if the assistant has one.
         if (picked) {
-          await palStore.updatePal(existing.id, {
+          await assistantStore.updateAssistant(existing.id, {
             defaultModel: picked,
             ...(greeting ? {greeting} : {}),
           });
         }
       } else {
-        // First time finishing with this topic — materialise the pal.
-        const palData: Omit<Pal, 'id' | 'created_at' | 'updated_at'> = {
+        // First time finishing with this topic — materialise the assistant.
+        const assistantData: Omit<
+          Assistant,
+          'id' | 'created_at' | 'updated_at'
+        > = {
           type: 'local',
-          name: palDef.name,
-          description: palDef.description,
-          systemPrompt: palDef.systemPrompt,
+          name: assistantDef.name,
+          description: assistantDef.description,
+          systemPrompt: assistantDef.systemPrompt,
           isSystemPromptChanged: false,
           useAIPrompt: false,
           defaultModel: picked,
           parameters: {},
           parameterSchema: [],
           capabilities: {},
-          color: palDef.color,
+          color: assistantDef.color,
           source: 'local',
           ...(greeting ? {greeting} : {}),
         };
-        await palStore.createPal(palData);
+        await assistantStore.createAssistant(assistantData);
       }
       uiStore.completeOnboarding({topic, modelId: picked?.id ?? null});
       if (picked) {

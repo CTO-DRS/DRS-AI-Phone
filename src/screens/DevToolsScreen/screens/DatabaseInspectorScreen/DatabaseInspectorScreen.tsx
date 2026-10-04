@@ -11,7 +11,7 @@ import {
 import {Card, Button} from 'react-native-paper';
 import {database} from '../../../../database';
 import {chatSessionRepository} from '../../../../repositories/ChatSessionRepository';
-import {palRepository} from '../../../../repositories/PalRepository';
+import {assistantRepository} from '../../../../repositories/AssistantRepository';
 import {useNavigation} from '@react-navigation/native';
 
 // Define the collections we want to inspect
@@ -21,7 +21,7 @@ const COLLECTIONS = [
   'completion_settings',
   'global_settings',
   'local_pals',
-  'cached_pals',
+  'cached_assistants',
   'user_library',
   'sync_status',
 ];
@@ -76,14 +76,17 @@ const DatabaseInspectorScreen = () => {
     }
   };
 
-  const resetPalMigration = async () => {
+  const resetAssistantMigration = async () => {
     try {
-      await palRepository.resetMigration();
-      Alert.alert('Pal migration reset successful', 'Please restart the app.');
-    } catch (error) {
-      console.error('Failed to reset pal migration:', error);
+      await assistantRepository.resetMigration();
       Alert.alert(
-        'Failed to reset pal migration',
+        'Assistant migration reset successful',
+        'Please restart the app.',
+      );
+    } catch (error) {
+      console.error('Failed to reset assistant migration:', error);
+      Alert.alert(
+        'Failed to reset assistant migration',
         error instanceof Error ? error.message : 'Unknown error occurred',
       );
     }
@@ -120,10 +123,10 @@ const DatabaseInspectorScreen = () => {
               Reset Chat Migration
             </Button>
             <Button
-              onPress={resetPalMigration}
+              onPress={resetAssistantMigration}
               mode="outlined"
               style={styles.resetButton}>
-              Reset Pal Migration
+              Reset Assistant Migration
             </Button>
           </View>
         </Card.Actions>
@@ -233,8 +236,8 @@ const DatabaseInspectorScreen = () => {
       }
     }
 
-    // If this is a cached_pal, find related user_library entries
-    if (collection === 'cached_pals' && record.drshub_id) {
+    // If this is a cached_assistant, find related user_library entries
+    if (collection === 'cached_assistants' && record.drshub_id) {
       const userLibraryEntries = (collectionData.user_library || []).filter(
         entry => entry.drshub_id === record.drshub_id,
       );
@@ -244,14 +247,14 @@ const DatabaseInspectorScreen = () => {
       }
     }
 
-    // If this is a user_library entry, find related cached_pal
+    // If this is a user_library entry, find related cached_assistant
     if (collection === 'user_library' && record.drshub_id) {
-      const cachedPal = (collectionData.cached_pals || []).find(
-        pal => pal.drshub_id === record.drshub_id,
+      const cachedAssistant = (collectionData.cached_assistants || []).find(
+        assistant => assistant.drshub_id === record.drshub_id,
       );
 
-      if (cachedPal) {
-        relatedRecords.cached_pals = [cachedPal];
+      if (cachedAssistant) {
+        relatedRecords.cached_assistants = [cachedAssistant];
       }
     }
 

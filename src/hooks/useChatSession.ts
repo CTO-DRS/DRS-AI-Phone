@@ -10,7 +10,7 @@ import {L10nContext} from '../utils';
 import {
   chatSessionStore,
   modelStore,
-  palStore,
+  assistantStore,
   serverStore,
   ttsStore,
   uiStore,
@@ -562,12 +562,14 @@ export const useChatSession = (
     const activeSession = chatSessionStore.sessions.find(
       s => s.id === chatSessionStore.activeSessionId,
     );
-    const pal = activeSession?.activePalId
-      ? palStore.pals.find(p => p.id === activeSession.activePalId)
+    const activeAssistant = activeSession?.activeAssistantId
+      ? assistantStore.assistants.find(
+          p => p.id === activeSession.activeAssistantId,
+        )
       : null;
 
     const systemMessages = resolveSystemMessages({
-      pal,
+      assistant: activeAssistant,
       model: modelStore.activeModel,
     });
 
@@ -585,9 +587,11 @@ export const useChatSession = (
 
     currentMessageInfo.current = messageInfo;
 
-    // Allowed talent names for this Pal. The runner rejects any
+    // Allowed talent names for this Assistant. The runner rejects any
     // tool call whose function.name isn't in this list.
-    const palTalents = (pal?.pact?.talents ?? []).map(t => t.name);
+    const assistantTalents = (activeAssistant?.pact?.talents ?? []).map(
+      t => t.name,
+    );
 
     abortRef.current = new AbortController();
     const completionStartTime = Date.now();
@@ -640,7 +644,7 @@ export const useChatSession = (
       const events = runAgent({
         engine,
         initialParams: cleanCompletionParams as ApiCompletionParams,
-        allowedTalentNames: palTalents,
+        allowedTalentNames: assistantTalents,
         talentLookup: name => talentRegistry.get(name),
         triggerMarkers,
         messageId: messageInfo.id,

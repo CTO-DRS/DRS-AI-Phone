@@ -31,13 +31,13 @@ jest.mock('../../../hooks', () => ({
 // Mock the stores
 jest.mock('../../../store', () => ({
   chatSessionStore: {
-    activePalId: null,
+    activeAssistantId: null,
   },
   modelStore: {
     activeModel: null,
   },
-  palStore: {
-    pals: [],
+  assistantStore: {
+    assistants: [],
   },
   uiStore: {
     colorScheme: 'light',
@@ -85,7 +85,7 @@ describe('ChatInput Thinking Toggle', () => {
   const defaultProps = {
     onSendPress: jest.fn(),
     onStopPress: jest.fn(),
-    onPalBtnPress: jest.fn(),
+    onAssistantBtnPress: jest.fn(),
     isStopVisible: false,
     sendButtonVisibilityMode: 'editing' as const,
     isPickerVisible: false,

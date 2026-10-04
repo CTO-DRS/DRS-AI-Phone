@@ -9,7 +9,12 @@ import {
 } from '../../../jest/fixtures/models';
 
 import {useChatSession} from '../useChatSession';
-import {chatSessionStore, modelStore, palStore, serverStore} from '../../store';
+import {
+  chatSessionStore,
+  modelStore,
+  assistantStore,
+  serverStore,
+} from '../../store';
 import {resolveBannerVariant} from '../../utils/bannerVariantResolver';
 import {ModelOrigin} from '../../utils/types';
 import {assistant} from '../../utils/chat';
@@ -23,7 +28,7 @@ const mockAssistant = {id: 'h3o3lc5xj'};
 beforeEach(() => {
   jest.clearAllMocks();
 
-  palStore.pals = [] as any;
+  assistantStore.assistants = [] as any;
   chatSessionStore.sessions = sessionFixtures as any;
   chatSessionStore.activeSessionId = 'session-1';
   chatSessionStore.agentUiState = {
@@ -426,12 +431,12 @@ describe('useChatSession — AssistantTurn integration', () => {
       }),
     };
     talentRegistry.register(fakeTalent);
-    // Pal advertises calculate so allowedTalentNames includes it.
-    palStore.pals = [
+    // Assistant advertises calculate so allowedTalentNames includes it.
+    assistantStore.assistants = [
       {
-        id: 'pal-1',
+        id: 'assistant-1',
         type: 'local',
-        name: 'Calc Pal',
+        name: 'Calc Assistant',
         systemPrompt: '',
         parameters: {},
         parameterSchema: [],
@@ -449,7 +454,7 @@ describe('useChatSession — AssistantTurn integration', () => {
         messages: [],
         completionSettings: {},
         settingsSource: 'pal',
-        activePalId: 'pal-1',
+        activeAssistantId: 'assistant-1',
       } as any,
     ];
     chatSessionStore.activeSessionId = 'session-1';
@@ -511,11 +516,11 @@ describe('useChatSession — AssistantTurn integration', () => {
       }),
     };
     talentRegistry.register(fakeTalent);
-    palStore.pals = [
+    assistantStore.assistants = [
       {
-        id: 'pal-1',
+        id: 'assistant-1',
         type: 'local',
-        name: 'Calc Pal',
+        name: 'Calc Assistant',
         systemPrompt: '',
         parameters: {},
         parameterSchema: [],
@@ -533,7 +538,7 @@ describe('useChatSession — AssistantTurn integration', () => {
         messages: [],
         completionSettings: {},
         settingsSource: 'pal',
-        activePalId: 'pal-1',
+        activeAssistantId: 'assistant-1',
       } as any,
     ];
     chatSessionStore.activeSessionId = 'session-1';
@@ -668,11 +673,11 @@ describe('useChatSession — AssistantTurn integration', () => {
     };
     talentRegistry.register(calcTalent);
     talentRegistry.register(dtTalent);
-    palStore.pals = [
+    assistantStore.assistants = [
       {
-        id: 'pal-1',
+        id: 'assistant-1',
         type: 'local',
-        name: 'Multi Pal',
+        name: 'Multi Assistant',
         systemPrompt: '',
         parameters: {},
         parameterSchema: [],
@@ -695,7 +700,7 @@ describe('useChatSession — AssistantTurn integration', () => {
         messages: [],
         completionSettings: {},
         settingsSource: 'pal',
-        activePalId: 'pal-1',
+        activeAssistantId: 'assistant-1',
       } as any,
     ];
     chatSessionStore.activeSessionId = 'session-1';
@@ -798,11 +803,11 @@ describe('useChatSession — AssistantTurn integration', () => {
     };
     talentRegistry.register(calcTalent);
     talentRegistry.register(dtTalent);
-    palStore.pals = [
+    assistantStore.assistants = [
       {
-        id: 'pal-1',
+        id: 'assistant-1',
         type: 'local',
-        name: 'Multi Pal',
+        name: 'Multi Assistant',
         systemPrompt: '',
         parameters: {},
         parameterSchema: [],
@@ -825,7 +830,7 @@ describe('useChatSession — AssistantTurn integration', () => {
         messages: [],
         completionSettings: {},
         settingsSource: 'pal',
-        activePalId: 'pal-1',
+        activeAssistantId: 'assistant-1',
       } as any,
     ];
     chatSessionStore.activeSessionId = 'session-1';
@@ -923,11 +928,11 @@ describe('useChatSession — AssistantTurn integration', () => {
       }),
     };
     talentRegistry.register(slowTalent);
-    palStore.pals = [
+    assistantStore.assistants = [
       {
-        id: 'pal-1',
+        id: 'assistant-1',
         type: 'local',
-        name: 'Slow Pal',
+        name: 'Slow Assistant',
         systemPrompt: '',
         parameters: {},
         parameterSchema: [],
@@ -945,7 +950,7 @@ describe('useChatSession — AssistantTurn integration', () => {
         messages: [],
         completionSettings: {},
         settingsSource: 'pal',
-        activePalId: 'pal-1',
+        activeAssistantId: 'assistant-1',
       } as any,
     ];
     chatSessionStore.activeSessionId = 'session-1';

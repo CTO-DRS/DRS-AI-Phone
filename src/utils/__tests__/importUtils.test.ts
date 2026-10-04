@@ -1,11 +1,11 @@
 import * as RNFS from '@dr.pogodin/react-native-fs';
 import {pick} from '@react-native-documents/picker';
-import {palStore} from '../../store';
+import {assistantStore} from '../../store';
 import {
   readJsonFile,
   validateImportedData,
   ImportedChatSession,
-  importPals,
+  importAssistants,
 } from '../importUtils';
 
 describe('importUtils', () => {
@@ -74,12 +74,12 @@ describe('importUtils', () => {
     });
   });
 
-  describe('Pal Import Functions', () => {
-    const mockImportedPal = {
+  describe('Assistant Import Functions', () => {
+    const mockImportedAssistant = {
       version: '2.0',
-      id: 'imported-pal-1',
-      name: 'Imported Pal',
-      description: 'An imported pal',
+      id: 'imported-assistant-1',
+      name: 'Imported Assistant',
+      description: 'An imported assistant',
       thumbnail_url: 'https://example.com/image.jpg',
       systemPrompt: 'You are a helpful assistant',
       originalSystemPrompt: 'You are a helpful assistant',
@@ -88,8 +88,8 @@ describe('importUtils', () => {
       defaultModel: 'test-model',
     };
 
-    const mockImportedPalWithBase64 = {
-      ...mockImportedPal,
+    const mockImportedAssistantWithBase64 = {
+      ...mockImportedAssistant,
       thumbnail_data: 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD',
       thumbnail_url: undefined,
     };
@@ -103,18 +103,18 @@ describe('importUtils', () => {
       // Mock document picker to return a file
       (pick as jest.Mock).mockResolvedValue([
         {
-          uri: 'file://path/to/pals.json',
-          name: 'pals.json',
+          uri: 'file://path/to/assistants.json',
+          name: 'assistants.json',
           type: 'application/json',
         },
       ]);
     });
 
-    describe('importPals', () => {
+    describe('importAssistants', () => {
       it('should return 0 when user cancels file picker', async () => {
         (pick as jest.Mock).mockResolvedValue(null);
 
-        const result = await importPals();
+        const result = await importAssistants();
 
         expect(result).toBe(0);
       });
@@ -124,29 +124,29 @@ describe('importUtils', () => {
           new Error('File read failed'),
         );
 
-        await expect(importPals()).rejects.toThrow(
+        await expect(importAssistants()).rejects.toThrow(
           'Failed to read or parse the selected file',
         );
       });
 
-      it('should import pal with remote thumbnail URL', async () => {
+      it('should import assistant with remote thumbnail URL', async () => {
         (RNFS.readFile as jest.Mock).mockResolvedValue(
-          JSON.stringify([mockImportedPal]),
+          JSON.stringify([mockImportedAssistant]),
         );
 
-        const result = await importPals();
+        const result = await importAssistants();
 
-        expect(result).toBe(1); // Should return number of imported pals
+        expect(result).toBe(1); // Should return number of imported assistants
         // Note: We can't easily test the mock calls with the centralized mock
         // but we can verify the function returns the correct count
       });
 
-      it('should import pal with base64 thumbnail and save as local file', async () => {
+      it('should import assistant with base64 thumbnail and save as local file', async () => {
         (RNFS.readFile as jest.Mock).mockResolvedValue(
-          JSON.stringify([mockImportedPalWithBase64]),
+          JSON.stringify([mockImportedAssistantWithBase64]),
         );
 
-        const result = await importPals();
+        const result = await importAssistants();
 
         expect(result).toBe(1);
         // Should create pal-images directory
@@ -164,48 +164,52 @@ describe('importUtils', () => {
 
       it('should handle base64 thumbnail save errors gracefully', async () => {
         (RNFS.readFile as jest.Mock).mockResolvedValue(
-          JSON.stringify([mockImportedPalWithBase64]),
+          JSON.stringify([mockImportedAssistantWithBase64]),
         );
         (RNFS.writeFile as jest.Mock).mockRejectedValue(
           new Error('Write failed'),
         );
 
-        const result = await importPals();
+        const result = await importAssistants();
 
         expect(result).toBe(1);
         // Function should still succeed even if thumbnail save fails
       });
 
-      it('should import multiple pals', async () => {
-        const multiplePals = [
-          mockImportedPal,
-          {...mockImportedPal, id: 'imported-pal-2', name: 'Second Pal'},
+      it('should import multiple assistants', async () => {
+        const multipleAssistants = [
+          mockImportedAssistant,
+          {
+            ...mockImportedAssistant,
+            id: 'imported-assistant-2',
+            name: 'Second Assistant',
+          },
         ];
         (RNFS.readFile as jest.Mock).mockResolvedValue(
-          JSON.stringify(multiplePals),
+          JSON.stringify(multipleAssistants),
         );
 
-        const result = await importPals();
+        const result = await importAssistants();
 
         expect(result).toBe(2);
       });
 
-      it('should handle single pal import', async () => {
+      it('should handle single assistant import', async () => {
         (RNFS.readFile as jest.Mock).mockResolvedValue(
-          JSON.stringify(mockImportedPal),
+          JSON.stringify(mockImportedAssistant),
         );
 
-        const result = await importPals();
+        const result = await importAssistants();
 
         expect(result).toBe(1);
       });
 
       // pact (talent set) and greeting are first-class persisted state.
-      // The transform path MUST forward them onto palStore.createPal so a
-      // re-imported Pal keeps its tools and greeting.
+      // The transform path MUST forward them onto assistantStore.createAssistant so a
+      // re-imported Assistant keeps its tools and greeting.
       it('preserves pact (talents) and greeting through import', async () => {
-        const palWithTalents = {
-          ...mockImportedPal,
+        const assistantWithTalents = {
+          ...mockImportedAssistant,
           pact: {
             talents: [
               {name: 'calculate'},
@@ -218,15 +222,16 @@ describe('importUtils', () => {
           },
         };
         (RNFS.readFile as jest.Mock).mockResolvedValue(
-          JSON.stringify(palWithTalents),
+          JSON.stringify(assistantWithTalents),
         );
 
-        await importPals();
+        await importAssistants();
 
-        expect(palStore.createPal).toHaveBeenCalledTimes(1);
-        const created = (palStore.createPal as jest.Mock).mock.calls[0][0];
-        expect(created.pact).toEqual(palWithTalents.pact);
-        expect(created.greeting).toEqual(palWithTalents.greeting);
+        expect(assistantStore.createAssistant).toHaveBeenCalledTimes(1);
+        const created = (assistantStore.createAssistant as jest.Mock).mock
+          .calls[0][0];
+        expect(created.pact).toEqual(assistantWithTalents.pact);
+        expect(created.greeting).toEqual(assistantWithTalents.greeting);
       });
     });
   });

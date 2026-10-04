@@ -380,11 +380,11 @@
     "fileMessage": {
       "fileButtonAccessibilityLabel": "Fichier"
     },
-    "chatPalModelPickerSheet": {
+    "chatAssistantModelPickerSheet": {
       "modelsTab": "Modèles",
-      "palsTab": "Pals",
-      "noPal": "Pas d'assistant",
-      "disablePal": "Désactiver l'assistant actif",
+      "assistantsTab": "Assistants",
+      "noAssistant": "Pas d'assistant",
+      "disableAssistant": "Désactiver l'assistant actif",
       "noDescription": "Pas de description",
       "assistantType": "Assistant",
       "roleplayType": "Jeu de rôle",
@@ -475,13 +475,13 @@
       "proceedWithReset": "Procéder à la réinitialisation",
       "confirmReset": "Confirmer la réinitialisation"
     },
-    "assistantPalSheet": {
+    "assistantPersonaSheet": {
       "title": {
         "create": "Créer un assistant",
         "edit": "Modifier un assistant"
       },
-      "palName": "Nom de l'assistant",
-      "palNamePlaceholder": "Nom",
+      "assistantName": "Nom de l'assistant",
+      "assistantNamePlaceholder": "Nom",
       "defaultModel": "Modèle par défaut",
       "defaultModelPlaceholder": "Sélectionner un modèle",
       "validation": {
@@ -497,13 +497,13 @@
       "cancelDownload": "Annuler le téléchargement",
       "download": "Télécharger"
     },
-    "roleplayPalSheet": {
+    "roleplayPersonaSheet": {
       "title": {
         "create": "Créer un assistant de jeu de rôle",
         "edit": "Modifier un assistant de jeu de rôle"
       },
-      "palName": "Nom de l'assistant",
-      "palNamePlaceholder": "Nom",
+      "assistantName": "Nom de l'assistant",
+      "assistantNamePlaceholder": "Nom",
       "defaultModel": "Modèle par défaut",
       "defaultModelPlaceholder": "Sélectionner un modèle",
       "descriptionSection": "Description",
@@ -560,7 +560,7 @@
       "menuItems": {
         "chat": "Discussion",
         "models": "Modèles",
-        "pals": "Pals",
+        "assistants": "Assistants",
         "benchmark": "Benchmark",
         "settings": "Paramètres",
         "appInfo": "Info application",
@@ -587,7 +587,12 @@
         "total": "Totale : ",
         "usage": "Utilisation : "
       },
-      "byteSizes": ["Octets", "Ko", "Mo", "Go"]
+      "byteSizes": [
+        "Octets",
+        "Ko",
+        "Mo",
+        "Go"
+      ]
     }
   },
   "validation": {
@@ -603,7 +608,7 @@
   "screenTitles": {
     "chat": "Discussion",
     "models": "Modèles",
-    "pals": "Assistants (expérimental)",
+    "assistants": "Assistants (expérimental)",
     "benchmark": "Benchmark",
     "settings": "Paramètres",
     "appInfo": "Info application",

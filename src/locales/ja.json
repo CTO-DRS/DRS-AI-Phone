@@ -114,11 +114,11 @@
     "useHfTokenLabel": "HFトークンを使用",
     "useHfTokenDescription": "HFトークンを使用して制限付きモデルにアクセスします",
     "cacheStorageTitle": "キャッシュとストレージ",
-    "clearPalCaches": "ショートカットキャッシュをクリア",
-    "clearPalCachesDescription": "ショートカットを高速化するために使用されるキャッシュデータをクリアします。Palやチャット履歴には影響しません。",
+    "clearAssistantCaches": "ショートカットキャッシュをクリア",
+    "clearAssistantCachesDescription": "ショートカットを高速化するために使用されるキャッシュデータをクリアします。アシスタントやチャット履歴には影響しません。",
     "clearCachesButton": "キャッシュをクリア",
     "clearCachesConfirmTitle": "ショートカットキャッシュをクリアしますか？",
-    "clearCachesConfirmMessage": "すべてのキャッシュされたセッションデータ（{{fileCount}}ファイル、{{size}}）をクリアします。クリア後、ショートカットの初回使用時は遅くなる可能性があります。Palやチャット履歴には影響しません。",
+    "clearCachesConfirmMessage": "すべてのキャッシュされたセッションデータ（{{fileCount}}ファイル、{{size}}）をクリアします。クリア後、ショートカットの初回使用時は遅くなる可能性があります。アシスタントやチャット履歴には影響しません。",
     "clearCachesSuccess": "{{count}}個のキャッシュファイルをクリアしました。",
     "clearCachesError": "キャッシュのクリアに失敗しました。もう一度お試しください。",
     "noCachesToClear": "クリアするキャッシュがありません。",
@@ -167,7 +167,7 @@
     "serverTypeHelp": "自動検出されます。誤っている場合は変更してください。",
     "internetSearch": {
       "title": "インターネット検索",
-      "description": "Palが自分のツールでウェブを検索できるようにします。APIキーはご自身のものをご用意ください。DRS AIがキーを保持したり、クエリを中継したりすることは一切ありません。",
+      "description": "アシスタントが自分のツールでウェブを検索できるようにします。APIキーはご自身のものをご用意ください。DRS AIがキーを保持したり、クエリを中継したりすることは一切ありません。",
       "providerLabel": "検索プロバイダー",
       "providerGated": "近日公開",
       "keyLabel": "APIキー",
@@ -183,7 +183,7 @@
       "resultCountLabel": "検索ごとの結果数",
       "resultCountDescription": "結果数を減らすと、モデルのコンテキストに余裕が生まれます。",
       "consentTitle": "検索はデバイスの外に送信されます",
-      "consentDescription": "Palがウェブを検索すると、クエリはインターネット経由で選択したプロバイダーに送信されます。Palがページを読み取る際、選択したプロバイダーに独自のリーダーがない場合は、代わりにURLとページの内容がデフォルトのリーダーサービス（r.jina.ai）に送信されることがあります。キーとクエリがDRS AIに送信されることは一切ありません。",
+      "consentDescription": "アシスタントがウェブを検索すると、クエリはインターネット経由で選択したプロバイダーに送信されます。アシスタントがページを読み取る際、選択したプロバイダーに独自のリーダーがない場合は、代わりにURLとページの内容がデフォルトのリーダーサービス（r.jina.ai）に送信されることがあります。キーとクエリがDRS AIに送信されることは一切ありません。",
       "consentAccept": "理解しました",
       "consentRequired": "キーを設定して検索を有効にするには、上記の説明に同意してください。",
       "consentGivenTitle": "ウェブ検索が有効になっています",
@@ -590,7 +590,7 @@
       "activateModelButton": "モデルを選択",
       "loading": "読み込み中...",
       "gettingReadyTitle": "{{name}}が準備中です",
-      "gettingReadyDescription": "パルがチャットできるようになったらすぐにお知らせします。上部のバナーをタップすると進み具合を確認できます。"
+      "gettingReadyDescription": "アシスタントがチャットできるようになったらすぐにお知らせします。上部のバナーをタップすると進み具合を確認できます。"
     },
     "chatInput": {
       "inputPlaceholder": "メッセージを入力",
@@ -676,22 +676,22 @@
         "title": "保存完了",
         "message": "これらの設定は今後すべてのセッションに適用されます"
       },
-      "palSettings": "Pal設定",
+      "assistantSettings": "アシスタント設定",
       "settingsSource": "設定ソース"
     },
-    "palGenerationSettingsSheet": {
-      "title": "生成設定 - {{palName}}",
+    "assistantGenerationSettingsSheet": {
+      "title": "生成設定 - {{assistantName}}",
       "invalidValues": "無効な値",
       "invalidNumericValuesMessage": "有効な数値を入力してください",
       "pleaseCorrect": "以下を修正してください：",
       "ok": "OK",
       "error": "エラー",
-      "failedToSave": "Pal設定の保存に失敗しました",
+      "failedToSave": "アシスタント設定の保存に失敗しました",
       "resetToGlobal": "グローバル設定に戻す",
       "resetToSystem": "システム設定に戻す",
-      "clearPalSettings": "Pal設定をクリア",
-      "customSettingsFor": "{{palName}}のカスタム設定",
-      "inheritedSettingsFor": "{{palName}}の継承設定"
+      "clearAssistantSettings": "アシスタント設定をクリア",
+      "customSettingsFor": "{{assistantName}}のカスタム設定",
+      "inheritedSettingsFor": "{{assistantName}}の継承設定"
     },
     "chatHeaderTitle": {
       "defaultTitle": "チャット"
@@ -699,11 +699,11 @@
     "fileMessage": {
       "fileButtonAccessibilityLabel": "ファイル"
     },
-    "chatPalModelPickerSheet": {
+    "chatAssistantModelPickerSheet": {
       "modelsTab": "モデル",
-      "palsTab": "アシスタント",
-      "noPal": "アシスタントなし",
-      "disablePal": "現在のアシスタントを無効化",
+      "assistantsTab": "アシスタント",
+      "noAssistant": "アシスタントなし",
+      "disableAssistant": "現在のアシスタントを無効化",
       "noDescription": "説明なし",
       "assistantType": "アシスタント",
       "roleplayType": "ロールプレイ",
@@ -809,11 +809,11 @@
       "proceedWithReset": "リセットする",
       "confirmReset": "リセットの確認"
     },
-    "palSheet": {
+    "assistantSheet": {
       "title": {
         "edit": "アシスタントを編集",
-        "newPal": "新しいアシスタント",
-        "newVideoPal": "新しいビデオアシスタント"
+        "newAssistant": "新しいアシスタント",
+        "newVideoAssistant": "新しいビデオアシスタント"
       },
       "description": "説明",
       "descriptionPlaceholder": "アシスタントの簡単な説明を入力",
@@ -843,20 +843,20 @@
       "greeting": {
         "sectionLabel": "あいさつ",
         "textLabel": "あいさつメッセージ",
-        "textPlaceholder": "このPalが空のチャットで話す内容は？",
+        "textPlaceholder": "このアシスタントが空のチャットで話す内容は？",
         "suggestedPromptsLabel": "おすすめプロンプト",
         "addPromptButton": "プロンプトを追加",
         "promptPlaceholder": "チップ用の短いプロンプト",
         "removePromptLabel": "プロンプトを削除"
       }
     },
-    "assistantPalSheet": {
+    "assistantPersonaSheet": {
       "title": {
         "create": "アシスタントを作成",
         "edit": "アシスタントを編集"
       },
-      "palName": "アシスタント名",
-      "palNamePlaceholder": "名前",
+      "assistantName": "アシスタント名",
+      "assistantNamePlaceholder": "名前",
       "defaultModel": "デフォルトモデル",
       "defaultModelPlaceholder": "モデルを選択",
       "validation": {
@@ -868,19 +868,19 @@
     "modelNotAvailable": {
       "noModelsDownloaded": "モデルがダウンロードされていません、先にモデルをダウンロードしてください",
       "downloadAModel": "モデルをダウンロード",
-      "defaultModelNotDownloaded": "このパルは特定のモデルを推奨していますが、ダウンロードが必要です。または別のモデルを選択できます",
+      "defaultModelNotDownloaded": "このアシスタントは特定のモデルを推奨していますが、ダウンロードが必要です。または別のモデルを選択できます",
       "modelNotDownloadedShort": "モデル未ダウンロード",
       "recommendedModel": "推奨モデル",
       "cancelDownload": "キャンセル",
       "download": "ダウンロード"
     },
-    "roleplayPalSheet": {
+    "roleplayPersonaSheet": {
       "title": {
         "create": "ロールプレイを作成",
         "edit": "ロールプレイを編集"
       },
-      "palName": "名前",
-      "palNamePlaceholder": "名前",
+      "assistantName": "名前",
+      "assistantNamePlaceholder": "名前",
       "defaultModel": "デフォルトモデル",
       "defaultModelPlaceholder": "モデルを選択",
       "descriptionSection": "説明",
@@ -904,13 +904,13 @@
       },
       "create": "作成する"
     },
-    "lookiePalSheet": {
+    "lookiePersonaSheet": {
       "title": {
         "create": "Lookieアシスタントを作成",
         "edit": "Lookieアシスタントを編集"
       },
-      "palName": "アシスタント名",
-      "palNamePlaceholder": "Lookieアシスタントの名前を入力",
+      "assistantName": "アシスタント名",
+      "assistantNamePlaceholder": "Lookieアシスタントの名前を入力",
       "visionModel": "ビジョンモデル",
       "visionModelPlaceholder": "ビジョンモデルを選択",
       "requiredModelsSection": "必要なモデル",
@@ -931,7 +931,7 @@
       },
       "generatingPrompt": {
         "label": "目的とコンテキスト",
-        "placeholder": "このPalの役割、目的、シナリオを説明してください..."
+        "placeholder": "このアシスタントの役割、目的、シナリオを説明してください..."
       },
       "buttons": {
         "loadingModel": "モデルを読み込み中...",
@@ -953,7 +953,7 @@
       "menuItems": {
         "chat": "チャット",
         "models": "モデル",
-        "pals": "アシスタント",
+        "assistants": "アシスタント",
         "benchmark": "ベンチマーク",
         "settings": "設定",
         "appInfo": "アプリ情報",
@@ -994,7 +994,12 @@
         "total": "合計: ",
         "usage": "使用率: "
       },
-      "byteSizes": ["B", "KB", "MB", "GB"]
+      "byteSizes": [
+        "B",
+        "KB",
+        "MB",
+        "GB"
+      ]
     },
     "chatView": {
       "menuItems": {
@@ -1005,9 +1010,9 @@
         "reportContent": "コンテンツを報告"
       }
     },
-    "palHeaderRight": {
-      "exportAllPals": "すべてのアシスタントをエクスポート",
-      "importPals": "アシスタントをインポート",
+    "assistantHeaderRight": {
+      "exportAllAssistants": "すべてのアシスタントをエクスポート",
+      "importAssistants": "アシスタントをインポート",
       "importSuccess": "{{count}}個のアシスタントをインポートしました。",
       "importError": "アシスタントのインポートに失敗しました。ファイル形式を確認してください。"
     },
@@ -1031,11 +1036,11 @@
       "elapsed": "{{seconds}}秒"
     }
   },
-  "palsScreen": {
+  "assistantsScreen": {
     "sectionTitles": {
-      "myPalsLocal": "マイアシスタント (ローカル)",
+      "myAssistantsLocal": "マイアシスタント (ローカル)",
       "myLibrary": "マイライブラリ (hub.drsai.app)",
-      "discoverPals": "アシスタントを探す (hub.drsai.app)"
+      "discoverAssistants": "アシスタントを探す (hub.drsai.app)"
     },
     "systemPrompt": "システムプロンプト",
     "videoAnalysis": "動画解析",
@@ -1050,26 +1055,26 @@
     "assistant": "アシスタント",
     "roleplay": "ロールプレイ",
     "video": "動画",
-    "deletePal": "Palを削除",
-    "deletePalMessage": "このPalを削除してもよろしいですか？",
+    "deleteAssistant": "アシスタントを削除",
+    "deleteAssistantMessage": "このアシスタントを削除してもよろしいですか？",
     "missingModel": "モデルが見つかりません",
-    "missingModelMessage": "このPalのデフォルトモデル「{{modelName}}」が利用できません、編集シートでダウンロードするか、別のモデルを選択してください",
+    "missingModelMessage": "このアシスタントのデフォルトモデル「{{modelName}}」が利用できません、編集シートでダウンロードするか、別のモデルを選択してください",
     "search": "検索",
     "profile": "プロフィール",
     "signIn": "サインイン",
-    "addPal": "Palを追加",
+    "addAssistant": "アシスタントを追加",
     "signInToAccessLibrary": "hub.drsai.appのライブラリにアクセスするにはサインインしてください",
     "signOut": "サインアウト",
     "signOutConfirmation": "サインアウトしてもよろしいですか？",
     "signOutError": "サインアウトに失敗しました。もう一度お試しください。",
     "account": "アカウント",
     "signInToDrshub": "Drshubにサインイン",
-    "signInDescription": "ライブラリにアクセスし、プライベートPalを作成し、デバイス間で同期",
-    "searchAllPals": "すべてのPalを検索...",
-    "deletePalConfirmation": "「{{palName}}」を削除してもよろしいですか？",
+    "signInDescription": "ライブラリにアクセスし、プライベートアシスタントを作成し、デバイス間で同期",
+    "searchAllAssistants": "すべてのアシスタントを検索...",
+    "deleteAssistantConfirmation": "「{{assistantName}}」を削除してもよろしいですか？",
     "filters": {
       "all": "すべて",
-      "myPals": "マイPal",
+      "myAssistants": "マイアシスタント",
       "local": "ローカル",
       "video": "動画",
       "free": "無料",
@@ -1082,15 +1087,15 @@
       "download": "ダウンロード",
       "getFree": "無料で入手"
     },
-    "premiumPalDescription": "hub.drsai.appコミュニティのプレミアムPal",
-    "premiumInfoText": "アプリ外でhub.drsai.appにアクセスして、より多くのPalを探索",
+    "premiumAssistantDescription": "hub.drsai.appコミュニティのプレミアムアシスタント",
+    "premiumInfoText": "アプリ外でhub.drsai.appにアクセスして、より多くのアシスタントを探索",
     "sortOptions": {
       "newest": "新着順",
       "oldest": "古い順",
       "rating": "評価順",
       "popular": "人気順"
     },
-    "palDetailSheet": {
+    "assistantDetailSheet": {
       "by": "by",
       "unknown": "不明",
       "rating": "評価",
@@ -1103,18 +1108,18 @@
       "systemPrompt": "システムプロンプト",
       "downloaded": "ダウンロード済み",
       "success": "成功",
-      "palAddedToCollection": "Palがコレクションに追加されました！",
+      "assistantAddedToCollection": "アシスタントがコレクションに追加されました！",
       "error": "エラー",
-      "failedToLoadDetails": "Palの詳細の読み込みに失敗しました",
-      "failedToDownload": "Palのダウンロードに失敗しました",
-      "premiumPalMessage": "これはプレミアムPalです。\n• Drshubアカウントで既にアンロックしている場合は、サインインして詳細にアクセスしてください。\n• まだアンロックしていない場合は、hub.drsai.appアプリにアクセスして詳細をご確認ください。",
+      "failedToLoadDetails": "アシスタントの詳細の読み込みに失敗しました",
+      "failedToDownload": "アシスタントのダウンロードに失敗しました",
+      "premiumAssistantMessage": "これはプレミアムアシスタントです。\n• Drshubアカウントで既にアンロックしている場合は、サインインして詳細にアクセスしてください。\n• まだアンロックしていない場合は、hub.drsai.appアプリにアクセスして詳細をご確認ください。",
       "notAvailable": "N/A",
       "buyOnDrshub": "Drshubで購入",
       "finalizingPurchase": "購入を完了処理中…",
       "processingPurchase": "処理中 — まもなくアンロックされます。",
       "checkoutSessionExpired": "セッションの有効期限が切れました。続行するには再度サインインしてください。",
       "signInAgain": "再度サインイン",
-      "palNotAvailable": "このPalは現在購入できません。",
+      "assistantNotAvailable": "このアシスタントは現在購入できません。",
       "checkoutFailed": "問題が発生しました。もう一度お試しください。"
     }
   },
@@ -1171,7 +1176,7 @@
   "screenTitles": {
     "chat": "チャット",
     "models": "モデル",
-    "pals": "アシスタント（実験的）",
+    "assistants": "アシスタント（実験的）",
     "benchmark": "ベンチマーク",
     "settings": "設定",
     "appInfo": "アプリ情報",
@@ -1225,7 +1230,7 @@
     "increaseContextReloading": "より大きなコンテキストでモデルを再読み込み中…",
     "increaseContextSuccess": "コンテキストを{{target}}トークンに増やしました。",
     "increaseContextFailure": "コンテキストサイズを増やせませんでした。以前の設定に戻しました。",
-    "palLoadHint": "このアシスタントは、現在のコンテキストサイズよりも多くの余裕を必要とする傾向があります。",
+    "assistantLoadHint": "このアシスタントは、現在のコンテキストサイズよりも多くの余裕を必要とする傾向があります。",
     "generatingPreview": "プレビューを生成中...（{{tokens}}トークン）",
     "generatingPreviewPending": "プレビューを生成中…",
     "toolUsedChip": "{{name}}を使用",
@@ -1493,15 +1498,15 @@
       "brand": "DRS AI"
     },
     "screen1": {
-      "title": "あなたのパルに会いましょう。",
-      "titleAccent": "パルに。",
+      "title": "あなたのアシスタントに会いましょう。",
+      "titleAccent": "アシスタントに。",
       "body": "あなたのスマホの中に住む、賢くて小さな友だち。\nセットアップを始めましょう。すぐに終わります。",
       "cta": "案内してもらう",
       "eyebrow": "DRS AIへようこそ"
     },
     "screen2": {
       "title": "いつでも、\nどこでも。",
-      "body": "パルはあなたのスマホの中にいます。\nインターネットも電波もいりません。飛行機の中でも、電波の届かない場所でも、辺ぴな村でも使えます。",
+      "body": "アシスタントはあなたのスマホの中にいます。\nインターネットも電波もいりません。飛行機の中でも、電波の届かない場所でも、辺ぴな村でも使えます。",
       "highlight": "インターネットも電波もいらない",
       "cta": "次へ",
       "eyebrow": "コンセプト",
@@ -1510,7 +1515,7 @@
     "screen3": {
       "title": "小さくても、\nあなただけのもの。",
       "titleAccent": "小さくても、",
-      "body": "スマホの中のパルは、すばやくてプライベート。でもクラウドAIよりは軽量です。何でも知っている賢者ではなく、ポケットに入る相棒だと考えてください。",
+      "body": "スマホの中のアシスタントは、すばやくてプライベート。でもクラウドAIよりは軽量です。何でも知っている賢者ではなく、ポケットに入る相棒だと考えてください。",
       "highlight": "すばやくてプライベート",
       "cta": "わかりました",
       "eyebrow": "ちょっとひとこと"
@@ -1524,8 +1529,8 @@
       "eyebrow": "プライバシーをお約束"
     },
     "screen5": {
-      "title": "パルを何に使いますか？",
-      "body": "話したいことを選んでください。あなたのスマホに合ったパルをご案内します。",
+      "title": "アシスタントを何に使いますか？",
+      "body": "話したいことを選んでください。あなたのスマホに合ったアシスタントをご案内します。",
       "topic": {
         "smartchat": "スマートチャット",
         "coding": "コーディング",
@@ -1540,7 +1545,7 @@
         "education": "学ぶ、解説する、クイズ",
         "roleplay": "キャラクター、シナリオ",
         "creative_writing": "物語、アイデア、下書き",
-        "else": "あとでアプリ内ですべてのパルを見る"
+        "else": "あとでアプリ内ですべてのアシスタントを見る"
       }
     },
     "screen6": {
@@ -1557,9 +1562,9 @@
         "best": "最高品質"
       },
       "subtitleTemplate": "{{name}}はスマホ上の小さなAIモデルを使って考えます。ぴったりのものを選んでください。",
-      "pal": {
+      "assistant": {
         "pip": {
-          "body": "あなたにぴったりのパルが見つかりました。毎日使えるフレンドリーな相棒です。たいていのことに対応できる賢さで、どんなスマホでも動く軽さです。"
+          "body": "あなたにぴったりのアシスタントが見つかりました。毎日使えるフレンドリーな相棒です。たいていのことに対応できる賢さで、どんなスマホでも動く軽さです。"
         },
         "codie": {
           "body": "Codieを紹介します。あなたのローカルなペアプログラマーです。コードを読み、コードを書き、難しい部分を解説します。すべてスマホの中だけで完結します。"
@@ -1577,7 +1582,7 @@
     }
   },
   "downloadBanner": {
-    "titleByPal": "{{name}}をダウンロード中",
+    "titleByAssistant": "{{name}}をダウンロード中",
     "titleByModel": "{{name}}をダウンロード中",
     "extraInProgress": "他に{{count}}件進行中"
   }

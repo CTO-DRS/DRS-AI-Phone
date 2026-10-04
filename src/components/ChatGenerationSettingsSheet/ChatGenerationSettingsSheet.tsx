@@ -5,7 +5,7 @@ import {CompletionParams} from '../../utils/completionTypes';
 import {
   chatSessionStore,
   defaultCompletionSettings,
-  palStore,
+  assistantStore,
 } from '../../store';
 import {styles} from './styles';
 import {
@@ -98,59 +98,60 @@ export const ChatGenerationSettingsSheet = ({
     defaultCompletionSettings,
   );
   const [resetMenuVisible, setResetMenuVisible] = useState(false);
-  // Only use local state for sessions with active pal, otherwise derive from session
+  // Only use local state for sessions with active assistant, otherwise derive from session
   const [localSettingsSource, setLocalSettingsSource] = useState<
     'pal' | 'custom' | null
   >(null);
 
   const isEditingPresetSettings = !session;
 
-  // For existing sessions, use session's activePalId
-  // For new chat sessions, use newChatPalId
-  const effectivePalId = session?.activePalId || chatSessionStore.newChatPalId;
-  const activePal = effectivePalId
-    ? palStore.pals.find(p => p.id === effectivePalId)
+  // For existing sessions, use session's activeAssistantId
+  // For new chat sessions, use newChatAssistantId
+  const effectiveAssistantId =
+    session?.activeAssistantId || chatSessionStore.newChatAssistantId;
+  const activeAssistant = effectiveAssistantId
+    ? assistantStore.assistants.find(p => p.id === effectiveAssistantId)
     : undefined;
 
   // Determine the actual settings source to use
-  // For existing sessions with pal: use session's settingsSource or local override
-  // For new chat sessions with pal: use stored newChatSettingsSource
-  const effectiveSettingsSource = activePal
+  // For existing sessions with assistant: use session's settingsSource or local override
+  // For new chat sessions with assistant: use stored newChatSettingsSource
+  const effectiveSettingsSource = activeAssistant
     ? session
       ? (localSettingsSource ?? session?.settingsSource ?? 'pal')
       : (localSettingsSource ?? chatSessionStore.newChatSettingsSource) // New chat session uses stored choice
     : null;
 
-  const isUsingPalSettings = effectiveSettingsSource === 'pal';
-  const showSettingsToggle = !!activePal; // Show toggle whenever there's an active pal
+  const isUsingAssistantSettings = effectiveSettingsSource === 'pal';
+  const showSettingsToggle = !!activeAssistant; // Show toggle whenever there's an active assistant
 
   // Reset and sync local state when session changes
   useEffect(() => {
-    if (activePal) {
+    if (activeAssistant) {
       if (session) {
-        // Existing session with pal - use session's settingsSource
+        // Existing session with assistant - use session's settingsSource
         setLocalSettingsSource(session.settingsSource || 'pal');
       } else {
-        // New chat session with pal - use stored newChatSettingsSource
+        // New chat session with assistant - use stored newChatSettingsSource
         setLocalSettingsSource(chatSessionStore.newChatSettingsSource);
       }
     } else {
-      // No pal - clear local state
+      // No assistant - clear local state
       setLocalSettingsSource(null);
     }
   }, [
     session,
-    activePal,
-    effectivePalId, // This includes both session pal and newChatPalId
+    activeAssistant,
+    effectiveAssistantId, // This includes both session assistant and newChatAssistantId
   ]);
 
   // Load appropriate settings based on source
   useEffect(() => {
     const loadSettings = async () => {
-      if (isUsingPalSettings && effectivePalId) {
+      if (isUsingAssistantSettings && effectiveAssistantId) {
         const resolved = await chatSessionStore.resolveCompletionSettings(
           session?.id, // Can be undefined for new sessions
-          effectivePalId,
+          effectiveAssistantId,
         );
         setSettings(resolved);
       } else {
@@ -168,9 +169,9 @@ export const ChatGenerationSettingsSheet = ({
   }, [
     session,
     effectiveSettingsSource,
-    isUsingPalSettings,
+    isUsingAssistantSettings,
     isVisible,
-    effectivePalId,
+    effectiveAssistantId,
   ]);
 
   const updateSettings = (name: string, value: any) => {
@@ -244,8 +245,8 @@ export const ChatGenerationSettingsSheet = ({
     }
 
     if (session) {
-      // Only save if using custom settings (pal settings are read-only)
-      if (!isUsingPalSettings) {
+      // Only save if using custom settings (assistant settings are read-only)
+      if (!isUsingAssistantSettings) {
         await chatSessionStore.updateSessionCompletionSettings(
           processedSettings.settings,
         );
@@ -318,11 +319,11 @@ export const ChatGenerationSettingsSheet = ({
                 }
 
                 // Immediately reload settings for the new source
-                if (newSource === 'pal' && effectivePalId) {
+                if (newSource === 'pal' && effectiveAssistantId) {
                   const resolved =
                     await chatSessionStore.resolveCompletionSettings(
                       session?.id, // Can be undefined for new sessions
-                      effectivePalId,
+                      effectiveAssistantId,
                     );
                   setSettings(resolved);
                 } else {
@@ -335,7 +336,7 @@ export const ChatGenerationSettingsSheet = ({
               buttons={[
                 {
                   value: 'pal',
-                  label: `Pal (${activePal.name})`,
+                  label: `Assistant (${activeAssistant.name})`,
                 },
                 {
                   value: 'custom',
@@ -350,7 +351,7 @@ export const ChatGenerationSettingsSheet = ({
         <CompletionSettings
           settings={settings}
           onChange={updateSettings}
-          disabled={isUsingPalSettings}
+          disabled={isUsingAssistantSettings}
         />
       </Sheet.ScrollView>
       <Sheet.Actions>

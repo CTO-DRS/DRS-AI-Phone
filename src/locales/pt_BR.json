@@ -119,11 +119,11 @@
     "useHfTokenLabel": "Usar Token HF",
     "useHfTokenDescription": "Ativar para usar o token em requisições de API. Desative se o token estiver causando problemas de autenticação.",
     "cacheStorageTitle": "Cache e Armazenamento",
-    "clearPalCaches": "Limpar Caches de Atalhos",
-    "clearPalCachesDescription": "Limpa os dados em cache usados para acelerar os Atalhos. Isso não afetará seus Pals nem o histórico de chats.",
+    "clearAssistantCaches": "Limpar Caches de Atalhos",
+    "clearAssistantCachesDescription": "Limpa os dados em cache usados para acelerar os Atalhos. Isso não afetará seus Assistentes nem o histórico de chats.",
     "clearCachesButton": "Limpar Caches",
     "clearCachesConfirmTitle": "Limpar Caches de Atalhos?",
-    "clearCachesConfirmMessage": "Isso limpará todos os dados de sessão em cache ({{fileCount}} arquivos, {{size}}). Os Atalhos podem ficar mais lentos no primeiro uso após a limpeza. Isso não afetará seus Pals nem o histórico de chats.",
+    "clearCachesConfirmMessage": "Isso limpará todos os dados de sessão em cache ({{fileCount}} arquivos, {{size}}). Os Atalhos podem ficar mais lentos no primeiro uso após a limpeza. Isso não afetará seus Assistentes nem o histórico de chats.",
     "clearCachesSuccess": "{{count}} arquivo(s) de cache excluído(s) com sucesso.",
     "clearCachesError": "Falha ao limpar caches. Tente novamente.",
     "noCachesToClear": "Nenhum cache para limpar.",
@@ -167,7 +167,7 @@
     "serverTypeHelp": "Detectado automaticamente; altere se estiver errado.",
     "internetSearch": {
       "title": "Busca na internet",
-      "description": "Deixe os Pals pesquisarem na web com as próprias ferramentas. Use sua própria chave de API — o DRS AI nunca guarda suas chaves nem encaminha suas consultas.",
+      "description": "Deixe os Assistentes pesquisarem na web com as próprias ferramentas. Use sua própria chave de API — o DRS AI nunca guarda suas chaves nem encaminha suas consultas.",
       "providerLabel": "Provedor de busca",
       "providerGated": "Em breve",
       "keyLabel": "Chave de API",
@@ -183,7 +183,7 @@
       "resultCountLabel": "Resultados por busca",
       "resultCountDescription": "Menos resultados deixam mais espaço no contexto do modelo.",
       "consentTitle": "As buscas saem do seu dispositivo",
-      "consentDescription": "Quando um Pal faz uma busca na web, sua consulta é enviada ao provedor selecionado pela internet. Quando um Pal lê uma página, a URL e o conteúdo da página podem, em vez disso, ser enviados a um serviço de leitura padrão (r.jina.ai) caso o provedor selecionado não tenha um leitor nativo. Chaves e consultas nunca são enviadas ao DRS AI.",
+      "consentDescription": "Quando um Assistente faz uma busca na web, sua consulta é enviada ao provedor selecionado pela internet. Quando um Assistente lê uma página, a URL e o conteúdo da página podem, em vez disso, ser enviados a um serviço de leitura padrão (r.jina.ai) caso o provedor selecionado não tenha um leitor nativo. Chaves e consultas nunca são enviadas ao DRS AI.",
       "consentAccept": "Entendi",
       "consentRequired": "Aceite o aviso acima para definir uma chave e ativar a busca.",
       "consentGivenTitle": "A busca na web está ativada",
@@ -609,7 +609,7 @@
       "activateModelButton": "Selecionar Modelo",
       "loading": "Carregando...",
       "gettingReadyTitle": "{{name}} está se preparando",
-      "gettingReadyDescription": "Avisaremos assim que seu pal estiver pronto para conversar. Toque no banner no topo para ver o andamento."
+      "gettingReadyDescription": "Avisaremos assim que seu assistant estiver pronto para conversar. Toque no banner no topo para ver o andamento."
     },
     "chatInput": {
       "inputPlaceholder": "Mensagem",
@@ -695,22 +695,22 @@
         "title": "Sucesso",
         "message": "Essas configurações serão aplicadas a todas as sessões futuras"
       },
-      "palSettings": "Configurações do Pal",
+      "assistantSettings": "Configurações do Assistente",
       "settingsSource": "Origem das Configurações"
     },
-    "palGenerationSettingsSheet": {
-      "title": "Configurações de Geração - {{palName}}",
+    "assistantGenerationSettingsSheet": {
+      "title": "Configurações de Geração - {{assistantName}}",
       "invalidValues": "Valores Inválidos",
       "invalidNumericValuesMessage": "Deve ser um número válido",
       "pleaseCorrect": "Corrija o seguinte:",
       "ok": "OK",
       "error": "Erro",
-      "failedToSave": "Falha ao salvar as configurações do pal",
+      "failedToSave": "Falha ao salvar as configurações do assistant",
       "resetToGlobal": "Redefinir para os Padrões Globais",
       "resetToSystem": "Redefinir para os Padrões do Sistema",
-      "clearPalSettings": "Limpar Configurações do Pal",
-      "customSettingsFor": "Configurações personalizadas para {{palName}}",
-      "inheritedSettingsFor": "Configurações herdadas para {{palName}}"
+      "clearAssistantSettings": "Limpar Configurações do Assistente",
+      "customSettingsFor": "Configurações personalizadas para {{assistantName}}",
+      "inheritedSettingsFor": "Configurações herdadas para {{assistantName}}"
     },
     "chatHeaderTitle": {
       "defaultTitle": "Chat"
@@ -718,17 +718,17 @@
     "fileMessage": {
       "fileButtonAccessibilityLabel": "Arquivo"
     },
-    "chatPalModelPickerSheet": {
+    "chatAssistantModelPickerSheet": {
       "modelsTab": "Modelos",
-      "palsTab": "Pals",
-      "noPal": "Nenhum Pal",
-      "disablePal": "Desativar pal ativo",
+      "assistantsTab": "Assistentes",
+      "noAssistant": "Nenhum Assistente",
+      "disableAssistant": "Desativar assistant ativo",
       "noDescription": "Sem descrição",
       "assistantType": "Assistente",
       "roleplayType": "Interpretação",
       "videoType": "Vídeo",
       "confirmationTitle": "Confirmação",
-      "modelSwitchMessage": "Este pal tem um modelo padrão diferente ({{modelName}}). Deseja mudar para o modelo padrão do pal?",
+      "modelSwitchMessage": "Este assistant tem um modelo padrão diferente ({{modelName}}). Deseja mudar para o modelo padrão do assistant?",
       "keepButton": "Manter",
       "switchButton": "Mudar"
     },
@@ -828,14 +828,14 @@
       "proceedWithReset": "Prosseguir com a Redefinição",
       "confirmReset": "Confirmar Redefinição"
     },
-    "palSheet": {
+    "assistantSheet": {
       "title": {
-        "edit": "Editar Pal",
-        "newPal": "Novo Pal",
-        "newVideoPal": "Novo Pal de Vídeo"
+        "edit": "Editar Assistente",
+        "newAssistant": "Novo Assistente",
+        "newVideoAssistant": "Novo Assistente de Vídeo"
       },
       "description": "Descrição",
-      "descriptionPlaceholder": "Insira uma breve descrição do seu pal",
+      "descriptionPlaceholder": "Insira uma breve descrição do seu assistant",
       "parameters": "Parâmetros",
       "generationSettings": "Configurações de Geração",
       "configureGenerationSettings": "Configurar Configurações de Geração",
@@ -862,20 +862,20 @@
       "greeting": {
         "sectionLabel": "Saudação",
         "textLabel": "Mensagem de saudação",
-        "textPlaceholder": "O que este pal deve dizer em um chat vazio?",
+        "textPlaceholder": "O que este assistant deve dizer em um chat vazio?",
         "suggestedPromptsLabel": "Prompts sugeridos",
         "addPromptButton": "Adicionar prompt",
         "promptPlaceholder": "Um prompt curto para o chip",
         "removePromptLabel": "Remover prompt"
       }
     },
-    "assistantPalSheet": {
+    "assistantPersonaSheet": {
       "title": {
-        "create": "Criar Pal Assistente",
-        "edit": "Editar Pal Assistente"
+        "create": "Criar Assistente Assistente",
+        "edit": "Editar Assistente Assistente"
       },
-      "palName": "Nome do Pal",
-      "palNamePlaceholder": "Nome",
+      "assistantName": "Nome do Assistente",
+      "assistantNamePlaceholder": "Nome",
       "defaultModel": "Modelo Padrão",
       "defaultModelPlaceholder": "Selecionar modelo",
       "validation": {
@@ -887,19 +887,19 @@
     "modelNotAvailable": {
       "noModelsDownloaded": "Você ainda não tem nenhum modelo baixado. Baixe um modelo primeiro.",
       "downloadAModel": "Baixar um modelo",
-      "defaultModelNotDownloaded": "Este pal recomenda um modelo específico que precisa ser baixado, ou você pode selecionar um modelo diferente.",
+      "defaultModelNotDownloaded": "Este assistant recomenda um modelo específico que precisa ser baixado, ou você pode selecionar um modelo diferente.",
       "modelNotDownloadedShort": "Modelo não baixado",
       "recommendedModel": "Modelo Recomendado",
       "cancelDownload": "Cancelar download",
       "download": "Baixar"
     },
-    "roleplayPalSheet": {
+    "roleplayPersonaSheet": {
       "title": {
-        "create": "Criar Pal de Interpretação",
-        "edit": "Editar Pal de Interpretação"
+        "create": "Criar Assistente de Interpretação",
+        "edit": "Editar Assistente de Interpretação"
       },
-      "palName": "Nome do Pal",
-      "palNamePlaceholder": "Nome",
+      "assistantName": "Nome do Assistente",
+      "assistantNamePlaceholder": "Nome",
       "defaultModel": "Modelo Padrão",
       "defaultModelPlaceholder": "Selecionar modelo",
       "descriptionSection": "Descrição",
@@ -923,13 +923,13 @@
       },
       "create": "Criar"
     },
-    "lookiePalSheet": {
+    "lookiePersonaSheet": {
       "title": {
-        "create": "Criar Pal Lookie",
-        "edit": "Editar Pal Lookie"
+        "create": "Criar Assistente Lookie",
+        "edit": "Editar Assistente Lookie"
       },
-      "palName": "Nome do Pal",
-      "palNamePlaceholder": "Digite um nome para o seu Pal Lookie",
+      "assistantName": "Nome do Assistente",
+      "assistantNamePlaceholder": "Digite um nome para o seu Assistente Lookie",
       "visionModel": "Modelo de Visão",
       "visionModelPlaceholder": "Selecione um modelo de visão",
       "requiredModelsSection": "Modelos Necessários",
@@ -950,7 +950,7 @@
       },
       "generatingPrompt": {
         "label": "Propósito e Contexto",
-        "placeholder": "Descreva o papel, propósito ou cenário deste pal..."
+        "placeholder": "Descreva o papel, propósito ou cenário deste assistant..."
       },
       "buttons": {
         "loadingModel": "Carregando modelo...",
@@ -972,7 +972,7 @@
       "menuItems": {
         "chat": "Chat",
         "models": "Modelos",
-        "pals": "Pals",
+        "assistants": "Assistentes",
         "benchmark": "Benchmark",
         "settings": "Configurações",
         "appInfo": "Sobre o App",
@@ -1013,7 +1013,12 @@
         "total": "Total: ",
         "usage": "Uso: "
       },
-      "byteSizes": ["Bytes", "KB", "MB", "GB"]
+      "byteSizes": [
+        "Bytes",
+        "KB",
+        "MB",
+        "GB"
+      ]
     },
     "chatView": {
       "menuItems": {
@@ -1024,18 +1029,18 @@
         "reportContent": "Denunciar Conteúdo"
       }
     },
-    "palHeaderRight": {
-      "exportAllPals": "Exportar todos os pals",
-      "importPals": "Importar pals",
-      "importSuccess": "{{count}} pal(s) importado(s) com sucesso.",
-      "importError": "Falha ao importar pals. Verifique o formato do arquivo."
+    "assistantHeaderRight": {
+      "exportAllAssistants": "Exportar todos os assistants",
+      "importAssistants": "Importar assistants",
+      "importSuccess": "{{count}} assistant(s) importado(s) com sucesso.",
+      "importError": "Falha ao importar assistants. Verifique o formato do arquivo."
     }
   },
-  "palsScreen": {
+  "assistantsScreen": {
     "sectionTitles": {
-      "myPalsLocal": "Meus Pals (local)",
+      "myAssistantsLocal": "Meus Assistentes (local)",
       "myLibrary": "Minha Biblioteca (hub.drsai.app)",
-      "discoverPals": "Descobrir Pals (hub.drsai.app)"
+      "discoverAssistants": "Descobrir Assistentes (hub.drsai.app)"
     },
     "systemPrompt": "Prompt de Sistema",
     "videoAnalysis": "Análise de Vídeo",
@@ -1050,26 +1055,26 @@
     "assistant": "Assistente",
     "roleplay": "Interpretação",
     "video": "Vídeo",
-    "deletePal": "Excluir Pal",
-    "deletePalMessage": "Tem certeza de que deseja excluir este pal?",
+    "deleteAssistant": "Excluir Assistente",
+    "deleteAssistantMessage": "Tem certeza de que deseja excluir este assistant?",
     "missingModel": "Modelo Ausente",
-    "missingModelMessage": "O modelo padrão \"{{modelName}}\" para este pal não está disponível. Baixe-o na tela de edição ou selecione um modelo diferente.",
+    "missingModelMessage": "O modelo padrão \"{{modelName}}\" para este assistant não está disponível. Baixe-o na tela de edição ou selecione um modelo diferente.",
     "search": "Pesquisar",
     "profile": "Perfil",
     "signIn": "Entrar",
-    "addPal": "Adicionar Pal",
+    "addAssistant": "Adicionar Assistente",
     "signInToAccessLibrary": "Entre para acessar sua biblioteca do hub.drsai.app",
     "signOut": "Sair",
     "signOutConfirmation": "Tem certeza de que deseja sair?",
     "signOutError": "Falha ao sair. Tente novamente.",
     "account": "Conta",
     "signInToDrshub": "Entrar no Drshub",
-    "signInDescription": "Acesse sua biblioteca, crie Pals privados e sincronize entre dispositivos",
-    "searchAllPals": "Pesquisar todos os Pals...",
-    "deletePalConfirmation": "Tem certeza de que deseja excluir \"{{palName}}\"?",
+    "signInDescription": "Acesse sua biblioteca, crie Assistentes privados e sincronize entre dispositivos",
+    "searchAllAssistants": "Pesquisar todos os Assistentes...",
+    "deleteAssistantConfirmation": "Tem certeza de que deseja excluir \"{{assistantName}}\"?",
     "filters": {
       "all": "Todos",
-      "myPals": "Meus Pals",
+      "myAssistants": "Meus Assistentes",
       "local": "Local",
       "video": "Vídeo",
       "free": "Grátis",
@@ -1082,15 +1087,15 @@
       "download": "Baixar",
       "getFree": "Obter Grátis"
     },
-    "premiumPalDescription": "Pal premium da comunidade hub.drsai.app",
-    "premiumInfoText": "Visite hub.drsai.app para explorar mais pals",
+    "premiumAssistantDescription": "Assistente premium da comunidade hub.drsai.app",
+    "premiumInfoText": "Visite hub.drsai.app para explorar mais assistants",
     "sortOptions": {
       "newest": "Mais Recentes",
       "oldest": "Mais Antigos",
       "rating": "Melhor Avaliados",
       "popular": "Mais Populares"
     },
-    "palDetailSheet": {
+    "assistantDetailSheet": {
       "by": "por",
       "unknown": "Desconhecido",
       "rating": "Avaliação",
@@ -1103,18 +1108,18 @@
       "systemPrompt": "Prompt de Sistema",
       "downloaded": "Baixado",
       "success": "Sucesso",
-      "palAddedToCollection": "O pal foi adicionado à sua coleção!",
+      "assistantAddedToCollection": "O assistant foi adicionado à sua coleção!",
       "error": "Erro",
-      "failedToLoadDetails": "Falha ao carregar os detalhes do pal",
-      "failedToDownload": "Falha ao baixar o pal",
-      "premiumPalMessage": "Este é um Pal Premium.\n• Se você já o desbloqueou com sua conta Drshub, basta entrar para acessar todos os detalhes.\n• Ainda não desbloqueou? Visite o app hub.drsai.app para saber mais.",
+      "failedToLoadDetails": "Falha ao carregar os detalhes do assistant",
+      "failedToDownload": "Falha ao baixar o assistant",
+      "premiumAssistantMessage": "Este é um Assistente Premium.\n• Se você já o desbloqueou com sua conta Drshub, basta entrar para acessar todos os detalhes.\n• Ainda não desbloqueou? Visite o app hub.drsai.app para saber mais.",
       "notAvailable": "N/D",
       "buyOnDrshub": "Comprar no Drshub",
       "finalizingPurchase": "Finalizando sua compra…",
       "processingPurchase": "Processando — será desbloqueado em breve.",
       "checkoutSessionExpired": "Sua sessão expirou. Entre novamente para continuar.",
       "signInAgain": "Entrar novamente",
-      "palNotAvailable": "Este pal não está disponível para compra no momento.",
+      "assistantNotAvailable": "Este assistant não está disponível para compra no momento.",
       "checkoutFailed": "Algo deu errado. Tente novamente."
     }
   },
@@ -1165,13 +1170,13 @@
       "step1": "• Edite o prompt (opcional) para guiar a análise",
       "step2": "• Toque no botão da câmera para iniciar a análise de vídeo ao vivo",
       "step3": "• Ajuste a frequência de capturas enquanto a câmera estiver ativa",
-      "step4": "• Mude para outro pal para o chat de texto normal"
+      "step4": "• Mude para outro assistant para o chat de texto normal"
     }
   },
   "screenTitles": {
     "chat": "Chat",
     "models": "Modelos",
-    "pals": "Pals (experimental)",
+    "assistants": "Assistentes (experimental)",
     "benchmark": "Benchmark",
     "settings": "Configurações",
     "appInfo": "Sobre o App",
@@ -1225,7 +1230,7 @@
     "increaseContextReloading": "Recarregando modelo com um contexto maior…",
     "increaseContextSuccess": "Contexto aumentado para {{target}} tokens.",
     "increaseContextFailure": "Não foi possível aumentar o tamanho do contexto. Sua configuração anterior foi restaurada.",
-    "palLoadHint": "Este pal costuma precisar de mais espaço do que o tamanho de contexto atual permite.",
+    "assistantLoadHint": "Este assistant costuma precisar de mais espaço do que o tamanho de contexto atual permite.",
     "generatingPreview": "Gerando pré-visualização… ({{tokens}} tokens)",
     "generatingPreviewPending": "Gerando pré-visualização…",
     "toolUsedChip": "usou {{name}}",
@@ -1493,15 +1498,15 @@
       "brand": "DRS AI"
     },
     "screen1": {
-      "title": "Conheça seus pals.",
-      "titleAccent": "pals.",
+      "title": "Conheça seus assistants.",
+      "titleAccent": "assistants.",
       "body": "Pequenos amigos inteligentes que vivem dentro do seu celular.\nVamos te ajudar a configurar - vai levar só um minuto.",
       "cta": "Me Mostre Como Funciona",
       "eyebrow": "Bem-vindo ao DRS AI"
     },
     "screen2": {
       "title": "A Qualquer Hora,\nEm Qualquer Lugar.",
-      "body": "Seus pals vivem dentro do seu celular.\nSem internet, sem sinal - eles funcionam em aviões, fora da rede, em vilarejos remotos.",
+      "body": "Seus assistants vivem dentro do seu celular.\nSem internet, sem sinal - eles funcionam em aviões, fora da rede, em vilarejos remotos.",
       "highlight": "Sem internet, sem sinal",
       "cta": "Próximo",
       "eyebrow": "A ideia",
@@ -1510,7 +1515,7 @@
     "screen3": {
       "title": "Menores,\nmas seus.",
       "titleAccent": "Menores,",
-      "body": "Os pals no seu celular são rápidos e privados - mas mais leves que a IA na nuvem. Pense em um companheiro de bolso, não em um oráculo onisciente.",
+      "body": "Os assistants no seu celular são rápidos e privados - mas mais leves que a IA na nuvem. Pense em um companheiro de bolso, não em um oráculo onisciente.",
       "highlight": "rápidos e privados",
       "cta": "Entendi",
       "eyebrow": "Um aviso"
@@ -1524,8 +1529,8 @@
       "eyebrow": "Privacidade garantida"
     },
     "screen5": {
-      "title": "Para que é o seu pal?",
-      "body": "Escolha o que você gostaria de discutir - vamos combinar um pal que se encaixe no seu celular.",
+      "title": "Para que é o seu assistant?",
+      "body": "Escolha o que você gostaria de discutir - vamos combinar um assistant que se encaixe no seu celular.",
       "topic": {
         "smartchat": "Chat Inteligente",
         "coding": "Programação",
@@ -1540,7 +1545,7 @@
         "education": "Aprenda, explique, faça testes",
         "roleplay": "Personagens, cenários",
         "creative_writing": "Histórias, ideias, rascunhos",
-        "else": "Explore todos os pals depois no app"
+        "else": "Explore todos os assistants depois no app"
       }
     },
     "screen6": {
@@ -1557,9 +1562,9 @@
         "best": "Melhor"
       },
       "subtitleTemplate": "{{name}} pensa usando um pequeno modelo de IA no seu celular - escolha um que se encaixe.",
-      "pal": {
+      "assistant": {
         "pip": {
-          "body": "Encontramos o pal perfeito para você - um companheiro amigável para o dia a dia. Inteligente o suficiente para a maioria das coisas, leve o suficiente para qualquer celular."
+          "body": "Encontramos o assistant perfeito para você - um companheiro amigável para o dia a dia. Inteligente o suficiente para a maioria das coisas, leve o suficiente para qualquer celular."
         },
         "codie": {
           "body": "Conheça o Codie — seu programador-parceiro local. Lê código, escreve código, explica partes complicadas sem nunca sair do seu celular."
@@ -1577,7 +1582,7 @@
     }
   },
   "downloadBanner": {
-    "titleByPal": "{{name}} está sendo baixado",
+    "titleByAssistant": "{{name}} está sendo baixado",
     "titleByModel": "{{name}} está sendo baixado",
     "extraInProgress": "+{{count}} mais em andamento"
   }

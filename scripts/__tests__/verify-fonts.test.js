@@ -63,10 +63,7 @@ function runWithOverrides(overrides = {}) {
         path.join(tmp, 'android', 'app', 'src', 'main', 'assets', 'fonts', f),
       );
     }
-    fs.copyFileSync(
-      INFO_PLIST,
-      path.join(tmp, 'ios', 'DrsAI', 'Info.plist'),
-    );
+    fs.copyFileSync(INFO_PLIST, path.join(tmp, 'ios', 'DrsAI', 'Info.plist'));
     // index.ts + the locale JSONs feed the headline glyph-coverage check.
     for (const f of fs.readdirSync(LOCALES_DIR)) {
       if (f === 'index.ts' || f.endsWith('.json')) {

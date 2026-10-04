@@ -116,7 +116,7 @@ describe('design-token grep invariants', () => {
       // matching architecture-doc note.
       'screens/OnboardingScreens',
       // Download overlay (banner + sheet + progress card) introduces the
-      // pal-facing "in flight" surface using the same Figma token set as
+      // assistant-facing "in flight" surface using the same Figma token set as
       // onboarding; lives at app-level above the navigator.
       'components/DownloadOverlay',
       'components/DownloadProgressCard',

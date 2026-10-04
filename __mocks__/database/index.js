@@ -28,13 +28,13 @@ class GlobalSetting {
   static table = 'global_settings';
 }
 
-class LocalPal {
+class LocalAssistant {
   static table = 'local_pals';
 
   constructor() {
-    this.id = 'mock-pal-id';
-    this.name = 'Mock Pal';
-    this.description = 'A mock pal for testing';
+    this.id = 'mock-assistant-id';
+    this.name = 'Mock Assistant';
+    this.description = 'A mock assistant for testing';
     this.thumbnailUrl = null;
     this.systemPrompt = 'You are a helpful assistant.';
     this.originalSystemPrompt = null;
@@ -82,8 +82,8 @@ class LocalPal {
     }
   }
 
-  // Mock the toPal method
-  toPal() {
+  // Mock the toAssistant method
+  toAssistant() {
     return {
       type: 'local',
       id: this.id,
@@ -217,12 +217,12 @@ const adapter = {
 };
 
 // Mock collection for local_pals
-const mockLocalPalsCollection = {
+const mockLocalAssistantsCollection = {
   query: () => ({
-    fetch: async () => [new LocalPal()], // Return array of mock LocalPal instances
+    fetch: async () => [new LocalAssistant()], // Return array of mock LocalAssistant instances
   }),
   create: async callback => {
-    const record = new LocalPal();
+    const record = new LocalAssistant();
     if (callback) {
       callback(record);
     }
@@ -234,7 +234,7 @@ const mockLocalPalsCollection = {
 const mockCollections = {
   get: tableName => {
     if (tableName === 'local_pals') {
-      return mockLocalPalsCollection;
+      return mockLocalAssistantsCollection;
     }
     // Return a basic mock for other tables
     return {
@@ -261,7 +261,7 @@ const mockDatabase = {
       Message,
       CompletionSetting,
       GlobalSetting,
-      LocalPal,
+      LocalAssistant,
     ],
   }),
   collections: mockCollections,
@@ -278,7 +278,7 @@ export {
   Message,
   CompletionSetting,
   GlobalSetting,
-  LocalPal,
+  LocalAssistant,
   Q,
   mockDatabase,
 };

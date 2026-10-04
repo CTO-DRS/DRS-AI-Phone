@@ -1,2 +1,2 @@
-export {PalDetailSheet} from './PalDetailSheet';
+export {AssistantDetailSheet} from './AssistantDetailSheet';
 export {AuthSheet} from './AuthSheet';

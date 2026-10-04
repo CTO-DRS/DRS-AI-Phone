@@ -9,13 +9,13 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useTheme} from '../../hooks';
 import {createStyles} from './styles';
 import {chatSessionStore, SessionMetaData} from '../../store';
-import {Menu, RenameModal, Checkbox} from '..';
+import {Menu, RenameModal, Checkbox, BrandHeader} from '..';
 import {
   BenchmarkIcon,
   ChatIcon,
   EditIcon,
   ModelIcon,
-  PalIcon,
+  AssistantIcon,
   SettingsIcon,
   ShareIcon,
   StarIcon,
@@ -536,6 +536,7 @@ export const SidebarContent: React.FC<DrawerContentComponentProps> = observer(
     const ListHeaderComponent = React.useMemo(
       () => (
         <View>
+          <BrandHeader />
           <Drawer.Section showDivider={false}>
             <Drawer.Item
               label={l10n.components.sidebarContent.menuItems.chat}
@@ -545,11 +546,11 @@ export const SidebarContent: React.FC<DrawerContentComponentProps> = observer(
               testID="drawer-item-chat"
             />
             <Drawer.Item
-              label={l10n.components.sidebarContent.menuItems.pals}
-              icon={() => <PalIcon stroke={theme.colors.primary} />}
-              onPress={() => props.navigation.navigate(ROUTES.PALS)}
+              label={l10n.components.sidebarContent.menuItems.assistants}
+              icon={() => <AssistantIcon stroke={theme.colors.primary} />}
+              onPress={() => props.navigation.navigate(ROUTES.ASSISTANTS)}
               style={styles.menuDrawerItem}
-              testID="drawer-item-pals"
+              testID="drawer-item-assistants"
             />
             <Drawer.Item
               label={l10n.components.sidebarContent.menuItems.models}

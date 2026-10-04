@@ -16,13 +16,13 @@ describe('DrshubApiService', () => {
 
     const {drshubApiService, DrshubError} = require('../DrshubApiService');
 
-    await expect(drshubApiService.getPals()).rejects.toThrow(DrshubError);
-    await expect(drshubApiService.getPals()).rejects.toThrow(
+    await expect(drshubApiService.getAssistants()).rejects.toThrow(DrshubError);
+    await expect(drshubApiService.getAssistants()).rejects.toThrow(
       'Drshub API not configured',
     );
   });
 
-  it('builds correct URL and maps response in getPals', async () => {
+  it('builds correct URL and maps response in getAssistants', async () => {
     jest.doMock('@env', () => ({DRSHUB_API_BASE_URL: 'https://api.test'}));
     jest.doMock('../supabase', () => ({
       getAuthHeaders: jest.fn().mockResolvedValue({}),
@@ -32,7 +32,7 @@ describe('DrshubApiService', () => {
     global.fetch = jest.fn().mockResolvedValue({
       ok: true,
       json: async () => ({
-        pals: [],
+        assistants: [],
         pagination: {page: 2, limit: 5, total: 0, has_more: false},
         filters_applied: {},
       }),
@@ -40,7 +40,7 @@ describe('DrshubApiService', () => {
 
     const {drshubApiService} = require('../DrshubApiService');
 
-    const result = await drshubApiService.getPals({
+    const result = await drshubApiService.getAssistants({
       query: 'foo',
       category_ids: ['cat1'],
       tag_names: ['tag1'],
@@ -52,11 +52,11 @@ describe('DrshubApiService', () => {
     });
 
     expect(global.fetch).toHaveBeenCalledWith(
-      'https://api.test/api/mobile/pals?q=foo&category=cat1&tag=tag1&price_min=1&price_max=100&sort=popular&page=2&limit=5',
+      'https://api.test/api/mobile/assistants?q=foo&category=cat1&tag=tag1&price_min=1&price_max=100&sort=popular&page=2&limit=5',
       expect.any(Object),
     );
     expect(result).toEqual({
-      pals: [],
+      assistants: [],
       total_count: 0,
       page: 2,
       limit: 5,
@@ -120,10 +120,13 @@ describe('DrshubApiService', () => {
         .fn()
         .mockResolvedValue({ok: true, json: async () => session});
 
-      const result = await drshubApiService.createCheckoutSession('pal-1', {
-        successUrl: 'https://host.test/app-return/success',
-        cancelUrl: 'https://host.test/app-return/cancel',
-      });
+      const result = await drshubApiService.createCheckoutSession(
+        'assistant-1',
+        {
+          successUrl: 'https://host.test/app-return/success',
+          cancelUrl: 'https://host.test/app-return/cancel',
+        },
+      );
 
       expect(result).toEqual(session);
       const [url, options] = (global.fetch as jest.Mock).mock.calls[0];
@@ -131,7 +134,7 @@ describe('DrshubApiService', () => {
       expect(options.method).toBe('POST');
       expect(options.headers.Authorization).toBe('Bearer token-abc');
       expect(JSON.parse(options.body)).toEqual({
-        pal_id: 'pal-1',
+        pal_id: 'assistant-1',
         success_url: 'https://host.test/app-return/success',
         cancel_url: 'https://host.test/app-return/cancel',
       });
@@ -147,7 +150,7 @@ describe('DrshubApiService', () => {
         json: async () => body,
       });
       const err = await drshubApiService
-        .createCheckoutSession('pal-1', {
+        .createCheckoutSession('assistant-1', {
           successUrl: 'https://host.test/app-return/success',
           cancelUrl: 'https://host.test/app-return/cancel',
         })
@@ -165,9 +168,9 @@ describe('DrshubApiService', () => {
     });
 
     it('maps a 400 "already own" message to already_owned', async () => {
-      expect(await mapStatus(400, {error: 'You already own this pal'})).toBe(
-        'already_owned',
-      );
+      expect(
+        await mapStatus(400, {error: 'You already own this assistant'}),
+      ).toBe('already_owned');
     });
 
     it('maps a 400 with explicit already_owned code to already_owned', async () => {
@@ -186,7 +189,7 @@ describe('DrshubApiService', () => {
       global.fetch = jest.fn().mockRejectedValue(new Error('offline'));
 
       await expect(
-        drshubApiService.createCheckoutSession('pal-1', {
+        drshubApiService.createCheckoutSession('assistant-1', {
           successUrl: 'https://host.test/app-return/success',
           cancelUrl: 'https://host.test/app-return/cancel',
         }),
@@ -194,7 +197,7 @@ describe('DrshubApiService', () => {
     });
   });
 
-  describe('transformApiPal', () => {
+  describe('transformApiAssistant', () => {
     let service: any;
 
     beforeEach(() => {
@@ -212,10 +215,10 @@ describe('DrshubApiService', () => {
       service = drshubApiService;
     });
 
-    it('should transform a complete API pal response', () => {
-      const apiPal = {
-        id: 'pal-123',
-        title: 'Test Pal',
+    it('should transform a complete API assistant response', () => {
+      const apiAssistant = {
+        id: 'assistant-123',
+        title: 'Test Assistant',
         description: 'Test description',
         thumbnail_url: 'https://example.com/thumb.jpg',
         price_cents: 999,
@@ -243,12 +246,12 @@ describe('DrshubApiService', () => {
         protection_level: 'reveal_on_purchase' as const,
       };
 
-      const result = service.transformApiPal(apiPal);
+      const result = service.transformApiAssistant(apiAssistant);
 
       expect(result.type).toBe('drshub');
-      expect(result.id).toBe('pal-123');
+      expect(result.id).toBe('assistant-123');
       expect(result.creator_id).toBe('creator-456');
-      expect(result.title).toBe('Test Pal');
+      expect(result.title).toBe('Test Assistant');
       expect(result.protection_level).toBe('reveal_on_purchase');
       expect(result.allow_fork).toBe(true);
       expect(result.average_rating).toBe(4.5);
@@ -256,9 +259,9 @@ describe('DrshubApiService', () => {
     });
 
     it('should handle missing optional fields with defaults', () => {
-      const apiPal = {
-        id: 'pal-minimal',
-        title: 'Minimal Pal',
+      const apiAssistant = {
+        id: 'assistant-minimal',
+        title: 'Minimal Assistant',
         price_cents: 0,
         is_free: true,
         categories: [],
@@ -268,7 +271,7 @@ describe('DrshubApiService', () => {
         created_at: '2024-01-01T00:00:00Z',
       };
 
-      const result = service.transformApiPal(apiPal);
+      const result = service.transformApiAssistant(apiAssistant);
 
       expect(result.model_settings).toEqual({});
       expect(result.protection_level).toBe('public');
@@ -278,8 +281,8 @@ describe('DrshubApiService', () => {
     });
 
     it('should handle missing creator with empty defaults', () => {
-      const apiPal = {
-        id: 'pal-no-creator',
+      const apiAssistant = {
+        id: 'assistant-no-creator',
         title: 'No Creator',
         price_cents: 0,
         is_free: true,
@@ -290,7 +293,7 @@ describe('DrshubApiService', () => {
         created_at: '2024-01-01T00:00:00Z',
       };
 
-      const result = service.transformApiPal(apiPal);
+      const result = service.transformApiAssistant(apiAssistant);
 
       expect(result.creator_id).toBe('');
       expect(result.creator.id).toBe('');
@@ -299,9 +302,9 @@ describe('DrshubApiService', () => {
     });
 
     it('should transform multiple categories and tags', () => {
-      const apiPal = {
-        id: 'pal-multi',
-        title: 'Multi Pal',
+      const apiAssistant = {
+        id: 'assistant-multi',
+        title: 'Multi Assistant',
         price_cents: 0,
         is_free: true,
         categories: [
@@ -317,7 +320,7 @@ describe('DrshubApiService', () => {
         created_at: '2024-01-01T00:00:00Z',
       };
 
-      const result = service.transformApiPal(apiPal);
+      const result = service.transformApiAssistant(apiAssistant);
 
       expect(result.categories).toHaveLength(2);
       expect(result.categories[0].name).toBe('Productivity');
@@ -328,8 +331,8 @@ describe('DrshubApiService', () => {
     });
 
     it('should handle null rating correctly', () => {
-      const apiPal = {
-        id: 'pal-no-rating',
+      const apiAssistant = {
+        id: 'assistant-no-rating',
         title: 'No Rating',
         price_cents: 0,
         is_free: true,
@@ -340,7 +343,7 @@ describe('DrshubApiService', () => {
         created_at: '2024-01-01T00:00:00Z',
       };
 
-      const result = service.transformApiPal(apiPal);
+      const result = service.transformApiAssistant(apiAssistant);
 
       expect(result.average_rating).toBeUndefined();
       expect(result.review_count).toBe(0);
@@ -354,8 +357,8 @@ describe('DrshubApiService', () => {
       ];
 
       levels.forEach(level => {
-        const apiPal = {
-          id: `pal-${level}`,
+        const apiAssistant = {
+          id: `assistant-${level}`,
           title: 'Test',
           price_cents: 0,
           is_free: true,
@@ -367,15 +370,15 @@ describe('DrshubApiService', () => {
           protection_level: level,
         };
 
-        const result = service.transformApiPal(apiPal);
+        const result = service.transformApiAssistant(apiAssistant);
         expect(result.protection_level).toBe(level);
       });
     });
 
     it('should preserve complex model_settings', () => {
-      const apiPal = {
-        id: 'pal-settings',
-        title: 'Settings Pal',
+      const apiAssistant = {
+        id: 'assistant-settings',
+        title: 'Settings Assistant',
         price_cents: 0,
         is_free: true,
         categories: [],
@@ -391,7 +394,7 @@ describe('DrshubApiService', () => {
         },
       };
 
-      const result = service.transformApiPal(apiPal);
+      const result = service.transformApiAssistant(apiAssistant);
 
       expect(result.model_settings).toEqual({
         temperature: 0.8,
@@ -402,8 +405,8 @@ describe('DrshubApiService', () => {
     });
 
     it('forwards pact, greeting, images, models when present', () => {
-      const apiPal = {
-        id: 'pal-new-fields',
+      const apiAssistant = {
+        id: 'assistant-new-fields',
         title: 'Has new fields',
         price_cents: 0,
         is_free: true,
@@ -427,12 +430,12 @@ describe('DrshubApiService', () => {
         models: [{repo_id: 'foo/bar', is_recommended: true}],
       };
 
-      const result = service.transformApiPal(apiPal);
+      const result = service.transformApiAssistant(apiAssistant);
 
       // Wire-boundary forwarding is verbatim — snake_case preserved, no
       // shape conversion. The snake_case to camelCase rename and the
       // strict-boolean to necessity mapping happen at the next boundary
-      // (PalStore.createLocalPalFromDrshub).
+      // (AssistantStore.createLocalAssistantFromDrshub).
       expect(result.pact).toEqual({
         version: 1,
         talents: [
@@ -453,8 +456,8 @@ describe('DrshubApiService', () => {
     });
 
     it('leaves new fields undefined when absent', () => {
-      const apiPal = {
-        id: 'pal-no-new-fields',
+      const apiAssistant = {
+        id: 'assistant-no-new-fields',
         title: 'No new fields',
         price_cents: 0,
         is_free: true,
@@ -465,7 +468,7 @@ describe('DrshubApiService', () => {
         created_at: '2024-01-01T00:00:00Z',
       };
 
-      const result = service.transformApiPal(apiPal);
+      const result = service.transformApiAssistant(apiAssistant);
 
       expect(result.pact).toBeUndefined();
       expect(result.greeting).toBeUndefined();
@@ -474,8 +477,8 @@ describe('DrshubApiService', () => {
     });
 
     it('forwards pact with version field intact (drop happens at next boundary)', () => {
-      const apiPal = {
-        id: 'pal-pact-version',
+      const apiAssistant = {
+        id: 'assistant-pact-version',
         title: 'Pact with version',
         price_cents: 0,
         is_free: true,
@@ -490,7 +493,7 @@ describe('DrshubApiService', () => {
         },
       };
 
-      const result = service.transformApiPal(apiPal);
+      const result = service.transformApiAssistant(apiAssistant);
 
       // Wire boundary preserves `version`; the conversion site drops it.
       expect(result.pact).toEqual({
@@ -501,8 +504,8 @@ describe('DrshubApiService', () => {
     });
 
     it('forwards explicit null pact/greeting verbatim (server-side null vs absent)', () => {
-      const apiPal = {
-        id: 'pal-null-fields',
+      const apiAssistant = {
+        id: 'assistant-null-fields',
         title: 'Explicit null fields',
         price_cents: 0,
         is_free: true,
@@ -515,7 +518,7 @@ describe('DrshubApiService', () => {
         greeting: null,
       };
 
-      const result = service.transformApiPal(apiPal);
+      const result = service.transformApiAssistant(apiAssistant);
 
       // Forwarder is verbatim; the conversion site collapses null → undefined.
       expect(result.pact).toBeNull();

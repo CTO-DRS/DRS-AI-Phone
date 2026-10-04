@@ -1382,14 +1382,14 @@ export const SettingsScreen: React.FC = observer(() => {
               <Card.Title title={l10n.settings.cacheStorageTitle} />
               <Card.Content>
                 <View style={styles.settingItemContainer}>
-                  {/* Clear Shortcuts Caches */}
+                  {/* Clear Assistant Caches */}
                   <View style={styles.switchContainer}>
                     <View style={styles.textContainer}>
                       <Text variant="titleMedium" style={styles.textLabel}>
-                        {l10n.settings.clearPalCaches}
+                        {l10n.settings.clearAssistantCaches}
                       </Text>
                       <Text variant="labelSmall" style={styles.textDescription}>
-                        {l10n.settings.clearPalCachesDescription}
+                        {l10n.settings.clearAssistantCachesDescription}
                       </Text>
                     </View>
                     <Button
@@ -1400,7 +1400,7 @@ export const SettingsScreen: React.FC = observer(() => {
 
                           if (cacheInfo.fileCount === 0) {
                             Alert.alert(
-                              l10n.settings.clearPalCaches,
+                              l10n.settings.clearAssistantCaches,
                               l10n.settings.noCachesToClear,
                             );
                             return;
@@ -1437,7 +1437,7 @@ export const SettingsScreen: React.FC = observer(() => {
                                       {count: deletedCount.toString()},
                                     );
                                     Alert.alert(
-                                      l10n.settings.clearPalCaches,
+                                      l10n.settings.clearAssistantCaches,
                                       successMessage,
                                     );
                                   } catch (error) {
@@ -1446,7 +1446,7 @@ export const SettingsScreen: React.FC = observer(() => {
                                       error,
                                     );
                                     Alert.alert(
-                                      l10n.settings.clearPalCaches,
+                                      l10n.settings.clearAssistantCaches,
                                       l10n.settings.clearCachesError,
                                     );
                                   }
@@ -1457,7 +1457,7 @@ export const SettingsScreen: React.FC = observer(() => {
                         } catch (error) {
                           console.error('Failed to get cache info:', error);
                           Alert.alert(
-                            l10n.settings.clearPalCaches,
+                            l10n.settings.clearAssistantCaches,
                             l10n.settings.clearCachesError,
                           );
                         }

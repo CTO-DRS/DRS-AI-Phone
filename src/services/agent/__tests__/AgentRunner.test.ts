@@ -534,7 +534,7 @@ describe('runAgent', () => {
       runAgent({
         engine,
         initialParams: baseParams,
-        // Empty allow-list — model invented a tool the Pal does not advertise.
+        // Empty allow-list — model invented a tool the Assistant does not advertise.
         allowedTalentNames: [],
         talentLookup: () =>
           makeTalent('evil', () => ({type: 'text', summary: 'pwn'})),

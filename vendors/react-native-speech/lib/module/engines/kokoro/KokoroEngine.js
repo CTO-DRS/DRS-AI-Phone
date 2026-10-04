@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 /**
  * Kokoro TTS Engine
@@ -13,19 +13,22 @@
  * - Voice blending support
  */
 
-import { Platform } from 'react-native';
-import { isPhonemeInput } from "../../types/index.js";
-import { BPETokenizer } from "./BPETokenizer.js";
-import { VoiceLoader } from "./VoiceLoader.js";
-import { neuralAudioPlayer } from "../NeuralAudioPlayer.js";
-import { createPhonemizer, NoOpPhonemizer } from "./Phonemizer.js";
-import { DEFAULT_COREML_FLAGS } from "../../types/Kokoro.js";
-import { loadNativeDict } from "../../phonemization/index.js";
-import { TextNormalizer } from "./TextNormalizer.js";
-import { EngineStreamSession } from "../EngineStreamSession.js";
-import { createComponentLogger } from "../../utils/logger.js";
-import { stripMarkdown, createMarkdownStreamBuffer } from "../../utils/stripMarkdown.js";
-import { KOKORO_CONSTANTS } from "./constants.js";
+import {Platform} from 'react-native';
+import {isPhonemeInput} from '../../types/index.js';
+import {BPETokenizer} from './BPETokenizer.js';
+import {VoiceLoader} from './VoiceLoader.js';
+import {neuralAudioPlayer} from '../NeuralAudioPlayer.js';
+import {createPhonemizer, NoOpPhonemizer} from './Phonemizer.js';
+import {DEFAULT_COREML_FLAGS} from '../../types/Kokoro.js';
+import {loadNativeDict} from '../../phonemization/index.js';
+import {TextNormalizer} from './TextNormalizer.js';
+import {EngineStreamSession} from '../EngineStreamSession.js';
+import {createComponentLogger} from '../../utils/logger.js';
+import {
+  stripMarkdown,
+  createMarkdownStreamBuffer,
+} from '../../utils/stripMarkdown.js';
+import {KOKORO_CONSTANTS} from './constants.js';
 const log = createComponentLogger('Kokoro', 'Engine');
 
 // Lazy-loaded ONNX Runtime references (loaded via dynamic require)
@@ -42,19 +45,25 @@ function getOnnxRuntime() {
       const onnx = require('onnxruntime-react-native');
       OnnxRuntime = {
         InferenceSession: onnx.InferenceSession,
-        Tensor: onnx.Tensor
+        Tensor: onnx.Tensor,
       };
     } catch {
-      throw new Error('onnxruntime-react-native is required to use the Kokoro engine.\n\n' + 'Install it with:\n' + '  npm install onnxruntime-react-native\n' + '  # or\n' + '  yarn add onnxruntime-react-native\n\n' + 'Then rebuild your app:\n' + '  iOS: cd ios && pod install && cd ..\n' + '  Android: Rebuild the app\n\n' + 'See https://github.com/CTO-DRS/drsai-speech/blob/main/docs/KOKORO_GUIDE.md for details.');
+      throw new Error(
+        'onnxruntime-react-native is required to use the Kokoro engine.\n\n' +
+          'Install it with:\n' +
+          '  npm install onnxruntime-react-native\n' +
+          '  # or\n' +
+          '  yarn add onnxruntime-react-native\n\n' +
+          'Then rebuild your app:\n' +
+          '  iOS: cd ios && pod install && cd ..\n' +
+          '  Android: Rebuild the app\n\n' +
+          'See https://github.com/CTO-DRS/drsai-speech/blob/main/docs/KOKORO_GUIDE.md for details.',
+      );
     }
   }
   return OnnxRuntime;
 }
-const {
-  MAX_TOKEN_LIMIT,
-  DEFAULT_MAX_CHUNK_SIZE,
-  SAMPLE_RATE
-} = KOKORO_CONSTANTS;
+const {MAX_TOKEN_LIMIT, DEFAULT_MAX_CHUNK_SIZE, SAMPLE_RATE} = KOKORO_CONSTANTS;
 
 /**
  * Default execution providers when the caller doesn't specify any.
@@ -67,10 +76,14 @@ const {
  */
 function getDefaultExecutionProviders() {
   if (Platform.OS === 'ios') {
-    return [{
-      name: 'coreml',
-      coreMlFlags: DEFAULT_COREML_FLAGS
-    }, 'xnnpack', 'cpu'];
+    return [
+      {
+        name: 'coreml',
+        coreMlFlags: DEFAULT_COREML_FLAGS,
+      },
+      'xnnpack',
+      'cpu',
+    ];
   }
   return ['xnnpack', 'cpu'];
 }
@@ -139,17 +152,22 @@ export class KokoroEngine {
         throw new Error('Kokoro config required for initialization');
       }
       this.config = config;
-      log.debug(`Initializing with phonemizerType=${config.phonemizerType || 'none'}`);
+      log.debug(
+        `Initializing with phonemizerType=${config.phonemizerType || 'none'}`,
+      );
 
       // Initialize phonemizer based on config
       const phonemizerType = config.phonemizerType || 'js';
       if (phonemizerType === 'js') {
         if (!config.dictPath) {
-          throw new Error("Kokoro phonemizerType 'js' requires `dictPath` in config " + '(path to the IPA dictionary .bin file, EPD1 format).');
+          throw new Error(
+            "Kokoro phonemizerType 'js' requires `dictPath` in config " +
+              '(path to the IPA dictionary .bin file, EPD1 format).',
+          );
         }
         const dict = await loadNativeDict(config.dictPath);
         this.phonemizer = createPhonemizer('js', {
-          dict
+          dict,
         });
       } else {
         this.phonemizer = createPhonemizer(phonemizerType);
@@ -161,7 +179,9 @@ export class KokoroEngine {
       } else if (this.config.vocabPath && this.config.mergesPath) {
         await this.loadTokenizer(this.config.vocabPath, this.config.mergesPath);
       } else {
-        throw new Error('Either tokenizerPath or (vocabPath + mergesPath) must be provided');
+        throw new Error(
+          'Either tokenizerPath or (vocabPath + mergesPath) must be provided',
+        );
       }
 
       // Load voice embeddings
@@ -172,7 +192,9 @@ export class KokoroEngine {
       this.isInitialized = true;
       this.isLoading = false;
       log.info(`engine_init_ms=${Date.now() - initStart}`);
-      log.info('Kokoro uses Kokoro-82M (Apache-2.0); verify upstream license for your use case.');
+      log.info(
+        'Kokoro uses Kokoro-82M (Apache-2.0); verify upstream license for your use case.',
+      );
     } catch (error) {
       this.isLoading = false;
       this.initError = error instanceof Error ? error.message : 'Unknown error';
@@ -184,7 +206,12 @@ export class KokoroEngine {
    * Check if engine is ready
    */
   async isReady() {
-    return this.isInitialized && this.session !== null && this.tokenizer.isReady() && this.voiceLoader.isReady();
+    return (
+      this.isInitialized &&
+      this.session !== null &&
+      this.tokenizer.isReady() &&
+      this.voiceLoader.isReady()
+    );
   }
 
   /**
@@ -201,7 +228,9 @@ export class KokoroEngine {
     if (!inputStr || inputStr.trim().length === 0) {
       // The text-path message predates phoneme input and is observable
       // behaviour (and matches Supertonic) — keep it unchanged.
-      throw new Error(isPhonemes ? 'Phonemes cannot be empty' : 'Text cannot be empty');
+      throw new Error(
+        isPhonemes ? 'Phonemes cannot be empty' : 'Text cannot be empty',
+      );
     }
 
     // Track synthesis state for safe resource release
@@ -238,15 +267,18 @@ export class KokoroEngine {
     // inline markers; structural breaks would be lost.
     const mdBuffer = stripMd ? createMarkdownStreamBuffer() : null;
     const session = new EngineStreamSession({
-      synthesizeChunk: text => this.synthesizeTextChunk(text, voiceId, language, options),
+      synthesizeChunk: text =>
+        this.synthesizeTextChunk(text, voiceId, language, options),
       playAudio: (buffer, playOpts) => neuralAudioPlayer.play(buffer, playOpts),
       stopPlayback: () => neuralAudioPlayer.stop(),
       maxChunkSize,
       playbackOptions: {
         ducking: options?.ducking,
-        silentMode: options?.silentMode
+        silentMode: options?.silentMode,
       },
-      onChunkProgress: this.chunkProgressCallback ? event => this.emitChunkProgress(event) : undefined
+      onChunkProgress: this.chunkProgressCallback
+        ? event => this.emitChunkProgress(event)
+        : undefined,
     });
     this.activeStreamSession = session;
     const wrapFinalize = async () => {
@@ -289,7 +321,7 @@ export class KokoroEngine {
         }
         return wrapFinalize();
       },
-      cancel: wrapCancel
+      cancel: wrapCancel,
     };
   }
 
@@ -332,7 +364,9 @@ export class KokoroEngine {
     // Get voice ID early (needed for language detection)
     const voiceId = options?.voiceId || this.defaultVoiceId;
     const language = this.getLanguageFromVoice(voiceId);
-    log.debug(`Synthesis start: voice=${voiceId}, text="${text.substring(0, 50)}..."`);
+    log.debug(
+      `Synthesis start: voice=${voiceId}, text="${text.substring(0, 50)}..."`,
+    );
 
     // Chunk text by sentences for streaming playback. Phoneme input is
     // never sentence-chunked — IPA has no reliable sentence structure to
@@ -341,18 +375,24 @@ export class KokoroEngine {
     const maxChunkSize = this.config?.maxChunkSize ?? DEFAULT_MAX_CHUNK_SIZE;
     let chunks;
     if (raw) {
-      chunks = [{
-        text,
-        originalText: text,
-        startIndex: 0,
-        endIndex: text.length
-      }];
+      chunks = [
+        {
+          text,
+          originalText: text,
+          startIndex: 0,
+          endIndex: text.length,
+        },
+      ];
     } else {
       // Strip markdown syntax before chunking so structural markers
       // (`---`, `###`, table rows) get converted into sentence breaks the
       // chunker recognizes. Default on; consumer can opt out via options.
-      const cleanText = options?.stripMarkdown === false ? text : stripMarkdown(text);
-      chunks = this.normalizer.chunkBySentencesWithMetadata(cleanText, maxChunkSize);
+      const cleanText =
+        options?.stripMarkdown === false ? text : stripMarkdown(text);
+      chunks = this.normalizer.chunkBySentencesWithMetadata(
+        cleanText,
+        maxChunkSize,
+      );
     }
     log.debug(`Text chunked into ${chunks.length} chunks`);
 
@@ -366,7 +406,7 @@ export class KokoroEngine {
         return undefined;
       }
       const chunk = chunks[chunkIndex];
-      const progress = Math.round(chunkIndex / chunks.length * 100);
+      const progress = Math.round((chunkIndex / chunks.length) * 100);
       log.debug(`Processing chunk ${chunkIndex + 1}/${chunks.length}`);
 
       // Emit chunk start progress event
@@ -377,9 +417,9 @@ export class KokoroEngine {
         chunkText: chunk.text,
         textRange: {
           start: chunk.startIndex,
-          end: chunk.endIndex
+          end: chunk.endIndex,
         },
-        progress
+        progress,
       });
 
       // Get current chunk's audio (either from pipeline or synthesize now)
@@ -389,11 +429,18 @@ export class KokoroEngine {
         audioBuffer = await this.raceWithStop(nextAudioPromise, stopSignal);
         nextAudioPromise = null;
       } else {
-        audioBuffer = await this.raceWithStop(this.synthesizeTextChunk(chunk.text, voiceId, language, options, raw), stopSignal);
+        audioBuffer = await this.raceWithStop(
+          this.synthesizeTextChunk(chunk.text, voiceId, language, options, raw),
+          stopSignal,
+        );
       }
 
       // Stop signal won the race, or empty buffer from early-stop check
-      if (audioBuffer === null || this.stopRequested || audioBuffer.samples.length === 0) {
+      if (
+        audioBuffer === null ||
+        this.stopRequested ||
+        audioBuffer.samples.length === 0
+      ) {
         log.debug('Stop requested, aborting before playback');
         return undefined;
       }
@@ -403,14 +450,23 @@ export class KokoroEngine {
       const nextChunkIndex = chunkIndex + 1;
       if (!this.stopRequested && nextChunkIndex < chunks.length) {
         const nextChunk = chunks[nextChunkIndex];
-        nextAudioPromise = this.synthesizeTextChunk(nextChunk.text, voiceId, language, options, raw);
+        nextAudioPromise = this.synthesizeTextChunk(
+          nextChunk.text,
+          voiceId,
+          language,
+          options,
+          raw,
+        );
       }
 
       // Play current chunk audio, racing against stop signal
-      await this.raceWithStop(neuralAudioPlayer.play(audioBuffer, {
-        ducking: options?.ducking,
-        silentMode: options?.silentMode
-      }), stopSignal);
+      await this.raceWithStop(
+        neuralAudioPlayer.play(audioBuffer, {
+          ducking: options?.ducking,
+          silentMode: options?.silentMode,
+        }),
+        stopSignal,
+      );
     }
     log.debug('Synthesis complete');
     return undefined;
@@ -420,7 +476,13 @@ export class KokoroEngine {
    * Synthesize a text chunk to audio (normalize -> phonemize -> tokenize -> infer)
    * This is the full pipeline for a single chunk
    */
-  async synthesizeTextChunk(chunkText, voiceId, language, options, raw = false) {
+  async synthesizeTextChunk(
+    chunkText,
+    voiceId,
+    language,
+    options,
+    raw = false,
+  ) {
     // For phoneme input, the chunk IS the IPA — skip normalization and
     // g2p entirely and tokenize it directly. For text input, run the
     // full normalize → phonemize pipeline as before.
@@ -436,7 +498,7 @@ export class KokoroEngine {
           samples: new Float32Array(0),
           sampleRate: SAMPLE_RATE,
           channels: 1,
-          duration: 0
+          duration: 0,
         };
       }
 
@@ -450,7 +512,7 @@ export class KokoroEngine {
         samples: new Float32Array(0),
         sampleRate: SAMPLE_RATE,
         channels: 1,
-        duration: 0
+        duration: 0,
       };
     }
 
@@ -459,7 +521,9 @@ export class KokoroEngine {
 
     // Check token limit
     if (tokens.length > MAX_TOKEN_LIMIT) {
-      log.warn(`Chunk has ${tokens.length} tokens, exceeding limit of ${MAX_TOKEN_LIMIT}. Audio may be truncated.`);
+      log.warn(
+        `Chunk has ${tokens.length} tokens, exceeding limit of ${MAX_TOKEN_LIMIT}. Audio may be truncated.`,
+      );
     }
 
     // Generate audio for this chunk
@@ -478,10 +542,17 @@ export class KokoroEngine {
     const voiceStartTime = Date.now();
     if (options?.voiceBlend) {
       // Blend multiple voices
-      voiceEmbedding = await this.voiceLoader.blendVoices(options.voiceBlend.voices, options.voiceBlend.weights, tokens.length);
+      voiceEmbedding = await this.voiceLoader.blendVoices(
+        options.voiceBlend.voices,
+        options.voiceBlend.weights,
+        tokens.length,
+      );
     } else {
       // Use single voice
-      voiceEmbedding = await this.voiceLoader.getVoiceEmbedding(voiceId, tokens.length);
+      voiceEmbedding = await this.voiceLoader.getVoiceEmbedding(
+        voiceId,
+        tokens.length,
+      );
     }
     const voiceTime = Date.now() - voiceStartTime;
 
@@ -493,18 +564,19 @@ export class KokoroEngine {
     const speedArray = new Float32Array([speed]);
 
     // Create input tensors using ONNX Runtime
-    const {
-      Tensor
-    } = getOnnxRuntime();
+    const {Tensor} = getOnnxRuntime();
     const tokensTensor = new Tensor('int64', tokensBigInt, [1, tokens.length]);
-    const voiceTensor = new Tensor('float32', voiceEmbedding, [1, voiceEmbedding.length]);
+    const voiceTensor = new Tensor('float32', voiceEmbedding, [
+      1,
+      voiceEmbedding.length,
+    ]);
     const speedTensor = new Tensor('float32', speedArray, [1]);
 
     // Run inference
     const feeds = {
       input_ids: tokensTensor,
       style: voiceTensor,
-      speed: speedTensor
+      speed: speedTensor,
     };
     if (!this.session) {
       throw new Error('Kokoro session not initialized');
@@ -516,7 +588,9 @@ export class KokoroEngine {
     // Extract audio output (kokoro.js uses 'waveform')
     const audioTensor = results.waveform || results.audio;
     if (!audioTensor) {
-      throw new Error(`No audio output from model. Available outputs: ${Object.keys(results).join(', ')}`);
+      throw new Error(
+        `No audio output from model. Available outputs: ${Object.keys(results).join(', ')}`,
+      );
     }
     const audioData = audioTensor.data;
 
@@ -526,7 +600,7 @@ export class KokoroEngine {
       sampleRate: SAMPLE_RATE,
       channels: 1,
       // Mono
-      duration: audioData.length / SAMPLE_RATE
+      duration: audioData.length / SAMPLE_RATE,
     };
 
     // Apply volume if specified (with bounds checking to prevent clipping)
@@ -542,7 +616,9 @@ export class KokoroEngine {
       }
     }
     const totalChunkTime = Date.now() - chunkStartTime;
-    log.debug(`Chunk done: inference=${inferenceTime}ms, voice=${voiceTime}ms, total=${totalChunkTime}ms, audio=${audioBuffer.duration.toFixed(2)}s`);
+    log.debug(
+      `Chunk done: inference=${inferenceTime}ms, voice=${voiceTime}ms, total=${totalChunkTime}ms, audio=${audioBuffer.duration.toFixed(2)}s`,
+    );
     return audioBuffer;
   }
 
@@ -654,7 +730,7 @@ export class KokoroEngine {
       return {
         success: true,
         partialRelease: false,
-        errors: []
+        errors: [],
       };
     }
     log.info('Releasing engine resources...');
@@ -665,10 +741,12 @@ export class KokoroEngine {
       return {
         success: false,
         partialRelease: false,
-        errors: [{
-          component: 'engine',
-          error: new Error('Cannot release while loading')
-        }]
+        errors: [
+          {
+            component: 'engine',
+            error: new Error('Cannot release while loading'),
+          },
+        ],
       };
     }
 
@@ -683,7 +761,7 @@ export class KokoroEngine {
       log.warn('Failed to stop audio player:', e);
       errors.push({
         component: 'audioPlayer',
-        error: e
+        error: e,
       });
     }
 
@@ -701,7 +779,7 @@ export class KokoroEngine {
         log.warn('Failed to release ONNX session:', e);
         errors.push({
           component: 'session',
-          error: e
+          error: e,
         });
       }
       this.session = null;
@@ -715,7 +793,7 @@ export class KokoroEngine {
       log.warn('Failed to clear voice loader:', e);
       errors.push({
         component: 'voiceLoader',
-        error: e
+        error: e,
       });
     }
 
@@ -727,18 +805,22 @@ export class KokoroEngine {
       log.warn('Failed to clear tokenizer:', e);
       errors.push({
         component: 'tokenizer',
-        error: e
+        error: e,
       });
     }
 
     // 7. Reset state to allow re-initialization
     this.resetState();
     const success = errors.length === 0;
-    log.info(success ? 'Engine resources released successfully' : `Engine released with ${errors.length} error(s)`);
+    log.info(
+      success
+        ? 'Engine resources released successfully'
+        : `Engine released with ${errors.length} error(s)`,
+    );
     return {
       success,
       partialRelease: errors.length > 0,
-      errors
+      errors,
     };
   }
 
@@ -749,7 +831,7 @@ export class KokoroEngine {
     return {
       isReady: this.isInitialized,
       isLoading: this.isLoading,
-      error: this.initError
+      error: this.initError,
     };
   }
 
@@ -757,14 +839,15 @@ export class KokoroEngine {
    * Load ONNX model with hardware acceleration
    */
   async loadModel(modelPath) {
-    const {
-      InferenceSession
-    } = getOnnxRuntime();
+    const {InferenceSession} = getOnnxRuntime();
     try {
-      const executionProviders = this.config?.executionProviders ?? getDefaultExecutionProviders();
-      log.debug(`Loading model with providers: ${JSON.stringify(executionProviders)}`);
+      const executionProviders =
+        this.config?.executionProviders ?? getDefaultExecutionProviders();
+      log.debug(
+        `Loading model with providers: ${JSON.stringify(executionProviders)}`,
+      );
       const sessionOptions = {
-        executionProviders
+        executionProviders,
       };
       const startTime = Date.now();
       this.session = await InferenceSession.create(modelPath, sessionOptions);
@@ -772,14 +855,18 @@ export class KokoroEngine {
       log.info(`Model loaded in ${loadTime}ms`);
     } catch (error) {
       // If hardware acceleration fails, try CPU-only as fallback
-      log.warn(`Failed to load with acceleration, trying CPU fallback: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      log.warn(
+        `Failed to load with acceleration, trying CPU fallback: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      );
       try {
         this.session = await InferenceSession.create(modelPath, {
-          executionProviders: ['cpu']
+          executionProviders: ['cpu'],
         });
         log.info('Model loaded with CPU fallback');
       } catch (fallbackError) {
-        throw new Error(`Failed to load ONNX model: ${fallbackError instanceof Error ? fallbackError.message : 'Unknown error'}`);
+        throw new Error(
+          `Failed to load ONNX model: ${fallbackError instanceof Error ? fallbackError.message : 'Unknown error'}`,
+        );
       }
     }
   }
@@ -792,15 +879,19 @@ export class KokoroEngine {
       log.debug('Loading tokenizer from vocab+merges files');
       const {
         loadAssetAsJSON,
-        loadAssetAsText
+        loadAssetAsText,
       } = require('../../utils/AssetLoader');
       const vocabData = await loadAssetAsJSON(vocabPath);
       const mergesText = await loadAssetAsText(mergesPath);
-      const mergesArray = mergesText.split('\n').filter(line => line.trim() && !line.startsWith('#'));
+      const mergesArray = mergesText
+        .split('\n')
+        .filter(line => line.trim() && !line.startsWith('#'));
       await this.tokenizer.loadFromData(vocabData, mergesArray);
       log.debug('Tokenizer loaded');
     } catch (error) {
-      throw new Error(`Failed to load tokenizer: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to load tokenizer: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      );
     }
   }
 
@@ -810,20 +901,24 @@ export class KokoroEngine {
   async loadTokenizerFromHF(tokenizerPath) {
     try {
       log.debug('Loading tokenizer from HuggingFace format');
-      const {
-        loadAssetAsJSON
-      } = require('../../utils/AssetLoader');
+      const {loadAssetAsJSON} = require('../../utils/AssetLoader');
       const tokenizerData = await loadAssetAsJSON(tokenizerPath);
 
       // Extract vocab from HF tokenizer.json format
       const vocab = tokenizerData.model?.vocab || {};
       const merges = tokenizerData.model?.merges || [];
-      log.debug(`Tokenizer vocab size: ${Object.keys(vocab).length}, merges: ${merges.length}`);
+      log.debug(
+        `Tokenizer vocab size: ${Object.keys(vocab).length}, merges: ${merges.length}`,
+      );
       await this.tokenizer.loadFromData(vocab, merges);
       log.debug('Tokenizer loaded');
     } catch (error) {
-      log.error(`Failed to load tokenizer: ${error instanceof Error ? error.message : String(error)}`);
-      throw new Error(`Failed to load tokenizer from HF format: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      log.error(
+        `Failed to load tokenizer: ${error instanceof Error ? error.message : String(error)}`,
+      );
+      throw new Error(
+        `Failed to load tokenizer from HF format: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      );
     }
   }
 
@@ -834,7 +929,7 @@ export class KokoroEngine {
     try {
       const {
         loadAssetAsJSON,
-        loadAssetAsArrayBuffer
+        loadAssetAsArrayBuffer,
       } = require('../../utils/AssetLoader');
 
       // Check if it's a manifest file (lazy loading) or direct voices file
@@ -842,7 +937,9 @@ export class KokoroEngine {
         log.debug('Loading voices from manifest (lazy loading mode)');
         const manifest = await loadAssetAsJSON(voicesPath);
         await this.voiceLoader.loadFromManifest(manifest, voicesPath);
-        log.debug(`Manifest loaded: ${manifest.voices?.length || 0} voices available`);
+        log.debug(
+          `Manifest loaded: ${manifest.voices?.length || 0} voices available`,
+        );
       } else if (voicesPath.endsWith('.json')) {
         log.debug('Loading voices from JSON file');
         const voicesData = await loadAssetAsJSON(voicesPath);
@@ -854,10 +951,16 @@ export class KokoroEngine {
         await this.voiceLoader.loadFromBinary(voicesData);
         log.debug(`Voices loaded: ${voicesData.byteLength} bytes`);
       }
-      log.info(`Voice loader ready: ${this.voiceLoader.getAvailableVoices().length} voices`);
+      log.info(
+        `Voice loader ready: ${this.voiceLoader.getAvailableVoices().length} voices`,
+      );
     } catch (error) {
-      log.error(`Failed to load voices: ${error instanceof Error ? error.message : String(error)}`);
-      throw new Error(`Failed to load voices: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      log.error(
+        `Failed to load voices: ${error instanceof Error ? error.message : String(error)}`,
+      );
+      throw new Error(
+        `Failed to load voices: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      );
     }
   }
 

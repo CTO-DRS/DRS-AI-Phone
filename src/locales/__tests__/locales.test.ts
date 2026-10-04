@@ -23,7 +23,7 @@ const EXPECTED_SECTIONS = [
   'about',
   'feedback',
   'components',
-  'palsScreen',
+  'assistantsScreen',
   'validation',
   'camera',
   'video',

@@ -3,7 +3,7 @@ import {View} from 'react-native';
 import {Text} from 'react-native-paper';
 import {Controller, useFormContext} from 'react-hook-form';
 
-import type {ParameterDefinition} from '../../types/pal';
+import type {ParameterDefinition} from '../../types/assistant';
 import {useTheme} from '../../hooks';
 import {createStyles} from './styles';
 import {TextInput} from '../TextInput';

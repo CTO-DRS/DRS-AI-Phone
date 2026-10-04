@@ -159,7 +159,7 @@
     "importError": "فشل استيراد جلسات المحادثة. يرجى التحقق من تنسيق الملف.",
     "internetSearch": {
       "title": "البحث في الإنترنت",
-      "description": "دع الرفاق يبحثون في الويب بأدواتهم الخاصة. أحضر مفتاح API الخاص بك - لا يحتفظ DRS AI بمفاتيحك ولا يوجّه استعلاماتك أبدًا.",
+      "description": "دع المساعدون يبحثون في الويب بأدواتهم الخاصة. أحضر مفتاح API الخاص بك - لا يحتفظ DRS AI بمفاتيحك ولا يوجّه استعلاماتك أبدًا.",
       "providerLabel": "مزود البحث",
       "providerGated": "قريبًا",
       "keyLabel": "مفتاح API",
@@ -175,7 +175,7 @@
       "resultCountLabel": "النتائج لكل بحث",
       "resultCountDescription": "النتائج الأقل تحافظ على مساحة أكبر في سياق النموذج.",
       "consentTitle": "عمليات البحث تخرج من جهازك",
-      "consentDescription": "عندما يبحث رفيق في الويب، يُرسَل استعلامك إلى المزود المختار عبر الإنترنت. وعندما يقرأ رفيق صفحة، قد يُرسَل الرابط ومحتوى الصفحة بدلًا من ذلك إلى خدمة قراءة افتراضية (r.jina.ai) إذا لم يكن للمزود المختار قارئ أصلي. لا تُرسَل المفاتيح ولا الاستعلامات إلى DRS AI أبدًا.",
+      "consentDescription": "عندما يبحث مساعد في الويب، يُرسَل استعلامك إلى المزود المختار عبر الإنترنت. وعندما يقرأ مساعد صفحة، قد يُرسَل الرابط ومحتوى الصفحة بدلًا من ذلك إلى خدمة قراءة افتراضية (r.jina.ai) إذا لم يكن للمزود المختار قارئ أصلي. لا تُرسَل المفاتيح ولا الاستعلامات إلى DRS AI أبدًا.",
       "consentAccept": "فهمت",
       "consentRequired": "اقبل الإفصاح أعلاه لتعيين مفتاح وتفعيل البحث.",
       "consentGivenTitle": "البحث في الويب مفعّل",
@@ -190,11 +190,11 @@
     "useHfTokenLabel": "استخدام توكن HF",
     "useHfTokenDescription": "فعّل استخدام التوكن في طلبات API. عطّله إذا كان التوكن يسبب مشاكل في المصادقة.",
     "cacheStorageTitle": "الذاكرة المؤقتة والتخزين",
-    "clearPalCaches": "مسح ذاكرات Shortcuts المؤقتة",
-    "clearPalCachesDescription": "يمسح البيانات المؤقتة المستخدمة لتسريع Shortcuts. لن يؤثر هذا على رفاقك أو سجل محادثاتك.",
+    "clearAssistantCaches": "مسح ذاكرات المساعدين المؤقتة",
+    "clearAssistantCachesDescription": "يمسح البيانات المؤقتة المستخدمة لتسريع المساعدين. لن يؤثر هذا على مساعدوك أو سجل محادثاتك.",
     "clearCachesButton": "مسح الذاكرة المؤقتة",
-    "clearCachesConfirmTitle": "مسح ذاكرات Shortcuts المؤقتة؟",
-    "clearCachesConfirmMessage": "سيؤدي هذا إلى مسح جميع بيانات الجلسات المؤقتة ({{fileCount}} ملفات، {{size}}). قد تكون Shortcuts أبطأ في أول استخدام بعد المسح. لن يؤثر هذا على رفاقك أو سجل محادثاتك.",
+    "clearCachesConfirmTitle": "مسح ذاكرات المساعدين المؤقتة؟",
+    "clearCachesConfirmMessage": "سيؤدي هذا إلى مسح جميع بيانات الجلسات المؤقتة ({{fileCount}} ملفات، {{size}}). قد تكون المساعدون أبطأ في أول استخدام بعد المسح. لن يؤثر هذا على مساعدوك أو سجل محادثاتك.",
     "clearCachesSuccess": "تم مسح {{count}} من ملفات الذاكرة المؤقتة بنجاح.",
     "clearCachesError": "فشل مسح الذاكرة المؤقتة. حاول مجددًا.",
     "noCachesToClear": "لا توجد ذاكرات مؤقتة لمسحها.",
@@ -613,7 +613,7 @@
       "activateModelButton": "اختيار نموذج",
       "loading": "جارٍ التحميل...",
       "gettingReadyTitle": "{{name}} يستعد",
-      "gettingReadyDescription": "سنخبرك لحظة جاهزية رفيقك للمحادثة. اضغط اللافتة في الأعلى لمتابعة التقدم."
+      "gettingReadyDescription": "سنخبرك لحظة جاهزية مساعدك للمحادثة. اضغط اللافتة في الأعلى لمتابعة التقدم."
     },
     "chatInput": {
       "inputPlaceholder": "رسالة",
@@ -699,22 +699,22 @@
         "title": "نجاح",
         "message": "ستُطبَّق هذه الإعدادات على جميع الجلسات المستقبلية"
       },
-      "palSettings": "إعدادات الرفيق",
+      "assistantSettings": "إعدادات المساعد",
       "settingsSource": "مصدر الإعدادات"
     },
-    "palGenerationSettingsSheet": {
-      "title": "إعدادات التوليد - {{palName}}",
+    "assistantGenerationSettingsSheet": {
+      "title": "إعدادات التوليد - {{assistantName}}",
       "invalidValues": "قيم غير صالحة",
       "invalidNumericValuesMessage": "يجب أن يكون رقمًا صالحًا",
       "pleaseCorrect": "يرجى تصحيح ما يلي:",
       "ok": "OK",
       "error": "خطأ",
-      "failedToSave": "تعذّر حفظ إعدادات الرفيق",
+      "failedToSave": "تعذّر حفظ إعدادات المساعد",
       "resetToGlobal": "إعادة التعيين إلى الافتراضيات العامة",
       "resetToSystem": "إعادة التعيين إلى إعدادات النظام الافتراضية",
-      "clearPalSettings": "مسح إعدادات الرفيق",
-      "customSettingsFor": "إعدادات مخصصة لـ {{palName}}",
-      "inheritedSettingsFor": "إعدادات موروثة لـ {{palName}}"
+      "clearAssistantSettings": "مسح إعدادات المساعد",
+      "customSettingsFor": "إعدادات مخصصة لـ {{assistantName}}",
+      "inheritedSettingsFor": "إعدادات موروثة لـ {{assistantName}}"
     },
     "chatHeaderTitle": {
       "defaultTitle": "محادثة"
@@ -722,17 +722,17 @@
     "fileMessage": {
       "fileButtonAccessibilityLabel": "ملف"
     },
-    "chatPalModelPickerSheet": {
+    "chatAssistantModelPickerSheet": {
       "modelsTab": "النماذج",
-      "palsTab": "الرفاق",
-      "noPal": "بدون رفيق",
-      "disablePal": "تعطيل الرفيق النشط",
+      "assistantsTab": "المساعدون",
+      "noAssistant": "بدون مساعد",
+      "disableAssistant": "تعطيل المساعد النشط",
       "noDescription": "لا يوجد وصف",
       "assistantType": "مساعد",
       "roleplayType": "تقمص أدوار",
       "videoType": "فيديو",
       "confirmationTitle": "تأكيد",
-      "modelSwitchMessage": "هذا الرفيق لديه نموذج افتراضي مختلف ({{modelName}}). هل تودّ التبديل إلى النموذج الافتراضي للرفيق؟",
+      "modelSwitchMessage": "هذا المساعد لديه نموذج افتراضي مختلف ({{modelName}}). هل تودّ التبديل إلى النموذج الافتراضي للمساعد؟",
       "keepButton": "إبقاء",
       "switchButton": "تبديل"
     },
@@ -832,14 +832,14 @@
       "proceedWithReset": "المتابعة مع إعادة التعيين",
       "confirmReset": "تأكيد إعادة التعيين"
     },
-    "palSheet": {
+    "assistantSheet": {
       "title": {
-        "edit": "تعديل الرفيق",
-        "newPal": "رفيق جديد",
-        "newVideoPal": "رفيق فيديو جديد"
+        "edit": "تعديل المساعد",
+        "newAssistant": "مساعد جديد",
+        "newVideoAssistant": "مساعد فيديو جديد"
       },
       "description": "الوصف",
-      "descriptionPlaceholder": "أدخل وصفًا موجزًا لرفيقك",
+      "descriptionPlaceholder": "أدخل وصفًا موجزًا لمساعدك",
       "parameters": "المعاملات",
       "generationSettings": "إعدادات التوليد",
       "configureGenerationSettings": "ضبط إعدادات التوليد",
@@ -866,20 +866,20 @@
       "greeting": {
         "sectionLabel": "الترحيب",
         "textLabel": "رسالة الترحيب",
-        "textPlaceholder": "ماذا يقول هذا الرفيق في محادثة فارغة؟",
+        "textPlaceholder": "ماذا يقول هذا المساعد في محادثة فارغة؟",
         "suggestedPromptsLabel": "برومبتات مقترحة",
         "addPromptButton": "إضافة برومبت",
         "promptPlaceholder": "برومبت قصير للشريحة",
         "removePromptLabel": "إزالة البرومبت"
       }
     },
-    "assistantPalSheet": {
+    "assistantPersonaSheet": {
       "title": {
-        "create": "إنشاء رفيق مساعد",
-        "edit": "تعديل الرفيق المساعد"
+        "create": "إنشاء مساعد",
+        "edit": "تعديل المساعد"
       },
-      "palName": "اسم الرفيق",
-      "palNamePlaceholder": "الاسم",
+      "assistantName": "اسم المساعد",
+      "assistantNamePlaceholder": "الاسم",
       "defaultModel": "النموذج الافتراضي",
       "defaultModelPlaceholder": "اختر نموذجًا",
       "validation": {
@@ -891,19 +891,19 @@
     "modelNotAvailable": {
       "noModelsDownloaded": "ليس لديك أي نماذج منزّلة بعد. يرجى تنزيل نموذج أولًا.",
       "downloadAModel": "تنزيل نموذج",
-      "defaultModelNotDownloaded": "يوصي هذا الرفيق بنموذج محدد يحتاج إلى تنزيل، أو يمكنك اختيار نموذج آخر.",
+      "defaultModelNotDownloaded": "يوصي هذا المساعد بنموذج محدد يحتاج إلى تنزيل، أو يمكنك اختيار نموذج آخر.",
       "modelNotDownloadedShort": "النموذج غير منزّل",
       "recommendedModel": "النموذج الموصى به",
       "cancelDownload": "إلغاء التنزيل",
       "download": "تنزيل"
     },
-    "roleplayPalSheet": {
+    "roleplayPersonaSheet": {
       "title": {
-        "create": "إنشاء رفيق تقمص أدوار",
-        "edit": "تعديل رفيق تقمص الأدوار"
+        "create": "إنشاء مساعد تقمص أدوار",
+        "edit": "تعديل مساعد تقمص الأدوار"
       },
-      "palName": "اسم الرفيق",
-      "palNamePlaceholder": "الاسم",
+      "assistantName": "اسم المساعد",
+      "assistantNamePlaceholder": "الاسم",
       "defaultModel": "النموذج الافتراضي",
       "defaultModelPlaceholder": "اختر نموذجًا",
       "descriptionSection": "الوصف",
@@ -927,13 +927,13 @@
       },
       "create": "إنشاء"
     },
-    "lookiePalSheet": {
+    "lookiePersonaSheet": {
       "title": {
-        "create": "إنشاء رفيق Lookie",
-        "edit": "تعديل رفيق Lookie"
+        "create": "إنشاء مساعد Lookie",
+        "edit": "تعديل مساعد Lookie"
       },
-      "palName": "اسم الرفيق",
-      "palNamePlaceholder": "أدخل اسمًا لرفيق Lookie",
+      "assistantName": "اسم المساعد",
+      "assistantNamePlaceholder": "أدخل اسمًا لمساعد Lookie",
       "visionModel": "نموذج الرؤية",
       "visionModelPlaceholder": "اختر نموذج رؤية",
       "requiredModelsSection": "النماذج المطلوبة",
@@ -954,7 +954,7 @@
       },
       "generatingPrompt": {
         "label": "الغرض والسياق",
-        "placeholder": "صف الدور أو الغرض أو السيناريو لهذا الرفيق..."
+        "placeholder": "صف الدور أو الغرض أو السيناريو لهذا المساعد..."
       },
       "buttons": {
         "loadingModel": "جارٍ تحميل النموذج...",
@@ -976,7 +976,7 @@
       "menuItems": {
         "chat": "محادثة",
         "models": "النماذج",
-        "pals": "الرفاق",
+        "assistants": "المساعدون",
         "benchmark": "اختبار الأداء",
         "settings": "الإعدادات",
         "appInfo": "معلومات التطبيق",
@@ -1033,18 +1033,21 @@
         "reportContent": "الإبلاغ عن المحتوى"
       }
     },
-    "palHeaderRight": {
-      "exportAllPals": "تصدير جميع الرفاق",
-      "importPals": "استيراد الرفاق",
-      "importSuccess": "تم استيراد {{count}} من الرفاق بنجاح.",
-      "importError": "تعذّر استيراد الرفاق. يرجى التحقق من تنسيق الملف."
+    "assistantHeaderRight": {
+      "exportAllAssistants": "تصدير جميع المساعدين",
+      "importAssistants": "استيراد المساعدين",
+      "importSuccess": "تم استيراد {{count}} من المساعدين بنجاح.",
+      "importError": "تعذّر استيراد المساعدين. يرجى التحقق من تنسيق الملف."
+    },
+    "brandHeader": {
+      "tagline": "ذكاؤك الخاص على جهازك"
     }
   },
-  "palsScreen": {
+  "assistantsScreen": {
     "sectionTitles": {
-      "myPalsLocal": "رفاقي (محلي)",
+      "myAssistantsLocal": "مساعدوي (محلي)",
       "myLibrary": "مكتبتي (hub.drsai.app)",
-      "discoverPals": "استكشف الرفاق (hub.drsai.app)"
+      "discoverAssistants": "استكشف المساعدين (hub.drsai.app)"
     },
     "systemPrompt": "برومبت النظام",
     "videoAnalysis": "تحليل الفيديو",
@@ -1059,26 +1062,26 @@
     "assistant": "مساعد",
     "roleplay": "تقمص أدوار",
     "video": "فيديو",
-    "deletePal": "حذف الرفيق",
-    "deletePalMessage": "هل أنت متأكد أنك تريد حذف هذا الرفيق؟",
+    "deleteAssistant": "حذف المساعد",
+    "deleteAssistantMessage": "هل أنت متأكد أنك تريد حذف هذا المساعد؟",
     "missingModel": "نموذج مفقود",
-    "missingModelMessage": "النموذج الافتراضي \"{{modelName}}\" لهذا الرفيق غير متاح. يرجى تنزيله من ورقة التعديل أو اختيار نموذج آخر.",
+    "missingModelMessage": "النموذج الافتراضي \"{{modelName}}\" لهذا المساعد غير متاح. يرجى تنزيله من ورقة التعديل أو اختيار نموذج آخر.",
     "search": "بحث",
     "profile": "الملف الشخصي",
     "signIn": "تسجيل الدخول",
-    "addPal": "إضافة رفيق",
+    "addAssistant": "إضافة مساعد",
     "signInToAccessLibrary": "سجّل الدخول للوصول إلى مكتبتك من hub.drsai.app",
     "signOut": "تسجيل الخروج",
     "signOutConfirmation": "هل أنت متأكد أنك تريد تسجيل الخروج؟",
     "signOutError": "فشل تسجيل الخروج. حاول مجددًا.",
     "account": "الحساب",
     "signInToDrshub": "تسجيل الدخول إلى Drshub",
-    "signInDescription": "يمكنك الوصول إلى مكتبتك وإنشاء رفاق خاصين والمزامنة بين الأجهزة",
-    "searchAllPals": "ابحث في جميع الرفاق...",
-    "deletePalConfirmation": "هل أنت متأكد أنك تريد حذف \"{{palName}}\"؟",
+    "signInDescription": "يمكنك الوصول إلى مكتبتك وإنشاء مساعدين خاصين والمزامنة بين الأجهزة",
+    "searchAllAssistants": "ابحث في جميع المساعدين...",
+    "deleteAssistantConfirmation": "هل أنت متأكد أنك تريد حذف \"{{assistantName}}\"؟",
     "filters": {
       "all": "الكل",
-      "myPals": "رفاقي",
+      "myAssistants": "مساعدوي",
       "local": "محلي",
       "video": "فيديو",
       "free": "مجاني",
@@ -1091,15 +1094,15 @@
       "download": "تنزيل",
       "getFree": "احصل عليه مجانًا"
     },
-    "premiumPalDescription": "رفيق مميز من مجتمع hub.drsai.app",
-    "premiumInfoText": "زُر hub.drsai.app لاستكشاف المزيد من الرفاق",
+    "premiumAssistantDescription": "مساعد مميز من مجتمع hub.drsai.app",
+    "premiumInfoText": "زُر hub.drsai.app لاستكشاف المزيد من المساعدين",
     "sortOptions": {
       "newest": "الأحدث",
       "oldest": "الأقدم",
       "rating": "الأعلى تقييمًا",
       "popular": "الأكثر شعبية"
     },
-    "palDetailSheet": {
+    "assistantDetailSheet": {
       "by": "بواسطة",
       "unknown": "غير معروف",
       "rating": "التقييم",
@@ -1112,18 +1115,18 @@
       "systemPrompt": "برومبت النظام",
       "downloaded": "تم التنزيل",
       "success": "نجاح",
-      "palAddedToCollection": "تمت إضافة الرفيق إلى مجموعتك!",
+      "assistantAddedToCollection": "تمت إضافة المساعد إلى مجموعتك!",
       "error": "خطأ",
-      "failedToLoadDetails": "تعذّر تحميل تفاصيل الرفيق",
-      "failedToDownload": "تعذّر تنزيل الرفيق",
-      "premiumPalMessage": "هذا رفيق مميز.\n• إذا كنت قد فتحته بالفعل بحساب Drshub، سجّل الدخول ببساطة للوصول إلى التفاصيل الكاملة.\n• لم تفتحه بعد؟ زُر تطبيق hub.drsai.app لمعرفة المزيد.",
+      "failedToLoadDetails": "تعذّر تحميل تفاصيل المساعد",
+      "failedToDownload": "تعذّر تنزيل المساعد",
+      "premiumAssistantMessage": "هذا مساعد مميز.\n• إذا كنت قد فتحته بالفعل بحساب Drshub، سجّل الدخول ببساطة للوصول إلى التفاصيل الكاملة.\n• لم تفتحه بعد؟ زُر تطبيق hub.drsai.app لمعرفة المزيد.",
       "notAvailable": "N/A",
       "buyOnDrshub": "اشترِ على Drshub",
       "finalizingPurchase": "جارٍ إتمام عملية الشراء…",
       "processingPurchase": "قيد المعالجة — سيُفتح قريبًا.",
       "checkoutSessionExpired": "انتهت صلاحية جلستك. سجّل الدخول مجددًا للمتابعة.",
       "signInAgain": "تسجيل الدخول مجددًا",
-      "palNotAvailable": "هذا الرفيق غير متاح للشراء الآن.",
+      "assistantNotAvailable": "هذا المساعد غير متاح للشراء الآن.",
       "checkoutFailed": "حدث خطأ ما. حاول مجددًا."
     }
   },
@@ -1174,13 +1177,13 @@
       "step1": "• عدّل البرومبت (اختياري) لتوجيه التحليل",
       "step2": "• اضغط زر الكاميرا لبدء تحليل الفيديو المباشر",
       "step3": "• اضبط تكرار اللقطات أثناء عمل الكاميرا",
-      "step4": "• بدّل إلى رفيق آخر للمحادثة النصية العادية"
+      "step4": "• بدّل إلى مساعد آخر للمحادثة النصية العادية"
     }
   },
   "screenTitles": {
     "chat": "محادثة",
     "models": "النماذج",
-    "pals": "الرفاق (تجريبي)",
+    "assistants": "المساعدون (تجريبي)",
     "benchmark": "اختبار الأداء",
     "settings": "الإعدادات",
     "appInfo": "معلومات التطبيق",
@@ -1236,7 +1239,7 @@
     "increaseContextReloading": "جارٍ إعادة تحميل النموذج بسياق أكبر…",
     "increaseContextSuccess": "تمت زيادة السياق إلى {{target}} توكن.",
     "increaseContextFailure": "تعذّرت زيادة حجم السياق. تمت استعادة الإعداد السابق.",
-    "palLoadHint": "هذا الرفيق يحتاج عادةً إلى مساحة أكبر مما يسمح به حجم السياق الحالي.",
+    "assistantLoadHint": "هذا المساعد يحتاج عادةً إلى مساحة أكبر مما يسمح به حجم السياق الحالي.",
     "generatingPreview": "جارٍ إنشاء المعاينة… ({{tokens}} توكن)",
     "generatingPreviewPending": "جارٍ إنشاء المعاينة…",
     "toolUsedChip": "استخدم {{name}}",
@@ -1502,15 +1505,15 @@
       "brand": "DRS AI"
     },
     "screen1": {
-      "title": "تعرّف على رفاقك.",
-      "titleAccent": "رفاقك.",
+      "title": "تعرّف على مساعدوك.",
+      "titleAccent": "مساعدوك.",
       "body": "أصدقاء صغار أذكياء يعيشون داخل هاتفك.\nلنجهّز كل شيء - لن يستغرق الأمر دقيقة.",
       "cta": "دُلّني على التطبيق",
       "eyebrow": "مرحبًا بك في DRS AI"
     },
     "screen2": {
       "title": "في أي وقت،\nوفي أي مكان.",
-      "body": "رفاقك يعيشون داخل هاتفك.\nبدون إنترنت، وبدون شبكة - يعملون في الطائرات، خارج التغطية، في القرى النائية.",
+      "body": "مساعدوك يعيشون داخل هاتفك.\nبدون إنترنت، وبدون شبكة - يعملون في الطائرات، خارج التغطية، في القرى النائية.",
       "highlight": "بدون إنترنت، وبدون شبكة",
       "cta": "التالي",
       "eyebrow": "الفكرة",
@@ -1519,7 +1522,7 @@
     "screen3": {
       "title": "أصغر،\nلكنه لك.",
       "titleAccent": "أصغر،",
-      "body": "الرفاق على هاتفك سريعون وخاصون - لكنهم أخف من ذكاء السحابة. فكّر فيه كرفيق جيب، لا كعالم يعلم كل شيء.",
+      "body": "المساعدون على هاتفك سريعون وخاصون - لكنهم أخف من ذكاء السحابة. فكّر فيه كمساعد جيب، لا كعالم يعلم كل شيء.",
       "highlight": "سريعون وخاصون",
       "cta": "فهمت",
       "eyebrow": "تنبيه ودّي"
@@ -1533,8 +1536,8 @@
       "eyebrow": "خصوصية مضمونة"
     },
     "screen5": {
-      "title": "لماذا تريد رفيقًا؟",
-      "body": "اختر ما تحب أن تناقشه - وسنطابق لك رفيقًا يناسب هاتفك.",
+      "title": "لماذا تريد مساعدًا؟",
+      "body": "اختر ما تحب أن تناقشه - وسنطابق لك مساعدًا يناسب هاتفك.",
       "topic": {
         "smartchat": "محادثة ذكية",
         "coding": "برمجة",
@@ -1544,12 +1547,12 @@
         "else": "تبحث عن شيء آخر؟"
       },
       "topicDescription": {
-        "smartchat": "رفيق يومي ودود",
+        "smartchat": "مساعد يومي ودود",
         "coding": "برمجة، تصحيح أخطاء، شرح",
         "education": "تعلّم، شرح، اختبارات",
         "roleplay": "شخصيات، سيناريوهات",
         "creative_writing": "قصص، أفكار، مسودات",
-        "else": "تصفح جميع الرفاق لاحقًا داخل التطبيق"
+        "else": "تصفح جميع المساعدين لاحقًا داخل التطبيق"
       }
     },
     "screen6": {
@@ -1566,18 +1569,18 @@
         "best": "الأفضل"
       },
       "subtitleTemplate": "{{name}} يفكر باستخدام نموذج ذكاء اصطناعي صغير على هاتفك - اختر نموذجًا يناسبك.",
-      "pal": {
+      "assistant": {
         "pip": {
-          "body": "وجدنا لك الرفيق المثالي - رفيق يومي ودود. ذكي بما يكفي لمعظم الأمور، وخفيف بما يكفي لأي هاتف."
+          "body": "وجدنا لك المساعد المثالي - مساعد يومي ودود. ذكي بما يكفي لمعظم الأمور، وخفيف بما يكفي لأي هاتف."
         },
         "codie": {
           "body": "تعرّف على Codie — شريكك المحلي في البرمجة. يقرأ الأكواد ويكتبها ويشرح الأجزاء الصعبة دون مغادرة هاتفك أبدًا."
         },
         "sage": {
-          "body": "Sage صبور وفضولي ويرافقك خطوة بخطوة في استيعاب الأفكار. رفيق دراسة تحمله في جيبك."
+          "body": "Sage صبور وفضولي ويرافقك خطوة بخطوة في استيعاب الأفكار. مساعد دراسة تحمله في جيبك."
         },
         "echo": {
-          "body": "Echo رفيق تقمص أدوار متعدد المواهب — يلتزم بشخصيته ويرسم المشاهد ويتبع قصتك أينما قادت."
+          "body": "Echo مساعد تقمص أدوار متعدد المواهب — يلتزم بشخصيته ويرسم المشاهد ويتبع قصتك أينما قادت."
         },
         "muse": {
           "body": "Muse يساعدك على الكتابة. يقترح الصياغة ويجد الإيقاع ويحافظ على نبرتك."
@@ -1586,7 +1589,7 @@
     }
   },
   "downloadBanner": {
-    "titleByPal": "جارٍ تنزيل {{name}}",
+    "titleByAssistant": "جارٍ تنزيل {{name}}",
     "titleByModel": "جارٍ تنزيل {{name}}",
     "extraInProgress": "+{{count}} أخرى قيد التنزيل"
   }

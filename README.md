@@ -2,6 +2,8 @@
 
 <img src="src/assets/drs-ai-mark.png" alt="DRS AI logo" width="120" />
 
+<img src="assets/images and logos/banner.png" alt="DRS AI — Run AI models privately on your phone" width="100%" />
+
 # DRS AI
 
 **A private AI assistant that runs entirely on your phone.**
@@ -36,9 +38,9 @@ Most AI apps are a thin window onto someone else's server — every message you 
 
 - **🧠 On-device chat** — run GGUF language models (Gemma, Qwen, Phi, Llama, and more) fully offline.
 - **🗣️ Text-to-speech** — give your assistant a voice with on-device neural TTS (Kokoro and other engines), no cloud calls.
-- **🎭 Pals** — create personalized assistants with their own model, system prompt, and personality (Assistant and Roleplay types).
-- **🛍️ Drshub** — discover and install community Pals from the in-app marketplace (disabled by default in this build).
-- **🛠️ Talents & tools** — let capable Pals call built-in tools (calculator, date/time, rich HTML rendering) inside a tool-use loop.
+- **🎭 Assistants** — create personalized assistants with their own model, system prompt, and personality (Assistant and Roleplay types).
+- **🛍️ Drshub** — discover and install community Assistants from the in-app marketplace (disabled by default in this build).
+- **🛠️ Talents & tools** — let capable Assistants call built-in tools (calculator, date/time, rich HTML rendering) inside a tool-use loop.
 - **📥 Hugging Face integration** — search and download GGUF models, including gated ones, directly from the HF Hub with your access token.
 - **📊 Benchmarking** — measure tokens/sec and memory on your own device.
 - **⚡ Hardware acceleration** — CPU, GPU (Metal on iOS, OpenCL/Adreno on Android), and NPU (Qualcomm Hexagon) inference paths, with graceful fallback.
@@ -56,7 +58,7 @@ DRS AI is a four-layer stack, from the silicon up to the chat UI. Each layer has
 
 | Layer             | What runs here                                                                                                                                                                                                                                                                                                                                                          |
 | ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **UI & Tool Use** | The React Native app (UI via React Native Paper, state via MobX, chat history in WatermelonDB). The **`AgentRunner`** drives each chat turn — streaming tokens, dispatching **Talents** (tools) when the model calls them, and feeding results back for follow-up reasoning. **Pals** are configurable personas; **Drshub** is the in-app marketplace for sharing them. |
+| **UI & Tool Use** | The React Native app (UI via React Native Paper, state via MobX, chat history in WatermelonDB). The **`AgentRunner`** drives each chat turn — streaming tokens, dispatching **Talents** (tools) when the model calls them, and feeding results back for follow-up reasoning. **Assistants** are configurable personas; **Drshub** is the in-app marketplace for sharing them. |
 | **Bridging**      | Native modules that connect JavaScript to the engines. [`llama.rn`](https://github.com/mybigday/llama.rn) bridges LLM inference over JSI; [`@drsai/react-native-speech`](vendors/react-native-speech) and `onnxruntime-react-native` bridge text-to-speech.                                                                                                             |
 | **Engine**        | The inference engines. **llama.cpp** runs language models in the quantized **GGUF** format. **ONNX Runtime** runs TTS voice models in the **ONNX** format.                                                                                                                                                                                                              |
 | **Hardware**      | Where the math actually happens. DRS AI targets **CPU** (universal fallback), **GPU** (Metal on iOS, OpenCL on Qualcomm Adreno for Android), and **NPU** (Qualcomm Hexagon) — falling back gracefully and offloading partial layers when a full backend isn't available.                                                                                                |
@@ -73,7 +75,7 @@ DRS AI is a four-layer stack, from the silicon up to the chat UI. Each layer has
 3. From Hugging Face, search GGUF models and choose a quantization that fits your device's memory and storage — download now or bookmark for later.
 4. After downloading, tap **Load** (or use the chevron icon left of the chat input to load right from the chat screen).
 
-<img src="assets/images and logos/Download_models.png" alt="Download Models" width="100%">
+<img src="assets/images and logos/feature-models.png" alt="Download models" width="60%">
 </details>
 
 <details>
@@ -87,23 +89,22 @@ DRS AI is a four-layer stack, from the silicon up to the chat UI. Each layer has
 4. **Copy** a full response with the copy icon, or long-press a paragraph to copy just that.
 5. **Edit** any of your messages with a long-press — the AI regenerates from your change. Hit **retry** for a fresh answer, optionally with a different model.
 
-<img src="assets/images and logos/Chat.png" alt="Chat" width="83%">
+<img src="assets/images and logos/feature-chat.png" alt="Private chat" width="60%">
 </details>
 
 <details>
-<summary><strong>🎭 Pals</strong></summary>
+<summary><strong>🎭 Assistants</strong></summary>
 
 <br/>
 
 Create personalized assistants:
 
-- **Assistant Pal** — pick a default model, set a system prompt (write it yourself or have the app generate one), and customize the chat input color.
-- **Roleplay Pal** — everything above, plus location, the AI's role, and other contextual parameters.
+- **Assistant** — pick a default model, set a system prompt (write it yourself or have the app generate one), and customize the chat input color.
+- **Roleplay Assistant** — everything above, plus location, the AI's role, and other contextual parameters.
 
-Switch personas with the Pal picker on the chat page.
+Switch personas with the Assistant picker on the chat page.
 
-<img src="assets/images and logos/Pals.png" alt="Assistant Pal" width="100%">
-<p><em>Creating a cocktail-recipe assistant</em></p>
+<img src="assets/images and logos/feature-assistants.png" alt="Create your own assistants" width="60%">
 </details>
 
 <details>
@@ -115,7 +116,7 @@ Switch personas with the Pal picker on the chat page.
 2. Run performance tests to compare speed and efficiency across models.
 3. Review tokens/sec and memory usage.
 
-<img src="assets/images and logos/Benchmark.png" alt="Benchmark" width="100%">
+<img src="assets/images and logos/feature-benchmark.png" alt="Benchmark" width="60%">
 </details>
 
 <details>
@@ -126,7 +127,6 @@ Switch personas with the Pal picker on the chat page.
 1. Create an access token in your Hugging Face account ([docs](https://huggingface.co/docs/hub/en/security-tokens)).
 2. In DRS AI, go to **Settings → Set Token**, paste it, and save.
 
-<img src="assets/images and logos/Token_in_drs-ai.png" alt="Token setup" width="66%">
 </details>
 
 <details>
@@ -136,7 +136,6 @@ Switch personas with the Pal picker on the chat page.
 
 Go to **App Info → "Sharing your thoughts"**, type your feedback — feature requests, suggestions, anything — and submit.
 
-<img src="assets/images and logos/Send_Feedback.png" alt="Send feedback" width="50%">
 </details>
 
 ## For developers
@@ -189,9 +188,9 @@ Run `yarn lint && yarn typecheck && yarn test` before opening a PR. Commits are 
 
 ```
 src/
-├── screens/        # Chat, Models, Pals, Benchmark, Settings, About, …
+├── screens/        # Chat, Models, Assistants, Benchmark, Settings, About, …
 ├── components/     # Reusable UI
-├── store/          # MobX stores (Model, ChatSession, Pal, TTS, HF, Benchmark, …)
+├── store/          # MobX stores (Model, ChatSession, Assistant, TTS, HF, Benchmark, …)
 ├── services/
 │   ├── agent/      # AgentRunner — the chat / tool loop
 │   ├── talents/    # Tool engines + registries

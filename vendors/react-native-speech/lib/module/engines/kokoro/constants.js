@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 /**
  * Kokoro TTS Engine Constants
@@ -37,7 +37,7 @@ export const KOKORO_CONSTANTS = {
   /** Characters preserved during phonemization */
   PUNCTUATION_CHARS: ';:,.!?¡¿—…"«»""(){}[]',
   // Supported languages
-  AVAILABLE_LANGS: ['en-us', 'en-gb', 'ja', 'zh', 'ko']
+  AVAILABLE_LANGS: ['en-us', 'en-gb', 'ja', 'zh', 'ko'],
 };
 
 /**
@@ -55,6 +55,6 @@ export const VOICE_EMBEDDING_CONSTANTS = {
   /** Total number of style embeddings per voice */
   TOTAL_EMBEDDINGS: KOKORO_CONSTANTS.TOTAL_EMBEDDINGS,
   /** Expected total floats per voice file */
-  EXPECTED_SIZE: KOKORO_CONSTANTS.EXPECTED_VOICE_SIZE
+  EXPECTED_SIZE: KOKORO_CONSTANTS.EXPECTED_VOICE_SIZE,
 };
 //# sourceMappingURL=constants.js.map

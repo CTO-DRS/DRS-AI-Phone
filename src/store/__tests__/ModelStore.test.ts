@@ -31,7 +31,7 @@ import * as RNFS from '@dr.pogodin/react-native-fs';
 import DeviceInfo from 'react-native-device-info';
 
 import {modelStore, uiStore, serverStore} from '..';
-import {LOOKIE_DEFAULT_MODEL} from '../builtinPalModels';
+import {LOOKIE_DEFAULT_MODEL} from '../builtinAssistantModels';
 import {classify} from '../../services/deviceRules/classify';
 import {getVisionModelSizeBreakdown} from '../../utils/multimodalHelpers';
 import {MODEL_LIST_VERSION} from '../ModelStore';

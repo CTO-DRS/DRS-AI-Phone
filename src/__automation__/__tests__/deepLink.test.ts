@@ -70,7 +70,7 @@ describe('dispatchAutomationDeepLink', () => {
 
   it('returns false when host is not memory', async () => {
     const handled = await dispatchAutomationDeepLink(
-      makeParams({host: 'chat', queryParams: {palId: 'pal-1'}}),
+      makeParams({host: 'chat', queryParams: {assistantId: 'assistant-1'}}),
     );
 
     expect(handled).toBe(false);

@@ -147,7 +147,7 @@ describe('isHubLink', () => {
   });
 
   it('is false for non-hub hosts', () => {
-    expect(isHubLink('drsai://chat?palId=x')).toBe(false);
+    expect(isHubLink('drsai://chat?assistantId=x')).toBe(false);
     expect(isHubLink('drsai://memory')).toBe(false);
     expect(isHubLink('drsai://e2e/benchmark')).toBe(false);
   });

@@ -49,7 +49,7 @@ function ensureONNXRuntime(): void {
     InferenceSession = onnx.InferenceSession;
     Tensor = onnx.Tensor;
     onnxInitialized = true;
-  } catch (error) {
+  } catch {
     throw new Error(
       'onnxruntime-react-native is required to use the Supertonic engine.\n\n' +
         'Install it with:\n' +

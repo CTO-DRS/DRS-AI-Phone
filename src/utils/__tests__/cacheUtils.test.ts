@@ -13,7 +13,7 @@ import {
   sessionCacheDirectoryExists,
   getSessionCacheInfo,
   clearAllSessionCaches,
-  clearSessionCacheForPal,
+  clearSessionCacheForAssistant,
 } from '../cacheUtils';
 
 const mockRNFS = RNFS as jest.Mocked<typeof RNFS>;
@@ -74,10 +74,10 @@ describe('cacheUtils', () => {
     it('should calculate file count and total size correctly', async () => {
       mockRNFS.exists.mockResolvedValue(true);
       mockRNFS.readDir.mockResolvedValue([
-        {name: 'pal1.session', isFile: () => true, size: 1024},
-        {name: 'pal1_metadata.json', isFile: () => true, size: 256},
-        {name: 'pal2.session', isFile: () => true, size: 2048},
-        {name: 'pal2_metadata.json', isFile: () => true, size: 512},
+        {name: 'assistant1.session', isFile: () => true, size: 1024},
+        {name: 'assistant1_metadata.json', isFile: () => true, size: 256},
+        {name: 'assistant2.session', isFile: () => true, size: 2048},
+        {name: 'assistant2_metadata.json', isFile: () => true, size: 512},
       ] as any);
 
       const result = await getSessionCacheInfo();
@@ -115,18 +115,18 @@ describe('cacheUtils', () => {
       mockRNFS.exists.mockResolvedValue(true);
       mockRNFS.readDir.mockResolvedValue([
         {
-          name: 'pal1.session',
-          path: '/mock/caches/session-cache/pal1.session',
+          name: 'assistant1.session',
+          path: '/mock/caches/session-cache/assistant1.session',
           isFile: () => true,
         },
         {
-          name: 'pal1_metadata.json',
-          path: '/mock/caches/session-cache/pal1_metadata.json',
+          name: 'assistant1_metadata.json',
+          path: '/mock/caches/session-cache/assistant1_metadata.json',
           isFile: () => true,
         },
         {
-          name: 'pal2.session',
-          path: '/mock/caches/session-cache/pal2.session',
+          name: 'assistant2.session',
+          path: '/mock/caches/session-cache/assistant2.session',
           isFile: () => true,
         },
       ] as any);
@@ -137,13 +137,13 @@ describe('cacheUtils', () => {
       expect(result).toBe(3);
       expect(mockRNFS.unlink).toHaveBeenCalledTimes(3);
       expect(mockRNFS.unlink).toHaveBeenCalledWith(
-        '/mock/caches/session-cache/pal1.session',
+        '/mock/caches/session-cache/assistant1.session',
       );
       expect(mockRNFS.unlink).toHaveBeenCalledWith(
-        '/mock/caches/session-cache/pal1_metadata.json',
+        '/mock/caches/session-cache/assistant1_metadata.json',
       );
       expect(mockRNFS.unlink).toHaveBeenCalledWith(
-        '/mock/caches/session-cache/pal2.session',
+        '/mock/caches/session-cache/assistant2.session',
       );
     });
 
@@ -151,13 +151,13 @@ describe('cacheUtils', () => {
       mockRNFS.exists.mockResolvedValue(true);
       mockRNFS.readDir.mockResolvedValue([
         {
-          name: 'pal1.session',
-          path: '/mock/caches/session-cache/pal1.session',
+          name: 'assistant1.session',
+          path: '/mock/caches/session-cache/assistant1.session',
           isFile: () => true,
         },
         {
-          name: 'pal2.session',
-          path: '/mock/caches/session-cache/pal2.session',
+          name: 'assistant2.session',
+          path: '/mock/caches/session-cache/assistant2.session',
           isFile: () => true,
         },
       ] as any);
@@ -172,20 +172,20 @@ describe('cacheUtils', () => {
     });
   });
 
-  describe('clearSessionCacheForPal', () => {
+  describe('clearSessionCacheForAssistant', () => {
     it('should delete both session and metadata files when they exist', async () => {
       mockRNFS.exists.mockResolvedValue(true);
       mockRNFS.unlink.mockResolvedValue(undefined);
 
-      const result = await clearSessionCacheForPal('test-pal-id');
+      const result = await clearSessionCacheForAssistant('test-assistant-id');
 
       expect(result).toBe(true);
       expect(mockRNFS.exists).toHaveBeenCalledTimes(2);
       expect(mockRNFS.exists).toHaveBeenCalledWith(
-        '/mock/caches/session-cache/test-pal-id.session',
+        '/mock/caches/session-cache/test-assistant-id.session',
       );
       expect(mockRNFS.exists).toHaveBeenCalledWith(
-        '/mock/caches/session-cache/test-pal-id_metadata.json',
+        '/mock/caches/session-cache/test-assistant-id_metadata.json',
       );
       expect(mockRNFS.unlink).toHaveBeenCalledTimes(2);
     });
@@ -193,7 +193,7 @@ describe('cacheUtils', () => {
     it('should return false when no files exist', async () => {
       mockRNFS.exists.mockResolvedValue(false);
 
-      const result = await clearSessionCacheForPal('test-pal-id');
+      const result = await clearSessionCacheForAssistant('test-assistant-id');
 
       expect(result).toBe(false);
       expect(mockRNFS.unlink).not.toHaveBeenCalled();
@@ -205,12 +205,12 @@ describe('cacheUtils', () => {
         .mockResolvedValueOnce(false); // metadata file does not exist
       mockRNFS.unlink.mockResolvedValue(undefined);
 
-      const result = await clearSessionCacheForPal('test-pal-id');
+      const result = await clearSessionCacheForAssistant('test-assistant-id');
 
       expect(result).toBe(true);
       expect(mockRNFS.unlink).toHaveBeenCalledTimes(1);
       expect(mockRNFS.unlink).toHaveBeenCalledWith(
-        '/mock/caches/session-cache/test-pal-id.session',
+        '/mock/caches/session-cache/test-assistant-id.session',
       );
     });
 
@@ -218,9 +218,9 @@ describe('cacheUtils', () => {
       mockRNFS.exists.mockResolvedValue(true);
       mockRNFS.unlink.mockRejectedValue(new Error('Delete failed'));
 
-      await expect(clearSessionCacheForPal('test-pal-id')).rejects.toThrow(
-        'Delete failed',
-      );
+      await expect(
+        clearSessionCacheForAssistant('test-assistant-id'),
+      ).rejects.toThrow('Delete failed');
     });
   });
 });

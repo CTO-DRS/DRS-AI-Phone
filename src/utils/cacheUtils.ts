@@ -120,19 +120,19 @@ export const clearAllSessionCaches = async (): Promise<number> => {
 };
 
 /**
- * Clear session cache for a specific pal
- * This removes both the .session file and _metadata.json file for the given pal ID
+ * Clear session cache for a specific assistant
+ * This removes both the .session file and _metadata.json file for the given assistant ID
  *
- * @param palId - The ID of the pal whose cache should be cleared
+ * @param assistantId - The ID of the assistant whose cache should be cleared
  * @returns Promise that resolves to true if files were deleted, false if they didn't exist
  */
-export const clearSessionCacheForPal = async (
-  palId: string,
+export const clearSessionCacheForAssistant = async (
+  assistantId: string,
 ): Promise<boolean> => {
   try {
     const cacheDir = getSessionCacheDirectory();
-    const sessionFile = `${cacheDir}/${palId}.session`;
-    const metadataFile = `${cacheDir}/${palId}_metadata.json`;
+    const sessionFile = `${cacheDir}/${assistantId}.session`;
+    const metadataFile = `${cacheDir}/${assistantId}_metadata.json`;
 
     let deletedAny = false;
 
@@ -140,7 +140,10 @@ export const clearSessionCacheForPal = async (
     const sessionExists = await RNFS.exists(sessionFile);
     if (sessionExists) {
       await RNFS.unlink(sessionFile);
-      console.log('[CacheUtils] Deleted session file for pal:', palId);
+      console.log(
+        '[CacheUtils] Deleted session file for assistant:',
+        assistantId,
+      );
       deletedAny = true;
     }
 
@@ -148,15 +151,18 @@ export const clearSessionCacheForPal = async (
     const metadataExists = await RNFS.exists(metadataFile);
     if (metadataExists) {
       await RNFS.unlink(metadataFile);
-      console.log('[CacheUtils] Deleted metadata file for pal:', palId);
+      console.log(
+        '[CacheUtils] Deleted metadata file for assistant:',
+        assistantId,
+      );
       deletedAny = true;
     }
 
     return deletedAny;
   } catch (error) {
     console.error(
-      '[CacheUtils] Error clearing session cache for pal:',
-      palId,
+      '[CacheUtils] Error clearing session cache for assistant:',
+      assistantId,
       error,
     );
     throw error;

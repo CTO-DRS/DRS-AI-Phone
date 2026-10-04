@@ -11,7 +11,7 @@
  *   E2E_API_KEY          - shared secret sent as the X-E2E-Key header
  *   E2E_BUYER_EMAIL      - test buyer email (local part must contain "e2e")
  *   E2E_BUYER_PASSWORD   - test buyer password
- *   E2E_DRSHUB_PAL_ID   - premium fixture pal id (defaults to the seeded pal)
+ *   E2E_DRSHUB_PAL_ID   - premium fixture assistant id (defaults to the seeded assistant)
  */
 
 export const drshubTestConfig = {
@@ -19,11 +19,11 @@ export const drshubTestConfig = {
   testKey: process.env.E2E_API_KEY || '',
   email: process.env.E2E_BUYER_EMAIL || '',
   password: process.env.E2E_BUYER_PASSWORD || '',
-  palId:
+  assistantId:
     process.env.E2E_DRSHUB_PAL_ID ||
-    // The seeded PREMIUM fixture pal ("Immeria Driver"); the purchase flow
-    // needs a premium pal (Buy → checkout → Download flip). The free
-    // dev-fixture pals (f0c0ffee-de40-…) have no Buy button.
+    // The seeded PREMIUM fixture assistant ("Immeria Driver"); the purchase flow
+    // needs a premium assistant (Buy → checkout → Download flip). The free
+    // dev-fixture assistants (f0c0ffee-de40-…) have no Buy button.
     'deadbeef-0000-4000-8000-000000000099',
 };
 
@@ -70,15 +70,15 @@ export async function ensureTestUser(
 }
 
 /**
- * Void the test buyer's purchase + entitlement of the given pal so it reads
+ * Void the test buyer's purchase + entitlement of the given assistant so it reads
  * is_owned=false and the Buy button renders. Call in beforeEach: without it
  * a prior run's purchase keeps the Buy button hidden. Idempotent.
  */
-export async function resetPalOwnership(
-  palId: string = drshubTestConfig.palId,
+export async function resetAssistantOwnership(
+  assistantId: string = drshubTestConfig.assistantId,
   userEmail: string = drshubTestConfig.email,
 ): Promise<void> {
-  await post(RESET_OWNERSHIP_PATH, {pal_id: palId, user_email: userEmail});
+  await post(RESET_OWNERSHIP_PATH, {pal_id: assistantId, user_email: userEmail});
 }
 
 /**
@@ -86,5 +86,5 @@ export async function resetPalOwnership(
  */
 export async function resetCheckoutScene(): Promise<void> {
   await ensureTestUser();
-  await resetPalOwnership();
+  await resetAssistantOwnership();
 }

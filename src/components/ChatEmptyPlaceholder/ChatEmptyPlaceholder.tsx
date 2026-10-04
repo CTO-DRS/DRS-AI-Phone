@@ -5,7 +5,7 @@ import {observer} from 'mobx-react';
 
 import {useTheme} from '../../hooks';
 import {createStyles} from './styles';
-import {modelStore, palStore} from '../../store';
+import {modelStore, assistantStore} from '../../store';
 import {useNavigation} from '@react-navigation/native';
 import {NavigationProp} from '@react-navigation/native';
 import {L10nContext} from '../../utils';
@@ -24,14 +24,14 @@ export const ChatEmptyPlaceholder = observer(
 
     const hasAvailableModels = modelStore.availableModels.length > 0;
     const hasActiveModel = modelStore.activeModelId !== undefined;
-    // When the user lands here from onboarding-finish, the pal exists
+    // When the user lands here from onboarding-finish, the assistant exists
     // and its defaultModel is downloading. The DownloadOverlay banner is
     // already showing progress at the top of the screen — the empty
-    // state's job is just to telegraph "your pal is on the way, no
+    // state's job is just to telegraph "your assistant is on the way, no
     // model picker needed."
-    const pendingPalDownload = modelStore.activeDownloads
+    const pendingAssistantDownload = modelStore.activeDownloads
       .map(d =>
-        palStore.pals.find(
+        assistantStore.assistants.find(
           p =>
             p.source === 'local' &&
             p.defaultModel &&
@@ -41,16 +41,16 @@ export const ChatEmptyPlaceholder = observer(
       .find(p => p !== undefined);
 
     const getContent = () => {
-      if (pendingPalDownload) {
+      if (pendingAssistantDownload) {
         return {
           title:
             l10n.components.chatEmptyPlaceholder.gettingReadyTitle?.replace(
               '{{name}}',
-              pendingPalDownload.name,
-            ) ?? `${pendingPalDownload.name} is getting ready`,
+              pendingAssistantDownload.name,
+            ) ?? `${pendingAssistantDownload.name} is getting ready`,
           description:
             l10n.components.chatEmptyPlaceholder.gettingReadyDescription ??
-            'We’ll let you know the moment your pal can chat. Tap the banner up top to see how it’s going.',
+            'We’ll let you know the moment your assistant can chat. Tap the banner up top to see how it’s going.',
           buttonText: null,
           onPress: () => {},
         };

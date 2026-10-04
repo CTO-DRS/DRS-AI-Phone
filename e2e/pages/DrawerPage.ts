@@ -26,27 +26,27 @@ export class DrawerPage extends BasePage {
   }
 
   /**
-   * Check if drawer is open (by checking if Pals tab is visible)
-   * We use Pals because it's unique to the drawer and not a screen title
+   * Check if drawer is open (by checking if Assistants tab is visible)
+   * We use Assistants because it's unique to the drawer and not a screen title
    */
   async isOpen(): Promise<boolean> {
-    return this.isElementDisplayed(Selectors.drawer.palsTab, 3000);
+    return this.isElementDisplayed(Selectors.drawer.assistantsTab, 3000);
   }
 
   /**
    * Wait for drawer to be fully open
-   * We use Pals tab because it's unique to the drawer (not a screen title)
+   * We use Assistants tab because it's unique to the drawer (not a screen title)
    */
   async waitForOpen(timeout = 10000): Promise<void> {
-    await this.waitForElement(Selectors.drawer.palsTab, timeout);
+    await this.waitForElement(Selectors.drawer.assistantsTab, timeout);
   }
 
   /**
    * Wait for drawer to close
-   * We use Pals tab because it's unique to the drawer and won't appear elsewhere
+   * We use Assistants tab because it's unique to the drawer and won't appear elsewhere
    */
   async waitForClose(timeout = 5000): Promise<void> {
-    await this.waitForElementToDisappear(Selectors.drawer.palsTab, timeout);
+    await this.waitForElementToDisappear(Selectors.drawer.assistantsTab, timeout);
   }
 
   /**
@@ -82,17 +82,17 @@ export class DrawerPage extends BasePage {
   }
 
   /**
-   * Navigate to Pals screen
+   * Navigate to Assistants screen
    *
-   * Tap the visible label, not Selectors.drawer.palsTab. That selector is the
-   * testID (drawer-item-pals) used as the open/close indicator so it survives a
+   * Tap the visible label, not Selectors.drawer.assistantsTab. That selector is the
+   * testID (drawer-item-assistants) used as the open/close indicator so it survives a
    * language switch, but a Paper Drawer.Item does not reliably respond to a
    * testID tap on iOS (see the selectors.ts drawer comment) — tapping the label
    * matches the other tabs and works on both platforms.
    */
-  async navigateToPals(): Promise<void> {
+  async navigateToAssistants(): Promise<void> {
     await this.waitForOpen();
-    await this.tap(byText('Pals'));
+    await this.tap(byText('Assistants'));
     await browser.pause(300);
     await this.waitForClose();
   }

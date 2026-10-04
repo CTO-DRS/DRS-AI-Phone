@@ -114,11 +114,11 @@
     "useHfTokenLabel": "Guna Token HF",
     "useHfTokenDescription": "Dayakan untuk menggunakan token dalam permintaan API. Lumpuhkan jika token menyebabkan masalah pengesahan.",
     "cacheStorageTitle": "Cache & Storan",
-    "clearPalCaches": "Kosongkan Cache Shortcut",
-    "clearPalCachesDescription": "Memadam data cache yang digunakan untuk mempercepatkan Shortcut. Tidak memberi kesan kepada Pal atau sejarah sembang anda.",
+    "clearAssistantCaches": "Kosongkan Cache Shortcut",
+    "clearAssistantCachesDescription": "Memadam data cache yang digunakan untuk mempercepatkan Shortcut. Tidak memberi kesan kepada Penolong atau sejarah sembang anda.",
     "clearCachesButton": "Kosongkan Cache",
     "clearCachesConfirmTitle": "Kosongkan Cache Shortcut?",
-    "clearCachesConfirmMessage": "Ini akan memadam semua data sesi cache ({{fileCount}} fail, {{size}}). Shortcut mungkin lebih perlahan apabila digunakan buat pertama kali selepas dikosongkan. Tidak memberi kesan kepada Pal atau sejarah sembang anda.",
+    "clearCachesConfirmMessage": "Ini akan memadam semua data sesi cache ({{fileCount}} fail, {{size}}). Shortcut mungkin lebih perlahan apabila digunakan buat pertama kali selepas dikosongkan. Tidak memberi kesan kepada Penolong atau sejarah sembang anda.",
     "clearCachesSuccess": "Berjaya mengosongkan {{count}} fail cache.",
     "clearCachesError": "Gagal mengosongkan cache. Sila cuba lagi.",
     "noCachesToClear": "Tiada cache untuk dikosongkan.",
@@ -167,7 +167,7 @@
     "serverTypeHelp": "Dikesan secara automatik; tukar jika salah.",
     "internetSearch": {
       "title": "Carian Internet",
-      "description": "Biarkan Pals mencari di web dengan alat mereka sendiri. Bawa kunci API anda sendiri — DRS AI tidak sekali-kali menyimpan kunci atau menghalakan pertanyaan anda.",
+      "description": "Biarkan Penolongs mencari di web dengan alat mereka sendiri. Bawa kunci API anda sendiri — DRS AI tidak sekali-kali menyimpan kunci atau menghalakan pertanyaan anda.",
       "providerLabel": "Penyedia carian",
       "providerGated": "Akan datang",
       "keyLabel": "Kunci API",
@@ -183,7 +183,7 @@
       "resultCountLabel": "Bilangan hasil setiap carian",
       "resultCountDescription": "Lebih sedikit hasil mengekalkan lebih banyak ruang dalam konteks model.",
       "consentTitle": "Carian meninggalkan peranti anda",
-      "consentDescription": "Apabila Pal mencari di web, pertanyaan anda dihantar ke penyedia yang dipilih melalui internet. Apabila Pal membaca sesuatu halaman, URL dan kandungan halaman mungkin dihantar ke perkhidmatan pembaca lalai (r.jina.ai) sebaliknya jika penyedia yang dipilih tiada pembaca natif. Kunci dan pertanyaan tidak sekali-kali dihantar ke DRS AI.",
+      "consentDescription": "Apabila Penolong mencari di web, pertanyaan anda dihantar ke penyedia yang dipilih melalui internet. Apabila Penolong membaca sesuatu halaman, URL dan kandungan halaman mungkin dihantar ke perkhidmatan pembaca lalai (r.jina.ai) sebaliknya jika penyedia yang dipilih tiada pembaca natif. Kunci dan pertanyaan tidak sekali-kali dihantar ke DRS AI.",
       "consentAccept": "Saya faham",
       "consentRequired": "Terima pendedahan di atas untuk menetapkan kunci dan mendayakan carian.",
       "consentGivenTitle": "Carian web telah didayakan",
@@ -365,7 +365,7 @@
         "sortRelevance": "Kerelevanan",
         "sortDownloads": "Bilangan Muat Turun",
         "sortRecent": "Dikemas Kini Terkini",
-        "sortLikes": "Paling Disukai"
+        "sortLikes": "Penolonging Disukai"
       }
     },
     "modelCard": {
@@ -590,7 +590,7 @@
       "activateModelButton": "Pilih Model",
       "loading": "Memuat...",
       "gettingReadyTitle": "{{name}} sedang bersedia",
-      "gettingReadyDescription": "Kami akan beritahu anda sebaik sahaja pal anda boleh bersembang. Ketik sepanduk di atas untuk melihat perkembangannya."
+      "gettingReadyDescription": "Kami akan beritahu anda sebaik sahaja assistant anda boleh bersembang. Ketik sepanduk di atas untuk melihat perkembangannya."
     },
     "chatInput": {
       "inputPlaceholder": "Mesej",
@@ -676,22 +676,22 @@
         "title": "Berjaya",
         "message": "Tetapan ini akan diaplikasikan kepada semua sesi akan datang"
       },
-      "palSettings": "Tetapan Pal",
+      "assistantSettings": "Tetapan Penolong",
       "settingsSource": "Sumber Tetapan"
     },
-    "palGenerationSettingsSheet": {
-      "title": "Tetapan Penjanaan - {{palName}}",
+    "assistantGenerationSettingsSheet": {
+      "title": "Tetapan Penjanaan - {{assistantName}}",
       "invalidValues": "Nilai Tidak Sah",
       "invalidNumericValuesMessage": "Mesti nombor yang sah",
       "pleaseCorrect": "Sila betulkan yang berikut:",
       "ok": "OK",
       "error": "Ralat",
-      "failedToSave": "Gagal menyimpan tetapan pal",
+      "failedToSave": "Gagal menyimpan tetapan assistant",
       "resetToGlobal": "Tetap Semula ke Lalai Global",
       "resetToSystem": "Tetap Semula ke Lalai Sistem",
-      "clearPalSettings": "Kosongkan Tetapan Pal",
-      "customSettingsFor": "Tetapan tersuai untuk {{palName}}",
-      "inheritedSettingsFor": "Tetapan warisan untuk {{palName}}"
+      "clearAssistantSettings": "Kosongkan Tetapan Penolong",
+      "customSettingsFor": "Tetapan tersuai untuk {{assistantName}}",
+      "inheritedSettingsFor": "Tetapan warisan untuk {{assistantName}}"
     },
     "chatHeaderTitle": {
       "defaultTitle": "Sembang"
@@ -699,17 +699,17 @@
     "fileMessage": {
       "fileButtonAccessibilityLabel": "Fail"
     },
-    "chatPalModelPickerSheet": {
+    "chatAssistantModelPickerSheet": {
       "modelsTab": "Model",
-      "palsTab": "Pal",
-      "noPal": "Tiada Pal",
-      "disablePal": "Lumpuhkan pal aktif",
+      "assistantsTab": "Penolong",
+      "noAssistant": "Tiada Penolong",
+      "disableAssistant": "Lumpuhkan assistant aktif",
       "noDescription": "Tiada penerangan",
       "assistantType": "Pembantu",
       "roleplayType": "Main Peranan",
       "videoType": "Video",
       "confirmationTitle": "Pengesahan",
-      "modelSwitchMessage": "Pal ini mempunyai model lalai yang berbeza ({{modelName}}). Adakah anda mahu bertukar kepada model lalai pal tersebut?",
+      "modelSwitchMessage": "Penolong ini mempunyai model lalai yang berbeza ({{modelName}}). Adakah anda mahu bertukar kepada model lalai assistant tersebut?",
       "keepButton": "Kekalkan",
       "switchButton": "Tukar"
     },
@@ -809,14 +809,14 @@
       "proceedWithReset": "Teruskan Tetapan Semula",
       "confirmReset": "Sahkan Tetapan Semula"
     },
-    "palSheet": {
+    "assistantSheet": {
       "title": {
-        "edit": "Sunting Pal",
-        "newPal": "Pal Baharu",
-        "newVideoPal": "Pal Video Baharu"
+        "edit": "Sunting Penolong",
+        "newAssistant": "Penolong Baharu",
+        "newVideoAssistant": "Penolong Video Baharu"
       },
       "description": "Penerangan",
-      "descriptionPlaceholder": "Masukkan penerangan ringkas Pal anda",
+      "descriptionPlaceholder": "Masukkan penerangan ringkas Penolong anda",
       "parameters": "Parameter",
       "generationSettings": "Tetapan Penjanaan",
       "configureGenerationSettings": "Konfigurasi Tetapan Penjanaan",
@@ -843,20 +843,20 @@
       "greeting": {
         "sectionLabel": "Sapaan",
         "textLabel": "Mesej sapaan",
-        "textPlaceholder": "Apa yang patut pal ini katakan pada sembang kosong?",
+        "textPlaceholder": "Apa yang patut assistant ini katakan pada sembang kosong?",
         "suggestedPromptsLabel": "Prompt yang dicadangkan",
         "addPromptButton": "Tambah prompt",
         "promptPlaceholder": "Prompt ringkas untuk cip",
         "removePromptLabel": "Buang prompt"
       }
     },
-    "assistantPalSheet": {
+    "assistantPersonaSheet": {
       "title": {
-        "create": "Cipta Pal Pembantu",
-        "edit": "Sunting Pal Pembantu"
+        "create": "Cipta Penolong Pembantu",
+        "edit": "Sunting Penolong Pembantu"
       },
-      "palName": "Nama Pal",
-      "palNamePlaceholder": "Nama",
+      "assistantName": "Nama Penolong",
+      "assistantNamePlaceholder": "Nama",
       "defaultModel": "Model Lalai",
       "defaultModelPlaceholder": "Pilih model",
       "validation": {
@@ -868,19 +868,19 @@
     "modelNotAvailable": {
       "noModelsDownloaded": "Anda belum memuat turun sebarang model. Sila muat turun model terlebih dahulu.",
       "downloadAModel": "Muat turun model",
-      "defaultModelNotDownloaded": "Pal ini mengesyorkan model tertentu yang perlu dimuat turun, atau anda boleh memilih model lain.",
+      "defaultModelNotDownloaded": "Penolong ini mengesyorkan model tertentu yang perlu dimuat turun, atau anda boleh memilih model lain.",
       "modelNotDownloadedShort": "Model belum dimuat turun",
       "recommendedModel": "Model yang Disyorkan",
       "cancelDownload": "Batal Muat Turun",
       "download": "Muat Turun"
     },
-    "roleplayPalSheet": {
+    "roleplayPersonaSheet": {
       "title": {
-        "create": "Cipta Pal Main Peranan",
-        "edit": "Sunting Pal Main Peranan"
+        "create": "Cipta Penolong Main Peranan",
+        "edit": "Sunting Penolong Main Peranan"
       },
-      "palName": "Nama Pal",
-      "palNamePlaceholder": "Nama",
+      "assistantName": "Nama Penolong",
+      "assistantNamePlaceholder": "Nama",
       "defaultModel": "Model Lalai",
       "defaultModelPlaceholder": "Pilih model",
       "descriptionSection": "Penerangan",
@@ -904,13 +904,13 @@
       },
       "create": "Cipta"
     },
-    "lookiePalSheet": {
+    "lookiePersonaSheet": {
       "title": {
-        "create": "Cipta Pal Lookie",
-        "edit": "Sunting Pal Lookie"
+        "create": "Cipta Penolong Lookie",
+        "edit": "Sunting Penolong Lookie"
       },
-      "palName": "Nama Pal",
-      "palNamePlaceholder": "Masukkan nama untuk Pal Lookie anda",
+      "assistantName": "Nama Penolong",
+      "assistantNamePlaceholder": "Masukkan nama untuk Penolong Lookie anda",
       "visionModel": "Model Penglihatan",
       "visionModelPlaceholder": "Pilih model penglihatan",
       "requiredModelsSection": "Model yang Diperlukan",
@@ -931,7 +931,7 @@
       },
       "generatingPrompt": {
         "label": "Tujuan & Konteks",
-        "placeholder": "Terangkan peranan, tujuan, atau senario untuk Pal ini..."
+        "placeholder": "Terangkan peranan, tujuan, atau senario untuk Penolong ini..."
       },
       "buttons": {
         "loadingModel": "Memuatkan model...",
@@ -953,7 +953,7 @@
       "menuItems": {
         "chat": "Sembang",
         "models": "Model",
-        "pals": "Pal",
+        "assistants": "Penolong",
         "benchmark": "Tolok Ukur",
         "settings": "Tetapan",
         "appInfo": "Maklumat Aplikasi",
@@ -994,7 +994,12 @@
         "total": "Jumlah: ",
         "usage": "Penggunaan: "
       },
-      "byteSizes": ["Bait", "KB", "MB", "GB"]
+      "byteSizes": [
+        "Bait",
+        "KB",
+        "MB",
+        "GB"
+      ]
     },
     "chatView": {
       "menuItems": {
@@ -1005,11 +1010,11 @@
         "reportContent": "Laporkan Kandungan"
       }
     },
-    "palHeaderRight": {
-      "exportAllPals": "Eksport semua pal",
-      "importPals": "Import pal",
-      "importSuccess": "Berjaya mengimport {{count}} pal.",
-      "importError": "Gagal mengimport pal. Sila semak format fail."
+    "assistantHeaderRight": {
+      "exportAllAssistants": "Eksport semua assistant",
+      "importAssistants": "Import assistant",
+      "importSuccess": "Berjaya mengimport {{count}} assistant.",
+      "importError": "Gagal mengimport assistant. Sila semak format fail."
     },
     "bubble": {
       "msPerToken": "{{value}}ms/token",
@@ -1031,11 +1036,11 @@
       "elapsed": "{{seconds}}s"
     }
   },
-  "palsScreen": {
+  "assistantsScreen": {
     "sectionTitles": {
-      "myPalsLocal": "Pal Saya (tempatan)",
+      "myAssistantsLocal": "Penolong Saya (tempatan)",
       "myLibrary": "Pustaka Saya (hub.drsai.app)",
-      "discoverPals": "Temui Pal (hub.drsai.app)"
+      "discoverAssistants": "Temui Penolong (hub.drsai.app)"
     },
     "systemPrompt": "Prompt Sistem",
     "videoAnalysis": "Analisis Video",
@@ -1050,26 +1055,26 @@
     "assistant": "Pembantu",
     "roleplay": "Main Peranan",
     "video": "Video",
-    "deletePal": "Padam Pal",
-    "deletePalMessage": "Pasti mahu memadam pal ini?",
+    "deleteAssistant": "Padam Penolong",
+    "deleteAssistantMessage": "Pasti mahu memadam assistant ini?",
     "missingModel": "Model Tidak Ditemui",
-    "missingModelMessage": "Model lalai \"{{modelName}}\" untuk pal ini tidak tersedia. Sila muat turun dalam helaian sunting atau pilih model lain.",
+    "missingModelMessage": "Model lalai \"{{modelName}}\" untuk assistant ini tidak tersedia. Sila muat turun dalam helaian sunting atau pilih model lain.",
     "search": "Cari",
     "profile": "Profil",
     "signIn": "Log Masuk",
-    "addPal": "Tambah Pal",
+    "addAssistant": "Tambah Penolong",
     "signInToAccessLibrary": "Log masuk untuk mengakses pustaka anda daripada hub.drsai.app",
     "signOut": "Log Keluar",
     "signOutConfirmation": "Pasti mahu log keluar?",
     "signOutError": "Gagal log keluar. Sila cuba lagi.",
     "account": "Akaun",
     "signInToDrshub": "Log Masuk ke Drshub",
-    "signInDescription": "Akses pustaka anda, cipta Pal persendirian, dan segerak merentas peranti",
-    "searchAllPals": "Cari semua Pal...",
-    "deletePalConfirmation": "Pasti mahu memadam \"{{palName}}\"?",
+    "signInDescription": "Akses pustaka anda, cipta Penolong persendirian, dan segerak merentas peranti",
+    "searchAllAssistants": "Cari semua Penolong...",
+    "deleteAssistantConfirmation": "Pasti mahu memadam \"{{assistantName}}\"?",
     "filters": {
       "all": "Semua",
-      "myPals": "Pal Saya",
+      "myAssistants": "Penolong Saya",
       "local": "Tempatan",
       "video": "Video",
       "free": "Percuma",
@@ -1082,15 +1087,15 @@
       "download": "Muat Turun",
       "getFree": "Dapatkan Percuma"
     },
-    "premiumPalDescription": "Pal premium daripada komuniti hub.drsai.app",
-    "premiumInfoText": "Lawati hub.drsai.app untuk meneroka lebih banyak pal",
+    "premiumAssistantDescription": "Penolong premium daripada komuniti hub.drsai.app",
+    "premiumInfoText": "Lawati hub.drsai.app untuk meneroka lebih banyak assistant",
     "sortOptions": {
       "newest": "Terbaharu",
       "oldest": "Terlama",
       "rating": "Rating Tertinggi",
-      "popular": "Paling Popular"
+      "popular": "Penolonging Popular"
     },
-    "palDetailSheet": {
+    "assistantDetailSheet": {
       "by": "oleh",
       "unknown": "Tidak Diketahui",
       "rating": "Rating",
@@ -1103,18 +1108,18 @@
       "systemPrompt": "Prompt Sistem",
       "downloaded": "Dimuat Turun",
       "success": "Berjaya",
-      "palAddedToCollection": "Pal telah ditambah ke koleksi anda!",
+      "assistantAddedToCollection": "Penolong telah ditambah ke koleksi anda!",
       "error": "Ralat",
-      "failedToLoadDetails": "Gagal memuatkan butiran pal",
-      "failedToDownload": "Gagal memuat turun pal",
-      "premiumPalMessage": "Ini adalah Pal Premium.\n• Jika anda sudah membukanya dengan akaun Drshub, hanya log masuk untuk mengakses butiran penuhnya.\n• Belum membukanya? Lawati aplikasi hub.drsai.app untuk maklumat lanjut.",
+      "failedToLoadDetails": "Gagal memuatkan butiran assistant",
+      "failedToDownload": "Gagal memuat turun assistant",
+      "premiumAssistantMessage": "Ini adalah Penolong Premium.\n• Jika anda sudah membukanya dengan akaun Drshub, hanya log masuk untuk mengakses butiran penuhnya.\n• Belum membukanya? Lawati aplikasi hub.drsai.app untuk maklumat lanjut.",
       "notAvailable": "T/A",
       "buyOnDrshub": "Beli di Drshub",
       "finalizingPurchase": "Memuktamadkan pembelian anda…",
       "processingPurchase": "Memproses — akan dibuka sebentar lagi.",
       "checkoutSessionExpired": "Sesi anda telah tamat tempoh. Log masuk semula untuk meneruskan.",
       "signInAgain": "Log masuk semula",
-      "palNotAvailable": "Pal ini tidak tersedia untuk dibeli buat masa ini.",
+      "assistantNotAvailable": "Penolong ini tidak tersedia untuk dibeli buat masa ini.",
       "checkoutFailed": "Sesuatu telah berlaku. Sila cuba lagi."
     }
   },
@@ -1165,13 +1170,13 @@
       "step1": "• Sunting prompt (pilihan) untuk memandu analisis",
       "step2": "• Ketik butang kamera untuk memulakan analisis video langsung",
       "step3": "• Laraskan kekerapan tangkapan semasa kamera aktif",
-      "step4": "• Bertukar kepada pal lain untuk sembang teks biasa"
+      "step4": "• Bertukar kepada assistant lain untuk sembang teks biasa"
     }
   },
   "screenTitles": {
     "chat": "Sembang",
     "models": "Model",
-    "pals": "Pal (percubaan)",
+    "assistants": "Penolong (percubaan)",
     "benchmark": "Tolok Ukur",
     "settings": "Tetapan",
     "appInfo": "Maklumat Aplikasi",
@@ -1225,7 +1230,7 @@
     "increaseContextReloading": "Memuat semula model dengan konteks yang lebih besar…",
     "increaseContextSuccess": "Konteks ditingkatkan kepada {{target}} token.",
     "increaseContextFailure": "Tidak dapat meningkatkan saiz konteks. Tetapan sebelumnya telah dipulihkan.",
-    "palLoadHint": "Pal ini cenderung memerlukan lebih ruang daripada yang dibenarkan oleh saiz konteks semasa.",
+    "assistantLoadHint": "Penolong ini cenderung memerlukan lebih ruang daripada yang dibenarkan oleh saiz konteks semasa.",
     "generatingPreview": "Menjana pratonton… ({{tokens}} token)",
     "generatingPreviewPending": "Menjana pratonton…",
     "toolUsedChip": "menggunakan {{name}}",
@@ -1427,7 +1432,7 @@
     "stepsCount": "{{steps}} langkah",
     "engineKittenTagline": "Jejak terkecil. Boleh dipercayai. Terbaik pada peranti lama.",
     "engineKokoroTagline": "Kualiti tertinggi. Lebih lambat dimulakan. Sesetengah suara mungkin tidak berfungsi pada semua peranti.",
-    "engineSupertonicTagline": "Paling pantas dimulakan. Menggunakan lebih banyak RAM. Mungkin sesekali tertinggal perkataan.",
+    "engineSupertonicTagline": "Penolonging pantas dimulakan. Menggunakan lebih banyak RAM. Mungkin sesekali tertinggal perkataan.",
     "engineSystemTagline": "Suara OS terbina dalam. Sentiasa tersedia, tanpa pemasangan.",
     "engineSystemTitleIos": "Suara iOS",
     "engineSystemTitleAndroid": "Suara Android",
@@ -1493,15 +1498,15 @@
       "brand": "DRS AI"
     },
     "screen1": {
-      "title": "Kenali pal anda.",
-      "titleAccent": "pal anda.",
+      "title": "Kenali assistant anda.",
+      "titleAccent": "assistant anda.",
       "body": "Kawan kecil yang bijak, hidup di dalam telefon anda.\nJom siapkan persediaan - hanya ambil seminit.",
       "cta": "Tunjuk sekeliling",
       "eyebrow": "Selamat datang ke DRS AI"
     },
     "screen2": {
       "title": "Bila-bila,\nDi mana-mana.",
-      "body": "Pal anda hidup di dalam telefon anda.\nTanpa internet, tanpa isyarat - mereka berfungsi dalam kapal terbang, jauh dari grid, di kampung terpencil.",
+      "body": "Penolong anda hidup di dalam telefon anda.\nTanpa internet, tanpa isyarat - mereka berfungsi dalam kapal terbang, jauh dari grid, di kampung terpencil.",
       "highlight": "Tanpa internet, tanpa isyarat",
       "cta": "Seterusnya",
       "eyebrow": "Ideanya",
@@ -1510,7 +1515,7 @@
     "screen3": {
       "title": "Lebih kecil,\ntapi milik anda.",
       "titleAccent": "Lebih kecil,",
-      "body": "Pal pada telefon anda pantas dan peribadi - tetapi lebih ringan daripada AI Awan. Anggap ia teman saku, bukan pakar serba tahu.",
+      "body": "Penolong pada telefon anda pantas dan peribadi - tetapi lebih ringan daripada AI Awan. Anggap ia teman saku, bukan pakar serba tahu.",
       "highlight": "pantas dan peribadi",
       "cta": "Faham",
       "eyebrow": "Sekadar makluman"
@@ -1524,8 +1529,8 @@
       "eyebrow": "Privasi terjamin"
     },
     "screen5": {
-      "title": "Untuk apa pal anda?",
-      "body": "Pilih apa yang anda ingin bualkan - kami akan padankan pal yang sesuai dengan telefon anda.",
+      "title": "Untuk apa assistant anda?",
+      "body": "Pilih apa yang anda ingin bualkan - kami akan padankan assistant yang sesuai dengan telefon anda.",
       "topic": {
         "smartchat": "Sembang Pintar",
         "coding": "Pengaturcaraan",
@@ -1540,7 +1545,7 @@
         "education": "Belajar, terangkan, kuiz",
         "roleplay": "Watak, senario",
         "creative_writing": "Cerita, idea, draf",
-        "else": "Layari semua pal kemudian dalam aplikasi"
+        "else": "Layari semua assistant kemudian dalam aplikasi"
       }
     },
     "screen6": {
@@ -1557,9 +1562,9 @@
         "best": "Terbaik"
       },
       "subtitleTemplate": "{{name}} berfikir menggunakan model AI kecil pada telefon anda - pilih satu yang sesuai.",
-      "pal": {
+      "assistant": {
         "pip": {
-          "body": "Kami menemui pal yang sempurna untuk anda - teman harian yang mesra. Cukup bijak untuk kebanyakan perkara, cukup ringan untuk mana-mana telefon."
+          "body": "Kami menemui assistant yang sempurna untuk anda - teman harian yang mesra. Cukup bijak untuk kebanyakan perkara, cukup ringan untuk mana-mana telefon."
         },
         "codie": {
           "body": "Kenali Codie — rakan pengaturcaraan tempatan anda. Membaca kod, menulis kod, menerangkan bahagian rumit tanpa keluar dari telefon anda."
@@ -1577,7 +1582,7 @@
     }
   },
   "downloadBanner": {
-    "titleByPal": "{{name}} sedang dimuat turun",
+    "titleByAssistant": "{{name}} sedang dimuat turun",
     "titleByModel": "{{name}} sedang dimuat turun",
     "extraInProgress": "+{{count}} lagi sedang berjalan"
   }

@@ -88,7 +88,7 @@ exports[`BottomNavBar — snapshot matrix baseline (variant x size x {default,di
       </Text>
     </View>
     <View
-      accessibilityLabel="Pals"
+      accessibilityLabel="Assistants"
       accessibilityRole="tab"
       accessibilityState={
         {
@@ -128,7 +128,7 @@ exports[`BottomNavBar — snapshot matrix baseline (variant x size x {default,di
           "paddingVertical": 4,
         }
       }
-      testID="ui-bottom-nav-item-pals"
+      testID="ui-bottom-nav-item-assistants"
     >
       <Text>
         P
@@ -144,7 +144,7 @@ exports[`BottomNavBar — snapshot matrix baseline (variant x size x {default,di
           }
         }
       >
-        Pals
+        Assistants
       </Text>
     </View>
     <View
@@ -299,7 +299,7 @@ exports[`BottomNavBar — snapshot matrix baseline (variant x size x {default,di
       </Text>
     </View>
     <View
-      accessibilityLabel="Pals"
+      accessibilityLabel="Assistants"
       accessibilityRole="tab"
       accessibilityState={
         {
@@ -339,7 +339,7 @@ exports[`BottomNavBar — snapshot matrix baseline (variant x size x {default,di
           "paddingVertical": 4,
         }
       }
-      testID="ui-bottom-nav-item-pals"
+      testID="ui-bottom-nav-item-assistants"
     >
       <Text>
         P
@@ -355,7 +355,7 @@ exports[`BottomNavBar — snapshot matrix baseline (variant x size x {default,di
           }
         }
       >
-        Pals
+        Assistants
       </Text>
     </View>
     <View
@@ -510,7 +510,7 @@ exports[`BottomNavBar — snapshot matrix baseline (variant x size x {default,di
       </Text>
     </View>
     <View
-      accessibilityLabel="Pals"
+      accessibilityLabel="Assistants"
       accessibilityRole="tab"
       accessibilityState={
         {
@@ -550,7 +550,7 @@ exports[`BottomNavBar — snapshot matrix baseline (variant x size x {default,di
           "paddingVertical": 4,
         }
       }
-      testID="ui-bottom-nav-item-pals"
+      testID="ui-bottom-nav-item-assistants"
     >
       <Text>
         P
@@ -566,7 +566,7 @@ exports[`BottomNavBar — snapshot matrix baseline (variant x size x {default,di
           }
         }
       >
-        Pals
+        Assistants
       </Text>
     </View>
     <View
@@ -721,7 +721,7 @@ exports[`BottomNavBar — snapshot matrix baseline (variant x size x {default,di
       </Text>
     </View>
     <View
-      accessibilityLabel="Pals"
+      accessibilityLabel="Assistants"
       accessibilityRole="tab"
       accessibilityState={
         {
@@ -761,7 +761,7 @@ exports[`BottomNavBar — snapshot matrix baseline (variant x size x {default,di
           "paddingVertical": 4,
         }
       }
-      testID="ui-bottom-nav-item-pals"
+      testID="ui-bottom-nav-item-assistants"
     >
       <Text>
         P
@@ -777,7 +777,7 @@ exports[`BottomNavBar — snapshot matrix baseline (variant x size x {default,di
           }
         }
       >
-        Pals
+        Assistants
       </Text>
     </View>
     <View
@@ -932,7 +932,7 @@ exports[`BottomNavBar — snapshot matrix non-Latin font-fallback canary (canary
       </Text>
     </View>
     <View
-      accessibilityLabel="Pals"
+      accessibilityLabel="Assistants"
       accessibilityRole="tab"
       accessibilityState={
         {
@@ -972,7 +972,7 @@ exports[`BottomNavBar — snapshot matrix non-Latin font-fallback canary (canary
           "paddingVertical": 4,
         }
       }
-      testID="ui-bottom-nav-item-pals"
+      testID="ui-bottom-nav-item-assistants"
     >
       <Text>
         P
@@ -988,7 +988,7 @@ exports[`BottomNavBar — snapshot matrix non-Latin font-fallback canary (canary
           }
         }
       >
-        Pals
+        Assistants
       </Text>
     </View>
     <View

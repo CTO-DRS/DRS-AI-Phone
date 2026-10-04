@@ -162,16 +162,16 @@ describe('Remote Vision Capability', () => {
     await browser.pause(3000);
 
     // Open the model picker. The empty-state "Select Model" button only shows
-    // when no model is active; the "Select Pal" button in the input bar is
+    // when no model is active; the "Select Assistant" button in the input bar is
     // always present and toggles the picker, so it works whether or not a model
     // is already active (e.g. after a previous test activated one).
-    const palBtn = browser.$('~Select Pal');
-    const palVisible = await palBtn
+    const assistantBtn = browser.$('~Select Assistant');
+    const assistantVisible = await assistantBtn
       .waitForDisplayed({timeout: 10000})
       .then(() => true)
       .catch(() => false);
-    if (palVisible) {
-      await palBtn.click();
+    if (assistantVisible) {
+      await assistantBtn.click();
     } else {
       const selectModelBtn = browser.$(byPartialText('Select Model'));
       await selectModelBtn.waitForDisplayed({timeout: 10000});
@@ -179,7 +179,7 @@ describe('Remote Vision Capability', () => {
     }
     await browser.pause(1000);
 
-    // Picker opens on the Pals tab; swipe left to the Models tab.
+    // Picker opens on the Assistants tab; swipe left to the Models tab.
     const {width, height} = await driver.getWindowSize();
     await driver
       .action('pointer', {parameters: {pointerType: 'touch'}})

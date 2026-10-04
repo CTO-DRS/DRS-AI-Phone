@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 /**
  * Voice Loader for Kokoro TTS
@@ -10,15 +10,11 @@
  * - Lazy loading from manifest (on-demand download)
  */
 
-import { createComponentLogger } from "../../utils/logger.js";
-import { decodeUtf8 } from "../../utils/utf8.js";
-import { VOICE_EMBEDDING_CONSTANTS } from "./constants.js";
+import {createComponentLogger} from '../../utils/logger.js';
+import {decodeUtf8} from '../../utils/utf8.js';
+import {VOICE_EMBEDDING_CONSTANTS} from './constants.js';
 const log = createComponentLogger('Kokoro', 'VoiceLoader');
-const {
-  STYLE_DIM,
-  MAX_TOKEN_INDEX,
-  EXPECTED_SIZE
-} = VOICE_EMBEDDING_CONSTANTS;
+const {STYLE_DIM, MAX_TOKEN_INDEX, EXPECTED_SIZE} = VOICE_EMBEDDING_CONSTANTS;
 export class VoiceLoader {
   voiceEmbeddings = new Map();
   availableVoices = [];
@@ -62,7 +58,9 @@ export class VoiceLoader {
 
         // Validate embedding size
         if (embeddingDim !== EXPECTED_SIZE) {
-          log.warn(`Voice ${voiceId} has unexpected size: ${embeddingDim} (expected ${EXPECTED_SIZE})`);
+          log.warn(
+            `Voice ${voiceId} has unexpected size: ${embeddingDim} (expected ${EXPECTED_SIZE})`,
+          );
         }
 
         // Store embedding
@@ -73,7 +71,9 @@ export class VoiceLoader {
         this.availableVoices.push(voiceInfo);
         voiceCount++;
       } catch (error) {
-        log.warn(`Failed to load voice at offset ${offset}: ${error instanceof Error ? error.message : String(error)}`);
+        log.warn(
+          `Failed to load voice at offset ${offset}: ${error instanceof Error ? error.message : String(error)}`,
+        );
         break;
       }
     }
@@ -114,7 +114,9 @@ export class VoiceLoader {
       this.availableVoices.push(voiceInfo);
     }
     this.isInitialized = true;
-    log.debug(`Lazy loading initialized with ${this.availableVoices.length} voices`);
+    log.debug(
+      `Lazy loading initialized with ${this.availableVoices.length} voices`,
+    );
   }
 
   /**
@@ -149,12 +151,17 @@ export class VoiceLoader {
 
     // Validate embedding data
     if (fullVoiceData.length < EXPECTED_SIZE) {
-      throw new Error(`Voice ${voiceId} has invalid size: ${fullVoiceData.length} (expected ${EXPECTED_SIZE})`);
+      throw new Error(
+        `Voice ${voiceId} has invalid size: ${fullVoiceData.length} (expected ${EXPECTED_SIZE})`,
+      );
     }
 
     // Clamp numTokens to valid range [0, 509]
     // Subtract 2 from token count (as per kokoro.js implementation)
-    const adjustedTokens = Math.min(Math.max(numTokens - 2, 0), MAX_TOKEN_INDEX);
+    const adjustedTokens = Math.min(
+      Math.max(numTokens - 2, 0),
+      MAX_TOKEN_INDEX,
+    );
 
     // Calculate offset based on number of tokens
     const offset = adjustedTokens * STYLE_DIM;
@@ -199,9 +206,7 @@ export class VoiceLoader {
   async doLazyLoadVoice(voiceId) {
     try {
       const localPath = `${this.manifestVoicesDir}/${voiceId}.bin`;
-      const {
-        loadAssetAsArrayBuffer
-      } = require('../../utils/AssetLoader');
+      const {loadAssetAsArrayBuffer} = require('../../utils/AssetLoader');
       let voiceData;
       try {
         // Try to load from local cache
@@ -216,7 +221,9 @@ export class VoiceLoader {
           throw new Error(`Failed to download voice: ${response.statusText}`);
         }
         voiceData = await response.arrayBuffer();
-        log.debug(`Downloaded voice: ${voiceId}, size: ${voiceData.byteLength} bytes`);
+        log.debug(
+          `Downloaded voice: ${voiceId}, size: ${voiceData.byteLength} bytes`,
+        );
       }
 
       // Convert ArrayBuffer to Float32Array
@@ -224,15 +231,21 @@ export class VoiceLoader {
 
       // Validate size
       if (fullArray.length !== EXPECTED_SIZE) {
-        log.warn(`Voice ${voiceId} has unexpected size: ${fullArray.length} (expected ${EXPECTED_SIZE})`);
+        log.warn(
+          `Voice ${voiceId} has unexpected size: ${fullArray.length} (expected ${EXPECTED_SIZE})`,
+        );
       }
 
       // Cache the full voice data in memory
       this.voiceEmbeddings.set(voiceId, fullArray);
-      log.debug(`Voice loaded: ${voiceId}, embeddings: ${fullArray.length / STYLE_DIM}`);
+      log.debug(
+        `Voice loaded: ${voiceId}, embeddings: ${fullArray.length / STYLE_DIM}`,
+      );
       return fullArray;
     } catch (error) {
-      log.error(`Failed to lazy load voice ${voiceId}: ${error instanceof Error ? error.message : String(error)}`);
+      log.error(
+        `Failed to lazy load voice ${voiceId}: ${error instanceof Error ? error.message : String(error)}`,
+      );
       return undefined;
     }
   }
@@ -271,7 +284,10 @@ export class VoiceLoader {
     if (!firstVoiceId) {
       throw new Error('Invalid voice ID at index 0');
     }
-    const firstEmbedding = await this.getVoiceEmbedding(firstVoiceId, numTokens);
+    const firstEmbedding = await this.getVoiceEmbedding(
+      firstVoiceId,
+      numTokens,
+    );
     const embeddingDim = firstEmbedding.length;
 
     // Create blended embedding
@@ -360,7 +376,7 @@ export class VoiceLoader {
       name,
       gender,
       language,
-      description: `${gender === 'male' ? 'Male' : 'Female'} ${this.getLanguageName(language)} voice`
+      description: `${gender === 'male' ? 'Male' : 'Female'} ${this.getLanguageName(language)} voice`,
     };
   }
 
@@ -372,7 +388,7 @@ export class VoiceLoader {
       en: 'English',
       zh: 'Chinese',
       ko: 'Korean',
-      ja: 'Japanese'
+      ja: 'Japanese',
     };
     return names[code] || code;
   }

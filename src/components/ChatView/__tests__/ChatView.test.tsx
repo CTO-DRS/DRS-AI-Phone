@@ -19,7 +19,7 @@ import DeviceInfo from 'react-native-device-info';
 
 // talentRegistry (src/services/talents) is the real singleton in Jest; register
 // the built-in engines so render_html (recommendedContextTokens=4096) drives the
-// pal-load hint.
+// assistant-load hint.
 registerDefaultTalents();
 
 jest.useFakeTimers();
@@ -207,10 +207,10 @@ describe('chat', () => {
   });
 
   // ---------------------------------------------------------------------------
-  // Active-pal auto-load gate (e2e bench isolation).
+  // Active-assistant auto-load gate (e2e bench isolation).
   //
-  // The mount-time `useEffect` calls `modelStore.selectModel(palDefaultModel)`
-  // when `activePal` is set and no model is active. That cold-launch path is
+  // The mount-time `useEffect` calls `modelStore.selectModel(assistantDefaultModel)`
+  // when `activeAssistant` is set and no model is active. That cold-launch path is
   // benign for end users but catastrophic for the e2e benchmark runner: the
   // matrix's per-cell `devices` / `n_gpu_layers` arrive AFTER the auto-load
   // has already loaded the model with default devices, and `initContext`'s
@@ -221,9 +221,9 @@ describe('chat', () => {
   // boundary. Two assertions: gate-off triggers the load; gate-on suppresses.
   // ---------------------------------------------------------------------------
 
-  describe('active pal auto-load gate', () => {
-    const mockPal = {
-      id: 'test-pal',
+  describe('active assistant auto-load gate', () => {
+    const mockAssistant = {
+      id: 'test-assistant',
       name: 'Test',
       type: 'roleplay',
       defaultModel: {id: 'qwen3-1.7b-q4_0'} as any,
@@ -244,13 +244,13 @@ describe('chat', () => {
       });
     });
 
-    it('calls modelStore.selectModel(palDefault) when benchmarkActive=false', () => {
+    it('calls modelStore.selectModel(assistantDefault) when benchmarkActive=false', () => {
       render(
         <ChatView
           messages={[]}
           onSendPress={jest.fn()}
           user={user}
-          activePal={mockPal}
+          activeAssistant={mockAssistant}
         />,
         {withNavigation: true, withBottomSheetProvider: true},
       );
@@ -268,7 +268,7 @@ describe('chat', () => {
           messages={[]}
           onSendPress={jest.fn()}
           user={user}
-          activePal={mockPal}
+          activeAssistant={mockAssistant}
         />,
         {withNavigation: true, withBottomSheetProvider: true},
       );
@@ -277,25 +277,27 @@ describe('chat', () => {
   });
 
   // ---------------------------------------------------------------------------
-  // Pal-load hint "More room" action → opens the IncreaseContextSheet.
+  // Assistant-load hint "More room" action → opens the IncreaseContextSheet.
   //
   // The hint snackbar is a separate advisory surface from the banner; its
   // action must reach the same sheet even when the banner increase CTA would
   // be hidden, so the sheet is never a dead-end from this entry point. The
   // sheet's content (its testIDs) only mounts once the host opens it.
   // ---------------------------------------------------------------------------
-  describe('pal-load hint "More room" action', () => {
-    const heavyPal = {
-      id: 'heavy-pal',
+  describe('assistant-load hint "More room" action', () => {
+    const heavyAssistant = {
+      id: 'heavy-assistant',
       name: 'Heavy',
       type: 'roleplay',
       pact: {talents: [{name: 'render_html', required: true}]},
     } as any;
 
     beforeEach(() => {
-      chatSessionStore.palLoadHintSeen = new Set();
-      (chatSessionStore.markPalLoadHintSeen as jest.Mock).mockImplementation(
-        (sig: string) => chatSessionStore.palLoadHintSeen.add(sig),
+      chatSessionStore.assistantLoadHintSeen = new Set();
+      (
+        chatSessionStore.markAssistantLoadHintSeen as jest.Mock
+      ).mockImplementation((sig: string) =>
+        chatSessionStore.assistantLoadHintSeen.add(sig),
       );
       (chatSessionStore.resetActiveSession as jest.Mock).mockClear();
       // The sheet's mount effect awaits getTotalMemory(); the central mock
@@ -322,7 +324,7 @@ describe('chat', () => {
         modelStore.activeModelId = undefined;
         modelStore.models = [];
       });
-      (chatSessionStore.markPalLoadHintSeen as jest.Mock).mockReset();
+      (chatSessionStore.markAssistantLoadHintSeen as jest.Mock).mockReset();
       (DeviceInfo.getTotalMemory as jest.Mock).mockReset();
     });
 
@@ -336,13 +338,13 @@ describe('chat', () => {
           messages={[]}
           onSendPress={jest.fn()}
           user={user}
-          activePal={heavyPal}
+          activeAssistant={heavyAssistant}
         />,
         {withNavigation: true, withBottomSheetProvider: true},
       );
 
       // The hint snackbar is shown; the sheet content has not mounted yet.
-      expect(getByTestId('pal-load-hint-snackbar')).toBeTruthy();
+      expect(getByTestId('assistant-load-hint-snackbar')).toBeTruthy();
       expect(queryByTestId('increase-context-no-fit')).toBeNull();
       expect(queryByTestId('increase-context-new-chat')).toBeNull();
 

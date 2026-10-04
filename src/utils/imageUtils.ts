@@ -1,7 +1,7 @@
 import * as RNFS from '@dr.pogodin/react-native-fs';
 
 /**
- * Utility functions for downloading and managing pal thumbnail images
+ * Utility functions for downloading and managing assistant thumbnail images
  */
 
 const PAL_IMAGES_DIR = `${RNFS.DocumentDirectoryPath}/pal-images`;
@@ -26,8 +26,8 @@ export const isRemoteThumbnailUrl = (thumbnailUrl: string): boolean => {
 
 /**
  * Convert a thumbnail filename to a full file:// URI for React Native Image component
- * @param filename - Filename like "palId_thumbnail.jpg"
- * @returns Full file:// URI like "file:///path/to/documents/pal-images/palId_thumbnail.jpg"
+ * @param filename - Filename like "assistantId_thumbnail.jpg"
+ * @returns Full file:// URI like "file:///path/to/documents/pal-images/assistantId_thumbnail.jpg"
  */
 export const getFullThumbnailUri = (filename: string): string => {
   if (isRemoteThumbnailUrl(filename)) {
@@ -41,7 +41,7 @@ export const getFullThumbnailUri = (filename: string): string => {
 
 /**
  * Get the absolute file system path from a thumbnail filename (for file operations)
- * @param filename - Filename like "palId_thumbnail.jpg"
+ * @param filename - Filename like "assistantId_thumbnail.jpg"
  * @returns Absolute file system path
  */
 export const getAbsoluteThumbnailPath = (filename: string): string => {
@@ -49,17 +49,17 @@ export const getAbsoluteThumbnailPath = (filename: string): string => {
 };
 
 /**
- * Ensure the pal images directory exists
+ * Ensure the assistant images directory exists
  */
-const ensurePalImagesDirectory = async (): Promise<void> => {
+const ensureAssistantImagesDirectory = async (): Promise<void> => {
   try {
     const exists = await RNFS.exists(PAL_IMAGES_DIR);
     if (!exists) {
       await RNFS.mkdir(PAL_IMAGES_DIR);
-      console.log('Created pal images directory:', PAL_IMAGES_DIR);
+      console.log('Created assistant images directory:', PAL_IMAGES_DIR);
     }
   } catch (error) {
-    console.error('Failed to create pal images directory:', error);
+    console.error('Failed to create assistant images directory:', error);
     throw error;
   }
 };
@@ -73,44 +73,47 @@ const getFileExtension = (url: string): string => {
 };
 
 /**
- * Generate thumbnail filename for a pal
+ * Generate thumbnail filename for a assistant
  */
 const generateThumbnailFilename = (
-  palId: string,
+  assistantId: string,
   originalUrl: string,
 ): string => {
   const extension = getFileExtension(originalUrl);
-  return `${palId}_thumbnail.${extension}`;
+  return `${assistantId}_thumbnail.${extension}`;
 };
 
 /**
- * Generate the absolute file path for a pal thumbnail (for file operations)
+ * Generate the absolute file path for a assistant thumbnail (for file operations)
  */
-const getAbsoluteThumbnailPathForPal = (
-  palId: string,
+const getAbsoluteThumbnailPathForAssistant = (
+  assistantId: string,
   originalUrl: string,
 ): string => {
-  const filename = generateThumbnailFilename(palId, originalUrl);
+  const filename = generateThumbnailFilename(assistantId, originalUrl);
   return `${PAL_IMAGES_DIR}/${filename}`;
 };
 
 /**
  * Download a thumbnail image from a URL and save it locally
- * @param palId - The ID of the pal
+ * @param assistantId - The ID of the assistant
  * @param imageUrl - The remote URL of the image
  * @returns Promise<string> - The filename of the downloaded image (for storage)
  */
-export const downloadPalThumbnail = async (
-  palId: string,
+export const downloadAssistantThumbnail = async (
+  assistantId: string,
   imageUrl: string,
 ): Promise<string> => {
   try {
     // Ensure directory exists
-    await ensurePalImagesDirectory();
+    await ensureAssistantImagesDirectory();
 
     // Generate filename and absolute path
-    const filename = generateThumbnailFilename(palId, imageUrl);
-    const absolutePath = getAbsoluteThumbnailPathForPal(palId, imageUrl);
+    const filename = generateThumbnailFilename(assistantId, imageUrl);
+    const absolutePath = getAbsoluteThumbnailPathForAssistant(
+      assistantId,
+      imageUrl,
+    );
 
     // Check if file already exists
     const exists = await RNFS.exists(absolutePath);
@@ -139,16 +142,18 @@ export const downloadPalThumbnail = async (
       );
     }
   } catch (error) {
-    console.error('Failed to download pal thumbnail:', error);
+    console.error('Failed to download assistant thumbnail:', error);
     throw error;
   }
 };
 
 /**
  * Delete a local thumbnail image
- * @param filename - The thumbnail filename like "palId_thumbnail.jpg"
+ * @param filename - The thumbnail filename like "assistantId_thumbnail.jpg"
  */
-export const deletePalThumbnail = async (filename: string): Promise<void> => {
+export const deleteAssistantThumbnail = async (
+  filename: string,
+): Promise<void> => {
   try {
     // Convert to absolute path for file operations
     const absolutePath = getAbsoluteThumbnailPath(filename);
@@ -166,7 +171,7 @@ export const deletePalThumbnail = async (filename: string): Promise<void> => {
 
 /**
  * Check if a local thumbnail exists
- * @param filename - The thumbnail filename like "palId_thumbnail.jpg"
+ * @param filename - The thumbnail filename like "assistantId_thumbnail.jpg"
  * @returns Promise<boolean> - Whether the file exists
  */
 export const localThumbnailExists = async (
@@ -183,17 +188,17 @@ export const localThumbnailExists = async (
 };
 
 /**
- * Get the local thumbnail filename for a pal if it exists
- * @param palId - The ID of the pal
+ * Get the local thumbnail filename for a assistant if it exists
+ * @param assistantId - The ID of the assistant
  * @param originalUrl - The original remote URL (used to determine file extension)
  * @returns Promise<string | null> - The filename if it exists, null otherwise
  */
 export const getLocalThumbnailPath = async (
-  palId: string,
+  assistantId: string,
   originalUrl: string,
 ): Promise<string | null> => {
   try {
-    const filename = generateThumbnailFilename(palId, originalUrl);
+    const filename = generateThumbnailFilename(assistantId, originalUrl);
     const exists = await localThumbnailExists(filename);
     return exists ? filename : null;
   } catch (error) {
@@ -203,11 +208,11 @@ export const getLocalThumbnailPath = async (
 };
 
 /**
- * Clean up all orphaned thumbnail images (images without corresponding pals)
- * @param activePalIds - Array of currently active pal IDs
+ * Clean up all orphaned thumbnail images (images without corresponding assistants)
+ * @param activeAssistantIds - Array of currently active assistant IDs
  */
 export const cleanupOrphanedThumbnails = async (
-  activePalIds: string[],
+  activeAssistantIds: string[],
 ): Promise<void> => {
   try {
     const exists = await RNFS.exists(PAL_IMAGES_DIR);
@@ -216,14 +221,14 @@ export const cleanupOrphanedThumbnails = async (
     }
 
     const files = await RNFS.readDir(PAL_IMAGES_DIR);
-    const activeIdSet = new Set(activePalIds);
+    const activeIdSet = new Set(activeAssistantIds);
 
     for (const file of files) {
       if (file.isFile() && file.name.includes('_thumbnail.')) {
-        // Extract pal ID from filename (format: palId_thumbnail.ext)
-        const palId = file.name.split('_thumbnail.')[0];
+        // Extract assistant ID from filename (format: assistantId_thumbnail.ext)
+        const assistantId = file.name.split('_thumbnail.')[0];
 
-        if (!activeIdSet.has(palId)) {
+        if (!activeIdSet.has(assistantId)) {
           console.log('Cleaning up orphaned thumbnail:', file.path);
           await RNFS.unlink(file.path);
         }

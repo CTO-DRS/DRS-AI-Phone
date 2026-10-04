@@ -9,9 +9,9 @@
  * synchronous lookup. Loading / opening is done by the implementation.
  */
 export interface DictSource {
-    /** Look up a (cleaned, lowercased) word. Returns null on miss. */
-    lookup(word: string): string | null;
-    /** Optional: total entry count, for logging only. May return undefined. */
-    size?(): number | undefined;
+  /** Look up a (cleaned, lowercased) word. Returns null on miss. */
+  lookup(word: string): string | null;
+  /** Optional: total entry count, for logging only. May return undefined. */
+  size?(): number | undefined;
 }
 //# sourceMappingURL=DictSource.d.ts.map

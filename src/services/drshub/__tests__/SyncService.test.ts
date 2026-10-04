@@ -42,11 +42,11 @@ describe('SyncService', () => {
       },
     }));
 
-    // drshubService.getLibrary returns two pals
+    // drshubService.getLibrary returns two assistants
     jest.doMock('../DrshubService', () => ({
       drshubService: {
         getLibrary: jest.fn().mockResolvedValue({
-          pals: [{id: 'p1'}, {id: 'p2'}],
+          assistants: [{id: 'p1'}, {id: 'p2'}],
           total_count: 2,
           page: 1,
           limit: 20,

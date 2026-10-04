@@ -3,7 +3,7 @@ export * from './ModelStore';
 export * from './UIStore';
 export * from './HFStore';
 export * from './BenchmarkStore';
-export * from './PalStore';
+export * from './AssistantStore';
 export * from './FeedbackStore';
 export * from './DeepLinkStore';
 export * from './ServerStore';

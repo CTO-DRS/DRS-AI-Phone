@@ -71,7 +71,7 @@ export class UIStore {
   hasCompletedOnboarding: boolean = false;
 
   // Frozen at onboarding completion; consumed by future Homepage
-  // pal-suggestion surfaces. Never re-edited after the single write in
+  // assistant-suggestion surfaces. Never re-edited after the single write in
   // `completeOnboarding`.
   onboardingTopicsSnapshot: TopicKey[] = [];
 

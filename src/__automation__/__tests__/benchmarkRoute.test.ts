@@ -13,7 +13,7 @@ describe('benchmarkRoute', () => {
     });
 
     it('does not match unrelated URLs', () => {
-      expect(isBenchmarkRunnerUrl('drsai://chat?palId=foo')).toBe(false);
+      expect(isBenchmarkRunnerUrl('drsai://chat?assistantId=foo')).toBe(false);
       expect(isBenchmarkRunnerUrl('drsai://e2e/other')).toBe(false);
     });
 

@@ -3,13 +3,13 @@ import {
   resolveSystemPrompt,
   resolveSystemMessages,
 } from '../systemPromptResolver';
-import type {Pal} from '../../types/pal';
+import type {Assistant} from '../../types/assistant';
 import type {Model} from '../types';
 
 describe('systemPromptResolver', () => {
   describe('resolveSystemPrompt', () => {
-    it('should return parametrized pal system prompt when pal has parameters', () => {
-      const pal: Partial<Pal> = {
+    it('should return parametrized assistant system prompt when assistant has parameters', () => {
+      const assistant: Partial<Assistant> = {
         systemPrompt: 'You are {{name}}, a {{role}} in {{setting}}.',
         parameters: {
           name: 'Gandalf',
@@ -18,35 +18,35 @@ describe('systemPromptResolver', () => {
         },
       };
 
-      const result = resolveSystemPrompt({pal: pal as Pal});
+      const result = resolveSystemPrompt({assistant: assistant as Assistant});
 
       expect(result).toBe('You are Gandalf, a wizard in Middle-earth.');
     });
 
-    it('should return pal system prompt as-is when pal has no parameters', () => {
-      const pal: Partial<Pal> = {
+    it('should return assistant system prompt as-is when assistant has no parameters', () => {
+      const assistant: Partial<Assistant> = {
         systemPrompt: 'You are a helpful assistant.',
         parameters: {},
       };
 
-      const result = resolveSystemPrompt({pal: pal as Pal});
+      const result = resolveSystemPrompt({assistant: assistant as Assistant});
 
       expect(result).toBe('You are a helpful assistant.');
     });
 
-    it('should return pal system prompt as-is when pal has undefined parameters', () => {
-      const pal: Partial<Pal> = {
+    it('should return assistant system prompt as-is when assistant has undefined parameters', () => {
+      const assistant: Partial<Assistant> = {
         systemPrompt: 'You are a helpful assistant.',
         parameters: undefined,
       };
 
-      const result = resolveSystemPrompt({pal: pal as Pal});
+      const result = resolveSystemPrompt({assistant: assistant as Assistant});
 
       expect(result).toBe('You are a helpful assistant.');
     });
 
-    it('should fallback to model chat template when pal has no system prompt', () => {
-      const pal: Partial<Pal> = {
+    it('should fallback to model chat template when assistant has no system prompt', () => {
+      const assistant: Partial<Assistant> = {
         systemPrompt: undefined,
       };
 
@@ -62,14 +62,14 @@ describe('systemPromptResolver', () => {
       };
 
       const result = resolveSystemPrompt({
-        pal: pal as Pal,
+        assistant: assistant as Assistant,
         model: activeModel as Model,
       });
 
       expect(result).toBe('Model default system prompt');
     });
 
-    it('should fallback to model chat template when pal is null', () => {
+    it('should fallback to model chat template when assistant is null', () => {
       const activeModel: Partial<Model> = {
         chatTemplate: {
           systemPrompt: 'Model default system prompt',
@@ -82,16 +82,16 @@ describe('systemPromptResolver', () => {
       };
 
       const result = resolveSystemPrompt({
-        pal: null,
+        assistant: null,
         model: activeModel as Model,
       });
 
       expect(result).toBe('Model default system prompt');
     });
 
-    it('should return empty string when no pal and no model system prompt', () => {
+    it('should return empty string when no assistant and no model system prompt', () => {
       const result = resolveSystemPrompt({
-        pal: null,
+        assistant: null,
         model: null,
       });
 
@@ -104,16 +104,16 @@ describe('systemPromptResolver', () => {
       };
 
       const result = resolveSystemPrompt({
-        pal: null,
+        assistant: null,
         model: activeModel as Model,
       });
 
       expect(result).toBe('');
     });
 
-    it('should prioritize pal system prompt over model system prompt', () => {
-      const pal: Partial<Pal> = {
-        systemPrompt: 'Pal system prompt',
+    it('should prioritize assistant system prompt over model system prompt', () => {
+      const assistant: Partial<Assistant> = {
+        systemPrompt: 'Assistant system prompt',
         parameters: {},
       };
 
@@ -129,22 +129,22 @@ describe('systemPromptResolver', () => {
       };
 
       const result = resolveSystemPrompt({
-        pal: pal as Pal,
+        assistant: assistant as Assistant,
         model: activeModel as Model,
       });
 
-      expect(result).toBe('Pal system prompt');
+      expect(result).toBe('Assistant system prompt');
     });
   });
 
   describe('resolveSystemMessages', () => {
     it('should return system message array when system prompt exists', () => {
-      const pal: Partial<Pal> = {
+      const assistant: Partial<Assistant> = {
         systemPrompt: 'You are a helpful assistant.',
         parameters: {},
       };
 
-      const result = resolveSystemMessages({pal: pal as Pal});
+      const result = resolveSystemMessages({assistant: assistant as Assistant});
 
       expect(result).toEqual([
         {
@@ -156,7 +156,7 @@ describe('systemPromptResolver', () => {
 
     it('should return empty array when system prompt is empty', () => {
       const result = resolveSystemMessages({
-        pal: null,
+        assistant: null,
         model: null,
       });
 
@@ -176,15 +176,15 @@ describe('systemPromptResolver', () => {
       };
 
       const result = resolveSystemMessages({
-        pal: null,
+        assistant: null,
         model: activeModel as Model,
       });
 
       expect(result).toEqual([]);
     });
 
-    it('should return system message array for parametrized pal', () => {
-      const pal: Partial<Pal> = {
+    it('should return system message array for parametrized assistant', () => {
+      const assistant: Partial<Assistant> = {
         systemPrompt: 'You are {{name}}, a {{role}}.',
         parameters: {
           name: 'Alice',
@@ -192,7 +192,7 @@ describe('systemPromptResolver', () => {
         },
       };
 
-      const result = resolveSystemMessages({pal: pal as Pal});
+      const result = resolveSystemMessages({assistant: assistant as Assistant});
 
       expect(result).toEqual([
         {
@@ -207,29 +207,35 @@ describe('systemPromptResolver', () => {
     const sys = (content: string) => ({role: 'system' as const, content});
     const user = {role: 'user' as const, content: 'hello'};
 
-    it('folds the pal prompt and every fragment into one leading system message', () => {
+    it('folds the assistant prompt and every fragment into one leading system message', () => {
       const result = assembleMessages(
-        [sys('Pal prompt')],
+        [sys('Assistant prompt')],
         ['FRAGMENT-A', 'FRAGMENT-B'],
         [user],
       );
 
       expect(result).toEqual([
-        {role: 'system', content: 'Pal prompt\n\nFRAGMENT-A\n\nFRAGMENT-B'},
+        {
+          role: 'system',
+          content: 'Assistant prompt\n\nFRAGMENT-A\n\nFRAGMENT-B',
+        },
         user,
       ]);
     });
 
-    it('emits the fragments as the sole system message when the pal has none', () => {
+    it('emits the fragments as the sole system message when the assistant has none', () => {
       const result = assembleMessages([], ['FRAGMENT'], [user]);
 
       expect(result).toEqual([{role: 'system', content: 'FRAGMENT'}, user]);
     });
 
-    it('leaves the pal prompt untouched when no talent contributes a fragment', () => {
-      const result = assembleMessages([sys('Pal prompt')], [], [user]);
+    it('leaves the assistant prompt untouched when no talent contributes a fragment', () => {
+      const result = assembleMessages([sys('Assistant prompt')], [], [user]);
 
-      expect(result).toEqual([{role: 'system', content: 'Pal prompt'}, user]);
+      expect(result).toEqual([
+        {role: 'system', content: 'Assistant prompt'},
+        user,
+      ]);
     });
 
     it('drops empty and whitespace-only parts', () => {
@@ -248,14 +254,14 @@ describe('systemPromptResolver', () => {
         user,
       ];
       const result = assembleMessages(
-        [sys('Pal prompt')],
+        [sys('Assistant prompt')],
         ['FRAGMENT'],
         history,
       );
 
       expect(result[0]).toEqual({
         role: 'system',
-        content: 'Pal prompt\n\nFRAGMENT',
+        content: 'Assistant prompt\n\nFRAGMENT',
       });
       expect(result.slice(1)).toEqual(history);
       expect(result.filter(msg => msg.role === 'system')).toHaveLength(1);

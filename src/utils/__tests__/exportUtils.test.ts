@@ -15,8 +15,8 @@ import {
   exportLegacyChatSessions,
   exportChatSession,
   exportAllChatSessions,
-  exportPal,
-  exportAllPals,
+  exportAssistant,
+  exportAllAssistants,
   exportChatSessionAsMarkdown,
 } from '../exportUtils';
 import {userId} from '../chat';
@@ -58,7 +58,7 @@ jest.mock('date-fns', () => ({
 
 // Import the actual repository to spy on it
 import {chatSessionRepository} from '../../repositories/ChatSessionRepository';
-import {palStore} from '../../store';
+import {assistantStore} from '../../store';
 import {
   getAbsoluteThumbnailPath,
   getFullThumbnailUri,
@@ -78,8 +78,8 @@ jest.mock('../androidPermission', () => ({
 describe('exportUtils', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    // Reset palStore to its original empty state
-    palStore.pals = [];
+    // Reset assistantStore to its original empty state
+    assistantStore.assistants = [];
 
     // Reset all RNFS mocks to their default behavior
     (RNFS.exists as jest.Mock).mockResolvedValue(true);
@@ -144,7 +144,7 @@ describe('exportUtils', () => {
         id: 'session-1',
         title: 'Test Session',
         date: '2024-01-01T00:00:00Z',
-        activePalId: 'pal-1',
+        activeAssistantId: 'assistant-1',
       },
       messages: [
         {
@@ -339,7 +339,7 @@ describe('exportUtils', () => {
         id: 'session-1',
         title: 'Test Session',
         date: '2024-01-01T00:00:00Z',
-        activePalId: 'pal-1',
+        activeAssistantId: 'assistant-1',
       },
       messages: [
         {
@@ -426,11 +426,11 @@ describe('exportUtils', () => {
     });
   });
 
-  describe('Pal Export Functions', () => {
-    const mockPal = {
-      id: 'pal-1',
-      name: 'Test Pal',
-      description: 'A test pal',
+  describe('Assistant Export Functions', () => {
+    const mockAssistant = {
+      id: 'assistant-1',
+      name: 'Test Assistant',
+      description: 'A test assistant',
       thumbnail_url: 'https://example.com/image.jpg',
       systemPrompt: 'You are a helpful assistant',
       originalSystemPrompt: 'You are a helpful assistant',
@@ -445,30 +445,30 @@ describe('exportUtils', () => {
       source: 'local' as const,
     };
 
-    const mockPalWithLocalThumbnail = {
-      ...mockPal,
+    const mockAssistantWithLocalThumbnail = {
+      ...mockAssistant,
       thumbnail_url: 'image.jpg',
     };
 
     beforeEach(() => {
-      // Set up the mock data by directly setting the pals array
-      palStore.pals = [mockPal as any];
+      // Set up the mock data by directly setting the assistants array
+      assistantStore.assistants = [mockAssistant as any];
       (RNFS.readFile as jest.Mock).mockResolvedValue('base64content');
     });
 
     afterEach(() => {
-      // Reset palStore to empty state after each test
-      palStore.pals = [];
+      // Reset assistantStore to empty state after each test
+      assistantStore.assistants = [];
     });
 
-    describe('exportPal', () => {
-      it('should export pal with remote thumbnail URL', async () => {
-        await exportPal('pal-1');
+    describe('exportAssistant', () => {
+      it('should export assistant with remote thumbnail URL', async () => {
+        await exportAssistant('assistant-1');
 
         expect(RNFS.writeFile).toHaveBeenCalled();
         expect(Share.open).toHaveBeenCalled();
 
-        // Verify the written data contains the pal
+        // Verify the written data contains the assistant
         const writeCall = (RNFS.writeFile as jest.Mock).mock.calls[0];
         const exportedData = JSON.parse(writeCall[1]);
         expect(exportedData.thumbnail_url).toBe(
@@ -477,10 +477,10 @@ describe('exportUtils', () => {
         expect(exportedData.thumbnail_data).toBeUndefined();
       });
 
-      it('should export pal with local thumbnail converted to base64', async () => {
-        palStore.pals = [mockPalWithLocalThumbnail as any];
+      it('should export assistant with local thumbnail converted to base64', async () => {
+        assistantStore.assistants = [mockAssistantWithLocalThumbnail as any];
 
-        await exportPal('pal-1');
+        await exportAssistant('assistant-1');
 
         expect(RNFS.readFile).toHaveBeenCalledWith(
           '/mock/document/path/pal-images/image.jpg',
@@ -498,12 +498,12 @@ describe('exportUtils', () => {
       });
 
       it('should handle thumbnail read errors gracefully', async () => {
-        palStore.pals = [mockPalWithLocalThumbnail as any];
+        assistantStore.assistants = [mockAssistantWithLocalThumbnail as any];
         (RNFS.readFile as jest.Mock).mockRejectedValue(
           new Error('File not found'),
         );
 
-        await exportPal('pal-1');
+        await exportAssistant('assistant-1');
 
         expect(RNFS.writeFile).toHaveBeenCalled();
 
@@ -514,18 +514,20 @@ describe('exportUtils', () => {
         expect(exportedData.thumbnail_url).toBeUndefined();
       });
 
-      it('should throw error if pal not found', async () => {
-        palStore.pals = [];
+      it('should throw error if assistant not found', async () => {
+        assistantStore.assistants = [];
 
-        await expect(exportPal('nonexistent')).rejects.toThrow('Pal not found');
+        await expect(exportAssistant('nonexistent')).rejects.toThrow(
+          'Assistant not found',
+        );
       });
 
       // pact (talent set) and greeting are first-class persisted state.
       // They MUST round-trip through export/import or backups silently
       // drop tool configuration and the empty-chat greeting.
       it('round-trips pact (talents) and greeting through exported data', async () => {
-        const palWithTalents = {
-          ...mockPal,
+        const assistantWithTalents = {
+          ...mockAssistant,
           pact: {
             talents: [
               {name: 'calculate'},
@@ -537,41 +539,41 @@ describe('exportUtils', () => {
             suggestedPrompts: ['Tell me a joke', 'Summarize this'],
           },
         };
-        palStore.pals = [palWithTalents as any];
+        assistantStore.assistants = [assistantWithTalents as any];
 
-        await exportPal('pal-1');
+        await exportAssistant('assistant-1');
 
         const writeCall = (RNFS.writeFile as jest.Mock).mock.calls[0];
         const exportedData = JSON.parse(writeCall[1]);
-        expect(exportedData.pact).toEqual(palWithTalents.pact);
-        expect(exportedData.greeting).toEqual(palWithTalents.greeting);
+        expect(exportedData.pact).toEqual(assistantWithTalents.pact);
+        expect(exportedData.greeting).toEqual(assistantWithTalents.greeting);
       });
     });
 
-    describe('exportAllPals', () => {
-      it('should export all pals successfully', async () => {
-        const mockPals = [
-          mockPal,
-          {...mockPal, id: 'pal-2', name: 'Test Pal 2'},
+    describe('exportAllAssistants', () => {
+      it('should export all assistants successfully', async () => {
+        const mockAssistants = [
+          mockAssistant,
+          {...mockAssistant, id: 'assistant-2', name: 'Test Assistant 2'},
         ];
-        palStore.pals = mockPals as any;
+        assistantStore.assistants = mockAssistants as any;
 
-        await exportAllPals();
+        await exportAllAssistants();
 
         expect(RNFS.writeFile).toHaveBeenCalled();
         expect(Share.open).toHaveBeenCalled();
 
-        // Verify the written data contains all pals
+        // Verify the written data contains all assistants
         const writeCall = (RNFS.writeFile as jest.Mock).mock.calls[0];
         const exportedData = JSON.parse(writeCall[1]);
         expect(Array.isArray(exportedData)).toBe(true);
         expect(exportedData).toHaveLength(2);
       });
 
-      it('should handle empty pals list', async () => {
-        palStore.pals = [];
+      it('should handle empty assistants list', async () => {
+        assistantStore.assistants = [];
 
-        await exportAllPals();
+        await exportAllAssistants();
 
         expect(RNFS.writeFile).toHaveBeenCalled();
         expect(Share.open).toHaveBeenCalled();
@@ -588,7 +590,7 @@ describe('exportUtils', () => {
   describe('isLocalThumbnailPath', () => {
     it('should return true for local filenames', () => {
       expect(isLocalThumbnailPath('test_thumbnail.jpg')).toBe(true);
-      expect(isLocalThumbnailPath('pal-123_thumbnail.png')).toBe(true);
+      expect(isLocalThumbnailPath('assistant-123_thumbnail.png')).toBe(true);
     });
 
     it('should return false for remote URLs', () => {
@@ -673,7 +675,7 @@ describe('exportUtils', () => {
           id: 'session-1',
           title: 'My Chat',
           date: '2024-01-01T00:00:00Z',
-          activePalId: null,
+          activeAssistantId: null,
         },
         messages: [
           makeTextMessage('m2', 'assistant-1', 'It is 4.', 1704067260000),
@@ -728,7 +730,7 @@ describe('exportUtils', () => {
             id: 'session-old',
             title: 'Old Chat',
             date: sessionCreated,
-            activePalId: null,
+            activeAssistantId: null,
           },
           messages: [makeTextMessage('m1', userId, 'Hi')],
           completionSettings: {settings: '{}'},
@@ -757,9 +759,9 @@ describe('exportUtils', () => {
             id: 'session-2',
             title: 'Greeting',
             date: '2024-01-01T00:00:00Z',
-            activePalId: null,
+            activeAssistantId: null,
           },
-          // Newest first: the Pal's greeting is the OLDEST message here, so it
+          // Newest first: the Assistant's greeting is the OLDEST message here, so it
           // sits last in the repository's array and first in the transcript.
           messages: [
             makeTextMessage('m2', userId, 'Hello.', 1704067260000),
@@ -772,7 +774,7 @@ describe('exportUtils', () => {
       await exportChatSessionAsMarkdown('session-2');
 
       const {content} = writtenMarkdown();
-      // A Pal greeting means the assistant legitimately speaks first; role must
+      // A Assistant greeting means the assistant legitimately speaks first; role must
       // follow the author id, and the greeting must lead the transcript.
       expect(content.indexOf('Hi there!')).toBeLessThan(
         content.indexOf('Hello.'),
@@ -790,7 +792,7 @@ describe('exportUtils', () => {
             id: 'session-3',
             title: 'Turn Based',
             date: '2024-01-01T00:00:00Z',
-            activePalId: null,
+            activeAssistantId: null,
           },
           messages: [
             {
@@ -830,7 +832,7 @@ describe('exportUtils', () => {
             id: 'session-4',
             title: 'Multi\nline # title',
             date: '2024-01-01T00:00:00Z',
-            activePalId: null,
+            activeAssistantId: null,
           },
           messages: [makeTextMessage('m1', userId, 'Hi')],
           completionSettings: {settings: '{}'},
@@ -857,7 +859,7 @@ describe('exportUtils', () => {
             id: 'session-5',
             title: 'With Images',
             date: '2024-01-01T00:00:00Z',
-            activePalId: null,
+            activeAssistantId: null,
           },
           messages: [withImages],
           completionSettings: {settings: '{}'},

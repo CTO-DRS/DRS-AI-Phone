@@ -84,8 +84,8 @@ export async function dismissPerformanceWarningIfPresent(): Promise<void> {
 
 /**
  * Dismiss the "Give this chat more room" sheet (IncreaseContextSheet, #763) if
- * it is open over the chat. With a pal active the pal-load-hint snackbar can
- * auto-pop ("This pal tends to need more room…"); its "More room" action opens
+ * it is open over the chat. With a assistant active the assistant-load-hint snackbar can
+ * auto-pop ("This assistant tends to need more room…"); its "More room" action opens
  * this sheet, which then overlays the chat and stalls the inference-wait path
  * (talent-tool-use times out on `ai-message`). Taps Cancel to close it without
  * changing the context size. No-op when the sheet is absent.
@@ -109,7 +109,7 @@ export async function dismissContextRoomSheetIfPresent(): Promise<void> {
 
 /**
  * Wait for the first AI message bubble to appear, dismissing the "Give this
- * chat more room" sheet on each poll. With a pal that needs more room than the
+ * chat more room" sheet on each poll. With a assistant that needs more room than the
  * current context, that sheet can surface over the chat right after sending and
  * block the AI bubble from being seen — a plain waitForExist then times out
  * (talent-tool-use, #764). Polling + dismissing clears the overlay so the

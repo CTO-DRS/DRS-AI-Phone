@@ -8,7 +8,7 @@ export type SurfaceStyleArgs = {
 };
 
 // Surface emits Android `elevation` only. iOS shadows are consumer-owned:
-// drsai's existing pattern (SquarePalCard, AboutScreen, ChatView, etc.)
+// drsai's existing pattern (SquareAssistantCard, AboutScreen, ChatView, etc.)
 // is to set shadowColor/Offset/Opacity/Radius hand-tuned per surface in
 // each screen's styles. Paper Surface's MD3 dual-layer synthesis isn't
 // drsai's design language — most surfaces use ad-hoc opacities

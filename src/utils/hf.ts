@@ -73,7 +73,7 @@ export function processHFSearchResults(
 }
 
 /**
- * Creates normalized siblings array from file details (used in PalStore)
+ * Creates normalized siblings array from file details (used in AssistantStore)
  * @param modelId - The HuggingFace model ID
  * @param fileDetails - Array of file details from HF API
  * @returns Normalized siblings array matching HFStore format

@@ -130,7 +130,7 @@ export class WebSearchEngine implements TalentEngine {
   systemPromptFragment(ctx: SystemPromptContext): string {
     const today = ctx.now.toISOString().slice(0, 10);
     const budget = ctx.maxToolTurns - 1;
-    // Mention read_url only when that talent is also enabled for this Pal.
+    // Mention read_url only when that talent is also enabled for this Assistant.
     const readUrl = ctx.activeTalents.has('read_url')
       ? ' and open pages with read_url'
       : '';

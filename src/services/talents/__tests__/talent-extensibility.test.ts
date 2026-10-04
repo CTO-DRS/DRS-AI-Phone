@@ -32,13 +32,13 @@ describe('Talent extensibility (engine-side)', () => {
   it('PACT declaration can reference the runtime talent', () => {
     talentRegistry.register(testEchoEngine);
 
-    const mockPal = {
+    const mockAssistant = {
       pact: {
         talents: [{name: 'test_echo', necessity: 'required'}],
       },
     };
 
-    const declaredTalents = mockPal.pact.talents.map(t => t.name);
+    const declaredTalents = mockAssistant.pact.talents.map(t => t.name);
     expect(declaredTalents).toContain('test_echo');
     expect(talentRegistry.has(declaredTalents[0])).toBe(true);
   });

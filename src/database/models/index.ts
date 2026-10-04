@@ -2,18 +2,18 @@ import ChatSession from './ChatSession';
 import Message from './Message';
 import CompletionSetting from './CompletionSetting';
 import GlobalSetting from './GlobalSetting';
-import CachedPal from './CachedPal';
+import CachedAssistant from './CachedAssistant';
 import UserLibrary from './UserLibrary';
 import SyncStatus from './SyncStatus';
-import LocalPal from './LocalPal';
+import LocalAssistant from './LocalAssistant';
 
 export {
   ChatSession,
   Message,
   CompletionSetting,
   GlobalSetting,
-  CachedPal,
+  CachedAssistant,
   UserLibrary,
   SyncStatus,
-  LocalPal,
+  LocalAssistant,
 };

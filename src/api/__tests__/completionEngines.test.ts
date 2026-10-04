@@ -190,7 +190,7 @@ describe('OpenAICompletionEngine', () => {
   });
 
   // PACT support requires the engine to forward tools and tool_choice
-  // down to streamChatCompletion. Without this, any Pal with talents
+  // down to streamChatCompletion. Without this, any Assistant with talents
   // enabled silently degrades to text-only on remote engines (no tools
   // schemas → no tool_calls).
   it('forwards tools and tool_choice to streamChatCompletion', async () => {

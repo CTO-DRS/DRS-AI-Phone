@@ -12,21 +12,21 @@ import AppIntents
 struct DrsAIShortcuts: AppShortcutsProvider {
     static var appShortcuts: [AppShortcut] {
         AppShortcut(
-            intent: AskPalIntent(),
+            intent: AskAssistantIntent(),
             phrases: [
                 "Ask \(.applicationName)",
-                "Ask my \(.applicationName) pal",
+                "Ask my \(.applicationName) assistant",
                 "Question for \(.applicationName)",
             ],
-            shortTitle: "Ask Pal",
+            shortTitle: "Ask Assistant",
             systemImageName: "message.fill"
         )
         
         AppShortcut(
-            intent: OpenPalChatIntent(),
+            intent: OpenAssistantChatIntent(),
             phrases: [
                 "Open \(.applicationName) chat",
-                "Chat with my pal in \(.applicationName)",
+                "Chat with my assistant in \(.applicationName)",
                 "Start \(.applicationName) conversation",
             ],
             shortTitle: "Open Chat",

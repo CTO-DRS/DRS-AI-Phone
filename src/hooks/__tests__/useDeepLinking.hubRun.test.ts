@@ -159,7 +159,7 @@ describe('useDeepLinking — hub/run dispatch', () => {
   });
 
   it('ignores a non-hub link on the prod Linking path without alerting', async () => {
-    getInitialURLSpy.mockResolvedValue('drsai://chat?palId=foo');
+    getInitialURLSpy.mockResolvedValue('drsai://chat?assistantId=foo');
 
     renderHook(() => useDeepLinking());
     await Promise.resolve();
@@ -181,7 +181,7 @@ describe('useDeepLinking — hub/run dispatch', () => {
     renderHook(() => useDeepLinking());
     await Promise.resolve();
 
-    handlers.forEach(h => h({url: 'drsai://chat?palId=foo'}));
+    handlers.forEach(h => h({url: 'drsai://chat?assistantId=foo'}));
 
     expect(deepLinkStore.setPendingHubRun).not.toHaveBeenCalled();
     expect(alertSpy).not.toHaveBeenCalled();

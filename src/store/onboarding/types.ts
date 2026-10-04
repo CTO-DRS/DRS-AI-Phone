@@ -10,7 +10,7 @@
  * outlined card — it advertises the no-preference path without competing
  * with the real topic chips for taps. Users still reach that path via the
  * top-right Skip button. `else` is also the fallback index into
- * `TOPIC_TO_PAL` for `resolvePalForTopic(null)`.
+ * `TOPIC_TO_PAL` for `resolveAssistantForTopic(null)`.
  */
 
 export type TopicKey =

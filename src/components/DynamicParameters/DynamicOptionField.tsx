@@ -2,7 +2,7 @@ import React from 'react';
 
 import {Controller, useFormContext} from 'react-hook-form';
 
-import type {ParameterDefinition} from '../../types/pal';
+import type {ParameterDefinition} from '../../types/assistant';
 
 import {Selector, SelectorOption} from '..';
 

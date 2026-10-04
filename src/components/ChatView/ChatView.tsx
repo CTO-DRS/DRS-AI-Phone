@@ -37,7 +37,7 @@ import {
   useTheme,
   useMessageActions,
   usePrevious,
-  usePalLoadHint,
+  useAssistantLoadHint,
 } from '../../hooks';
 
 import ImageView from './ImageView';
@@ -56,14 +56,14 @@ import {CONTEXT_LADDER} from '../../utils/bannerVariantResolver';
 import {chatSessionStore, modelStore} from '../../store';
 
 import {MessageType, User} from '../../utils/types';
-import {Pal} from '../../types/pal';
+import {Assistant} from '../../types/assistant';
 import {
   calculateChatMessages,
   unwrap,
   UserContext,
   L10nContext,
 } from '../../utils';
-import {hasVideoCapability} from '../../utils/pal-capabilities';
+import {hasVideoCapability} from '../../utils/assistant-capabilities';
 
 import {
   Message,
@@ -74,10 +74,10 @@ import {
   ChatInputTopLevelProps,
   Menu,
   PendingIndicator,
-  ChatPalModelPickerSheet,
+  ChatAssistantModelPickerSheet,
   ChatHeader,
   ChatEmptyPlaceholder,
-  VideoPalEmptyPlaceholder,
+  VideoAssistantEmptyPlaceholder,
   ContentReportSheet,
   GreetingBubble,
   SuggestedPromptsRow,
@@ -154,10 +154,10 @@ export interface ChatProps extends ChatTopLevelProps {
    * to the very end of the list (minus `onEndReachedThreshold`).
    * See {@link ChatProps.flatListProps} to set it up. */
   onEndReached?: () => Promise<void>;
-  /** The currently active pal */
-  activePal?: Pal;
-  /** Called when pal sheet should be opened */
-  onPalSettingsSelect?: (pal: Pal) => void;
+  /** The currently active assistant */
+  activeAssistant?: Assistant;
+  /** Called when assistant sheet should be opened */
+  onAssistantSettingsSelect?: (assistant: Assistant) => void;
   /** Show user names for received messages. Useful for a group chat. Will be
    * shown only on text messages. */
   showUserNames?: boolean;
@@ -215,8 +215,8 @@ export const ChatView = observer(
     onEndReached,
     onMessageLongPress: externalOnMessageLongPress,
     onMessagePress,
-    activePal,
-    onPalSettingsSelect,
+    activeAssistant,
+    onAssistantSettingsSelect,
     onPreviewDataFetched,
     onSendPress,
     onStopPress,
@@ -259,7 +259,9 @@ export const ChatView = observer(
     const [_selectedModel, setSelectedModel] = React.useState<string | null>(
       null,
     );
-    const [_selectedPal, setSelectedPal] = React.useState<string | undefined>();
+    const [_selectedAssistant, setSelectedAssistant] = React.useState<
+      string | undefined
+    >();
 
     // Image viewer state
     const [isImageViewVisible, setIsImageViewVisible] = React.useState(false);
@@ -344,8 +346,11 @@ export const ChatView = observer(
       return () => clearTimeout(timer);
     }, [reloadSnackbar]);
 
-    // One-shot pal-load hint snackbar (separate surface from the banner).
-    const palLoadHint = usePalLoadHint({activePal, isFocused});
+    // One-shot assistant-load hint snackbar (separate surface from the banner).
+    const assistantLoadHint = useAssistantLoadHint({
+      activeAssistant,
+      isFocused,
+    });
 
     // ============ COMPONENT SIZE TRACKING ============
     const {onLayout, size} = useComponentSize();
@@ -385,8 +390,8 @@ export const ChatView = observer(
       // eslint-disable-next-line react-hooks/exhaustive-deps -- MobX observer makes activeSessionId reactive
     }, [chatSessionStore.activeSessionId]);
 
-    // ============ ACTIVE PAL MODEL INITIALIZATION ============
-    // Initialize model context when active pal changes.
+    // ============ ACTIVE ASSISTANT MODEL INITIALIZATION ============
+    // Initialize model context when active assistant changes.
     // Gate: while the e2e benchmark runner owns the native context lifecycle,
     // this auto-load must NOT fire — otherwise it shadows the matrix's per-cell
     // devices/n_gpu_layers via initContext's "already loaded → skip" path.
@@ -394,19 +399,19 @@ export const ChatView = observer(
       if (modelStore.benchmarkActive) {
         return;
       }
-      if (activePal) {
-        if (!modelStore.activeModel && activePal.defaultModel) {
-          const palDefaultModel = modelStore.availableModels.find(
-            m => m.id === activePal.defaultModel?.id,
+      if (activeAssistant) {
+        if (!modelStore.activeModel && activeAssistant.defaultModel) {
+          const assistantDefaultModel = modelStore.availableModels.find(
+            m => m.id === activeAssistant.defaultModel?.id,
           );
 
-          if (palDefaultModel) {
+          if (assistantDefaultModel) {
             // Initialize the model context
-            modelStore.selectModel(palDefaultModel);
+            modelStore.selectModel(assistantDefaultModel);
           }
         }
       }
-    }, [activePal]);
+    }, [activeAssistant]);
 
     // ============ KEYBOARD ANIMATION SETUP ============
     // Get real-time keyboard height from the keyboard controller
@@ -908,12 +913,12 @@ export const ChatView = observer(
       ],
     );
 
-    // Render empty state (video pal or regular chat placeholder)
+    // Render empty state (video assistant or regular chat placeholder)
     const renderListEmptyComponent = React.useCallback(() => {
-      // Show VideoPalEmptyPlaceholder for video pal, otherwise show regular ChatEmptyPlaceholder
-      if (activePal && hasVideoCapability(activePal)) {
+      // Show VideoAssistantEmptyPlaceholder for video assistant, otherwise show regular ChatEmptyPlaceholder
+      if (activeAssistant && hasVideoCapability(activeAssistant)) {
         return (
-          <VideoPalEmptyPlaceholder
+          <VideoAssistantEmptyPlaceholder
             bottomComponentHeight={bottomComponentHeight}
           />
         );
@@ -921,8 +926,8 @@ export const ChatView = observer(
 
       return (
         <>
-          {activePal?.greeting?.text && modelStore.activeModelId ? (
-            <GreetingBubble text={activePal.greeting.text} />
+          {activeAssistant?.greeting?.text && modelStore.activeModelId ? (
+            <GreetingBubble text={activeAssistant.greeting.text} />
           ) : null}
           <ChatEmptyPlaceholder
             bottomComponentHeight={bottomComponentHeight}
@@ -930,7 +935,7 @@ export const ChatView = observer(
           />
         </>
       );
-    }, [bottomComponentHeight, setIsPickerVisible, activePal]);
+    }, [bottomComponentHeight, setIsPickerVisible, activeAssistant]);
 
     // Render footer (loading indicator or spacer)
     const renderListFooterComponent = React.useCallback(
@@ -1078,20 +1083,23 @@ export const ChatView = observer(
       ],
     );
 
-    // ============ PAL/MODEL PICKER HANDLERS ============
+    // ============ ASSISTANT/MODEL PICKER HANDLERS ============
     const handleModelSelect = React.useCallback((model: string) => {
       setSelectedModel(model);
       setIsPickerVisible(false);
     }, []);
 
-    const handlePalSelect = React.useCallback((pal: string | undefined) => {
-      setSelectedPal(pal);
-      setIsPickerVisible(false);
-    }, []);
+    const handleAssistantSelect = React.useCallback(
+      (assistant: string | undefined) => {
+        setSelectedAssistant(assistant);
+        setIsPickerVisible(false);
+      },
+      [],
+    );
 
     // ============ COMPUTED VALUES ============
-    const inputBackgroundColor = activePal?.color?.[1]
-      ? activePal.color?.[1]
+    const inputBackgroundColor = activeAssistant?.color?.[1]
+      ? activeAssistant.color?.[1]
       : theme.colors.surface;
 
     // Soft cap: warn the user before the 5th HTML preview in this session.
@@ -1158,7 +1166,8 @@ export const ChatView = observer(
                   chatInputHeight,
                   inputBackgroundColor,
                   onCancelEdit: handleCancelEdit,
-                  onPalBtnPress: () => setIsPickerVisible(!isPickerVisible),
+                  onAssistantBtnPress: () =>
+                    setIsPickerVisible(!isPickerVisible),
                   isStopVisible,
                   isPickerVisible,
                   sendButtonVisibilityMode,
@@ -1169,7 +1178,9 @@ export const ChatView = observer(
                   textInputProps: {
                     ...textInputProps,
                     // Only override value and onChangeText if not using promptText
-                    ...(!(activePal && hasVideoCapability(activePal)) && {
+                    ...(!(
+                      activeAssistant && hasVideoCapability(activeAssistant)
+                    ) && {
                       value: inputText,
                       onChangeText: setInputText,
                     }),
@@ -1184,8 +1195,8 @@ export const ChatView = observer(
             {messages.length === 0 &&
             !isStreaming &&
             modelStore.activeModelId !== undefined &&
-            activePal?.greeting?.suggestedPrompts &&
-            activePal.greeting.suggestedPrompts.length > 0 ? (
+            activeAssistant?.greeting?.suggestedPrompts &&
+            activeAssistant.greeting.suggestedPrompts.length > 0 ? (
               <Reanimated.View
                 pointerEvents="box-none"
                 style={[
@@ -1194,7 +1205,7 @@ export const ChatView = observer(
                   {bottom: chatInputHeight.height},
                 ]}>
                 <SuggestedPromptsRow
-                  prompts={activePal.greeting.suggestedPrompts}
+                  prompts={activeAssistant.greeting.suggestedPrompts}
                   onSelect={prompt =>
                     wrappedOnSendPress({type: 'text', text: prompt})
                   }
@@ -1202,16 +1213,16 @@ export const ChatView = observer(
               </Reanimated.View>
             ) : null}
 
-            {/* Pal/Model picker sheet */}
+            {/* Assistant/Model picker sheet */}
             {/* Conditionally render the sheet to avoid keyboard issues.
             It makes the disappearing sudden, but it's better than the keyboard issue.*/}
             {isPickerVisible && (
-              <ChatPalModelPickerSheet
+              <ChatAssistantModelPickerSheet
                 isVisible={isPickerVisible}
                 onClose={() => setIsPickerVisible(false)}
                 onModelSelect={handleModelSelect}
-                onPalSelect={handlePalSelect}
-                onPalSettingsSelect={onPalSettingsSelect}
+                onAssistantSelect={handleAssistantSelect}
+                onAssistantSettingsSelect={onAssistantSettingsSelect}
                 chatInputHeight={chatInputHeight.height}
               />
             )}
@@ -1252,9 +1263,9 @@ export const ChatView = observer(
                 setIncreaseSheetOpen(false);
               }}
               onReloadStart={() => {
-                // Single advisory surface: dismiss the pal-load hint in the
+                // Single advisory surface: dismiss the assistant-load hint in the
                 // same handler so no frame shows two snackbars at once.
-                palLoadHint.dismiss();
+                assistantLoadHint.dismiss();
                 setReloadSnackbar({
                   message: l10n.chat.increaseContextReloading,
                   indefinite: true,
@@ -1284,18 +1295,20 @@ export const ChatView = observer(
           </Snackbar>
 
           <Snackbar
-            visible={isFocused && palLoadHint.hintVisible && !reloadSnackbar}
-            onDismiss={palLoadHint.dismiss}
+            visible={
+              isFocused && assistantLoadHint.hintVisible && !reloadSnackbar
+            }
+            onDismiss={assistantLoadHint.dismiss}
             duration={6000}
             action={{
               label: l10n.chat.contextMoreRoom,
               onPress: () => {
-                palLoadHint.dismiss();
+                assistantLoadHint.dismiss();
                 setIncreaseSheetOpen(true);
               },
             }}
-            testID="pal-load-hint-snackbar">
-            {l10n.chat.palLoadHint}
+            testID="assistant-load-hint-snackbar">
+            {l10n.chat.assistantLoadHint}
           </Snackbar>
         </View>
       </UserContext.Provider>

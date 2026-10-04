@@ -69,8 +69,8 @@ export function registerDefaultTalents(): void {
  * Derive OpenAI-format tool schemas from registered engines.
  *
  * When `talentNames` is provided, only engines matching those names are
- * included — this ensures a Pal's completionSettings.tools matches its
- * pact.talents (the single source of truth for what the Pal advertises
+ * included — this ensures a Assistant's completionSettings.tools matches its
+ * pact.talents (the single source of truth for what the Assistant advertises
  * to the model and what the dispatch loop will accept).
  *
  * Calls registerDefaultTalents() internally (idempotent).

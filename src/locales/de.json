@@ -112,11 +112,11 @@
     "useHfTokenLabel": "HF Token nutzen",
     "useHfTokenDescription": "Aktivieren, um Token für API-Abfragen zu verwenden. Deaktivieren, wenn Token Authentifizierungsprobleme verursacht.",
     "cacheStorageTitle": "Cache & Speicher",
-    "clearPalCaches": "Verknüpfungscache löschen",
-    "clearPalCachesDescription": "Daten im Cache löschen um Verknüpfungen zu beschleunigen. Beeinflusst weder Deine Pals noch den Chat Verlauf.",
+    "clearAssistantCaches": "Verknüpfungscache löschen",
+    "clearAssistantCachesDescription": "Daten im Cache löschen um Verknüpfungen zu beschleunigen. Beeinflusst weder Deine Assistents noch den Chat Verlauf.",
     "clearCachesButton": "Caches löschen",
     "clearCachesConfirmTitle": "Verknüpfungscaches löschen?",
-    "clearCachesConfirmMessage": "Dies löscht alle zwischengespeicherten Daten ({{fileCount}} Dateien, {{size}}). Verknüpfungen laden nach dem Löschen evtl. zunächst langsamer. Beeinflusst weder Deine Pals noch den Chatverlauf.",
+    "clearCachesConfirmMessage": "Dies löscht alle zwischengespeicherten Daten ({{fileCount}} Dateien, {{size}}). Verknüpfungen laden nach dem Löschen evtl. zunächst langsamer. Beeinflusst weder Deine Assistents noch den Chatverlauf.",
     "clearCachesSuccess": "{{count}} Dateien im Cache erfolgreich gelöscht.",
     "clearCachesError": "Cache löschen fehlgeschlagen. Bitte erneut versuchen.",
     "noCachesToClear": "Keine Caches zum Löschen vorhanden.",
@@ -607,22 +607,22 @@
         "title": "Erfolgreich",
         "message": "Diese Einstellungen werden auf alle zukünftigen Sitzungen angewendet"
       },
-      "palSettings": "Pal-Einstellungen",
+      "assistantSettings": "Assistent-Einstellungen",
       "settingsSource": "Einstellungen Quelle"
     },
-    "palGenerationSettingsSheet": {
-      "title": "Generierungseinstellungen - {{palName}}",
+    "assistantGenerationSettingsSheet": {
+      "title": "Generierungseinstellungen - {{assistantName}}",
       "invalidValues": "Falsche Werte",
       "invalidNumericValuesMessage": "Muss eine gültige Nummer sein",
       "pleaseCorrect": "Bitte korrigieren Sie Folgendes:",
       "ok": "OK",
       "error": "Fehler",
-      "failedToSave": "Speichern der Pal-Einstellungen gescheitert",
+      "failedToSave": "Speichern der Assistent-Einstellungen gescheitert",
       "resetToGlobal": "Auf globale Standardwerte zurücksetzen",
       "resetToSystem": "Standardwerte laden",
-      "clearPalSettings": "Lösche Pal-Einstellungen",
-      "customSettingsFor": "Benutzerdefinierte Einstellungen für {{palName}}",
-      "inheritedSettingsFor": "Geerbte Einstellungen für {{palName}}"
+      "clearAssistantSettings": "Lösche Assistent-Einstellungen",
+      "customSettingsFor": "Benutzerdefinierte Einstellungen für {{assistantName}}",
+      "inheritedSettingsFor": "Geerbte Einstellungen für {{assistantName}}"
     },
     "chatHeaderTitle": {
       "defaultTitle": "Chat"
@@ -630,17 +630,17 @@
     "fileMessage": {
       "fileButtonAccessibilityLabel": "Datei"
     },
-    "chatPalModelPickerSheet": {
+    "chatAssistantModelPickerSheet": {
       "modelsTab": "Modelle",
-      "palsTab": "Pals",
-      "noPal": "Kein Pal",
-      "disablePal": "Aktiven Pal deaktivieren",
+      "assistantsTab": "Assistents",
+      "noAssistant": "Kein Assistent",
+      "disableAssistant": "Aktiven Assistent deaktivieren",
       "noDescription": "Keine Beschreibung",
       "assistantType": "Assistent",
       "roleplayType": "Rollenspiele",
       "videoType": "Video",
       "confirmationTitle": "Bestätigung",
-      "modelSwitchMessage": "Dieser Pal nutzt ein anderes Standardmodell ({{modelName}}). Möchten Sie zum Standardmodell des Pals wechseln?",
+      "modelSwitchMessage": "Dieser Assistent nutzt ein anderes Standardmodell ({{modelName}}). Möchten Sie zum Standardmodell des Assistents wechseln?",
       "keepButton": "Behalten",
       "switchButton": "Wechseln"
     },
@@ -726,14 +726,14 @@
       "proceedWithReset": "Zurücksetzen ausführen",
       "confirmReset": "Zurücksetzen bestätigen"
     },
-    "palSheet": {
+    "assistantSheet": {
       "title": {
-        "edit": "Pal bearbeiten",
-        "newPal": "Neuer Pal",
-        "newVideoPal": "Neuer Video Pal"
+        "edit": "Assistent bearbeiten",
+        "newAssistant": "Neuer Assistent",
+        "newVideoAssistant": "Neuer Video Assistent"
       },
       "description": "Beschreibung",
-      "descriptionPlaceholder": "Geben Sie eine kurze Beschreibung Ihres Pals ein",
+      "descriptionPlaceholder": "Geben Sie eine kurze Beschreibung Ihres Assistents ein",
       "parameters": "Parameter",
       "generationSettings": "Generierungseinstellungen",
       "configureGenerationSettings": "Erzeugungseinstellungen konfigurieren",
@@ -743,13 +743,13 @@
         "promptModelRequired": "Prompt-Generierung Modell ist erforderlich, bei der Nutzung von AI-Prompt"
       }
     },
-    "assistantPalSheet": {
+    "assistantPersonaSheet": {
       "title": {
-        "create": "Assistent Pal erstellen",
-        "edit": "Assistent Pal bearbeiten"
+        "create": "Assistent erstellen",
+        "edit": "Assistent bearbeiten"
       },
-      "palName": "Pal Name",
-      "palNamePlaceholder": "Name",
+      "assistantName": "Assistent Name",
+      "assistantNamePlaceholder": "Name",
       "defaultModel": "Standardmodell",
       "defaultModelPlaceholder": "Modell auswählen",
       "validation": {
@@ -761,19 +761,19 @@
     "modelNotAvailable": {
       "noModelsDownloaded": "Sie haben noch keine Modelle heruntergeladen. Bitte laden Sie zuerst ein Modell herunter.",
       "downloadAModel": "Modell herunterladen",
-      "defaultModelNotDownloaded": "Dieser Pal empfiehlt ein bestimmtes Modell, das heruntergeladen werden muss. Sie können auch ein anderes Modell auswählen.",
+      "defaultModelNotDownloaded": "Dieser Assistent empfiehlt ein bestimmtes Modell, das heruntergeladen werden muss. Sie können auch ein anderes Modell auswählen.",
       "modelNotDownloadedShort": "Modell nicht heruntergeladen",
       "recommendedModel": "Empfohlenes Modell",
       "cancelDownload": "Download abbrechen",
       "download": "Download"
     },
-    "roleplayPalSheet": {
+    "roleplayPersonaSheet": {
       "title": {
-        "create": "Rollenspiel Pal erstellen",
-        "edit": "Rollenspiel Pal bearbeiten"
+        "create": "Rollenspiel Assistent erstellen",
+        "edit": "Rollenspiel Assistent bearbeiten"
       },
-      "palName": "Pal Name",
-      "palNamePlaceholder": "Name",
+      "assistantName": "Assistent Name",
+      "assistantNamePlaceholder": "Name",
       "defaultModel": "Standardmodell",
       "defaultModelPlaceholder": "Modell auswählen",
       "descriptionSection": "Beschreibung",
@@ -797,13 +797,13 @@
       },
       "create": "Erstellen"
     },
-    "lookiePalSheet": {
+    "lookiePersonaSheet": {
       "title": {
-        "create": "Erstellen Sie Lookie Pal",
-        "edit": "Bearbeite Lookie Pal"
+        "create": "Erstellen Sie Lookie Assistent",
+        "edit": "Bearbeite Lookie Assistent"
       },
-      "palName": "Pal Name",
-      "palNamePlaceholder": "Geben Sie einen Namen für Ihren Lookie Pal",
+      "assistantName": "Assistent Name",
+      "assistantNamePlaceholder": "Geben Sie einen Namen für Ihren Lookie Assistent",
       "visionModel": "Vision Modell",
       "visionModelPlaceholder": "Wählen Sie ein Vision-Modell",
       "requiredModelsSection": "Erforderliche Modelle",
@@ -823,7 +823,7 @@
       },
       "generatingPrompt": {
         "label": "Zweck & Kontext",
-        "placeholder": "Beschreib die Rolle, Zweck, oder Szenario für diesen Pal..."
+        "placeholder": "Beschreib die Rolle, Zweck, oder Szenario für diesen Assistent..."
       },
       "buttons": {
         "loadingModel": "Lade Model...",
@@ -845,7 +845,7 @@
       "menuItems": {
         "chat": "Chat",
         "models": "Modelle",
-        "pals": "Pals",
+        "assistants": "Assistents",
         "benchmark": "Benchmark",
         "settings": "Einstellungen",
         "appInfo": "App-Info",
@@ -883,7 +883,12 @@
         "total": "Insgesamt ",
         "usage": "Verwendung: "
       },
-      "byteSizes": ["Bytes", "KB", "MB", "GB"]
+      "byteSizes": [
+        "Bytes",
+        "KB",
+        "MB",
+        "GB"
+      ]
     },
     "chatView": {
       "menuItems": {
@@ -894,18 +899,18 @@
         "reportContent": "Bericht Inhalt"
       }
     },
-    "palHeaderRight": {
-      "exportAllPals": "Exportiere alle Pals",
-      "importPals": "Importiere Pals",
-      "importSuccess": "Erfolgreich {{count}} Pal(s) importiert.",
-      "importError": "Import der Pals gescheitert. Bitte überprüfen Sie das Dateiformat."
+    "assistantHeaderRight": {
+      "exportAllAssistants": "Exportiere alle Assistents",
+      "importAssistants": "Importiere Assistents",
+      "importSuccess": "Erfolgreich {{count}} Assistent(s) importiert.",
+      "importError": "Import der Assistents gescheitert. Bitte überprüfen Sie das Dateiformat."
     }
   },
-  "palsScreen": {
+  "assistantsScreen": {
     "sectionTitles": {
-      "myPalsLocal": "Meine Pals (lokal)",
+      "myAssistantsLocal": "Meine Assistents (lokal)",
       "myLibrary": "Meine Bibliothek (hub.drsai.app)",
-      "discoverPals": "Entdecken Sie Pals (hub.drsai.app)"
+      "discoverAssistants": "Entdecken Sie Assistents (hub.drsai.app)"
     },
     "systemPrompt": "System Prompt",
     "videoAnalysis": "Videoanalyse",

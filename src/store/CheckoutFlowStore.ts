@@ -68,7 +68,7 @@ const isAllowedCheckoutUrl = (value: string): boolean => {
 
 class CheckoutFlowStore {
   status: CheckoutStatus = 'idle';
-  palId: string | null = null;
+  assistantId: string | null = null;
   purchaseId?: string;
   errorKind?: CheckoutErrorKind;
 
@@ -102,13 +102,13 @@ class CheckoutFlowStore {
   }
 
   // Create a session and open the Stripe-hosted page via the auth session.
-  async start(palId: string): Promise<void> {
+  async start(assistantId: string): Promise<void> {
     if (this.isInFlight) {
       return;
     }
     runInAction(() => {
       this.status = 'creating';
-      this.palId = palId;
+      this.assistantId = assistantId;
       this.purchaseId = undefined;
       this.errorKind = undefined;
     });
@@ -121,10 +121,13 @@ class CheckoutFlowStore {
     const cancelUrl = `${DRSHUB_API_BASE_URL}/app-return/checkout/cancel`;
 
     try {
-      const session = await drshubApiService.createCheckoutSession(palId, {
-        successUrl,
-        cancelUrl,
-      });
+      const session = await drshubApiService.createCheckoutSession(
+        assistantId,
+        {
+          successUrl,
+          cancelUrl,
+        },
+      );
       if (this.epoch !== myEpoch) {
         return;
       }
@@ -140,7 +143,7 @@ class CheckoutFlowStore {
       const authSession = NativeAuthSession;
       if (!authSession) {
         this.setStatus('browser_open');
-        this.onReturn(palId, 'cancel');
+        this.onReturn(assistantId, 'cancel');
         return;
       }
       // Android (link-out prep present): run eligibility -> token ->
@@ -163,7 +166,7 @@ class CheckoutFlowStore {
           this.setStatus('browser_open');
           await this.openAuthAndHandle(
             authSession,
-            palId,
+            assistantId,
             session.checkout_url,
           );
           return;
@@ -180,7 +183,11 @@ class CheckoutFlowStore {
         return;
       }
       this.setStatus('browser_open');
-      await this.openAuthAndHandle(authSession, palId, session.checkout_url);
+      await this.openAuthAndHandle(
+        authSession,
+        assistantId,
+        session.checkout_url,
+      );
     } catch (error) {
       if (this.epoch !== myEpoch) {
         return;
@@ -210,7 +217,7 @@ class CheckoutFlowStore {
   // session error) is a silent cancel (matches a cancel callback).
   private async openAuthAndHandle(
     authSession: NonNullable<typeof NativeAuthSession>,
-    palId: string,
+    assistantId: string,
     checkoutUrl: string,
   ) {
     // Pin this auth session to the current epoch. A reset (and any newer
@@ -224,7 +231,7 @@ class CheckoutFlowStore {
       if (this.epoch !== myEpoch) {
         return;
       }
-      this.onReturn(palId, 'cancel');
+      this.onReturn(assistantId, 'cancel');
       return;
     }
     if (this.epoch !== myEpoch) {
@@ -240,27 +247,31 @@ class CheckoutFlowStore {
     } catch {
       kind = 'cancel';
     }
-    this.onReturn(palId, kind);
+    this.onReturn(assistantId, kind);
   }
 
   // Drive the flow from a captured callback. Ignored when it targets a
   // stale/closed flow. Success runs the ownership reconcile; cancel is silent.
-  onReturn(palId: string | null, kind: 'success' | 'cancel') {
-    if (this.status === 'idle' || !this.palId || this.palId !== palId) {
+  onReturn(assistantId: string | null, kind: 'success' | 'cancel') {
+    if (
+      this.status === 'idle' ||
+      !this.assistantId ||
+      this.assistantId !== assistantId
+    ) {
       return;
     }
     if (kind === 'cancel') {
       this.setStatus('cancelled');
       return;
     }
-    this.reconcile(this.palId);
+    this.reconcile(this.assistantId);
   }
 
   // Bounded ownership re-check after a success return. Any per-attempt failure
   // (owned:false OR thrown) is non-terminal; the first owned===true ends as
   // owned; exhausting attempts -> processing_deferred, never error.
   // Cancellable via the epoch token. Never writes ownership locally.
-  private async reconcile(palId: string): Promise<void> {
+  private async reconcile(assistantId: string): Promise<void> {
     this.setStatus('finalizing');
     const myEpoch = this.epoch;
 
@@ -272,7 +283,8 @@ class CheckoutFlowStore {
         return;
       }
       try {
-        const {owned} = await drshubService.checkPalOwnership(palId);
+        const {owned} =
+          await drshubService.checkAssistantOwnership(assistantId);
         if (this.epoch !== myEpoch) {
           return;
         }
@@ -312,7 +324,7 @@ class CheckoutFlowStore {
     runInAction(() => {
       this.epoch += 1;
       this.status = 'idle';
-      this.palId = null;
+      this.assistantId = null;
       this.purchaseId = undefined;
       this.errorKind = undefined;
       this.reportToken = undefined;

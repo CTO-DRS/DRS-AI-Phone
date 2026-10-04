@@ -10,7 +10,12 @@ import {Alert, Linking} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {deepLinkService, DeepLinkParams} from '../services/DeepLinkService';
 import {isHubLink, parseHubRunURL} from '../services/hubRunLink';
-import {chatSessionStore, palStore, deepLinkStore, uiStore} from '../store';
+import {
+  chatSessionStore,
+  assistantStore,
+  deepLinkStore,
+  uiStore,
+} from '../store';
 import {ROUTES} from '../utils/navigationConstants';
 import {
   isBenchmarkRunnerUrl,
@@ -25,18 +30,22 @@ export const useDeepLinking = () => {
   const navigation = useNavigation();
 
   const handleChatDeepLink = useCallback(
-    async (palId: string, palName?: string, message?: string) => {
+    async (assistantId: string, assistantName?: string, message?: string) => {
       try {
-        // Find the pal
-        const pal = palStore.pals.find(p => p.id === palId);
+        // Find the assistant
+        const assistant = assistantStore.assistants.find(
+          p => p.id === assistantId,
+        );
 
-        if (!pal) {
-          console.error(`Pal not found: ${palId} (${palName})`);
+        if (!assistant) {
+          console.error(
+            `Assistant not found: ${assistantId} (${assistantName})`,
+          );
 
           // Show user-friendly error message
           Alert.alert(
-            'Pal Not Found',
-            `The pal "${palName || palId}" could not be found. It may have been deleted or is not available on this device.`,
+            'Assistant Not Found',
+            `The assistant "${assistantName || assistantId}" could not be found. It may have been deleted or is not available on this device.`,
             [{text: 'OK'}],
           );
           return;
@@ -47,8 +56,8 @@ export const useDeepLinking = () => {
           deepLinkStore.setPendingMessage(message);
         }
 
-        // Set the pal as active
-        await chatSessionStore.setActivePal(pal.id);
+        // Set the assistant as active
+        await chatSessionStore.setActiveAssistant(assistant.id);
 
         // Navigate to chat screen with proper typing
         (navigation as any).navigate(ROUTES.CHAT);
@@ -99,10 +108,10 @@ export const useDeepLinking = () => {
 
       // Handle chat deep links
       if (params.host === 'chat' && params.queryParams) {
-        const {palId, palName, message} = params.queryParams;
+        const {assistantId, assistantName, message} = params.queryParams;
 
-        if (palId) {
-          await handleChatDeepLink(palId, palName, message);
+        if (assistantId) {
+          await handleChatDeepLink(assistantId, assistantName, message);
         }
       }
 

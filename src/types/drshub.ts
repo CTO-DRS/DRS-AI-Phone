@@ -62,28 +62,28 @@ export interface ModelReference {
 }
 
 /**
- * Drshub Pal - A pal from the Drshub marketplace
+ * Drshub Assistant - A assistant from the Drshub marketplace
  *
- * This represents a pal that exists on Drshub (remote) but has NOT been
+ * This represents a assistant that exists on Drshub (remote) but has NOT been
  * downloaded to the device yet. These are shown in the marketplace/discovery
- * sections and can be downloaded to become local Pals.
+ * sections and can be downloaded to become local Assistants.
  *
- * Key differences from local Pal:
+ * Key differences from local Assistant:
  * - Uses 'title' instead of 'name'
  * - Uses 'system_prompt' instead of 'systemPrompt'
  * - May have restricted content based on protection_level and ownership
  * - Cannot be used directly - must be downloaded first
  *
- * Use the type discriminator `type: 'drshub'` to distinguish from Pal.
- * Use type guards from `src/utils/pal-type-guards.ts` for type-safe checks:
- * - isLocalPal(pal) - returns true if pal is a local Pal
- * - isDrshubPal(pal) - returns true if pal is a DrshubPal
+ * Use the type discriminator `type: 'drshub'` to distinguish from Assistant.
+ * Use type guards from `src/utils/assistant-type-guards.ts` for type-safe checks:
+ * - isLocalAssistant(assistant) - returns true if assistant is a local Assistant
+ * - isDrshubAssistant(assistant) - returns true if assistant is a DrshubAssistant
  */
-export interface DrshubPal {
+export interface DrshubAssistant {
   // ============================================================================
-  // TYPE DISCRIMINATOR - Use this to distinguish between Pal and DrshubPal
+  // TYPE DISCRIMINATOR - Use this to distinguish between Assistant and DrshubAssistant
   // ============================================================================
-  /** Type discriminator - Always 'drshub' for remote Drshub pals */
+  /** Type discriminator - Always 'drshub' for remote Drshub assistants */
   type: 'drshub';
 
   // ============================================================================
@@ -93,7 +93,7 @@ export interface DrshubPal {
   id: string;
   /** User ID of the creator on Drshub */
   creator_id: string;
-  /** Display name of the pal (NOTE: called 'title' not 'name') */
+  /** Display name of the assistant (NOTE: called 'title' not 'name') */
   title: string;
   /** Optional description shown in marketplace */
   description?: string;
@@ -106,9 +106,9 @@ export interface DrshubPal {
   /**
    * System prompt template (NOTE: called 'system_prompt' not 'systemPrompt')
    * Only available for:
-   * - Public pals (protection_level === 'public')
-   * - Owned pals (is_owned === true)
-   * Will be undefined for premium pals that aren't owned
+   * - Public assistants (protection_level === 'public')
+   * - Owned assistants (is_owned === true)
+   * Will be undefined for premium assistants that aren't owned
    */
   system_prompt?: string;
 
@@ -133,21 +133,21 @@ export interface DrshubPal {
   protection_level: 'public' | 'reveal_on_purchase' | 'private';
 
   /**
-   * Price in cents (0 for free pals)
-   * Free pals can be downloaded immediately
-   * Premium pals require purchase first
+   * Price in cents (0 for free assistants)
+   * Free assistants can be downloaded immediately
+   * Premium assistants require purchase first
    */
   price_cents: number;
 
-  /** Whether users can fork/copy this pal. This is not used yet. */
+  /** Whether users can fork/copy this assistant. This is not used yet. */
   allow_fork: boolean;
 
   // ============================================================================
   // TIMESTAMPS
   // ============================================================================
-  /** When this pal was created on Drshub */
+  /** When this assistant was created on Drshub */
   created_at: string;
-  /** When this pal was last updated on Drshub */
+  /** When this assistant was last updated on Drshub */
   updated_at: string;
 
   // ============================================================================
@@ -155,26 +155,26 @@ export interface DrshubPal {
   // ============================================================================
   /** Creator profile information */
   creator?: DrshubProfile;
-  /** Categories this pal belongs to */
+  /** Categories this assistant belongs to */
   categories?: DrshubCategory[];
-  /** Tags associated with this pal */
+  /** Tags associated with this assistant */
   tags?: DrshubTag[];
   /** Average rating from user reviews */
   average_rating?: number;
   /** Total number of reviews */
   review_count?: number;
-  /** Whether the current user owns this pal (for premium pals) */
+  /** Whether the current user owns this assistant (for premium assistants) */
   is_owned?: boolean;
 
   // ============================================================================
-  // PACT (Pal Action & Capability Treaty) — wire shape, snake_case
+  // PACT (Assistant Action & Capability Treaty) — wire shape, snake_case
   // ============================================================================
   /**
    * Optional PACT declaration carried from Drshub. The wire shape uses
    * snake_case (`required`) and includes a `version` integer. The local
-   * `Pal.pact` shape uses `necessity: 'required' | 'optional'` and has no
+   * `Assistant.pact` shape uses `necessity: 'required' | 'optional'` and has no
    * `version` field; the conversion happens once inside
-   * `PalStore.createLocalPalFromDrshub` (the single conversion site).
+   * `AssistantStore.createLocalAssistantFromDrshub` (the single conversion site).
    */
   pact?: {
     version: number;
@@ -210,7 +210,7 @@ export interface DrshubPal {
   models?: unknown[];
 }
 
-export interface DrshubUserPal {
+export interface DrshubUserAssistant {
   id: string;
   user_id: string;
   pal_id: string;
@@ -219,11 +219,11 @@ export interface DrshubUserPal {
   created_at: string;
 
   // Joined data
-  pal?: DrshubPal;
+  assistant?: DrshubAssistant;
 }
 
 // API Query interfaces
-export interface PalsQuery {
+export interface AssistantsQuery {
   query?: string; // Text search
   category_ids?: string[]; // Filter by categories
   tag_names?: string[]; // Filter by tags
@@ -254,8 +254,8 @@ export interface TagsQuery {
 }
 
 // API Response interfaces
-export interface PalsResponse {
-  pals: DrshubPal[];
+export interface AssistantsResponse {
+  assistants: DrshubAssistant[];
   total_count: number;
   page: number;
   limit: number;
@@ -263,7 +263,7 @@ export interface PalsResponse {
 }
 
 export interface LibraryResponse {
-  pals: DrshubPal[]; // Processed pals, not raw user_pals
+  assistants: DrshubAssistant[]; // Processed assistants, not raw user_pals
   total_count: number;
   page: number;
   limit: number;
@@ -279,7 +279,7 @@ export interface TagsResponse {
 }
 
 // Request interfaces
-export interface CreatePalRequest {
+export interface CreateAssistantRequest {
   title: string; // 3-100 characters
   description?: string; // Max 1000 characters
   system_prompt: string; // Required
@@ -348,7 +348,7 @@ export interface CacheMetadata {
   expiresAt?: number;
 }
 
-// Download status for owned Pals
+// Download status for owned Assistants
 export interface DownloadStatus {
   isDownloaded: boolean;
   downloadPath?: string;
@@ -356,14 +356,14 @@ export interface DownloadStatus {
   fileSize?: number;
 }
 
-// Enhanced local Pal type that combines local and Drshub data
-export interface EnhancedPalData {
+// Enhanced local Assistant type that combines local and Drshub data
+export interface EnhancedAssistantData {
   // Drshub integration fields
-  drshub_id?: string; // Link to Drshub pal
-  source: 'local' | 'drshub'; // Origin of the pal
+  drshub_id?: string; // Link to Drshub assistant
+  source: 'local' | 'drshub'; // Origin of the assistant
   generation_settings?: Record<string, unknown>; // Model parameters
 
-  // Drshub metadata (for synced pals)
+  // Drshub metadata (for synced assistants)
   creator_info?: {
     id: string;
     name?: string;

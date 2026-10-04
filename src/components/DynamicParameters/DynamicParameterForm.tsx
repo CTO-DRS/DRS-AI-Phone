@@ -2,7 +2,7 @@ import React from 'react';
 import {View} from 'react-native';
 import {useFormContext} from 'react-hook-form';
 
-import type {ParameterDefinition} from '../../types/pal';
+import type {ParameterDefinition} from '../../types/assistant';
 import {useTheme} from '../../hooks';
 import {createStyles} from './styles';
 import {DynamicTextField} from './DynamicTextField';

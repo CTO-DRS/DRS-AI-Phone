@@ -14,7 +14,7 @@ export const createStyles = ({
     container: {
       flexDirection: 'column',
     },
-    palBtn: {
+    assistantBtn: {
       height: 28,
       width: 28,
       alignItems: 'center',
@@ -59,7 +59,7 @@ export const createStyles = ({
     thinkingToggleTextDisabled: {
       // Dynamic color will be applied via theme
     },
-    palSelector: {
+    assistantSelector: {
       flexDirection: 'row',
       alignItems: 'center',
       gap: 4,
@@ -146,23 +146,23 @@ export const createStyles = ({
       paddingVertical: 20,
       marginTop: isEditMode ? 28 : 0,
     },
-    palNameWrapper: {
+    assistantNameWrapper: {
       ...fontStyles.regular,
       color: theme.colors.inverseOnSurface,
       fontSize: 12,
     },
-    palName: {
+    assistantName: {
       fontSize: 12,
       color: theme.colors.inverseOnSurface,
       ...fontStyles.semibold,
     },
-    // New compact pal name styles for control bar
-    palNameCompact: {
+    // New compact assistant name styles for control bar
+    assistantNameCompact: {
       fontSize: 10,
       ...fontStyles.regular,
       color: theme.colors.inverseOnSurface,
     },
-    palNameValueCompact: {
+    assistantNameValueCompact: {
       fontSize: 10,
       ...fontStyles.semibold,
       color: theme.colors.inverseOnSurface,
@@ -246,7 +246,7 @@ export const createStyles = ({
       fontSize: 12,
       fontWeight: '600',
     },
-    // Prompt Label for Video Pals
+    // Prompt Label for Video Assistants
     promptLabel: {
       marginBottom: 4,
     },

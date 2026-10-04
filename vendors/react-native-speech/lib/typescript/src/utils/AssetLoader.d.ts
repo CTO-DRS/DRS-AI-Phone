@@ -30,7 +30,9 @@ export declare function loadAssetAsText(path: string): Promise<string>;
  * @returns File contents as ArrayBuffer
  * @throws Error if path scheme is unsupported or file not found
  */
-export declare function loadAssetAsArrayBuffer(path: string): Promise<ArrayBuffer>;
+export declare function loadAssetAsArrayBuffer(
+  path: string,
+): Promise<ArrayBuffer>;
 /**
  * Convert base64 string to ArrayBuffer
  */

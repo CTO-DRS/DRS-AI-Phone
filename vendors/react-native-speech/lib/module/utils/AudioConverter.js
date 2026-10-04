@@ -1,11 +1,11 @@
-"use strict";
+'use strict';
 
 /**
  * Audio conversion utilities for neural TTS engines
  * Converts Float32Array PCM to Int16 PCM and encodes to base64 for native bridge transfer
  */
 
-import { Buffer } from 'buffer';
+import {Buffer} from 'buffer';
 
 /**
  * Convert Float32Array PCM samples to Int16 PCM
@@ -58,7 +58,7 @@ export function float32ToBase64Int16(float32Samples) {
 export function estimateBase64Size(sampleCount) {
   // Int16 = 2 bytes per sample
   // Base64 encoding increases size by ~33%
-  return Math.ceil(sampleCount * 2 * 4 / 3);
+  return Math.ceil((sampleCount * 2 * 4) / 3);
 }
 
 /**

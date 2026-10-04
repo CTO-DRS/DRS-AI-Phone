@@ -190,13 +190,13 @@ actor LlamaInferenceEngine {
         let additionalStops = formattedResult["additional_stops"] as? [String] ?? []
 
         // Prepare completion parameters
-        // Match the app's pattern: defaultCompletionParams → pal settings → strip app-only keys
+        // Match the app's pattern: defaultCompletionParams → assistant settings → strip app-only keys
         // See: src/utils/completionSettingsVersions.ts and src/utils/completionTypes.ts
 
         print("[LlamaInferenceEngine] Formatted prompt: \(formattedPrompt)")
         print("[LlamaInferenceEngine] Additional stops from template: \(additionalStops)")
         // Start with default completion params (matching defaultCompletionParams from TypeScript)
-        // Store default stop words to merge with pal settings and template stops later
+        // Store default stop words to merge with assistant settings and template stops later
         let defaultStopWords: [String] = [
             "</s>",
             "<|eot_id|>",
@@ -238,7 +238,7 @@ actor LlamaInferenceEngine {
             "enable_thinking": enableThinking,
         ]
 
-        // Merge pal-specific settings if available (pal settings override defaults)
+        // Merge assistant-specific settings if available (assistant settings override defaults)
         // IMPORTANT: We need to handle 'prompt' and 'stop' specially:
         // - 'prompt' should NOT be overridden (it's always empty in completionSettings)
         // - 'stop' should be MERGED (not replaced) to include all possible stop tokens
@@ -255,13 +255,13 @@ actor LlamaInferenceEngine {
                 }
 
                 // Special handling for 'stop' - merge arrays instead of replacing
-                if key == "stop", let palStops = value as? [String] {
-                    // Merge pal stops with default stops, removing duplicates
+                if key == "stop", let assistantStops = value as? [String] {
+                    // Merge assistant stops with default stops, removing duplicates
                     var mergedStops = Set(defaultStopWords)
-                    mergedStops.formUnion(palStops)
+                    mergedStops.formUnion(assistantStops)
                     completionParams[key] = Array(mergedStops)
                 } else {
-                    // For all other keys, override with pal settings
+                    // For all other keys, override with assistant settings
                     completionParams[key] = value
                 }
             }
@@ -321,26 +321,26 @@ actor LlamaInferenceEngine {
         currentModelPath = nil
     }
 
-    /// Save session cache for a pal
-    /// @param palId The pal's ID
+    /// Save session cache for a assistant
+    /// @param assistantId The assistant's ID
     /// @param modelId The model ID
     /// @param systemPrompt The current system prompt
     /// @param tokenSize Number of tokens to save (pass -1 to save all)
     /// @return Number of tokens saved
-    func saveSessionCache(palId: String, modelId: String, systemPrompt: String, tokenSize: Int = -1) async -> Int {
+    func saveSessionCache(assistantId: String, modelId: String, systemPrompt: String, tokenSize: Int = -1) async -> Int {
         guard let context = currentContext else {
             print("[LlamaInferenceEngine] Cannot save session - no model loaded")
             return 0
         }
 
-        let sessionCachePath = Self.getSessionCachePath(for: palId)
+        let sessionCachePath = Self.getSessionCachePath(for: assistantId)
 
         do {
             let tokensSaved = Int(context.saveSession(sessionCachePath, size: Int32(tokenSize)))
             print("[LlamaInferenceEngine] Saved session cache with \(tokensSaved) tokens")
 
             // Save metadata for validation
-            Self.saveSessionMetadata(for: palId, modelId: modelId, systemPrompt: systemPrompt)
+            Self.saveSessionMetadata(for: assistantId, modelId: modelId, systemPrompt: systemPrompt)
 
             return tokensSaved
         } catch {
@@ -349,27 +349,27 @@ actor LlamaInferenceEngine {
         }
     }
 
-    /// Load or regenerate session cache for a pal
+    /// Load or regenerate session cache for a assistant
     /// Strategy:
     /// 1. Check if cache exists and metadata is valid (model ID + system prompt match)
     /// 2. If valid, load the session
     /// 3. If invalid, run minimal inference (1 char, 1 token) to load system prompt into memory, then save
-    /// @param palId The pal's ID
+    /// @param assistantId The assistant's ID
     /// @param modelId The model ID (portable across app updates)
     /// @param systemPrompt The current system prompt
     /// @return True if cache was loaded or regenerated successfully
-    func loadSessionCache(palId: String, modelId: String, systemPrompt: String) async -> Bool {
+    func loadSessionCache(assistantId: String, modelId: String, systemPrompt: String) async -> Bool {
         guard let context = currentContext else {
             print("[LlamaInferenceEngine] Cannot load session - no model loaded")
             return false
         }
 
-        let sessionCachePath = Self.getSessionCachePath(for: palId)
+        let sessionCachePath = Self.getSessionCachePath(for: assistantId)
         let fileManager = FileManager.default
 
         // Check if cache exists and metadata is valid
         let cacheExists = fileManager.fileExists(atPath: sessionCachePath)
-        let metadataValid = Self.validateSessionMetadata(for: palId, modelId: modelId, systemPrompt: systemPrompt)
+        let metadataValid = Self.validateSessionMetadata(for: assistantId, modelId: modelId, systemPrompt: systemPrompt)
 
         if cacheExists && metadataValid {
             // Cache is valid, load it
@@ -439,7 +439,7 @@ actor LlamaInferenceEngine {
             print("[LlamaInferenceEngine] Minimal inference complete, generated \(tokenCount) token(s)")
 
             // Now save the session with the system prompt loaded
-            let tokensSaved = await saveSessionCache(palId: palId, modelId: modelId, systemPrompt: systemPrompt)
+            let tokensSaved = await saveSessionCache(assistantId: assistantId, modelId: modelId, systemPrompt: systemPrompt)
             print("[LlamaInferenceEngine] Regenerated session cache with \(tokensSaved) tokens")
 
             return tokensSaved > 0
@@ -449,11 +449,11 @@ actor LlamaInferenceEngine {
         }
     }
 
-    /// Get session cache path for a pal
-    /// @param palId The pal's ID
+    /// Get session cache path for a assistant
+    /// @param assistantId The assistant's ID
     /// @param modelPath The model file path (used to invalidate cache when model changes)
     /// @return File path for the session cache
-    static func getSessionCachePath(for palId: String) -> String {
+    static func getSessionCachePath(for assistantId: String) -> String {
         let fileManager = FileManager.default
         guard let cachesPath = fileManager.urls(for: .cachesDirectory, in: .userDomainMask).first else {
             return ""
@@ -467,17 +467,17 @@ actor LlamaInferenceEngine {
             try? fileManager.createDirectory(at: cacheDir, withIntermediateDirectories: true)
         }
 
-        return cacheDir.appendingPathComponent("\(palId).session").path
+        return cacheDir.appendingPathComponent("\(assistantId).session").path
     }
 
-    static func getSessionMetadataPath(for palId: String) -> String {
-        let sessionPath = getSessionCachePath(for: palId)
+    static func getSessionMetadataPath(for assistantId: String) -> String {
+        let sessionPath = getSessionCachePath(for: assistantId)
         return sessionPath.replacingOccurrences(of: ".session", with: "_metadata.json")
     }
 
     /// Save session metadata (model ID and system prompt) to validate cache
-    static func saveSessionMetadata(for palId: String, modelId: String, systemPrompt: String) {
-        let metadataPath = getSessionMetadataPath(for: palId)
+    static func saveSessionMetadata(for assistantId: String, modelId: String, systemPrompt: String) {
+        let metadataPath = getSessionMetadataPath(for: assistantId)
 
         let metadata: [String: String] = [
             "modelId": modelId,
@@ -494,8 +494,8 @@ actor LlamaInferenceEngine {
 
     /// Load and validate session metadata
     /// @return true if metadata exists and matches current model ID and system prompt
-    static func validateSessionMetadata(for palId: String, modelId: String, systemPrompt: String) -> Bool {
-        let metadataPath = getSessionMetadataPath(for: palId)
+    static func validateSessionMetadata(for assistantId: String, modelId: String, systemPrompt: String) -> Bool {
+        let metadataPath = getSessionMetadataPath(for: assistantId)
 
         guard FileManager.default.fileExists(atPath: metadataPath) else {
             return false

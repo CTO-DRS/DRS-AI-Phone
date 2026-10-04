@@ -19,7 +19,7 @@ import {renderHook} from '@testing-library/react-native';
 import {useDeepLinking} from '../useDeepLinking';
 import {ROUTES} from '../../utils/navigationConstants';
 import {deepLinkService} from '../../services/DeepLinkService';
-import {checkoutFlowStore, chatSessionStore, palStore} from '../../store';
+import {checkoutFlowStore, chatSessionStore, assistantStore} from '../../store';
 
 // Stable navigate spy that we re-assert across the file. The hook reads
 // `useNavigation()` once per render, so capturing the function from a
@@ -132,7 +132,7 @@ describe('useDeepLinking — cold-launch routing', () => {
   });
 
   it('does NOT navigate when getInitialURL returns an unrelated URL', async () => {
-    getInitialURLSpy.mockResolvedValue('drsai://chat?palId=foo');
+    getInitialURLSpy.mockResolvedValue('drsai://chat?assistantId=foo');
 
     renderHook(() => useDeepLinking());
 
@@ -309,15 +309,15 @@ describe('useDeepLinking — deep-link routing', () => {
   });
 
   it('does not route checkout for the chat host link (no regression)', async () => {
-    (palStore as any).pals = [{id: 'p1'}];
+    (assistantStore as any).assistants = [{id: 'p1'}];
     renderHook(() => useDeepLinking());
     await getHandler()({
-      url: 'drsai://chat?palId=p1',
+      url: 'drsai://chat?assistantId=p1',
       scheme: 'drsai',
       host: 'chat',
-      queryParams: {palId: 'p1'},
+      queryParams: {assistantId: 'p1'},
     });
     expect(checkoutFlowStore.onReturn).not.toHaveBeenCalled();
-    expect(chatSessionStore.setActivePal).toHaveBeenCalledWith('p1');
+    expect(chatSessionStore.setActiveAssistant).toHaveBeenCalledWith('p1');
   });
 });

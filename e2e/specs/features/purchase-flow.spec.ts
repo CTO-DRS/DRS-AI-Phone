@@ -26,11 +26,11 @@ import * as path from 'path';
 
 import {ChatPage} from '../../pages/ChatPage';
 import {DrawerPage} from '../../pages/DrawerPage';
-import {PalPurchasePage} from '../../pages/PalPurchasePage';
+import {AssistantPurchasePage} from '../../pages/AssistantPurchasePage';
 import {TIMEOUTS} from '../../fixtures/models';
 import {
   ensureTestUser,
-  resetPalOwnership,
+  resetAssistantOwnership,
   drshubTestConfig,
 } from '../../helpers/drshubTestApi';
 import {SCREENSHOT_DIR} from '../../wdio.shared.conf';
@@ -44,21 +44,21 @@ const getAppBundleId = (): string =>
 describe('Drshub authenticated purchase', () => {
   let chatPage: ChatPage;
   let drawerPage: DrawerPage;
-  let purchasePage: PalPurchasePage;
+  let purchasePage: AssistantPurchasePage;
 
   before(async () => {
     chatPage = new ChatPage();
     drawerPage = new DrawerPage();
-    purchasePage = new PalPurchasePage();
+    purchasePage = new AssistantPurchasePage();
     await chatPage.waitForReady(TIMEOUTS.appReady);
   });
 
   beforeEach(async () => {
-    // Clean slate on the server so the pal is unowned and the Buy button shows.
+    // Clean slate on the server so the assistant is unowned and the Buy button shows.
     await ensureTestUser();
-    await resetPalOwnership();
+    await resetAssistantOwnership();
     // Relaunch to a clean Chat screen so a prior test's open sheet/tab doesn't
-    // leak into this one (each test navigates drawer -> Pals from scratch).
+    // leak into this one (each test navigates drawer -> Assistants from scratch).
     await driver.terminateApp(getAppBundleId());
     await browser.pause(800);
     await driver.activateApp(getAppBundleId());
@@ -84,9 +84,9 @@ describe('Drshub authenticated purchase', () => {
 
   it('completes checkout and flips Buy to Download', async () => {
     await chatPage.openDrawer();
-    await drawerPage.navigateToPals();
+    await drawerPage.navigateToAssistants();
 
-    await purchasePage.openPalDetail(drshubTestConfig.palId);
+    await purchasePage.openAssistantDetail(drshubTestConfig.assistantId);
 
     // Buy (logged out) -> sign in -> Buy again starts checkout. On Android the
     // store runs the Play link-out prep; Play renders its own disclosure (not
@@ -111,8 +111,8 @@ describe('Drshub authenticated purchase', () => {
     }
 
     await chatPage.openDrawer();
-    await drawerPage.navigateToPals();
-    await purchasePage.openPalDetail(drshubTestConfig.palId);
+    await drawerPage.navigateToAssistants();
+    await purchasePage.openAssistantDetail(drshubTestConfig.assistantId);
 
     // Start checkout up to the Custom Tab, then dismiss it with hardware BACK.
     // The native auth-session settles the openAuth promise on the single

@@ -118,12 +118,12 @@ export const Selectors = {
     get modelsTab(): string {
       return byText('Models');
     },
-    // Pals tab doubles as the drawer-open indicator (DrawerPage.isOpen /
+    // Assistants tab doubles as the drawer-open indicator (DrawerPage.isOpen /
     // waitForOpen / waitForClose), so it must survive a language switch.
-    // Match the app's stable testID (SidebarContent drawer-item-pals) instead
+    // Match the app's stable testID (SidebarContent drawer-item-assistants) instead
     // of the English label.
-    get palsTab(): string {
-      return byTestId('drawer-item-pals');
+    get assistantsTab(): string {
+      return byTestId('drawer-item-assistants');
     },
     get benchmarkTab(): string {
       return byText('Benchmark');
@@ -418,15 +418,15 @@ export const Selectors = {
     },
   },
 
-  // Pals screen
-  palsScreen: {
+  // Assistants screen
+  assistantsScreen: {
     get addButton(): string {
       return byTestId('bottom-action-add');
     },
   },
 
-  // Pal sheet (create/edit pal)
-  palSheet: {
+  // Assistant sheet (create/edit assistant)
+  assistantSheet: {
     get nameInput(): string {
       return byTestId('form-field-name');
     },
@@ -591,8 +591,8 @@ export const Selectors = {
     get fullNewChat(): string {
       return byTestId('context-full-new-chat');
     },
-    get palLoadHint(): string {
-      return byTestId('pal-load-hint-snackbar');
+    get assistantLoadHint(): string {
+      return byTestId('assistant-load-hint-snackbar');
     },
     // Increase-context sheet
     get sheetConfirm(): string {

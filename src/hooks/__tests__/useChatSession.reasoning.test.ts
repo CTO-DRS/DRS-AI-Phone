@@ -11,7 +11,12 @@ import {
 
 import {useChatSession} from '../useChatSession';
 
-import {chatSessionStore, modelStore, palStore, serverStore} from '../../store';
+import {
+  chatSessionStore,
+  modelStore,
+  assistantStore,
+  serverStore,
+} from '../../store';
 
 const mockAssistant = {id: 'assistant-1'};
 
@@ -41,7 +46,7 @@ const setSettings = (overrides: Record<string, any>) => {
 
 beforeEach(() => {
   jest.clearAllMocks();
-  palStore.pals = [] as any;
+  assistantStore.assistants = [] as any;
   chatSessionStore.sessions = sessionFixtures as any;
   chatSessionStore.activeSessionId = 'session-1';
   modelStore.models = modelsList as any;

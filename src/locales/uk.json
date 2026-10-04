@@ -116,11 +116,11 @@
     "useHfTokenLabel": "Використовуйте токен HF",
     "useHfTokenDescription": "Увімкнути використання токена для запитів до API. Вимкнути, якщо токен спричиняє проблеми з автентифікацією.",
     "cacheStorageTitle": "Кеш і пам'ять",
-    "clearPalCaches": "Очистити кеш ярликів",
-    "clearPalCachesDescription": "Очищає кешовані дані, які використовуються для прискорення роботи ярликів. Це не вплине на ваших друзів або історію чату.",
+    "clearAssistantCaches": "Очистити кеш ярликів",
+    "clearAssistantCachesDescription": "Очищає кешовані дані, які використовуються для прискорення роботи ярликів. Це не вплине на ваших друзів або історію чату.",
     "clearCachesButton": "Очистити кеш",
     "clearCachesConfirmTitle": "Очистити кеш ярликів?",
-    "clearCachesConfirmMessage": "Це призведе до очищення всіх кешованих даних сеансу ({{fileCount}} файлів, {{size}}). Після очищення при першому використанні ярлики можуть працювати повільніше. Це не вплине на ваших друзів у Pals та історію чату.",
+    "clearCachesConfirmMessage": "Це призведе до очищення всіх кешованих даних сеансу ({{fileCount}} файлів, {{size}}). Після очищення при першому використанні ярлики можуть працювати повільніше. Це не вплине на ваших друзів у Асистентs та історію чату.",
     "clearCachesSuccess": "Успішно очищено {{count}} файлів кешу.",
     "clearCachesError": "Не вдалося очистити кеш. Спробуйте ще раз.",
     "noCachesToClear": "Немає кешів для очищення.",
@@ -167,7 +167,7 @@
     "serverTypeHelp": "Визначається автоматично; змініть, якщо неправильно.",
     "internetSearch": {
       "title": "Пошук в інтернеті",
-      "description": "Дозвольте Pals шукати в інтернеті за допомогою власних інструментів. Використовуйте власний ключ API — DRS AI ніколи не зберігає ваші ключі й не маршрутизує ваші запити.",
+      "description": "Дозвольте Асистентs шукати в інтернеті за допомогою власних інструментів. Використовуйте власний ключ API — DRS AI ніколи не зберігає ваші ключі й не маршрутизує ваші запити.",
       "providerLabel": "Постачальник пошуку",
       "providerGated": "Незабаром",
       "keyLabel": "Ключ API",
@@ -183,7 +183,7 @@
       "resultCountLabel": "Результатів на пошук",
       "resultCountDescription": "Менша кількість результатів залишає більше місця в контексті моделі.",
       "consentTitle": "Пошукові запити залишають ваш пристрій",
-      "consentDescription": "Коли Pal шукає в інтернеті, ваш запит надсилається вибраному постачальнику через інтернет. Коли Pal читає сторінку, URL-адреса та вміст сторінки можуть натомість надсилатися до стандартного сервісу читання (r.jina.ai), якщо у вибраного постачальника немає власного засобу читання. Ключі та запити ніколи не надсилаються до DRS AI.",
+      "consentDescription": "Коли Асистент шукає в інтернеті, ваш запит надсилається вибраному постачальнику через інтернет. Коли Асистент читає сторінку, URL-адреса та вміст сторінки можуть натомість надсилатися до стандартного сервісу читання (r.jina.ai), якщо у вибраного постачальника немає власного засобу читання. Ключі та запити ніколи не надсилаються до DRS AI.",
       "consentAccept": "Зрозуміло",
       "consentRequired": "Прийміть застереження вище, щоб встановити ключ і ввімкнути пошук.",
       "consentGivenTitle": "Пошук в інтернеті ввімкнено",
@@ -598,7 +598,7 @@
       "activateModelButton": "Вибрати модель",
       "loading": "Завантаження...",
       "gettingReadyTitle": "{{name}} готується",
-      "gettingReadyDescription": "Ми повідомимо вас, щойно ваш Pal зможе почати чат. Натисніть на банер у верхній частині екрана, щоб дізнатися, як просуваються справи."
+      "gettingReadyDescription": "Ми повідомимо вас, щойно ваш Асистент зможе почати чат. Натисніть на банер у верхній частині екрана, щоб дізнатися, як просуваються справи."
     },
     "chatInput": {
       "inputPlaceholder": "Повідомлення",
@@ -684,11 +684,11 @@
         "title": "Успіх",
         "message": "Ці налаштування будуть застосовані до всіх майбутніх сеансів"
       },
-      "palSettings": "Налаштування Pal",
+      "assistantSettings": "Налаштування Асистент",
       "settingsSource": "Джерело налаштувань"
     },
-    "palGenerationSettingsSheet": {
-      "title": "Налаштування генеранції — {{palName}}",
+    "assistantGenerationSettingsSheet": {
+      "title": "Налаштування генеранції — {{assistantName}}",
       "invalidValues": "Недопустимі значення",
       "invalidNumericValuesMessage": "Номер повинен бути дійсним",
       "pleaseCorrect": "Будь ласка, виправте наступне:",
@@ -697,9 +697,9 @@
       "failedToSave": "Не вдалося зберегти налаштування друзів",
       "resetToGlobal": "Скинути до загальних налаштувань за замовчуванням",
       "resetToSystem": "Відновити заводські налаштування",
-      "clearPalSettings": "Очистити налаштування Pal",
-      "customSettingsFor": "Налаштування для {{palName}}",
-      "inheritedSettingsFor": "Універсальні налаштування для {{palName}}"
+      "clearAssistantSettings": "Очистити налаштування Асистент",
+      "customSettingsFor": "Налаштування для {{assistantName}}",
+      "inheritedSettingsFor": "Універсальні налаштування для {{assistantName}}"
     },
     "chatHeaderTitle": {
       "defaultTitle": "Чат"
@@ -707,17 +707,17 @@
     "fileMessage": {
       "fileButtonAccessibilityLabel": "Файл"
     },
-    "chatPalModelPickerSheet": {
+    "chatAssistantModelPickerSheet": {
       "modelsTab": "Моделі",
-      "palsTab": "Палички",
-      "noPal": "Немає палички",
-      "disablePal": "Вимкнути активного паличках",
+      "assistantsTab": "Асистенти",
+      "noAssistant": "Немає палички",
+      "disableAssistant": "Вимкнути активного паличках",
       "noDescription": "Опис відсутній",
       "assistantType": "Асистент",
       "roleplayType": "Рольова гра",
       "videoType": "Відео",
       "confirmationTitle": "Підтвердження",
-      "modelSwitchMessage": "Цей pal має іншу модель за замовчуванням ({{modelName}}). Чи хочете ви перейти на модель за замовчуванням цього pal?",
+      "modelSwitchMessage": "Цей асистент має іншу модель за замовчуванням ({{modelName}}). Чи хочете ви перейти на модель за замовчуванням цього асистент?",
       "keepButton": "Зберігати",
       "switchButton": "Перемикач"
     },
@@ -817,11 +817,11 @@
       "proceedWithReset": "Продовжити скидання",
       "confirmReset": "Підтвердити скидання"
     },
-    "palSheet": {
+    "assistantSheet": {
       "title": {
-        "edit": "Редагувати Pal",
-        "newPal": "Новий Pal",
-        "newVideoPal": "Новий відео Pal"
+        "edit": "Редагувати Асистент",
+        "newAssistant": "Новий асистент",
+        "newVideoAssistant": "Новий відео Асистент"
       },
       "description": "Опис",
       "descriptionPlaceholder": "Введіть короткий опис свого друга",
@@ -858,13 +858,13 @@
         "removePromptLabel": "Прибрати підказку"
       }
     },
-    "assistantPalSheet": {
+    "assistantPersonaSheet": {
       "title": {
-        "create": "Створити помічника Pal",
-        "edit": "Редагувати помічника Pal"
+        "create": "Створити помічника Асистент",
+        "edit": "Редагувати помічника Асистент"
       },
-      "palName": "Ім'я Pal",
-      "palNamePlaceholder": "Ім'я",
+      "assistantName": "Ім'я Асистент",
+      "assistantNamePlaceholder": "Ім'я",
       "defaultModel": "Модель за замовчуванням",
       "defaultModelPlaceholder": "Виберіть модель",
       "validation": {
@@ -882,13 +882,13 @@
       "cancelDownload": "Скасувати завантаження",
       "download": "Завантажити"
     },
-    "roleplayPalSheet": {
+    "roleplayPersonaSheet": {
       "title": {
-        "create": "Створити друга для рольової pal",
-        "edit": "Редагувати рольову груPal"
+        "create": "Створити друга для рольової асистент",
+        "edit": "Редагувати рольову груАсистент"
       },
-      "palName": "Ім'я Pal",
-      "palNamePlaceholder": "Ім'я",
+      "assistantName": "Ім'я Асистент",
+      "assistantNamePlaceholder": "Ім'я",
       "defaultModel": "Модель за замовчуванням",
       "defaultModelPlaceholder": "Виберіть модель",
       "descriptionSection": "Опис",
@@ -912,13 +912,13 @@
       },
       "create": "Створити"
     },
-    "lookiePalSheet": {
+    "lookiePersonaSheet": {
       "title": {
-        "create": "Створити Lookie Pal",
-        "edit": "Редагувати Lookie Pal"
+        "create": "Створити Lookie Асистент",
+        "edit": "Редагувати Lookie Асистент"
       },
-      "palName": "Ім'я Pal",
-      "palNamePlaceholder": "Введіть ім'я для свого Lookie Pal",
+      "assistantName": "Ім'я Асистент",
+      "assistantNamePlaceholder": "Введіть ім'я для свого Lookie Асистент",
       "visionModel": "Модель бачення",
       "visionModelPlaceholder": "Виберіть модель зору",
       "requiredModelsSection": "Необхідні моделі",
@@ -961,7 +961,7 @@
       "menuItems": {
         "chat": "Чат",
         "models": "Моделі",
-        "pals": "Палички",
+        "assistants": "Асистенти",
         "benchmark": "Бенчмарк",
         "settings": "Налаштування",
         "appInfo": "Інформація про додаток",
@@ -1002,7 +1002,12 @@
         "total": "Разом: ",
         "usage": "Спосіб застосування: "
       },
-      "byteSizes": ["Байти", "КБ", "МБ", "ГБ"]
+      "byteSizes": [
+        "Байти",
+        "КБ",
+        "МБ",
+        "ГБ"
+      ]
     },
     "chatView": {
       "menuItems": {
@@ -1013,10 +1018,10 @@
         "reportContent": "Зміст звіту"
       }
     },
-    "palHeaderRight": {
-      "exportAllPals": "Експортувати всіх pal",
-      "importPals": "Імпортувати pals",
-      "importSuccess": "Успішно імпортовано {{count}} pal.",
+    "assistantHeaderRight": {
+      "exportAllAssistants": "Експортувати всіх асистентів",
+      "importAssistants": "Імпортувати асистентів",
+      "importSuccess": "Успішно імпортовано {{count}} асистент.",
       "importError": "Не вдалося імпортувати контакти. Перевірте формат файлу."
     },
     "pendingIndicator": {
@@ -1031,11 +1036,11 @@
       "elapsed": "{{seconds}} сек"
     }
   },
-  "palsScreen": {
+  "assistantsScreen": {
     "sectionTitles": {
-      "myPalsLocal": "Мої Pal (місцеві)",
+      "myAssistantsLocal": "Мої Асистент (місцеві)",
       "myLibrary": "Моя бібліотека (hub.drsai.app)",
-      "discoverPals": "Відкрийте для себе Pals (hub.drsai.app)"
+      "discoverAssistants": "Відкрийте для себе Асистентs (hub.drsai.app)"
     },
     "systemPrompt": "Системне повідомлення",
     "videoAnalysis": "Аналіз відео",
@@ -1050,14 +1055,14 @@
     "assistant": "Асистент",
     "roleplay": "Рольова гра",
     "video": "Відео",
-    "deletePal": "Видалити Pal",
-    "deletePalMessage": "Ти впевнений, що хочеш видалити цього pal?",
+    "deleteAssistant": "Видалити Асистент",
+    "deleteAssistantMessage": "Ти впевнений, що хочеш видалити цього асистент?",
     "missingModel": "Відсутня модель",
     "missingModelMessage": "Стандартна модель «{{modelName}}» для цього палетки недоступна. Завантажте її у вікні редагування або виберіть іншу модель.",
     "search": "Пошук",
     "profile": "Профіль",
     "signIn": "Увійти",
-    "addPal": "Додати Pal",
+    "addAssistant": "Додати Асистент",
     "signInToAccessLibrary": "Увійдіть, щоб отримати доступ до своєї бібліотеки на сайті hub.drsai.app",
     "signOut": "Вийти",
     "signOutConfirmation": "Ви впевнені, що хочете вийти з системи?",
@@ -1065,11 +1070,11 @@
     "account": "Обліковий запис",
     "signInToDrshub": "Увійти в Drshub",
     "signInDescription": "Отримуйте доступ до своєї бібліотеки, створюйте приватні списки друзів та синхронізуйте дані між пристроями",
-    "searchAllPals": "Переглянути всіх Pal...",
-    "deletePalConfirmation": "Ви впевнені, що хочете видалити «{{palName}}»?",
+    "searchAllAssistants": "Переглянути всіх асистентів...",
+    "deleteAssistantConfirmation": "Ви впевнені, що хочете видалити «{{assistantName}}»?",
     "filters": {
       "all": "Всі",
-      "myPals": "Мій Pals",
+      "myAssistants": "Мої асистенти",
       "local": "Локальний",
       "video": "Відео",
       "free": "Безкоштовно",
@@ -1082,7 +1087,7 @@
       "download": "Завантажити",
       "getFree": "Отримати Безкоштовно"
     },
-    "premiumPalDescription": "Преміум-користувач із спільноти hub.drsai.app",
+    "premiumAssistantDescription": "Преміум-користувач із спільноти hub.drsai.app",
     "premiumInfoText": "Завітайте на сайт hub.drsai.app, щоб знайти нових друзів",
     "sortOptions": {
       "newest": "Новійша",
@@ -1090,7 +1095,7 @@
       "rating": "Найкращі за оцінками",
       "popular": "Найпопулярніші"
     },
-    "palDetailSheet": {
+    "assistantDetailSheet": {
       "by": "від",
       "unknown": "Невідомо",
       "rating": "Оцінка",
@@ -1103,18 +1108,18 @@
       "systemPrompt": "Системне повідомлення",
       "downloaded": "Завантажено",
       "success": "Успіх",
-      "palAddedToCollection": "Pal додано до вашої колекції!",
+      "assistantAddedToCollection": "Асистент додано до вашої колекції!",
       "error": "Помилка",
-      "failedToLoadDetails": "Не вдалося завантажити інформацію про Pal",
-      "failedToDownload": "Не вдалося завантажити pal",
-      "premiumPalMessage": "Це Преміум-Pal.\n• Якщо ви вже розблокували його за допомогою свого облікового запису Drshub, просто увійдіть, щоб переглянути повну інформацію.\n• Ще не розблокували? Зайдіть у додаток hub.drsai.app, щоб дізнатися більше.",
+      "failedToLoadDetails": "Не вдалося завантажити інформацію про Асистент",
+      "failedToDownload": "Не вдалося завантажити асистент",
+      "premiumAssistantMessage": "Це Преміум-Асистент.\n• Якщо ви вже розблокували його за допомогою свого облікового запису Drshub, просто увійдіть, щоб переглянути повну інформацію.\n• Ще не розблокували? Зайдіть у додаток hub.drsai.app, щоб дізнатися більше.",
       "notAvailable": "Н/Д",
       "buyOnDrshub": "Купити на Drshub",
       "finalizingPurchase": "Завершується оформлення вашої покупки…",
       "processingPurchase": "Обробка — доступ буде відкрито незабаром.",
       "checkoutSessionExpired": "Термін дії вашої сесії закінчився. Увійдіть знову, щоб продовжити.",
       "signInAgain": "Увійти знову",
-      "palNotAvailable": "Цей pal наразі недоступний для покупки.",
+      "assistantNotAvailable": "Цей асистент наразі недоступний для покупки.",
       "checkoutFailed": "Щось пішло не так. Спробуйте ще раз."
     }
   },
@@ -1171,7 +1176,7 @@
   "screenTitles": {
     "chat": "Чпт",
     "models": "Моделі",
-    "pals": "Pals (експериментальний)",
+    "assistants": "Асистенти (експериментальні)",
     "benchmark": "Бенчмарк",
     "settings": "Налаштування",
     "appInfo": "Про додаток",
@@ -1229,7 +1234,7 @@
     "increaseContextReloading": "Перезавантаження моделі з більшим контекстом…",
     "increaseContextSuccess": "Контекст збільшено до {{target}} токенів.",
     "increaseContextFailure": "Не вдалося збільшити розмір контексту. Було відновлено попереднє значення.",
-    "palLoadHint": "Цей pal зазвичай потребує більше місця, ніж дозволяє поточний розмір контексту.",
+    "assistantLoadHint": "Цей асистент зазвичай потребує більше місця, ніж дозволяє поточний розмір контексту.",
     "webSearch": {
       "searched": "Виконано пошук: {{query}}",
       "noResults": "Немає результатів",
@@ -1557,7 +1562,7 @@
         "best": "Найкраща"
       },
       "subtitleTemplate": "{{name}} думає за допомогою невеликої моделі ШІ у вашому телефоні — виберіть ту, що підходить.",
-      "pal": {
+      "assistant": {
         "pip": {
           "body": "Ми знайшли для вас ідеального приятеля — дружнього супутника на щодень. Достатньо кмітливий для більшості завдань і достатньо легкий для будь-якого телефона."
         },
@@ -1577,7 +1582,7 @@
     }
   },
   "downloadBanner": {
-    "titleByPal": "{{name}} завантажується",
+    "titleByAssistant": "{{name}} завантажується",
     "titleByModel": "{{name}} завантажується",
     "extraInProgress": "+{{count}} ще триває"
   }

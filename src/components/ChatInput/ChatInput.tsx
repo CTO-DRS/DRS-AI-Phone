@@ -16,7 +16,7 @@ import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import {observer} from 'mobx-react';
 import {IconButton, Text} from 'react-native-paper';
 
-import {hasVideoCapability} from '../../utils/pal-capabilities';
+import {hasVideoCapability} from '../../utils/assistant-capabilities';
 
 import {
   ChevronUpIcon,
@@ -29,7 +29,12 @@ import {useTheme} from '../../hooks';
 
 import {createStyles} from './styles';
 
-import {chatSessionStore, modelStore, palStore, uiStore} from '../../store';
+import {
+  chatSessionStore,
+  modelStore,
+  assistantStore,
+  uiStore,
+} from '../../store';
 
 import {MessageType} from '../../utils/types';
 import {L10nContext, UserContext} from '../../utils';
@@ -45,7 +50,7 @@ export interface ChatInputTopLevelProps {
   onSendPress: (message: MessageType.PartialText) => void;
   onStopPress?: () => void;
   onCancelEdit?: () => void;
-  onPalBtnPress?: () => void;
+  onAssistantBtnPress?: () => void;
   isStopVisible?: boolean;
   /** Controls the visibility behavior of the {@link SendButton} based on the
    * `TextInput` state. Defaults to `editing`. */
@@ -122,7 +127,7 @@ export const ChatInput = observer(
     onSendPress,
     onStopPress,
     onCancelEdit,
-    onPalBtnPress,
+    onAssistantBtnPress,
     isStopVisible,
     sendButtonVisibilityMode,
     textInputProps,
@@ -150,8 +155,10 @@ export const ChatInput = observer(
     const inputRef = React.useRef<TextInput>(null);
     const editBarHeight = React.useRef(new Animated.Value(0)).current;
     const iconRotation = React.useRef(new Animated.Value(0)).current;
-    const activePalId = chatSessionStore.activePalId;
-    const currentActivePal = palStore.pals.find(pal => pal.id === activePalId);
+    const activeAssistantId = chatSessionStore.activeAssistantId;
+    const currentActiveAssistant = assistantStore.assistants.find(
+      assistant => assistant.id === activeAssistantId,
+    );
 
     // Camera permission hook from react-native-vision-camera
     const {hasPermission, requestPermission} = useCameraPermission();
@@ -177,7 +184,7 @@ export const ChatInput = observer(
 
     // For camera input, use promptText if provided
     const isVideoCapable =
-      currentActivePal && hasVideoCapability(currentActivePal);
+      currentActiveAssistant && hasVideoCapability(currentActiveAssistant);
     const value =
       isVideoCapable && promptText !== undefined
         ? promptText
@@ -360,7 +367,7 @@ export const ChatInput = observer(
       !isStreaming &&
       !isStopVisible &&
       user &&
-      !isVideoCapable && // Hide send button for video-capable pals
+      !isVideoCapable && // Hide send button for video-capable assistants
       (sendButtonVisibilityMode === 'always' || value.trim());
     const isSendButtonEnabled = value.trim().length > 0 && hasActiveModel;
     const sendButtonOpacity = isSendButtonEnabled ? 1 : 0.4;
@@ -370,7 +377,8 @@ export const ChatInput = observer(
       outputRange: ['0deg', '180deg'],
     });
 
-    const onSurfaceColor = currentActivePal?.color?.[0] || theme.colors.text;
+    const onSurfaceColor =
+      currentActiveAssistant?.color?.[0] || theme.colors.text;
     const onSurfaceColorVariant = onSurfaceColor + '55'; // for disabled state or placeholder text
     // // Plus button state
     const isPlusButtonEnabled = !isStreaming && isVisionEnabled;
@@ -459,12 +467,12 @@ export const ChatInput = observer(
                     : 20,
               },
             ]}>
-            {/* Subtle Prompt Label for Video Pals */}
+            {/* Subtle Prompt Label for Video Assistants */}
             {isVideoCapable && (
               <Text
                 variant="labelSmall"
                 style={[styles.promptLabel, {color: onSurfaceColorVariant}]}>
-                {l10n.palsScreen.prompt}:
+                {l10n.assistantsScreen.prompt}:
               </Text>
             )}
             <TextInput
@@ -533,23 +541,23 @@ export const ChatInput = observer(
                 </Menu>
               )}
 
-              {/* Pal Selector */}
-              <View style={styles.palSelector}>
+              {/* Assistant Selector */}
+              <View style={styles.assistantSelector}>
                 <TouchableOpacity
                   style={[
-                    styles.palBtn,
+                    styles.assistantBtn,
                     {
                       backgroundColor:
                         uiStore.colorScheme === 'dark'
                           ? theme.colors.inverseOnSurface
                           : theme.colors.inverseSurface,
                     },
-                    currentActivePal?.color && {
-                      backgroundColor: currentActivePal?.color?.[0],
+                    currentActiveAssistant?.color && {
+                      backgroundColor: currentActiveAssistant?.color?.[0],
                     },
                   ]}
-                  onPress={onPalBtnPress}
-                  accessibilityLabel="Select Pal"
+                  onPress={onAssistantBtnPress}
+                  accessibilityLabel="Select Assistant"
                   accessibilityRole="button">
                   <Animated.View
                     style={{
@@ -559,24 +567,24 @@ export const ChatInput = observer(
                   </Animated.View>
                 </TouchableOpacity>
 
-                {/* Pal Name Display */}
-                {currentActivePal?.name && hasActiveModel && (
+                {/* Assistant Name Display */}
+                {currentActiveAssistant?.name && hasActiveModel && (
                   <Text
                     style={[
-                      styles.palNameCompact,
+                      styles.assistantNameCompact,
                       {
                         color: onSurfaceColor,
                       },
                     ]}>
-                    Pal:{' '}
+                    Assistant:{' '}
                     <Text
                       style={[
-                        styles.palNameValueCompact,
+                        styles.assistantNameValueCompact,
                         {
                           color: onSurfaceColor,
                         },
                       ]}>
-                      {currentActivePal?.name}
+                      {currentActiveAssistant?.name}
                     </Text>
                   </Text>
                 )}
@@ -658,7 +666,7 @@ export const ChatInput = observer(
               {isStopVisible ? (
                 <StopButton color={onSurfaceColor} onPress={onStopPress} />
               ) : isVideoCapable && !isCameraActive ? (
-                /* Compact Start Video Button for Video Pals */
+                /* Compact Start Video Button for Video Assistants */
                 <TouchableOpacity
                   style={[
                     styles.compactVideoButton,

@@ -7,10 +7,10 @@ import {
   Message,
   CompletionSetting,
   GlobalSetting,
-  CachedPal,
+  CachedAssistant,
   UserLibrary,
   SyncStatus,
-  LocalPal,
+  LocalAssistant,
 } from './models';
 
 const adapter = new SQLiteAdapter({
@@ -30,10 +30,10 @@ export const database = new Database({
     Message,
     CompletionSetting,
     GlobalSetting,
-    CachedPal,
+    CachedAssistant,
     UserLibrary,
     SyncStatus,
-    LocalPal,
+    LocalAssistant,
   ],
 });
 
@@ -42,8 +42,8 @@ export {
   Message,
   CompletionSetting,
   GlobalSetting,
-  CachedPal,
+  CachedAssistant,
   UserLibrary,
   SyncStatus,
-  LocalPal,
+  LocalAssistant,
 };

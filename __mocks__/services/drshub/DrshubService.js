@@ -3,27 +3,27 @@
 
 const mockDrshubService = {
   // Methods
-  getPals: jest.fn().mockResolvedValue({pals: [], total: 0}),
-  getPal: jest.fn().mockResolvedValue(null),
-  getMyPals: jest.fn().mockResolvedValue(null),
+  getAssistants: jest.fn().mockResolvedValue({assistants: [], total: 0}),
+  getAssistant: jest.fn().mockResolvedValue(null),
+  getMyAssistants: jest.fn().mockResolvedValue(null),
   getUserLibrary: jest.fn().mockResolvedValue([]),
-  getUserCreatedPals: jest.fn().mockResolvedValue([]),
+  getUserCreatedAssistants: jest.fn().mockResolvedValue([]),
   addToLibrary: jest.fn().mockResolvedValue(undefined),
   removeFromLibrary: jest.fn().mockResolvedValue(undefined),
-  createPal: jest.fn().mockResolvedValue(null),
-  updatePal: jest.fn().mockResolvedValue(null),
-  deletePal: jest.fn().mockResolvedValue(undefined),
-  searchPals: jest.fn().mockResolvedValue({pals: [], total: 0}),
+  createAssistant: jest.fn().mockResolvedValue(null),
+  updateAssistant: jest.fn().mockResolvedValue(null),
+  deleteAssistant: jest.fn().mockResolvedValue(undefined),
+  searchAssistants: jest.fn().mockResolvedValue({assistants: [], total: 0}),
   getCategories: jest.fn().mockResolvedValue([]),
   getTags: jest.fn().mockResolvedValue([]),
-  downloadPalImage: jest.fn().mockResolvedValue(null),
+  downloadAssistantImage: jest.fn().mockResolvedValue(null),
   getLibrary: jest.fn().mockResolvedValue(null),
-  checkPalOwnership: jest.fn().mockResolvedValue(null),
+  checkAssistantOwnership: jest.fn().mockResolvedValue(null),
 
   // Private methods (mocked for completeness)
   buildQuery: jest.fn().mockReturnValue({}),
   executeQuery: jest.fn().mockResolvedValue([]),
-  transformPal: jest.fn().mockReturnValue({}),
+  transformAssistant: jest.fn().mockReturnValue({}),
   handleError: jest.fn(),
 };
 

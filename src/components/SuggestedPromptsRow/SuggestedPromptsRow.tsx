@@ -9,8 +9,8 @@ interface SuggestedPromptsRowProps {
   prompts: string[];
   /**
    * Invoked when the user taps a chip. Consumer is responsible for sending
-   * the prompt (auto-send, per Pal spec UX). The prompt string is passed
-   * verbatim as typed by the Pal author.
+   * the prompt (auto-send, per Assistant spec UX). The prompt string is passed
+   * verbatim as typed by the Assistant author.
    */
   onSelect: (prompt: string) => void;
   /**

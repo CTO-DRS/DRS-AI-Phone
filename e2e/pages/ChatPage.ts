@@ -58,16 +58,16 @@ export class ChatPage extends BasePage {
    *
    * The single tap is occasionally missed on Android (the drawer never opens),
    * which then fails the downstream waitForOpen. Tap, verify the drawer
-   * actually opened (the Pals item appears), and retry the tap if it didn't —
+   * actually opened (the Assistants item appears), and retry the tap if it didn't —
    * checking "already open" first so a retry can't toggle an open drawer shut.
    */
   async openDrawer(): Promise<void> {
     for (let attempt = 0; attempt < 3; attempt++) {
-      if (await this.isElementDisplayed(Selectors.drawer.palsTab, 1000)) {
+      if (await this.isElementDisplayed(Selectors.drawer.assistantsTab, 1000)) {
         return;
       }
       await this.tap(Selectors.chat.menuButton);
-      if (await this.isElementDisplayed(Selectors.drawer.palsTab, 5000)) {
+      if (await this.isElementDisplayed(Selectors.drawer.assistantsTab, 5000)) {
         return;
       }
     }
@@ -165,7 +165,7 @@ export class ChatPage extends BasePage {
    * Tap the thinking toggle to switch its state.
    *
    * The TTS VoiceChip can overlap the thinking toggle on EITHER side depending
-   * on pal-name length and screen geometry (confirmed across the device fleet,
+   * on assistant-name length and screen geometry (confirmed across the device fleet,
    * #764). A tap on the overlap hits the chip and opens the "Voices" sheet
    * instead of flipping the toggle. So: measure both elements, tap the part of
    * the toggle the chip does NOT cover, dismiss any sheet that still slips
@@ -321,27 +321,27 @@ export class ChatPage extends BasePage {
   }
 
   /**
-   * Open the pal/model picker sheet by tapping the pal selector button.
+   * Open the assistant/model picker sheet by tapping the assistant selector button.
    */
-  async openPalPicker(): Promise<void> {
-    const palBtn = browser.$(byAccessibilityLabel('Select Pal'));
-    await palBtn.waitForDisplayed({timeout: 5000});
-    await palBtn.click();
+  async openAssistantPicker(): Promise<void> {
+    const assistantBtn = browser.$(byAccessibilityLabel('Select Assistant'));
+    await assistantBtn.waitForDisplayed({timeout: 5000});
+    await assistantBtn.click();
     await browser.pause(500);
   }
 
   /**
-   * Select a pal by name from the pal picker sheet (must be open).
-   * Swipes left to reach the Pals tab since the picker defaults to Models.
+   * Select a assistant by name from the assistant picker sheet (must be open).
+   * Swipes left to reach the Assistants tab since the picker defaults to Models.
    */
-  async selectPal(palName: string): Promise<void> {
+  async selectAssistant(assistantName: string): Promise<void> {
     // The picker shows Models tab by default.
-    // Swipe right to reach the Pals tab (Pals is to the left of Models).
-    // Swipe right to reach the Pals tab, then find the pal by partial text.
+    // Swipe right to reach the Assistants tab (Assistants is to the left of Models).
+    // Swipe right to reach the Assistants tab, then find the assistant by partial text.
     // The first swipe can land short / the list can still be settling, so
-    // retry the swipe+lookup before giving up (the pal-picker tab transition
+    // retry the swipe+lookup before giving up (the assistant-picker tab transition
     // is gesture-driven and flaky on a fresh model load).
-    const palItem = browser.$(byPartialText(palName));
+    const assistantItem = browser.$(byPartialText(assistantName));
     for (let attempt = 0; attempt < 3; attempt++) {
       await Gestures.swipe({
         startXPercent: 0.2,
@@ -351,7 +351,7 @@ export class ChatPage extends BasePage {
         duration: 300,
       });
       await browser.pause(500);
-      const found = await palItem
+      const found = await assistantItem
         .waitForDisplayed({timeout: 5000})
         .then(() => true)
         .catch(() => false);
@@ -359,8 +359,8 @@ export class ChatPage extends BasePage {
         break;
       }
     }
-    await palItem.waitForDisplayed({timeout: 5000});
-    await palItem.click();
+    await assistantItem.waitForDisplayed({timeout: 5000});
+    await assistantItem.click();
     await browser.pause(500);
   }
 

@@ -114,11 +114,11 @@
     "useHfTokenLabel": "Gunakan Token HF",
     "useHfTokenDescription": "Aktifkan untuk menggunakan token dalam permintaan API. Nonaktifkan jika token menyebabkan masalah autentikasi.",
     "cacheStorageTitle": "Cache & Penyimpanan",
-    "clearPalCaches": "Bersihkan Cache Shortcut",
-    "clearPalCachesDescription": "Menghapus data cache yang digunakan untuk mempercepat Shortcut. Tidak memengaruhi Pal atau riwayat obrolan Anda.",
+    "clearAssistantCaches": "Bersihkan Cache Shortcut",
+    "clearAssistantCachesDescription": "Menghapus data cache yang digunakan untuk mempercepat Shortcut. Tidak memengaruhi Asisten atau riwayat obrolan Anda.",
     "clearCachesButton": "Bersihkan Cache",
     "clearCachesConfirmTitle": "Bersihkan Cache Shortcut?",
-    "clearCachesConfirmMessage": "Ini akan menghapus semua data sesi cache ({{fileCount}} file, {{size}}). Shortcut mungkin lebih lambat saat pertama kali digunakan setelah dibersihkan. Tidak memengaruhi Pal atau riwayat obrolan Anda.",
+    "clearCachesConfirmMessage": "Ini akan menghapus semua data sesi cache ({{fileCount}} file, {{size}}). Shortcut mungkin lebih lambat saat pertama kali digunakan setelah dibersihkan. Tidak memengaruhi Asisten atau riwayat obrolan Anda.",
     "clearCachesSuccess": "Berhasil membersihkan {{count}} file cache.",
     "clearCachesError": "Gagal membersihkan cache. Silakan coba lagi.",
     "noCachesToClear": "Tidak ada cache untuk dibersihkan.",
@@ -167,7 +167,7 @@
     "serverTypeHelp": "Terdeteksi otomatis; ubah jika keliru.",
     "internetSearch": {
       "title": "Pencarian Internet",
-      "description": "Izinkan Pal mencari di web dengan alat mereka sendiri. Bawa kunci API Anda sendiri — DRS AI tidak pernah menyimpan kunci Anda atau merutekan kueri Anda.",
+      "description": "Izinkan Asisten mencari di web dengan alat mereka sendiri. Bawa kunci API Anda sendiri — DRS AI tidak pernah menyimpan kunci Anda atau merutekan kueri Anda.",
       "providerLabel": "Penyedia pencarian",
       "providerGated": "Segera hadir",
       "keyLabel": "Kunci API",
@@ -183,7 +183,7 @@
       "resultCountLabel": "Hasil per pencarian",
       "resultCountDescription": "Lebih sedikit hasil menyisakan lebih banyak ruang dalam konteks model.",
       "consentTitle": "Pencarian meninggalkan perangkat Anda",
-      "consentDescription": "Saat Pal mencari di web, kueri Anda dikirim ke penyedia yang dipilih melalui internet. Saat Pal membaca halaman, URL dan konten halaman dapat dikirim ke layanan pembaca default (r.jina.ai) jika penyedia yang dipilih tidak memiliki pembaca bawaan. Kunci dan kueri tidak pernah dikirim ke DRS AI.",
+      "consentDescription": "Saat Asisten mencari di web, kueri Anda dikirim ke penyedia yang dipilih melalui internet. Saat Asisten membaca halaman, URL dan konten halaman dapat dikirim ke layanan pembaca default (r.jina.ai) jika penyedia yang dipilih tidak memiliki pembaca bawaan. Kunci dan kueri tidak pernah dikirim ke DRS AI.",
       "consentAccept": "Saya mengerti",
       "consentRequired": "Terima pengungkapan di atas untuk mengatur kunci dan mengaktifkan pencarian.",
       "consentGivenTitle": "Pencarian web diaktifkan",
@@ -365,7 +365,7 @@
         "sortRelevance": "Relevansi",
         "sortDownloads": "Jumlah Unduhan",
         "sortRecent": "Terbaru Diperbarui",
-        "sortLikes": "Paling Disukai"
+        "sortLikes": "Asistening Disukai"
       }
     },
     "modelCard": {
@@ -590,7 +590,7 @@
       "activateModelButton": "Pilih Model",
       "loading": "Memuat...",
       "gettingReadyTitle": "{{name}} sedang bersiap",
-      "gettingReadyDescription": "Kami akan memberi tahu saat pal Anda siap mengobrol. Ketuk banner di atas untuk melihat perkembangannya."
+      "gettingReadyDescription": "Kami akan memberi tahu saat assistant Anda siap mengobrol. Ketuk banner di atas untuk melihat perkembangannya."
     },
     "chatInput": {
       "inputPlaceholder": "Pesan",
@@ -676,22 +676,22 @@
         "title": "Berhasil",
         "message": "Pengaturan ini akan diterapkan ke semua sesi mendatang"
       },
-      "palSettings": "Pengaturan Pal",
+      "assistantSettings": "Pengaturan Asisten",
       "settingsSource": "Sumber Pengaturan"
     },
-    "palGenerationSettingsSheet": {
-      "title": "Pengaturan Generasi - {{palName}}",
+    "assistantGenerationSettingsSheet": {
+      "title": "Pengaturan Generasi - {{assistantName}}",
       "invalidValues": "Nilai Tidak Valid",
       "invalidNumericValuesMessage": "Harus berupa angka yang valid",
       "pleaseCorrect": "Harap perbaiki hal berikut:",
       "ok": "OK",
       "error": "Kesalahan",
-      "failedToSave": "Gagal menyimpan pengaturan pal",
+      "failedToSave": "Gagal menyimpan pengaturan assistant",
       "resetToGlobal": "Atur Ulang ke Default Global",
       "resetToSystem": "Atur Ulang ke Default Sistem",
-      "clearPalSettings": "Hapus Pengaturan Pal",
-      "customSettingsFor": "Pengaturan khusus untuk {{palName}}",
-      "inheritedSettingsFor": "Pengaturan warisan untuk {{palName}}"
+      "clearAssistantSettings": "Hapus Pengaturan Asisten",
+      "customSettingsFor": "Pengaturan khusus untuk {{assistantName}}",
+      "inheritedSettingsFor": "Pengaturan warisan untuk {{assistantName}}"
     },
     "chatHeaderTitle": {
       "defaultTitle": "Obrolan"
@@ -699,17 +699,17 @@
     "fileMessage": {
       "fileButtonAccessibilityLabel": "File"
     },
-    "chatPalModelPickerSheet": {
+    "chatAssistantModelPickerSheet": {
       "modelsTab": "Model",
-      "palsTab": "Pal",
-      "noPal": "Tidak Ada Pal",
-      "disablePal": "Nonaktifkan pal aktif",
+      "assistantsTab": "Asisten",
+      "noAssistant": "Tidak Ada Asisten",
+      "disableAssistant": "Nonaktifkan assistant aktif",
       "noDescription": "Tidak ada deskripsi",
       "assistantType": "Asisten",
       "roleplayType": "Bermain Peran",
       "videoType": "Video",
       "confirmationTitle": "Konfirmasi",
-      "modelSwitchMessage": "Pal ini memiliki model default berbeda ({{modelName}}). Apakah Anda ingin beralih ke model default pal tersebut?",
+      "modelSwitchMessage": "Asisten ini memiliki model default berbeda ({{modelName}}). Apakah Anda ingin beralih ke model default assistant tersebut?",
       "keepButton": "Pertahankan",
       "switchButton": "Alihkan"
     },
@@ -809,14 +809,14 @@
       "proceedWithReset": "Lanjutkan Atur Ulang",
       "confirmReset": "Konfirmasi Atur Ulang"
     },
-    "palSheet": {
+    "assistantSheet": {
       "title": {
-        "edit": "Sunting Pal",
-        "newPal": "Pal Baru",
-        "newVideoPal": "Pal Video Baru"
+        "edit": "Sunting Asisten",
+        "newAssistant": "Asisten Baru",
+        "newVideoAssistant": "Asisten Video Baru"
       },
       "description": "Deskripsi",
-      "descriptionPlaceholder": "Masukkan deskripsi singkat Pal Anda",
+      "descriptionPlaceholder": "Masukkan deskripsi singkat Asisten Anda",
       "parameters": "Parameter",
       "generationSettings": "Pengaturan Generasi",
       "configureGenerationSettings": "Konfigurasi Pengaturan Generasi",
@@ -850,13 +850,13 @@
         "removePromptLabel": "Hapus prompt"
       }
     },
-    "assistantPalSheet": {
+    "assistantPersonaSheet": {
       "title": {
-        "create": "Buat Pal Asisten",
-        "edit": "Edit Pal Asisten"
+        "create": "Buat Asisten",
+        "edit": "Edit Asisten"
       },
-      "palName": "Nama Pal",
-      "palNamePlaceholder": "Nama",
+      "assistantName": "Nama Asisten",
+      "assistantNamePlaceholder": "Nama",
       "defaultModel": "Model Default",
       "defaultModelPlaceholder": "Pilih model",
       "validation": {
@@ -868,19 +868,19 @@
     "modelNotAvailable": {
       "noModelsDownloaded": "Anda belum mengunduh model apa pun. Harap unduh model terlebih dahulu.",
       "downloadAModel": "Unduh model",
-      "defaultModelNotDownloaded": "Pal ini merekomendasikan model tertentu yang perlu diunduh, atau Anda dapat memilih model lain.",
+      "defaultModelNotDownloaded": "Asisten ini merekomendasikan model tertentu yang perlu diunduh, atau Anda dapat memilih model lain.",
       "modelNotDownloadedShort": "Model belum diunduh",
       "recommendedModel": "Model yang Direkomendasikan",
       "cancelDownload": "Batalkan unduhan",
       "download": "Unduh"
     },
-    "roleplayPalSheet": {
+    "roleplayPersonaSheet": {
       "title": {
-        "create": "Buat Pal Bermain Peran",
-        "edit": "Edit Pal Bermain Peran"
+        "create": "Buat Asisten Bermain Peran",
+        "edit": "Edit Asisten Bermain Peran"
       },
-      "palName": "Nama Pal",
-      "palNamePlaceholder": "Nama",
+      "assistantName": "Nama Asisten",
+      "assistantNamePlaceholder": "Nama",
       "defaultModel": "Model Default",
       "defaultModelPlaceholder": "Pilih model",
       "descriptionSection": "Deskripsi",
@@ -904,13 +904,13 @@
       },
       "create": "Buat"
     },
-    "lookiePalSheet": {
+    "lookiePersonaSheet": {
       "title": {
-        "create": "Buat Pal Lookie",
-        "edit": "Edit Pal Lookie"
+        "create": "Buat Asisten Lookie",
+        "edit": "Edit Asisten Lookie"
       },
-      "palName": "Nama Pal",
-      "palNamePlaceholder": "Masukkan nama untuk Pal Lookie Anda",
+      "assistantName": "Nama Asisten",
+      "assistantNamePlaceholder": "Masukkan nama untuk Asisten Lookie Anda",
       "visionModel": "Model Visi",
       "visionModelPlaceholder": "Pilih model visi",
       "requiredModelsSection": "Model yang Diperlukan",
@@ -931,7 +931,7 @@
       },
       "generatingPrompt": {
         "label": "Tujuan & Konteks",
-        "placeholder": "Jelaskan peran, tujuan, atau skenario untuk Pal ini..."
+        "placeholder": "Jelaskan peran, tujuan, atau skenario untuk Asisten ini..."
       },
       "buttons": {
         "loadingModel": "Memuat model...",
@@ -953,7 +953,7 @@
       "menuItems": {
         "chat": "Obrolan",
         "models": "Model",
-        "pals": "Pal",
+        "assistants": "Asisten",
         "benchmark": "Benchmark",
         "settings": "Pengaturan",
         "appInfo": "Info Aplikasi",
@@ -994,7 +994,12 @@
         "total": "Total: ",
         "usage": "Penggunaan: "
       },
-      "byteSizes": ["Byte", "KB", "MB", "GB"]
+      "byteSizes": [
+        "Byte",
+        "KB",
+        "MB",
+        "GB"
+      ]
     },
     "chatView": {
       "menuItems": {
@@ -1005,11 +1010,11 @@
         "reportContent": "Laporkan Konten"
       }
     },
-    "palHeaderRight": {
-      "exportAllPals": "Ekspor semua pal",
-      "importPals": "Impor pal",
-      "importSuccess": "Berhasil mengimpor {{count}} pal.",
-      "importError": "Gagal mengimpor pal. Harap periksa format file."
+    "assistantHeaderRight": {
+      "exportAllAssistants": "Ekspor semua assistant",
+      "importAssistants": "Impor assistant",
+      "importSuccess": "Berhasil mengimpor {{count}} assistant.",
+      "importError": "Gagal mengimpor assistant. Harap periksa format file."
     },
     "bubble": {
       "msPerToken": "{{value}}md/token",
@@ -1031,11 +1036,11 @@
       "elapsed": "{{seconds}} dtk"
     }
   },
-  "palsScreen": {
+  "assistantsScreen": {
     "sectionTitles": {
-      "myPalsLocal": "Pal Saya (lokal)",
+      "myAssistantsLocal": "Asisten Saya (lokal)",
       "myLibrary": "Pustaka Saya (hub.drsai.app)",
-      "discoverPals": "Temukan Pal (hub.drsai.app)"
+      "discoverAssistants": "Temukan Asisten (hub.drsai.app)"
     },
     "systemPrompt": "Prompt Sistem",
     "videoAnalysis": "Analisis Video",
@@ -1050,26 +1055,26 @@
     "assistant": "Asisten",
     "roleplay": "Bermain Peran",
     "video": "Video",
-    "deletePal": "Hapus Pal",
-    "deletePalMessage": "Yakin ingin menghapus pal ini?",
+    "deleteAssistant": "Hapus Asisten",
+    "deleteAssistantMessage": "Yakin ingin menghapus assistant ini?",
     "missingModel": "Model Tidak Ditemukan",
-    "missingModelMessage": "Model default \"{{modelName}}\" untuk pal ini tidak tersedia. Harap unduh di lembar edit atau pilih model lain.",
+    "missingModelMessage": "Model default \"{{modelName}}\" untuk assistant ini tidak tersedia. Harap unduh di lembar edit atau pilih model lain.",
     "search": "Cari",
     "profile": "Profil",
     "signIn": "Masuk",
-    "addPal": "Tambah Pal",
+    "addAssistant": "Tambah Asisten",
     "signInToAccessLibrary": "Masuk untuk mengakses pustaka Anda dari hub.drsai.app",
     "signOut": "Keluar",
     "signOutConfirmation": "Yakin ingin keluar?",
     "signOutError": "Gagal keluar. Silakan coba lagi.",
     "account": "Akun",
     "signInToDrshub": "Masuk ke Drshub",
-    "signInDescription": "Akses pustaka Anda, buat Pal pribadi, dan sinkronkan lintas perangkat",
-    "searchAllPals": "Cari semua Pal...",
-    "deletePalConfirmation": "Yakin ingin menghapus \"{{palName}}\"?",
+    "signInDescription": "Akses pustaka Anda, buat Asisten pribadi, dan sinkronkan lintas perangkat",
+    "searchAllAssistants": "Cari semua Asisten...",
+    "deleteAssistantConfirmation": "Yakin ingin menghapus \"{{assistantName}}\"?",
     "filters": {
       "all": "Semua",
-      "myPals": "Pal Saya",
+      "myAssistants": "Asisten Saya",
       "local": "Lokal",
       "video": "Video",
       "free": "Gratis",
@@ -1082,15 +1087,15 @@
       "download": "Unduh",
       "getFree": "Dapatkan Gratis"
     },
-    "premiumPalDescription": "Pal premium dari komunitas hub.drsai.app",
-    "premiumInfoText": "Kunjungi hub.drsai.app untuk menjelajahi lebih banyak pal",
+    "premiumAssistantDescription": "Asisten premium dari komunitas hub.drsai.app",
+    "premiumInfoText": "Kunjungi hub.drsai.app untuk menjelajahi lebih banyak assistant",
     "sortOptions": {
       "newest": "Terbaru",
       "oldest": "Terlama",
       "rating": "Rating Tertinggi",
-      "popular": "Paling Populer"
+      "popular": "Asistening Populer"
     },
-    "palDetailSheet": {
+    "assistantDetailSheet": {
       "by": "oleh",
       "unknown": "Tidak Diketahui",
       "rating": "Rating",
@@ -1103,18 +1108,18 @@
       "systemPrompt": "Prompt Sistem",
       "downloaded": "Diunduh",
       "success": "Berhasil",
-      "palAddedToCollection": "Pal telah ditambahkan ke koleksi Anda!",
+      "assistantAddedToCollection": "Asisten telah ditambahkan ke koleksi Anda!",
       "error": "Kesalahan",
-      "failedToLoadDetails": "Gagal memuat detail pal",
-      "failedToDownload": "Gagal mengunduh pal",
-      "premiumPalMessage": "Ini adalah Pal Premium.\n• Jika Anda sudah membukanya dengan akun Drshub, cukup masuk untuk mengakses detail lengkapnya.\n• Belum membukanya? Kunjungi aplikasi hub.drsai.app untuk informasi lebih lanjut.",
+      "failedToLoadDetails": "Gagal memuat detail assistant",
+      "failedToDownload": "Gagal mengunduh assistant",
+      "premiumAssistantMessage": "Ini adalah Asisten Premium.\n• Jika Anda sudah membukanya dengan akun Drshub, cukup masuk untuk mengakses detail lengkapnya.\n• Belum membukanya? Kunjungi aplikasi hub.drsai.app untuk informasi lebih lanjut.",
       "notAvailable": "T/A",
       "buyOnDrshub": "Beli di Drshub",
       "finalizingPurchase": "Menyelesaikan pembelian Anda…",
       "processingPurchase": "Memproses — akan segera terbuka.",
       "checkoutSessionExpired": "Sesi Anda telah berakhir. Masuk lagi untuk melanjutkan.",
       "signInAgain": "Masuk Lagi",
-      "palNotAvailable": "Pal ini sedang tidak tersedia untuk dibeli saat ini.",
+      "assistantNotAvailable": "Asisten ini sedang tidak tersedia untuk dibeli saat ini.",
       "checkoutFailed": "Terjadi kesalahan. Silakan coba lagi."
     }
   },
@@ -1165,13 +1170,13 @@
       "step1": "• Edit prompt (opsional) untuk memandu analisis",
       "step2": "• Ketuk tombol kamera untuk memulai analisis video langsung",
       "step3": "• Sesuaikan frekuensi tangkapan saat kamera aktif",
-      "step4": "• Beralih ke pal lain untuk obrolan teks biasa"
+      "step4": "• Beralih ke assistant lain untuk obrolan teks biasa"
     }
   },
   "screenTitles": {
     "chat": "Obrolan",
     "models": "Model",
-    "pals": "Pal (eksperimental)",
+    "assistants": "Asisten (eksperimental)",
     "benchmark": "Benchmark",
     "settings": "Pengaturan",
     "appInfo": "Info Aplikasi",
@@ -1229,7 +1234,7 @@
     "increaseContextReloading": "Memuat ulang model dengan konteks yang lebih besar…",
     "increaseContextSuccess": "Konteks ditingkatkan menjadi {{target}} token.",
     "increaseContextFailure": "Gagal meningkatkan ukuran konteks. Pengaturan sebelumnya telah dipulihkan.",
-    "palLoadHint": "Pal ini cenderung membutuhkan lebih banyak ruang daripada yang diizinkan ukuran konteks saat ini.",
+    "assistantLoadHint": "Asisten ini cenderung membutuhkan lebih banyak ruang daripada yang diizinkan ukuran konteks saat ini.",
     "webSearch": {
       "searched": "Dicari: {{query}}",
       "noResults": "Tidak ada hasil",
@@ -1419,7 +1424,7 @@
     "stepsCount": "{{steps}} langkah",
     "engineKittenTagline": "Ukuran paling kecil. Andal. Terbaik untuk perangkat lama.",
     "engineKokoroTagline": "Kualitas tertinggi. Lebih lambat saat memulai. Beberapa suara mungkin tidak berfungsi di semua perangkat.",
-    "engineSupertonicTagline": "Paling cepat memulai. Menggunakan lebih banyak RAM. Mungkin sesekali menghilangkan kata.",
+    "engineSupertonicTagline": "Asistening cepat memulai. Menggunakan lebih banyak RAM. Mungkin sesekali menghilangkan kata.",
     "engineSystemTagline": "Suara bawaan sistem operasi. Selalu tersedia, tanpa instalasi.",
     "engineSystemTitleIos": "Suara iOS",
     "engineSystemTitleAndroid": "Suara Android",
@@ -1493,15 +1498,15 @@
       "brand": "DRS AI"
     },
     "screen1": {
-      "title": "Temui para pal Anda.",
-      "titleAccent": "pal.",
+      "title": "Temui para assistant Anda.",
+      "titleAccent": "assistant.",
       "body": "Teman-teman kecil pintar yang tinggal di dalam ponsel Anda.\nMari kita siapkan - akan memakan waktu sebentar.",
       "cta": "Ajak Berkeliling",
       "eyebrow": "Selamat Datang di DRS AI"
     },
     "screen2": {
       "title": "Kapan Saja,\nDi Mana Saja.",
-      "body": "Pal Anda tinggal di dalam ponsel Anda.\nTanpa internet, tanpa sinyal - mereka bekerja di pesawat, di luar jaringan, di desa terpencil.",
+      "body": "Asisten Anda tinggal di dalam ponsel Anda.\nTanpa internet, tanpa sinyal - mereka bekerja di pesawat, di luar jaringan, di desa terpencil.",
       "highlight": "Tanpa internet, tanpa sinyal",
       "cta": "Lanjut",
       "eyebrow": "Konsepnya",
@@ -1510,7 +1515,7 @@
     "screen3": {
       "title": "Lebih Kecil,\ntapi Milik Anda.",
       "titleAccent": "Lebih Kecil,",
-      "body": "Pal di ponsel Anda cepat dan pribadi - namun lebih ringan dari AI Cloud. Anggap saja teman saku, bukan oracle yang tahu segalanya.",
+      "body": "Asisten di ponsel Anda cepat dan pribadi - namun lebih ringan dari AI Cloud. Anggap saja teman saku, bukan oracle yang tahu segalanya.",
       "highlight": "cepat dan pribadi",
       "cta": "Mengerti",
       "eyebrow": "Peringatan"
@@ -1524,8 +1529,8 @@
       "eyebrow": "Privasi Terjamin"
     },
     "screen5": {
-      "title": "Untuk apa pal Anda?",
-      "body": "Pilih apa yang ingin Anda diskusikan - kami akan mencocokkan pal yang cocok dengan ponsel Anda.",
+      "title": "Untuk apa assistant Anda?",
+      "body": "Pilih apa yang ingin Anda diskusikan - kami akan mencocokkan assistant yang cocok dengan ponsel Anda.",
       "topic": {
         "smartchat": "Obrolan Cerdas",
         "coding": "Pemrograman",
@@ -1540,7 +1545,7 @@
         "education": "Belajar, jelaskan, kuis",
         "roleplay": "Karakter, skenario",
         "creative_writing": "Cerita, ide, draf",
-        "else": "Jelajahi semua pal nanti di aplikasi"
+        "else": "Jelajahi semua assistant nanti di aplikasi"
       }
     },
     "screen6": {
@@ -1557,9 +1562,9 @@
         "best": "Terbaik"
       },
       "subtitleTemplate": "{{name}} berpikir menggunakan model AI kecil di ponsel Anda — pilih yang cocok.",
-      "pal": {
+      "assistant": {
         "pip": {
-          "body": "Kami menemukan pal yang sempurna untuk Anda — teman sehari-hari yang ramah. Cukup pintar untuk sebagian besar hal, cukup ringan untuk ponsel mana pun."
+          "body": "Kami menemukan assistant yang sempurna untuk Anda — teman sehari-hari yang ramah. Cukup pintar untuk sebagian besar hal, cukup ringan untuk ponsel mana pun."
         },
         "codie": {
           "body": "Kenali Codie — pair-programmer lokal Anda. Membaca kode, menulis kode, menjelaskan bagian rumit tanpa meninggalkan ponsel Anda."
@@ -1577,7 +1582,7 @@
     }
   },
   "downloadBanner": {
-    "titleByPal": "{{name}} sedang mengunduh",
+    "titleByAssistant": "{{name}} sedang mengunduh",
     "titleByModel": "{{name}} sedang mengunduh",
     "extraInProgress": "+{{count}} lainnya sedang berlangsung"
   }

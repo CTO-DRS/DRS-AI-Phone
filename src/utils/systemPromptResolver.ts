@@ -1,30 +1,33 @@
-import type {Pal} from '../types/pal';
+import type {Assistant} from '../types/assistant';
 import type {Model} from './types';
 import {generateFinalSystemPrompt} from './drshub-template-parser';
 
 export interface SystemPromptDependencies {
-  pal?: Pal | null;
+  assistant?: Assistant | null;
   model?: Model | null;
 }
 
 /**
  * Resolves the system prompt based on priority:
- * 1. Pal's system prompt (with parameter rendering if needed)
+ * 1. Assistant's system prompt (with parameter rendering if needed)
  * 2. Fallback to model's chat template system prompt
  * 3. Empty string if neither exists
  */
 export function resolveSystemPrompt(
   dependencies: SystemPromptDependencies,
 ): string {
-  const {pal, model} = dependencies;
+  const {assistant, model} = dependencies;
 
-  // Priority 1: Pal's system prompt
-  if (pal?.systemPrompt) {
-    // Check if the pal has parameters that need rendering
-    if (pal.parameters && Object.keys(pal.parameters).length > 0) {
-      return generateFinalSystemPrompt(pal.systemPrompt, pal.parameters);
+  // Priority 1: Assistant's system prompt
+  if (assistant?.systemPrompt) {
+    // Check if the assistant has parameters that need rendering
+    if (assistant.parameters && Object.keys(assistant.parameters).length > 0) {
+      return generateFinalSystemPrompt(
+        assistant.systemPrompt,
+        assistant.parameters,
+      );
     } else {
-      return pal.systemPrompt;
+      return assistant.systemPrompt;
     }
   }
 

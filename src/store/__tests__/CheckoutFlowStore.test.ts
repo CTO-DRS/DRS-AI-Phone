@@ -6,7 +6,7 @@ jest.mock('../../services/drshub/DrshubApiService', () => ({
   drshubApiService: {createCheckoutSession: jest.fn()},
 }));
 jest.mock('../../services', () => ({
-  drshubService: {checkPalOwnership: jest.fn()},
+  drshubService: {checkAssistantOwnership: jest.fn()},
 }));
 
 jest.mock('../../specs/NativeAuthSession', () => ({
@@ -29,7 +29,8 @@ import NativeExternalContentLink from '../../specs/NativeExternalContentLink';
 import {checkoutFlowStore} from '../CheckoutFlowStore';
 
 const createSession = drshubApiService.createCheckoutSession as jest.Mock;
-const checkPalOwnership = drshubService.checkPalOwnership as jest.Mock;
+const checkAssistantOwnership =
+  drshubService.checkAssistantOwnership as jest.Mock;
 const openAuth = (NativeAuthSession as unknown as {openAuth: jest.Mock})
   .openAuth;
 const prepareExternalLink = (
@@ -59,7 +60,7 @@ describe('CheckoutFlowStore', () => {
     jest.useFakeTimers();
     checkoutFlowStore.reset();
     createSession.mockResolvedValue(session);
-    checkPalOwnership.mockResolvedValue({owned: false});
+    checkAssistantOwnership.mockResolvedValue({owned: false});
     reportExternalContentLink.mockResolvedValue(undefined);
     // Default (Android with the link-out prep present): prep launches so the
     // happy-path tests reach the Custom Tab. The 'linking' describe overrides
@@ -82,10 +83,10 @@ describe('CheckoutFlowStore', () => {
   });
 
   it('200 -> linking -> launched -> browser_open and opens the auth session', async () => {
-    checkoutFlowStore.start('pal-1');
+    checkoutFlowStore.start('assistant-1');
     await flushMicrotasks();
     expect(createSession).toHaveBeenCalledWith(
-      'pal-1',
+      'assistant-1',
       expect.objectContaining({
         successUrl: expect.stringContaining('/app-return/checkout/success'),
         cancelUrl: expect.stringContaining('/app-return/checkout/cancel'),
@@ -99,7 +100,7 @@ describe('CheckoutFlowStore', () => {
 
   it('400 already owned -> owned without prep, auth session, or reporting', async () => {
     createSession.mockRejectedValue({details: {status: 'already_owned'}});
-    await checkoutFlowStore.start('pal-1');
+    await checkoutFlowStore.start('assistant-1');
     expect(prepareExternalLink).not.toHaveBeenCalled();
     expect(openAuth).not.toHaveBeenCalled();
     expect(checkoutFlowStore.status).toBe('owned');
@@ -115,41 +116,41 @@ describe('CheckoutFlowStore', () => {
     ['network', 'error'],
   ])('create error %s -> status %s', async (status, expectedStatus) => {
     createSession.mockRejectedValue({details: {status}});
-    await checkoutFlowStore.start('pal-1');
+    await checkoutFlowStore.start('assistant-1');
     expect(checkoutFlowStore.status).toBe(expectedStatus);
   });
 
   it('sets errorKind from the create error status', async () => {
     createSession.mockRejectedValue({details: {status: 401}});
-    await checkoutFlowStore.start('pal-1');
+    await checkoutFlowStore.start('assistant-1');
     expect(checkoutFlowStore.errorKind).toBe('401');
   });
 
   it('a press while in flight is a no-op', async () => {
     createSession.mockReturnValue(new Promise(() => {})); // never resolves
-    checkoutFlowStore.start('pal-1');
+    checkoutFlowStore.start('assistant-1');
     await flushMicrotasks();
     expect(checkoutFlowStore.status).toBe('creating');
-    await checkoutFlowStore.start('pal-2');
+    await checkoutFlowStore.start('assistant-2');
     expect(createSession).toHaveBeenCalledTimes(1);
   });
 
   it('a press while linking is a no-op (double-tap during the Play disclosure)', async () => {
     prepareExternalLink.mockReturnValue(new Promise(() => {})); // never resolves
-    checkoutFlowStore.start('pal-1');
+    checkoutFlowStore.start('assistant-1');
     await flushMicrotasks();
     expect(checkoutFlowStore.status).toBe('linking');
     expect(checkoutFlowStore.isInFlight).toBe(true);
-    await checkoutFlowStore.start('pal-2');
+    await checkoutFlowStore.start('assistant-2');
     expect(createSession).toHaveBeenCalledTimes(1);
     expect(prepareExternalLink).toHaveBeenCalledTimes(1);
   });
 
   it('a press while browser_open is a no-op', async () => {
-    checkoutFlowStore.start('pal-1');
+    checkoutFlowStore.start('assistant-1');
     await flushMicrotasks();
     expect(checkoutFlowStore.status).toBe('browser_open');
-    await checkoutFlowStore.start('pal-2');
+    await checkoutFlowStore.start('assistant-2');
     expect(createSession).toHaveBeenCalledTimes(1);
     expect(openAuth).toHaveBeenCalledTimes(1);
   });
@@ -161,14 +162,14 @@ describe('CheckoutFlowStore', () => {
     'rejects a %s checkout_url -> error, prep and auth session not opened',
     async (_label, checkout_url) => {
       createSession.mockResolvedValue({...session, checkout_url});
-      await checkoutFlowStore.start('pal-1');
+      await checkoutFlowStore.start('assistant-1');
       expect(prepareExternalLink).not.toHaveBeenCalled();
       expect(openAuth).not.toHaveBeenCalled();
       expect(checkoutFlowStore.status).toBe('error');
     },
   );
 
-  it('a stale same-pal callback does not mutate a newer flow', async () => {
+  it('a stale same-assistant callback does not mutate a newer flow', async () => {
     // First flow parks in browser_open with a controllable auth promise.
     let resolveOld!: (value: string) => void;
     openAuth.mockReturnValueOnce(
@@ -176,14 +177,14 @@ describe('CheckoutFlowStore', () => {
         resolveOld = resolve;
       }),
     );
-    checkoutFlowStore.start('pal-1');
+    checkoutFlowStore.start('assistant-1');
     await flushMicrotasks();
     expect(checkoutFlowStore.status).toBe('browser_open');
 
-    // Reset, then a new checkout for the same pal parks again.
+    // Reset, then a new checkout for the same assistant parks again.
     checkoutFlowStore.reset();
     openAuth.mockReturnValueOnce(new Promise(() => {}));
-    checkoutFlowStore.start('pal-1');
+    checkoutFlowStore.start('assistant-1');
     await flushMicrotasks();
     expect(checkoutFlowStore.status).toBe('browser_open');
 
@@ -199,7 +200,7 @@ describe('CheckoutFlowStore', () => {
         outcome: 'launched',
         token: 'tok_x',
       });
-      checkoutFlowStore.start('pal-1');
+      checkoutFlowStore.start('assistant-1');
       await flushMicrotasks();
       expect(checkoutFlowStore.status).toBe('browser_open');
       expect(openAuth).toHaveBeenCalledWith(session.checkout_url, 'drsai');
@@ -207,7 +208,7 @@ describe('CheckoutFlowStore', () => {
 
     it("'user_canceled' (Play disclosure declined) -> cancelled, no tab, no report", async () => {
       prepareExternalLink.mockResolvedValue({outcome: 'user_canceled'});
-      await checkoutFlowStore.start('pal-1');
+      await checkoutFlowStore.start('assistant-1');
       await flushMicrotasks();
       expect(checkoutFlowStore.status).toBe('cancelled');
       expect(openAuth).not.toHaveBeenCalled();
@@ -216,7 +217,7 @@ describe('CheckoutFlowStore', () => {
 
     it("'ineligible' -> cancelled, no tab, no report", async () => {
       prepareExternalLink.mockResolvedValue({outcome: 'ineligible'});
-      await checkoutFlowStore.start('pal-1');
+      await checkoutFlowStore.start('assistant-1');
       await flushMicrotasks();
       expect(checkoutFlowStore.status).toBe('cancelled');
       expect(openAuth).not.toHaveBeenCalled();
@@ -225,7 +226,7 @@ describe('CheckoutFlowStore', () => {
 
     it("'error' -> error('network'), no tab", async () => {
       prepareExternalLink.mockResolvedValue({outcome: 'error'});
-      await checkoutFlowStore.start('pal-1');
+      await checkoutFlowStore.start('assistant-1');
       await flushMicrotasks();
       expect(checkoutFlowStore.status).toBe('error');
       expect(checkoutFlowStore.errorKind).toBe('network');
@@ -239,7 +240,7 @@ describe('CheckoutFlowStore', () => {
           resolvePrep = resolve;
         }),
       );
-      checkoutFlowStore.start('pal-1');
+      checkoutFlowStore.start('assistant-1');
       await flushMicrotasks();
       expect(checkoutFlowStore.status).toBe('linking');
 
@@ -254,7 +255,7 @@ describe('CheckoutFlowStore', () => {
 
     it('prep rejecting -> error(network), no tab, no report', async () => {
       prepareExternalLink.mockRejectedValue(new Error('native failure'));
-      await checkoutFlowStore.start('pal-1');
+      await checkoutFlowStore.start('assistant-1');
       await flushMicrotasks();
       expect(checkoutFlowStore.status).toBe('error');
       expect(checkoutFlowStore.errorKind).toBe('network');
@@ -264,9 +265,9 @@ describe('CheckoutFlowStore', () => {
 
     it("'launched' without a token -> opens the tab; later owned does not report", async () => {
       prepareExternalLink.mockResolvedValue({outcome: 'launched'});
-      checkPalOwnership.mockResolvedValueOnce({owned: true});
+      checkAssistantOwnership.mockResolvedValueOnce({owned: true});
       openAuth.mockResolvedValueOnce('drsai://checkout/success');
-      await checkoutFlowStore.start('pal-1');
+      await checkoutFlowStore.start('assistant-1');
       await flushMicrotasks();
       await jest.advanceTimersByTimeAsync(1000);
       expect(checkoutFlowStore.status).toBe('owned');
@@ -276,35 +277,35 @@ describe('CheckoutFlowStore', () => {
 
   describe('reconcile on success return', () => {
     beforeEach(async () => {
-      checkoutFlowStore.start('pal-1'); // -> browser_open (session pending)
+      checkoutFlowStore.start('assistant-1'); // -> browser_open (session pending)
       await flushMicrotasks();
     });
 
     it('owned on attempt 1 -> owned', async () => {
-      checkPalOwnership.mockResolvedValueOnce({owned: true});
-      checkoutFlowStore.onReturn('pal-1', 'success');
+      checkAssistantOwnership.mockResolvedValueOnce({owned: true});
+      checkoutFlowStore.onReturn('assistant-1', 'success');
       expect(checkoutFlowStore.status).toBe('finalizing');
       await jest.advanceTimersByTimeAsync(1000);
       expect(checkoutFlowStore.status).toBe('owned');
     });
 
     it('webhook lag: false/thrown x6 -> processing_deferred, never error', async () => {
-      checkPalOwnership
+      checkAssistantOwnership
         .mockResolvedValueOnce({owned: false})
         .mockRejectedValueOnce(new Error('flaky'))
         .mockResolvedValueOnce({owned: false})
         .mockRejectedValueOnce(new Error('flaky'))
         .mockResolvedValueOnce({owned: false})
         .mockRejectedValueOnce(new Error('flaky'));
-      checkoutFlowStore.onReturn('pal-1', 'success');
+      checkoutFlowStore.onReturn('assistant-1', 'success');
       await jest.advanceTimersByTimeAsync(30000);
       expect(checkoutFlowStore.status).toBe('processing_deferred');
       expect(checkoutFlowStore.status).not.toBe('error');
     });
 
     it('reset mid-poll aborts and does not flip status', async () => {
-      checkPalOwnership.mockResolvedValue({owned: false});
-      checkoutFlowStore.onReturn('pal-1', 'success');
+      checkAssistantOwnership.mockResolvedValue({owned: false});
+      checkoutFlowStore.onReturn('assistant-1', 'success');
       await jest.advanceTimersByTimeAsync(1000);
       checkoutFlowStore.reset();
       await jest.advanceTimersByTimeAsync(30000);
@@ -314,13 +315,13 @@ describe('CheckoutFlowStore', () => {
 
   describe('external content link reporting', () => {
     beforeEach(async () => {
-      checkoutFlowStore.start('pal-1'); // -> browser_open (session pending)
+      checkoutFlowStore.start('assistant-1'); // -> browser_open (session pending)
       await flushMicrotasks();
     });
 
     it('reports once with the purchase id and prep token on reconcile-success owned', async () => {
-      checkPalOwnership.mockResolvedValueOnce({owned: true});
-      checkoutFlowStore.onReturn('pal-1', 'success');
+      checkAssistantOwnership.mockResolvedValueOnce({owned: true});
+      checkoutFlowStore.onReturn('assistant-1', 'success');
       await jest.advanceTimersByTimeAsync(1000);
       expect(checkoutFlowStore.status).toBe('owned');
       expect(reportExternalContentLink).toHaveBeenCalledTimes(1);
@@ -328,14 +329,14 @@ describe('CheckoutFlowStore', () => {
     });
 
     it('does not report on cancel', async () => {
-      checkoutFlowStore.onReturn('pal-1', 'cancel');
+      checkoutFlowStore.onReturn('assistant-1', 'cancel');
       expect(checkoutFlowStore.status).toBe('cancelled');
       expect(reportExternalContentLink).not.toHaveBeenCalled();
     });
 
     it('does not report on processing_deferred (webhook lag)', async () => {
-      checkPalOwnership.mockResolvedValue({owned: false});
-      checkoutFlowStore.onReturn('pal-1', 'success');
+      checkAssistantOwnership.mockResolvedValue({owned: false});
+      checkoutFlowStore.onReturn('assistant-1', 'success');
       await jest.advanceTimersByTimeAsync(30000);
       expect(checkoutFlowStore.status).toBe('processing_deferred');
       expect(reportExternalContentLink).not.toHaveBeenCalled();
@@ -345,8 +346,8 @@ describe('CheckoutFlowStore', () => {
       reportExternalContentLink.mockRejectedValueOnce(
         new Error('reporting failed'),
       );
-      checkPalOwnership.mockResolvedValueOnce({owned: true});
-      checkoutFlowStore.onReturn('pal-1', 'success');
+      checkAssistantOwnership.mockResolvedValueOnce({owned: true});
+      checkoutFlowStore.onReturn('assistant-1', 'success');
       await jest.advanceTimersByTimeAsync(1000);
       await flushMicrotasks();
       expect(checkoutFlowStore.status).toBe('owned');
@@ -354,23 +355,23 @@ describe('CheckoutFlowStore', () => {
   });
 
   it('cancel return -> cancelled, silent', async () => {
-    checkoutFlowStore.start('pal-1');
+    checkoutFlowStore.start('assistant-1');
     await flushMicrotasks();
-    checkoutFlowStore.onReturn('pal-1', 'cancel');
+    checkoutFlowStore.onReturn('assistant-1', 'cancel');
     expect(checkoutFlowStore.status).toBe('cancelled');
   });
 
-  it('stale return for a different pal is ignored', async () => {
-    checkoutFlowStore.start('pal-1');
+  it('stale return for a different assistant is ignored', async () => {
+    checkoutFlowStore.start('assistant-1');
     await flushMicrotasks();
-    checkoutFlowStore.onReturn('pal-OTHER', 'success');
+    checkoutFlowStore.onReturn('assistant-OTHER', 'success');
     expect(checkoutFlowStore.status).toBe('browser_open');
   });
 
   it('openAuth resolves a success callback -> reconcile -> owned', async () => {
     openAuth.mockResolvedValue('drsai://checkout/success?purchase_id=pur_1');
-    checkPalOwnership.mockResolvedValueOnce({owned: true});
-    await checkoutFlowStore.start('pal-1');
+    checkAssistantOwnership.mockResolvedValueOnce({owned: true});
+    await checkoutFlowStore.start('assistant-1');
     await flushMicrotasks();
     expect(checkoutFlowStore.status).toBe('finalizing');
     await jest.advanceTimersByTimeAsync(1000);
@@ -379,14 +380,14 @@ describe('CheckoutFlowStore', () => {
 
   it('openAuth resolves a cancel callback -> cancelled, silent', async () => {
     openAuth.mockResolvedValue('drsai://checkout/cancel');
-    await checkoutFlowStore.start('pal-1');
+    await checkoutFlowStore.start('assistant-1');
     await flushMicrotasks();
     expect(checkoutFlowStore.status).toBe('cancelled');
   });
 
   it('openAuth rejects (user dismiss) -> cancelled, silent', async () => {
     openAuth.mockRejectedValue(new Error('auth_cancelled'));
-    await checkoutFlowStore.start('pal-1');
+    await checkoutFlowStore.start('assistant-1');
     await flushMicrotasks();
     expect(checkoutFlowStore.status).toBe('cancelled');
   });
@@ -395,7 +396,7 @@ describe('CheckoutFlowStore', () => {
     // A tab back-out rejects openAuth -> cancelled. Buy must re-enable
     // (isInFlight false), and reset -> a second start must run, not be blocked.
     openAuth.mockRejectedValueOnce(new Error('auth_cancelled'));
-    await checkoutFlowStore.start('pal-1');
+    await checkoutFlowStore.start('assistant-1');
     await flushMicrotasks();
     expect(checkoutFlowStore.status).toBe('cancelled');
     expect(checkoutFlowStore.isInFlight).toBe(false);
@@ -404,7 +405,7 @@ describe('CheckoutFlowStore', () => {
     expect(checkoutFlowStore.status).toBe('idle');
 
     openAuth.mockReturnValueOnce(new Promise(() => {}));
-    checkoutFlowStore.start('pal-2');
+    checkoutFlowStore.start('assistant-2');
     await flushMicrotasks();
     expect(createSession).toHaveBeenCalledTimes(2);
     expect(checkoutFlowStore.status).toBe('browser_open');
@@ -413,7 +414,7 @@ describe('CheckoutFlowStore', () => {
   it('openAuth resolves a malformed callback URL -> cancelled, silent', async () => {
     // URL parsing throws; the defensive catch treats it as a cancel.
     openAuth.mockResolvedValue('not a valid url');
-    await checkoutFlowStore.start('pal-1');
+    await checkoutFlowStore.start('assistant-1');
     await flushMicrotasks();
     expect(checkoutFlowStore.status).toBe('cancelled');
   });
@@ -422,24 +423,24 @@ describe('CheckoutFlowStore', () => {
     // Well-formed URL whose trailing segment is neither success nor cancel
     // falls through to the cancel default — no reconcile, no error.
     openAuth.mockResolvedValue('drsai://checkout/unexpected');
-    await checkoutFlowStore.start('pal-1');
+    await checkoutFlowStore.start('assistant-1');
     await flushMicrotasks();
     expect(checkoutFlowStore.status).toBe('cancelled');
   });
 
   it('aborts the success reconcile when reset lands after the ownership check resolves', async () => {
-    // Drive the epoch guard that sits AFTER the awaited checkPalOwnership:
+    // Drive the epoch guard that sits AFTER the awaited checkAssistantOwnership:
     // resolve ownership only once the poll is parked on the first attempt,
     // then reset before the resolution is observed. Status must not flip.
     let resolveOwnership!: (v: {owned: boolean}) => void;
-    checkPalOwnership.mockReturnValue(
+    checkAssistantOwnership.mockReturnValue(
       new Promise(resolve => {
         resolveOwnership = resolve;
       }),
     );
-    checkoutFlowStore.start('pal-1');
+    checkoutFlowStore.start('assistant-1');
     await flushMicrotasks();
-    checkoutFlowStore.onReturn('pal-1', 'success');
+    checkoutFlowStore.onReturn('assistant-1', 'success');
     expect(checkoutFlowStore.status).toBe('finalizing');
 
     // Advance past the first backoff so the attempt issues the ownership call.
@@ -454,16 +455,16 @@ describe('CheckoutFlowStore', () => {
   });
 
   it('return with no active flow is ignored', () => {
-    checkoutFlowStore.onReturn('pal-1', 'success');
+    checkoutFlowStore.onReturn('assistant-1', 'success');
     expect(checkoutFlowStore.status).toBe('idle');
   });
 
   it('reset returns to idle', async () => {
-    checkoutFlowStore.start('pal-1');
+    checkoutFlowStore.start('assistant-1');
     await flushMicrotasks();
     checkoutFlowStore.reset();
     expect(checkoutFlowStore.status).toBe('idle');
-    expect(checkoutFlowStore.palId).toBeNull();
+    expect(checkoutFlowStore.assistantId).toBeNull();
   });
 
   it('drops a create that resolves after reset -> idle, no prep, opens no tab', async () => {
@@ -475,7 +476,7 @@ describe('CheckoutFlowStore', () => {
         resolveCreate = resolve;
       }),
     );
-    checkoutFlowStore.start('pal-1');
+    checkoutFlowStore.start('assistant-1');
     await flushMicrotasks();
     expect(checkoutFlowStore.status).toBe('creating');
 
@@ -497,7 +498,7 @@ describe('CheckoutFlowStore', () => {
         rejectAuth = reject;
       }),
     );
-    checkoutFlowStore.start('pal-1');
+    checkoutFlowStore.start('assistant-1');
     await flushMicrotasks();
     expect(checkoutFlowStore.status).toBe('browser_open');
 
@@ -513,8 +514,8 @@ describe('CheckoutFlowStore — iOS (link-out prep absent)', () => {
   // iOS has no External Content Links module: the spec is null, so start()
   // goes 200 -> browser_open directly with no prep and never reports.
   let store: {
-    start: (palId: string) => Promise<void>;
-    onReturn: (palId: string, kind: 'success' | 'cancel') => void;
+    start: (assistantId: string) => Promise<void>;
+    onReturn: (assistantId: string, kind: 'success' | 'cancel') => void;
     status: string;
   };
   let iosOpenAuth: jest.Mock;
@@ -536,7 +537,7 @@ describe('CheckoutFlowStore — iOS (link-out prep absent)', () => {
     }));
     jest.doMock('../../services', () => ({
       drshubService: {
-        checkPalOwnership: jest.fn().mockResolvedValue({owned: false}),
+        checkAssistantOwnership: jest.fn().mockResolvedValue({owned: false}),
       },
     }));
     jest.doMock('../../specs/NativeAuthSession', () => ({
@@ -556,7 +557,7 @@ describe('CheckoutFlowStore — iOS (link-out prep absent)', () => {
   });
 
   it('200 -> browser_open directly, no prep, opens the auth session', async () => {
-    store.start('pal-1');
+    store.start('assistant-1');
     await Promise.resolve();
     await Promise.resolve();
     await Promise.resolve();
@@ -570,15 +571,15 @@ describe('CheckoutFlowStore — iOS (link-out prep absent)', () => {
   it('reconcile-success owned does not report (iOS never reports)', async () => {
     const iosServices = require('../../services');
     (
-      iosServices.drshubService.checkPalOwnership as jest.Mock
+      iosServices.drshubService.checkAssistantOwnership as jest.Mock
     ).mockResolvedValueOnce({
       owned: true,
     });
-    store.start('pal-1');
+    store.start('assistant-1');
     await Promise.resolve();
     await Promise.resolve();
     await Promise.resolve();
-    store.onReturn('pal-1', 'success');
+    store.onReturn('assistant-1', 'success');
     await jest.advanceTimersByTimeAsync(1000);
     expect(store.status).toBe('owned');
   });
@@ -603,7 +604,7 @@ describe('CheckoutFlowStore — auth-session spec unavailable', () => {
       },
     }));
     jest.doMock('../../services', () => ({
-      drshubService: {checkPalOwnership: jest.fn()},
+      drshubService: {checkAssistantOwnership: jest.fn()},
     }));
     jest.doMock('../../specs/NativeAuthSession', () => ({
       __esModule: true,
@@ -616,7 +617,7 @@ describe('CheckoutFlowStore — auth-session spec unavailable', () => {
 
     const {checkoutFlowStore: store} = require('../CheckoutFlowStore');
 
-    await expect(store.start('pal-1')).resolves.toBeUndefined();
+    await expect(store.start('assistant-1')).resolves.toBeUndefined();
     expect(store.status).toBe('cancelled');
   });
 });

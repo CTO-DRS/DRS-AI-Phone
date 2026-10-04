@@ -56,14 +56,14 @@ class ChatSessionRepository {
     title,
     initialMessages = [],
     completionSettings = defaultCompletionSettings,
-    activePalId,
+    activeAssistantId,
     settingsSource,
   ) {
     return {
       id: 'mock-session-id',
       title,
       date: new Date().toISOString(),
-      activePalId,
+      activeAssistantId,
     };
   }
 
@@ -105,7 +105,7 @@ class ChatSessionRepository {
     return; // Mock: do nothing
   }
 
-  async setSessionActivePal(sessionId, palId) {
+  async setSessionActiveAssistant(sessionId, assistantId) {
     return; // Mock: do nothing
   }
 

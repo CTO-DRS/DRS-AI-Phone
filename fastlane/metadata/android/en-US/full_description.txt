@@ -20,7 +20,7 @@ WHAT YOU GET
 - Full control over model parameters — temperature, context length, system prompts
 - Built-in benchmarking to test model performance on your hardware
 - Metal acceleration on iOS, NNAPI on Android
-- Pals — AI personas from Drshub.ai that give models personality and purpose
+- Assistants — AI personas from Drshub.ai that give models personality and purpose
 
 WHAT THIS IS NOT
 

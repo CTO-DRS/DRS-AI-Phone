@@ -577,7 +577,7 @@ export async function runMatrix(
 
     // Take exclusive ownership of the native context lifecycle. This:
     //   - Sets `modelStore.benchmarkActive = true` synchronously so any
-    //     in-flight or new auto-load (e.g. ChatView's pal-default
+    //     in-flight or new auto-load (e.g. ChatView's assistant-default
     //     selectModel on cold-launch) is gated.
     //   - Releases any context the rest of the app loaded so no stale
     //     LlamaContext occupies the native context list while the matrix
@@ -1113,7 +1113,7 @@ export const BenchmarkRunnerScreen: React.FC<BenchmarkRunnerScreenProps> =
     // `autostart` on the navigation route params via parseBenchmarkAutostart;
     // we just read it here. Tests mock @react-navigation/native's useRoute
     // to inject the desired params (the codebase's existing per-file
-    // navigation-mock pattern; see SquarePalCard / ModelCard / useDeepLinking
+    // navigation-mock pattern; see SquareAssistantCard / ModelCard / useDeepLinking
     // test files).
     const route = useRoute();
     const autostart = (route.params as {autostart?: boolean} | undefined)

@@ -3,13 +3,17 @@ import {makeAutoObservable} from 'mobx';
 
 import {database} from '../../database';
 import type {EntityType} from '../../database/models/SyncStatus';
-import type {CachedPal, UserLibrary, SyncStatus} from '../../database/models';
+import type {
+  CachedAssistant,
+  UserLibrary,
+  SyncStatus,
+} from '../../database/models';
 
 import {authService} from './AuthService';
 import {drshubService} from './DrshubService';
 import {DrshubErrorHandler, RetryHandler} from './ErrorHandler';
 
-import type {DrshubPal, SyncState} from '../../types/drshub';
+import type {DrshubAssistant, SyncState} from '../../types/drshub';
 
 export interface SyncProgress {
   current: number;
@@ -77,13 +81,13 @@ class SyncService {
       };
       await this.syncUserLibrary();
 
-      // Sync cached Pals metadata
+      // Sync cached Assistants metadata
       this.syncProgress = {
         current: 4,
         total: 4,
-        operation: 'Updating Pal metadata...',
+        operation: 'Updating Assistant metadata...',
       };
-      await this.syncCachedPalsMetadata();
+      await this.syncCachedAssistantsMetadata();
 
       this.lastSyncTime = Date.now();
       await this.updateSyncStatus('library', 'synced');
@@ -122,13 +126,13 @@ class SyncService {
         }
 
         // Insert new library entries
-        for (const pal of libraryResponse.pals) {
+        for (const assistant of libraryResponse.assistants) {
           await userLibraryCollection.create((entry: UserLibrary) => {
             entry.userId = authService.user!.id;
-            entry.drshubId = pal.id; // Use pal.id instead of pal_id
+            entry.drshubId = assistant.id; // Use assistant.id instead of pal_id
             entry.purchasedAt = Date.now(); // Use current time since purchase info not available
             entry.purchaseId = undefined; // Purchase ID not available in processed response
-            entry.isDownloaded = false; // Will be updated when Pal is downloaded
+            entry.isDownloaded = false; // Will be updated when Assistant is downloaded
           });
         }
       });
@@ -231,30 +235,33 @@ class SyncService {
     }
   }
 
-  // Update metadata for cached Pals
-  async syncCachedPalsMetadata(): Promise<void> {
+  // Update metadata for cached Assistants
+  async syncCachedAssistantsMetadata(): Promise<void> {
     try {
-      const cachedPalsCollection = database.get<CachedPal>('cached_pals');
-      const cachedPals = await cachedPalsCollection.query().fetch();
+      const cachedAssistantsCollection =
+        database.get<CachedAssistant>('cached_pals');
+      const cachedAssistants = await cachedAssistantsCollection.query().fetch();
 
-      for (const cachedPal of cachedPals) {
+      for (const cachedAssistant of cachedAssistants) {
         try {
-          const updatedPal = await drshubService.getPal(cachedPal.drshubId);
+          const updatedAssistant = await drshubService.getAssistant(
+            cachedAssistant.drshubId,
+          );
 
           await database.write(async () => {
-            await cachedPal.update((pal: CachedPal) => {
-              pal.title = updatedPal.title;
-              pal.description = updatedPal.description;
-              pal.thumbnailUrl = updatedPal.thumbnail_url;
-              pal.averageRating = updatedPal.average_rating;
-              pal.reviewCount = updatedPal.review_count || 0;
-              pal.cachedAt = Date.now();
+            await cachedAssistant.update((assistant: CachedAssistant) => {
+              assistant.title = updatedAssistant.title;
+              assistant.description = updatedAssistant.description;
+              assistant.thumbnailUrl = updatedAssistant.thumbnail_url;
+              assistant.averageRating = updatedAssistant.average_rating;
+              assistant.reviewCount = updatedAssistant.review_count || 0;
+              assistant.cachedAt = Date.now();
             });
           });
         } catch (error) {
-          // Log error but continue with other Pals
+          // Log error but continue with other Assistants
           console.warn(
-            `Failed to update cached Pal ${cachedPal.drshubId}:`,
+            `Failed to update cached Assistant ${cachedAssistant.drshubId}:`,
             error,
           );
         }
@@ -271,54 +278,67 @@ class SyncService {
     }
   }
 
-  // Cache a Pal for offline browsing
-  async cachePal(pal: DrshubPal): Promise<void> {
-    const cachedPalsCollection = database.get<CachedPal>('cached_pals');
+  // Cache a Assistant for offline browsing
+  async cacheAssistant(assistant: DrshubAssistant): Promise<void> {
+    const cachedAssistantsCollection =
+      database.get<CachedAssistant>('cached_pals');
 
     await database.write(async () => {
       // Check if already cached
-      const existing = await cachedPalsCollection
-        .query(Q.where('drshub_id', pal.id))
+      const existing = await cachedAssistantsCollection
+        .query(Q.where('drshub_id', assistant.id))
         .fetch();
 
       if (existing.length > 0) {
         // Update existing
-        await existing[0].update((cachedPal: CachedPal) => {
-          this.updateCachedPalFromDrshubPal(cachedPal, pal);
+        await existing[0].update((cachedAssistant: CachedAssistant) => {
+          this.updateCachedAssistantFromDrshubAssistant(
+            cachedAssistant,
+            assistant,
+          );
         });
       } else {
         // Create new
-        await cachedPalsCollection.create((cachedPal: CachedPal) => {
-          this.updateCachedPalFromDrshubPal(cachedPal, pal);
-        });
+        await cachedAssistantsCollection.create(
+          (cachedAssistant: CachedAssistant) => {
+            this.updateCachedAssistantFromDrshubAssistant(
+              cachedAssistant,
+              assistant,
+            );
+          },
+        );
       }
     });
   }
 
-  private updateCachedPalFromDrshubPal(
-    cachedPal: CachedPal,
-    pal: DrshubPal,
+  private updateCachedAssistantFromDrshubAssistant(
+    cachedAssistant: CachedAssistant,
+    assistant: DrshubAssistant,
   ): void {
-    cachedPal.drshubId = pal.id;
-    cachedPal.title = pal.title;
-    cachedPal.description = pal.description;
-    cachedPal.thumbnailUrl = pal.thumbnail_url;
-    cachedPal.creatorId = pal.creator_id;
-    cachedPal.creatorName = pal.creator?.display_name;
-    cachedPal.creatorAvatarUrl = pal.creator?.avatar_url;
-    cachedPal.protectionLevel = pal.protection_level;
-    cachedPal.priceCents = pal.price_cents;
-    cachedPal.allowFork = pal.allow_fork;
-    cachedPal.averageRating = pal.average_rating;
-    cachedPal.reviewCount = pal.review_count || 0;
-    cachedPal.isOwned = pal.is_owned || false;
-    cachedPal.categories = JSON.stringify(
-      pal.categories?.map(c => c.name) || [],
+    cachedAssistant.drshubId = assistant.id;
+    cachedAssistant.title = assistant.title;
+    cachedAssistant.description = assistant.description;
+    cachedAssistant.thumbnailUrl = assistant.thumbnail_url;
+    cachedAssistant.creatorId = assistant.creator_id;
+    cachedAssistant.creatorName = assistant.creator?.display_name;
+    cachedAssistant.creatorAvatarUrl = assistant.creator?.avatar_url;
+    cachedAssistant.protectionLevel = assistant.protection_level;
+    cachedAssistant.priceCents = assistant.price_cents;
+    cachedAssistant.allowFork = assistant.allow_fork;
+    cachedAssistant.averageRating = assistant.average_rating;
+    cachedAssistant.reviewCount = assistant.review_count || 0;
+    cachedAssistant.isOwned = assistant.is_owned || false;
+    cachedAssistant.categories = JSON.stringify(
+      assistant.categories?.map(c => c.name) || [],
     );
-    cachedPal.tags = JSON.stringify(pal.tags?.map(t => t.name) || []);
-    cachedPal.systemPrompt = pal.system_prompt;
-    cachedPal.modelSettings = JSON.stringify(pal.model_settings || {});
-    cachedPal.cachedAt = Date.now();
+    cachedAssistant.tags = JSON.stringify(
+      assistant.tags?.map(t => t.name) || [],
+    );
+    cachedAssistant.systemPrompt = assistant.system_prompt;
+    cachedAssistant.modelSettings = JSON.stringify(
+      assistant.model_settings || {},
+    );
+    cachedAssistant.cachedAt = Date.now();
   }
 
   // Update sync status in database
@@ -364,16 +384,19 @@ class SyncService {
   // Clear all cached data
   async clearCache(): Promise<void> {
     await database.write(async () => {
-      const cachedPalsCollection = database.get<CachedPal>('cached_pals');
+      const cachedAssistantsCollection =
+        database.get<CachedAssistant>('cached_pals');
       const userLibraryCollection = database.get<UserLibrary>('user_library');
       const syncStatusCollection = database.get<SyncStatus>('sync_status');
 
-      const allCachedPals = await cachedPalsCollection.query().fetch();
+      const allCachedAssistants = await cachedAssistantsCollection
+        .query()
+        .fetch();
       const allUserLibrary = await userLibraryCollection.query().fetch();
       const allSyncStatus = await syncStatusCollection.query().fetch();
 
       for (const item of [
-        ...allCachedPals,
+        ...allCachedAssistants,
         ...allUserLibrary,
         ...allSyncStatus,
       ]) {

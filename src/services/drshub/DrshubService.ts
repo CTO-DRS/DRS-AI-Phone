@@ -2,14 +2,14 @@ import {authService} from './AuthService';
 import {drshubApiService} from './DrshubApiService';
 
 import type {
-  PalsQuery,
+  AssistantsQuery,
   LibraryQuery,
   TagsQuery,
-  PalsResponse,
+  AssistantsResponse,
   LibraryResponse,
   CategoriesResponse,
   TagsResponse,
-  DrshubPal,
+  DrshubAssistant,
 } from '../../types/drshub';
 
 export class DrshubError extends Error {
@@ -25,14 +25,16 @@ export class DrshubError extends Error {
 class DrshubService {
   constructor() {}
 
-  // Browse and search Pals - Using REST API
-  async getPals(query: PalsQuery = {}): Promise<PalsResponse> {
-    return drshubApiService.getPals(query);
+  // Browse and search Assistants - Using REST API
+  async getAssistants(
+    query: AssistantsQuery = {},
+  ): Promise<AssistantsResponse> {
+    return drshubApiService.getAssistants(query);
   }
 
-  // Get detailed Pal information - Using REST API
-  async getPal(id: string): Promise<DrshubPal> {
-    return drshubApiService.getPal(id);
+  // Get detailed Assistant information - Using REST API
+  async getAssistant(id: string): Promise<DrshubAssistant> {
+    return drshubApiService.getAssistant(id);
   }
 
   // Get user's library - Using REST API
@@ -40,40 +42,40 @@ class DrshubService {
     return drshubApiService.getLibrary(query);
   }
 
-  // Get user's created Pals - Using REST API
-  async getMyPals(query: LibraryQuery = {}): Promise<PalsResponse> {
-    return drshubApiService.getMyPals(query);
+  // Get user's created Assistants - Using REST API
+  async getMyAssistants(query: LibraryQuery = {}): Promise<AssistantsResponse> {
+    return drshubApiService.getMyAssistants(query);
   }
 
   // Advanced search
-  async searchPals(query: PalsQuery): Promise<PalsResponse> {
-    return this.getPals(query);
+  async searchAssistants(query: AssistantsQuery): Promise<AssistantsResponse> {
+    return this.getAssistants(query);
   }
 
-  // Get all categories - Using REST API (extracted from pals data)
+  // Get all categories - Using REST API (extracted from assistants data)
   async getCategories(): Promise<CategoriesResponse> {
     return drshubApiService.getCategories();
   }
 
-  // Get popular tags - Using REST API (extracted from pals data)
+  // Get popular tags - Using REST API (extracted from assistants data)
   async getTags(query: TagsQuery = {}): Promise<TagsResponse> {
     return drshubApiService.getTags(query);
   }
 
-  // Check if user owns a Pal - Using REST API
-  async checkPalOwnership(
-    palId: string,
+  // Check if user owns a Assistant - Using REST API
+  async checkAssistantOwnership(
+    assistantId: string,
   ): Promise<{owned: boolean; purchase_date?: string}> {
     try {
       if (!authService.user?.id) {
         return {owned: false};
       }
 
-      // Get pal details which includes ownership information
-      const pal = await this.getPal(palId);
+      // Get assistant details which includes ownership information
+      const assistant = await this.getAssistant(assistantId);
 
       return {
-        owned: pal.is_owned || false,
+        owned: assistant.is_owned || false,
         purchase_date: undefined, // Purchase date not available in current API
       };
     } catch (error) {

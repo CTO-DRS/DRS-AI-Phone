@@ -9,7 +9,7 @@ export const createStyles = (theme: Theme) =>
       gap: theme.spacing.sm,
       paddingHorizontal: theme.spacing.m,
     },
-    palBody: {
+    assistantBody: {
       ...theme.typography.bodyS,
       color: theme.colors.onSurfaceVariant,
       textAlign: 'center',

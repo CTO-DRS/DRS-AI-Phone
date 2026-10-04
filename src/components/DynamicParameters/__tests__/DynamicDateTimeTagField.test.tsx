@@ -2,7 +2,7 @@ import React from 'react';
 import {FormProvider, useForm} from 'react-hook-form';
 import {render, fireEvent} from '../../../../jest/test-utils';
 import {DynamicDateTimeTagField} from '../DynamicDateTimeTagField';
-import type {ParameterDefinition} from '../../../types/pal';
+import type {ParameterDefinition} from '../../../types/assistant';
 
 // Wrapper component to provide form context
 const TestWrapper: React.FC<{

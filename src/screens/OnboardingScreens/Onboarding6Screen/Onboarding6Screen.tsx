@@ -6,8 +6,8 @@ import {modelStore, uiStore} from '../../../store';
 import {useTheme} from '../../../hooks';
 import {
   entryId,
-  resolvePalForTopic,
-} from '../../../store/onboarding/onboardingPals';
+  resolveAssistantForTopic,
+} from '../../../store/onboarding/onboardingAssistants';
 import {OnboardingScaffold} from '../components/OnboardingScaffold';
 import {OnboardingBottomBar} from '../components/OnboardingBottomBar';
 import {ItalicAccentTitle} from '../components/ItalicAccentTitle';
@@ -34,29 +34,31 @@ export const Onboarding6Screen: React.FC = observer(() => {
   const styles = createStyles(theme);
   const t = l10n.onboarding;
   const topic = uiStore.onboardingState.selectedTopic;
-  const pal = resolvePalForTopic(topic);
+  const assistant = resolveAssistantForTopic(topic);
   const selectedId = uiStore.onboardingState.selectedModelId;
 
   // Pre-select the Recommended (Balanced) tier on first arrival so the
   // Download CTA is enabled immediately. Re-seed when the topic (and
-  // thus the pal) changes — the previously-picked model belongs to a
-  // different pal's list and would otherwise leave the radio in an
+  // thus the assistant) changes — the previously-picked model belongs to a
+  // different assistant's list and would otherwise leave the radio in an
   // unselectable state. User taps after that override the seed.
   useEffect(() => {
-    const inPalList = pal.models.some(m => entryId(m) === selectedId);
-    if (!inPalList) {
-      const recommended = pal.models.find(m => m.recommended);
+    const inAssistantList = assistant.models.some(
+      m => entryId(m) === selectedId,
+    );
+    if (!inAssistantList) {
+      const recommended = assistant.models.find(m => m.recommended);
       if (recommended) {
         uiStore.setOnboardingModelId(entryId(recommended));
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pal.key]);
+  }, [assistant.key]);
 
   const canFinish = selectedId !== null && !isFinishing;
   const isDownloaded = (id: string): boolean =>
     !!modelStore.models.find(m => m.id === id)?.isDownloaded;
-  const options: ModelOption[] = pal.models.map(entry => {
+  const options: ModelOption[] = assistant.models.map(entry => {
     const id = entryId(entry);
     const sizeSegment = formatSize(entry.sizeBytes);
     const downloaded = isDownloaded(id);
@@ -75,19 +77,22 @@ export const Onboarding6Screen: React.FC = observer(() => {
     };
   });
   const pickedEntry = selectedId
-    ? pal.models.find(m => entryId(m) === selectedId)
+    ? assistant.models.find(m => entryId(m) === selectedId)
     : undefined;
   const pickedDownloaded = selectedId ? isDownloaded(selectedId) : false;
   const sizeLabel = formatSize(pickedEntry?.sizeBytes);
-  const palBody = t.screen6.pal[pal.key].body;
+  const assistantBody = t.screen6.assistant[assistant.key].body;
   const primaryLabel = pickedDownloaded
-    ? t.screen6.useTemplate.replace('{{name}}', pal.name)
+    ? t.screen6.useTemplate.replace('{{name}}', assistant.name)
     : sizeLabel
       ? t.screen6.ctaTemplate
-          .replace('{{name}}', pal.name)
+          .replace('{{name}}', assistant.name)
           .replace('{{size}}', sizeLabel)
-      : t.screen6.cta.replace('{{name}}', pal.name);
-  const subtitle = t.screen6.subtitleTemplate.replace('{{name}}', pal.name);
+      : t.screen6.cta.replace('{{name}}', assistant.name);
+  const subtitle = t.screen6.subtitleTemplate.replace(
+    '{{name}}',
+    assistant.name,
+  );
   return (
     <OnboardingScaffold
       step={6}
@@ -96,8 +101,8 @@ export const Onboarding6Screen: React.FC = observer(() => {
         <>
           <View style={styles.header}>
             <RobotMascot size={86} mood="celebrate" />
-            <ItalicAccentTitle title={pal.name} align="center" />
-            <Text style={styles.palBody}>{palBody}</Text>
+            <ItalicAccentTitle title={assistant.name} align="center" />
+            <Text style={styles.assistantBody}>{assistantBody}</Text>
           </View>
           <DeviceInfoChip
             ramSuffix={t.screen6.deviceRamSuffix}

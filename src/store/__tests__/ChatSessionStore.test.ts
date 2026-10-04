@@ -23,7 +23,7 @@ jest.spyOn(chatSessionRepository, 'updateSessionTitle');
 jest.spyOn(chatSessionRepository, 'updateSessionCompletionSettings');
 jest.spyOn(chatSessionRepository, 'getGlobalCompletionSettings');
 jest.spyOn(chatSessionRepository, 'saveGlobalCompletionSettings');
-jest.spyOn(chatSessionRepository, 'setSessionActivePal');
+jest.spyOn(chatSessionRepository, 'setSessionActiveAssistant');
 jest.spyOn(chatSessionRepository, 'setSessionSettingsSource');
 jest.spyOn(chatSessionRepository, 'setSessionPinned');
 
@@ -1326,30 +1326,30 @@ describe('chatSessionStore', () => {
     });
   });
 
-  describe('pal management', () => {
-    it('gets active pal ID from active session', () => {
+  describe('assistant management', () => {
+    it('gets active assistant ID from active session', () => {
       const session = {
         id: 'session1',
         title: 'Session 1',
         date: new Date().toISOString(),
         messages: [],
         completionSettings: defaultCompletionSettings,
-        activePalId: 'pal1',
+        activeAssistantId: 'assistant1',
         settingsSource: 'pal' as 'pal' | 'custom',
       };
       chatSessionStore.sessions = [session];
       chatSessionStore.activeSessionId = 'session1';
 
-      expect(chatSessionStore.activePalId).toBe('pal1');
+      expect(chatSessionStore.activeAssistantId).toBe('assistant1');
     });
 
-    it('gets active pal ID from newChatPalId when no active session', () => {
-      chatSessionStore.newChatPalId = 'pal2';
+    it('gets active assistant ID from newChatAssistantId when no active session', () => {
+      chatSessionStore.newChatAssistantId = 'assistant2';
 
-      expect(chatSessionStore.activePalId).toBe('pal2');
+      expect(chatSessionStore.activeAssistantId).toBe('assistant2');
     });
 
-    it('sets active pal ID for active session', async () => {
+    it('sets active assistant ID for active session', async () => {
       const session = {
         id: 'session1',
         title: 'Session 1',
@@ -1361,25 +1361,25 @@ describe('chatSessionStore', () => {
       chatSessionStore.sessions = [session];
       chatSessionStore.activeSessionId = 'session1';
 
-      await chatSessionStore.setActivePal('pal1');
+      await chatSessionStore.setActiveAssistant('assistant1');
 
-      expect(chatSessionStore.sessions[0].activePalId).toBe('pal1');
+      expect(chatSessionStore.sessions[0].activeAssistantId).toBe('assistant1');
     });
 
-    it('sets newChatPalId when no active session', async () => {
-      await chatSessionStore.setActivePal('pal2');
+    it('sets newChatAssistantId when no active session', async () => {
+      await chatSessionStore.setActiveAssistant('assistant2');
 
-      expect(chatSessionStore.newChatPalId).toBe('pal2');
+      expect(chatSessionStore.newChatAssistantId).toBe('assistant2');
     });
 
-    it('preserves active pal ID when resetting active session', () => {
+    it('preserves active assistant ID when resetting active session', () => {
       const session = {
         id: 'session1',
         title: 'Session 1',
         date: new Date().toISOString(),
         messages: [],
         completionSettings: defaultCompletionSettings,
-        activePalId: 'pal1',
+        activeAssistantId: 'assistant1',
         settingsSource: 'pal' as 'pal' | 'custom',
       };
       chatSessionStore.sessions = [session];
@@ -1387,23 +1387,23 @@ describe('chatSessionStore', () => {
 
       chatSessionStore.resetActiveSession();
 
-      expect(chatSessionStore.newChatPalId).toBe('pal1');
+      expect(chatSessionStore.newChatAssistantId).toBe('assistant1');
       expect(chatSessionStore.activeSessionId).toBeNull();
     });
 
-    it('applies newChatPalId when creating a new session', async () => {
-      chatSessionStore.newChatPalId = 'pal1';
+    it('applies newChatAssistantId when creating a new session', async () => {
+      chatSessionStore.newChatAssistantId = 'assistant1';
 
       await chatSessionStore.createNewSession('New Session');
 
-      expect(chatSessionStore.sessions[0].activePalId).toBe('pal1');
-      expect(chatSessionStore.newChatPalId).toBeUndefined();
+      expect(chatSessionStore.sessions[0].activeAssistantId).toBe('assistant1');
+      expect(chatSessionStore.newChatAssistantId).toBeUndefined();
     });
   });
 
   describe('newChatThinkingOverride — session-creation handoff & clears', () => {
     beforeEach(() => {
-      chatSessionStore.newChatPalId = undefined;
+      chatSessionStore.newChatAssistantId = undefined;
       chatSessionStore.newChatThinkingOverride = undefined;
       chatSessionStore.newChatSettingsSource = 'pal';
     });
@@ -1422,7 +1422,7 @@ describe('chatSessionStore', () => {
         completionSettings: {getSettings: () => defaultCompletionSettings},
       });
 
-      chatSessionStore.newChatPalId = 'palX';
+      chatSessionStore.newChatAssistantId = 'assistantX';
       chatSessionStore.newChatSettingsSource = 'pal';
       chatSessionStore.newChatThinkingOverride = false;
 
@@ -1435,12 +1435,12 @@ describe('chatSessionStore', () => {
         'With Override',
         [],
         defaultCompletionSettings,
-        'palX',
+        'assistantX',
         'custom',
       );
-      // Override is one-shot — cleared in the same code block as newChatPalId.
+      // Override is one-shot — cleared in the same code block as newChatAssistantId.
       expect(chatSessionStore.newChatThinkingOverride).toBeUndefined();
-      expect(chatSessionStore.newChatPalId).toBeUndefined();
+      expect(chatSessionStore.newChatAssistantId).toBeUndefined();
     });
 
     it('births session with newChatSettingsSource when override is undefined (regression guard)', async () => {
@@ -1457,7 +1457,7 @@ describe('chatSessionStore', () => {
         completionSettings: {getSettings: () => defaultCompletionSettings},
       });
 
-      chatSessionStore.newChatPalId = 'palX';
+      chatSessionStore.newChatAssistantId = 'assistantX';
       chatSessionStore.newChatSettingsSource = 'pal';
       chatSessionStore.newChatThinkingOverride = undefined;
 
@@ -1468,7 +1468,7 @@ describe('chatSessionStore', () => {
         'No Override',
         [],
         defaultCompletionSettings,
-        'palX',
+        'assistantX',
         'pal',
       );
     });
@@ -2232,7 +2232,7 @@ describe('chatSessionStore', () => {
       chatSessionStore.lastCompletionResult = undefined;
       chatSessionStore.dismissedBannerVariants = new Set();
       chatSessionStore.consecutiveFullFailures = 0;
-      chatSessionStore.palLoadHintSeen = new Set();
+      chatSessionStore.assistantLoadHintSeen = new Set();
     });
 
     describe('recordCompletionSnapshot', () => {
@@ -2303,20 +2303,24 @@ describe('chatSessionStore', () => {
       });
     });
 
-    describe('markPalLoadHintSeen', () => {
+    describe('markAssistantLoadHintSeen', () => {
       it('records a signature once', () => {
-        chatSessionStore.markPalLoadHintSeen('pal-1|2048|render_html');
+        chatSessionStore.markAssistantLoadHintSeen(
+          'assistant-1|2048|render_html',
+        );
         expect(
-          chatSessionStore.palLoadHintSeen.has('pal-1|2048|render_html'),
+          chatSessionStore.assistantLoadHintSeen.has(
+            'assistant-1|2048|render_html',
+          ),
         ).toBe(true);
       });
 
       it('is idempotent for an already-seen signature', () => {
-        chatSessionStore.markPalLoadHintSeen('sig');
-        const first = chatSessionStore.palLoadHintSeen;
-        chatSessionStore.markPalLoadHintSeen('sig');
-        expect(chatSessionStore.palLoadHintSeen).toBe(first);
-        expect(chatSessionStore.palLoadHintSeen.size).toBe(1);
+        chatSessionStore.markAssistantLoadHintSeen('sig');
+        const first = chatSessionStore.assistantLoadHintSeen;
+        chatSessionStore.markAssistantLoadHintSeen('sig');
+        expect(chatSessionStore.assistantLoadHintSeen).toBe(first);
+        expect(chatSessionStore.assistantLoadHintSeen.size).toBe(1);
       });
     });
 
@@ -2329,14 +2333,14 @@ describe('chatSessionStore', () => {
         };
         chatSessionStore.setBannerDismissed('context-warning');
         chatSessionStore.consecutiveFullFailures = 3;
-        chatSessionStore.markPalLoadHintSeen('sig');
+        chatSessionStore.markAssistantLoadHintSeen('sig');
 
         chatSessionStore.resetActiveSession();
 
         expect(chatSessionStore.lastCompletionResult).toBeUndefined();
         expect(chatSessionStore.dismissedBannerVariants.size).toBe(0);
         expect(chatSessionStore.consecutiveFullFailures).toBe(0);
-        expect(chatSessionStore.palLoadHintSeen.size).toBe(0);
+        expect(chatSessionStore.assistantLoadHintSeen.size).toBe(0);
       });
 
       it('deleteSession clears dismissedBannerVariants', async () => {

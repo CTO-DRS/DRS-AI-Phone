@@ -5,7 +5,7 @@ import {useNavigation, NavigationProp} from '@react-navigation/native';
 
 import {XIcon} from '../../assets/icons';
 import {useTheme} from '../../hooks';
-import {modelStore, palStore, uiStore} from '../../store';
+import {modelStore, assistantStore, uiStore} from '../../store';
 import {L10nContext} from '../../utils';
 import {ROUTES} from '../../utils/navigationConstants';
 import {bannerStyles as createStyles} from './styles';
@@ -27,7 +27,7 @@ const formatSize = (bytes: number): string => {
  * Affordances:
  *   - Body tap → Models screen (the home for multi-download management;
  *     the +N badge telegraphs that there are more behind the visible one).
- *   - Stop pill → cancels the visible download. Pal stays bound to the
+ *   - Stop pill → cancels the visible download. Assistant stays bound to the
  *     model so the user can resume from the Models screen.
  *   - × icon  → dismisses the banner for this download only. Download
  *     continues. Dismissal clears when the download disappears.
@@ -45,19 +45,21 @@ export const DownloadBanner: React.FC = observer(() => {
     return null;
   }
 
-  // Match the download's model id to a local pal so we can show the pal
+  // Match the download's model id to a local assistant so we can show the assistant
   // name (the user's mental model is "Pip is downloading", not the
-  // filename). Falls back to the model name when no pal owns it (manual
+  // filename). Falls back to the model name when no assistant owns it (manual
   // download from Models screen).
-  const pal = palStore.pals.find(
+  const assistant = assistantStore.assistants.find(
     p =>
       p.source === 'local' &&
       p.defaultModel &&
       p.defaultModel.id === visible.modelId,
   );
-  const subject = pal ? pal.name : visible.model.name;
+  const subject = assistant ? assistant.name : visible.model.name;
   const title = (
-    pal ? l10n.downloadBanner.titleByPal : l10n.downloadBanner.titleByModel
+    assistant
+      ? l10n.downloadBanner.titleByAssistant
+      : l10n.downloadBanner.titleByModel
   ).replace('{{name}}', subject);
   const eta = visible.etaLabel || formatSize(visible.bytesTotal);
   const clamped = Math.max(0, Math.min(100, visible.progress));
@@ -84,7 +86,9 @@ export const DownloadBanner: React.FC = observer(() => {
           importantForAccessibility="no-hide-descendants"
           style={[
             styles.avatar,
-            pal?.color?.[0] ? {backgroundColor: pal.color[0]} : null,
+            assistant?.color?.[0]
+              ? {backgroundColor: assistant.color[0]}
+              : null,
           ]}
         />
         <View style={styles.content}>

@@ -1,0 +1,1 @@
+export {VideoAssistantEmptyPlaceholder} from './VideoAssistantEmptyPlaceholder';

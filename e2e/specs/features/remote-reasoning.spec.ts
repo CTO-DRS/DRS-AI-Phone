@@ -301,7 +301,7 @@ describe('Remote Reasoning Features', () => {
       await tapControl(byPartialText('Select Model'));
       await browser.pause(1000);
 
-      // Picker opens on the Pals tab; swipe to the Models tab.
+      // Picker opens on the Assistants tab; swipe to the Models tab.
       const {width, height} = await driver.getWindowSize();
       await driver
         .action('pointer', {parameters: {pointerType: 'touch'}})

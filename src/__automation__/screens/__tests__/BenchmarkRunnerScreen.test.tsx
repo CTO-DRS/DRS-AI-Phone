@@ -9,7 +9,7 @@ import {modelStore} from '../../../store';
 // Mock @react-navigation/native's useRoute so the screen can read route
 // params without a real navigator in the tree. The default return covers
 // every non-autostart test; the autostart suite overrides per-test. This
-// mirrors the per-file navigation mock pattern used in SquarePalCard,
+// mirrors the per-file navigation mock pattern used in SquareAssistantCard,
 // ModelCard, ModelNotLoadedMessage, and useDeepLinking tests.
 jest.mock('@react-navigation/native', () => ({
   useRoute: jest.fn(() => ({

@@ -33,7 +33,7 @@ import {ROUTES} from './src/utils/navigationConstants';
 import {
   SidebarContent,
   ModelsHeaderRight,
-  PalHeaderRight,
+  AssistantHeaderRight,
   HeaderLeft,
   AppWithMigration,
   TTSSetupSheet,
@@ -52,7 +52,7 @@ import {
   // Dev tools screen. Only available in debug mode.
   DevToolsScreen,
 } from './src/screens';
-import PalsScreen from './src/screens/PalsScreen';
+import AssistantsScreen from './src/screens/AssistantsScreen';
 import {OnboardingStack} from './src/screens/OnboardingScreens';
 
 // Check if app is in debug mode
@@ -162,12 +162,12 @@ const App = observer(() => {
                             }}
                           />
                           <Drawer.Screen
-                            name={ROUTES.PALS}
-                            component={gestureHandlerRootHOC(PalsScreen)}
+                            name={ROUTES.ASSISTANTS}
+                            component={gestureHandlerRootHOC(AssistantsScreen)}
                             options={{
-                              headerRight: () => <PalHeaderRight />,
+                              headerRight: () => <AssistantHeaderRight />,
                               headerStyle: styles.headerWithoutDivider,
-                              title: currentL10n.screenTitles.pals,
+                              title: currentL10n.screenTitles.assistants,
                             }}
                           />
                           <Drawer.Screen

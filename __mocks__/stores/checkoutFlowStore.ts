@@ -14,7 +14,7 @@ class MockCheckoutFlowStore {
     | 'processing_deferred'
     | 'cancelled'
     | 'error' = 'idle';
-  palId: string | null = null;
+  assistantId: string | null = null;
   purchaseId?: string;
   errorKind?: '401' | '404' | '500' | 'network';
 
