@@ -115,6 +115,10 @@
     "language": "Language",
     "languageSheetTitle": "Language",
     "languageSearchPlaceholder": "Search languages",
+    "languageRestartTitle": "Restart required",
+    "languageRestartMessage": "The layout direction changed for this language. Restart the app to apply it fully.",
+    "languageRestartNow": "Restart now",
+    "languageRestartLater": "Later",
     "darkMode": "Dark Mode",
     "displayMemoryUsage": "Display Memory Usage",
     "displayMemoryUsageDescription": "Display memory usage in the chat page.",
@@ -1013,7 +1017,12 @@
         "total": "Total: ",
         "usage": "Usage: "
       },
-      "byteSizes": ["Bytes", "KB", "MB", "GB"]
+      "byteSizes": [
+        "Bytes",
+        "KB",
+        "MB",
+        "GB"
+      ]
     },
     "chatView": {
       "menuItems": {

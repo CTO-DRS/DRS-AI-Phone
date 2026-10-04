@@ -9,6 +9,7 @@ import type {TopicKey} from '../../../store/onboarding/types';
 import {OnboardingScaffold} from '../components/OnboardingScaffold';
 import {OnboardingBottomBar} from '../components/OnboardingBottomBar';
 import {TopicChipGrid} from '../components/TopicChipGrid';
+import {RobotMascot} from '../illustrations/AnimatedRobot';
 import {useOnboardingHandlers} from '../useOnboardingHandlers';
 import {createStyles} from './styles';
 
@@ -30,6 +31,7 @@ export const Onboarding5Screen: React.FC = observer(() => {
       content={
         <>
           <View style={styles.header}>
+            <RobotMascot size={96} mood="point" />
             <Text style={styles.title}>{t.screen5.title}</Text>
             <Text style={styles.body}>{t.screen5.body}</Text>
           </View>

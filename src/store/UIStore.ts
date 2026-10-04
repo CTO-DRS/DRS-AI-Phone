@@ -41,6 +41,10 @@ export class UIStore {
   // Current selected language (default to English)
   _language: AvailableLanguage = 'en';
 
+  // Whether the user explicitly picked a language at least once. When
+  // false, the app may auto-adopt the device locale (e.g. Arabic).
+  _languageManuallySet = false;
+
   // List of supported languages (derived from locales registry)
   get supportedLanguages(): readonly AvailableLanguage[] {
     return localesSupportedLanguages;
@@ -119,6 +123,7 @@ export class UIStore {
         'displayMemUsage',
         'benchmarkShareDialog',
         '_language',
+        '_languageManuallySet',
         'toolCompatWarnedModels',
         'hasCompletedOnboarding',
         'onboardingTopicsSnapshot',
@@ -153,7 +158,23 @@ export class UIStore {
   setLanguage(language: AvailableLanguage) {
     runInAction(() => {
       this._language = language;
+      this._languageManuallySet = true;
     });
+  }
+
+  /**
+   * Languages whose script reads right-to-left. Switching between an RTL
+   * and an LTR language requires I18nManager.forceRTL + an app restart
+   * (Android applies the new direction only on the next activity create).
+   */
+  static readonly RTL_LANGUAGES: ReadonlyArray<AvailableLanguage> = [
+    'ar',
+    'fa',
+    'he',
+  ];
+
+  get isRTLLanguage(): boolean {
+    return UIStore.RTL_LANGUAGES.includes(this.language);
   }
   get language() {
     // If the language is not in l10n, return 'en'
