@@ -1,5 +1,5 @@
-import React, {useContext} from 'react';
-import {View} from 'react-native';
+import React, {useContext, useEffect, useRef} from 'react';
+import {Animated, Easing, View} from 'react-native';
 
 import {observer} from 'mobx-react';
 import {Button, Text} from 'react-native-paper';
@@ -14,6 +14,7 @@ import {MessageType, ModelOrigin} from '../../utils/types';
 import {resolveBannerVariant} from '../../utils/bannerVariantResolver';
 import {talentRegistry} from '../../services/talents';
 import {t} from '../../locales';
+import {BRAND_BLUE} from '../../theme/tokens/brand';
 
 interface BannerRowProps {
   messages: MessageType.Any[];
@@ -72,17 +73,49 @@ const Meter: React.FC<{
   </View>
 );
 
+/** Circular badge cradling the alert glyph — softens the warning tone. */
+const AlertBadge: React.FC<{
+  stroke: string;
+  background: string;
+  styles: ReturnType<typeof createStyles>;
+}> = ({stroke, background, styles}) => (
+  <View style={[styles.bannerIconBadge, {backgroundColor: background}]}>
+    <AlertIcon width={14} height={14} stroke={stroke} />
+  </View>
+);
+
+/** Rounded pill that carries the context percentage. */
+const PercentPill: React.FC<{
+  label: string;
+  color: string;
+  background: string;
+  styles: ReturnType<typeof createStyles>;
+  testID?: string;
+}> = ({label, color, background, styles, testID}) => (
+  <View style={[styles.bannerPercentPill, {backgroundColor: background}]}>
+    <Text style={[styles.bannerPercent, {color}]} testID={testID}>
+      {label}
+    </Text>
+  </View>
+);
+
 /**
  * The single chat-input banner slot. Renders the one variant resolved from the
  * completion snapshot and current model state, or the existing HTML soft-cap
- * sub-case. Dismiss writes back to the store; recovery CTAs are handled by the
- * host.
+ * sub-case. Dismiss writes back to the store; recovery CTAs are handled by
+ * the host.
+ *
+ * Creative pass: the banner now enters with a soft drop-and-fade, sits as a
+ * rounded card, and carries its accent as a glowing meter + pill instead of
+ * flat top/bottom rules.
  */
 export const BannerRow: React.FC<BannerRowProps> = observer(
   ({messages, htmlPreviewCount, canIncrease, onIncreaseContext, onNewChat}) => {
     const theme = useTheme();
     const styles = createStyles({theme});
     const l10n = useContext(L10nContext);
+
+    const entrance = useRef(new Animated.Value(0)).current;
 
     const error = theme.colors.error;
     const tint = {
@@ -116,38 +149,73 @@ export const BannerRow: React.FC<BannerRowProps> = observer(
       },
     );
 
+    useEffect(() => {
+      if (variant === 'none') {
+        return;
+      }
+      Animated.parallel([
+        Animated.timing(entrance, {
+          toValue: 1,
+          duration: 260,
+          easing: Easing.out(Easing.cubic),
+          useNativeDriver: true,
+        }),
+      ]).start();
+      return () => entrance.setValue(0);
+    }, [variant, entrance]);
+
+    const entranceStyle = {
+      opacity: entrance,
+      transform: [
+        {
+          translateY: entrance.interpolate({
+            inputRange: [0, 1],
+            outputRange: [-10, 0],
+          }),
+        },
+      ],
+    };
+
     if (variant === 'none') {
       return null;
     }
 
     if (variant === 'html-soft-cap') {
       return (
-        <View testID="soft-cap-warning" style={styles.softCapBanner}>
+        <Animated.View
+          testID="soft-cap-warning"
+          style={[styles.softCapBanner, entranceStyle]}>
           <Text style={styles.softCapBannerText}>
             {l10n.chat.softCapWarning}
           </Text>
-        </View>
+        </Animated.View>
       );
     }
 
     if (variant === 'context-warning') {
       const percent = Math.round((ratio ?? 0) * 100);
       return (
-        <View
+        <Animated.View
           testID="context-warning-banner"
           accessibilityRole="alert"
           accessibilityLiveRegion="polite"
-          style={[styles.banner, tint.warning]}>
+          style={[styles.banner, tint.warning, entranceStyle]}>
           <View style={styles.bannerHeader}>
-            <AlertIcon width={14} height={14} stroke={error} />
+            <AlertBadge
+              stroke={error}
+              background={withAlpha(error, '1A')}
+              styles={styles}
+            />
             <Text style={[styles.bannerText, styles.bannerHeaderText]}>
               {l10n.chat.contextWarning}
             </Text>
-            <Text
-              style={[styles.bannerPercent, {color: error}]}
-              testID="banner-percent">
-              {`${percent}%`}
-            </Text>
+            <PercentPill
+              label={`${percent}%`}
+              color={error}
+              background={withAlpha(error, '1A')}
+              styles={styles}
+              testID="banner-percent"
+            />
           </View>
           {ratio != null ? (
             <Meter ratio={ratio} tint={error} styles={styles} />
@@ -172,18 +240,27 @@ export const BannerRow: React.FC<BannerRowProps> = observer(
               {l10n.chat.contextBannerDismiss}
             </Button>
           </View>
-        </View>
+        </Animated.View>
       );
     }
 
     if (variant === 'context-remote-hedged') {
       return (
-        <View
+        <Animated.View
           testID="context-remote-hedged-banner"
           accessibilityRole="alert"
           accessibilityLiveRegion="polite"
-          style={[styles.banner, tint.neutral]}>
-          <Text style={styles.bannerText}>{l10n.chat.contextRemoteHedged}</Text>
+          style={[styles.banner, tint.neutral, entranceStyle]}>
+          <View style={styles.bannerHeader}>
+            <AlertBadge
+              stroke={BRAND_BLUE}
+              background={withAlpha(BRAND_BLUE, '1A')}
+              styles={styles}
+            />
+            <Text style={[styles.bannerText, styles.bannerHeaderText]}>
+              {l10n.chat.contextRemoteHedged}
+            </Text>
+          </View>
           <View style={styles.bannerActions}>
             <Button
               compact
@@ -195,7 +272,7 @@ export const BannerRow: React.FC<BannerRowProps> = observer(
               {l10n.chat.contextBannerDismiss}
             </Button>
           </View>
-        </View>
+        </Animated.View>
       );
     }
 
@@ -218,22 +295,28 @@ export const BannerRow: React.FC<BannerRowProps> = observer(
           : l10n.chat.contextFull;
 
     return (
-      <View
+      <Animated.View
         testID="context-full-banner"
         accessibilityRole="alert"
         accessibilityLiveRegion="polite"
-        style={[styles.banner, tint.full]}>
+        style={[styles.banner, tint.full, entranceStyle]}>
         <View style={styles.bannerHeader}>
-          <AlertIcon width={14} height={14} stroke={error} />
+          <AlertBadge
+            stroke={error}
+            background={withAlpha(error, '1F')}
+            styles={styles}
+          />
           <Text style={[styles.bannerText, styles.bannerHeaderText]}>
             {fullText}
           </Text>
           {ratio != null ? (
-            <Text
-              style={[styles.bannerPercent, {color: error}]}
-              testID="banner-percent">
-              {`${Math.round(ratio * 100)}%`}
-            </Text>
+            <PercentPill
+              label={`${Math.round(ratio * 100)}%`}
+              color={error}
+              background={withAlpha(error, '1F')}
+              styles={styles}
+              testID="banner-percent"
+            />
           ) : null}
         </View>
         {ratio != null ? (
@@ -264,7 +347,7 @@ export const BannerRow: React.FC<BannerRowProps> = observer(
             {l10n.chat.contextBannerDismiss}
           </Button>
         </View>
-      </View>
+      </Animated.View>
     );
   },
 );

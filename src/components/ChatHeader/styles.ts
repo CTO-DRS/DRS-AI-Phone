@@ -15,6 +15,14 @@ export const createStyles = ({
     container: {
       height: headerHeight,
       paddingTop: insets.top,
+      backgroundColor: theme.colors.background,
+    },
+    brandWash: {
+      ...StyleSheet.absoluteFillObject,
+      opacity: 0.8,
+    },
+    contentRow: {
+      flex: 1,
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
@@ -32,16 +40,21 @@ export const createStyles = ({
       justifyContent: 'center',
       alignItems: 'center',
     },
+    brandHairline: {
+      position: 'absolute',
+      left: 0,
+      right: 0,
+      bottom: 0,
+      height: 1.5,
+      opacity: 0.55,
+    },
     headerWithoutDivider: {
       elevation: 0,
       shadowOpacity: 0,
       borderBottomWidth: 0,
-      backgroundColor: theme.colors.background,
+      backgroundColor: 'transparent',
     },
     headerWithDivider: {
-      backgroundColor: theme.colors.background,
-      // Hairline separation so the header reads as its own layer over chat.
-      borderBottomWidth: 1,
-      borderBottomColor: theme.colors.border,
+      backgroundColor: 'transparent',
     },
   });

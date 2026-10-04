@@ -9,4 +9,8 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  halo: {
+    borderRadius: 14,
+    backgroundColor: '#7C3AED',
+  },
 });

@@ -158,3 +158,32 @@ jobs:
           path: android/app/build/outputs/apk/prod/release/app-prod-release.apk
           if-no-files-found: error
           retention-days: 30
+
+      - name: Rename APK with version
+        run: |
+          VERSION=$(grep -m1 'versionName' android/app/build.gradle | sed -E 's/.*versionName "([^"]+)".*/\1/')
+          echo "Building DRS-AI-v${VERSION}.apk"
+          cp android/app/build/outputs/apk/prod/release/app-prod-release.apk "DRS-AI-v${VERSION}.apk"
+          echo "VERSION=${VERSION}" >> "$GITHUB_ENV"
+          ls -la DRS-AI-v*.apk
+
+      - name: Create GitHub Release with signed APK
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ env.VERSION }}
+          name: "DRS AI v${{ env.VERSION }} — شريطا المحادثة بلمسة العلامة"
+          files: DRS-AI-v*.apk
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+          body: |
+            ## DRS AI v${{ env.VERSION }}
+
+            تحسين الشريطين أعلى لوحة المحادثة بلمسات العلامة:
+
+            - 🎨 **شريط العنوان**: غسلة تدرج بنفسجي←أزرق من حافة شريط الحالة + خط شعر متدرج بتوقيع العلامة
+            - 🟢 **نقطة حالة النموذج**: نبضة حية بجانب اسم النموذج النشط
+            - ✨ **زر القائمة**: هالة بنفسجية تتفتح عند الضغط
+            - 🪧 **شريط تنبيهات السياق**: تصميم بطاقة مستديرة، شارة أيقونة، حبة نسبة مئوية، ودخول متحرك ناعم
+
+            محمّل وموقّع بنفس شهادة الإصدار — يثبّت مباشرة فوق النسخ السابقة.
