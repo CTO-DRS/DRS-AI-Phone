@@ -90,8 +90,8 @@ android {
         applicationId "com.drsai.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 152
-        versionName "1.22.0"
+        versionCode 153
+        versionName "1.22.1"
         ndk {
             abiFilters "arm64-v8a", "x86_64"
         }
@@ -123,6 +123,22 @@ android {
                 keyAlias "drsai_key_alias"
                 keyPassword releaseKeyPassword
             }
+            // Sign with every scheme for maximum sideload compatibility:
+            // v1 covers legacy/OEM verifier paths, v2 is required by Android 7+,
+            // v3 future-proofs key rotation on Android 9+.
+            enableV1Signing true
+            enableV2Signing true
+            enableV3Signing true
+        }
+    }
+    // Compress native libraries inside the APK (extractNativeLibs=true).
+    // Why: uncompressed .so made the APK ~250MB — huge downloads get truncated
+    // on phones and install as "package appears to be invalid". Compressed
+    // libs halve the download and remove all page-alignment requirements at
+    // install time, maximizing compatibility with OEM package installers.
+    packagingOptions {
+        jniLibs {
+            useLegacyPackaging = true
         }
     }
     buildTypes {
