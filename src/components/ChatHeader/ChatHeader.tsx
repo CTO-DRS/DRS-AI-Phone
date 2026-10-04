@@ -1,6 +1,7 @@
 import React from 'react';
 import {Platform, View} from 'react-native';
 import {observer} from 'mobx-react';
+import {LinearGradient} from 'react-native-linear-gradient';
 
 import {createStyles} from './styles';
 import {HeaderRight} from '../HeaderRight';
@@ -13,6 +14,10 @@ import {getDefaultHeaderHeight} from '@react-navigation/elements';
 import {useTheme} from '../../hooks';
 import {chatSessionStore} from '../../store';
 import {HeaderLeft} from '../HeaderLeft';
+import {
+  BRAND_GRADIENT_COLORS,
+  BRAND_GRADIENT_SOFT,
+} from '../../theme/tokens/brand';
 
 export const ChatHeader: React.FC = observer(() => {
   const theme = useTheme();
@@ -37,11 +42,30 @@ export const ChatHeader: React.FC = observer(() => {
 
   return (
     <View testID="header-view" style={[styles.container, headerStyle]}>
-      <View style={styles.leftSection}>
-        <HeaderLeft />
-        <ChatHeaderTitle />
+      {/* Signature brand wash bleeding down from the status-bar edge */}
+      <LinearGradient
+        pointerEvents="none"
+        start={{x: 0, y: 0}}
+        end={{x: 0, y: 1}}
+        colors={[BRAND_GRADIENT_SOFT[0], BRAND_GRADIENT_SOFT[1], '#FFFFFF00']}
+        style={styles.brandWash}
+      />
+
+      <View style={styles.contentRow}>
+        <View style={styles.leftSection}>
+          <HeaderLeft />
+          <ChatHeaderTitle />
+        </View>
+        <HeaderRight />
       </View>
-      <HeaderRight />
+
+      {/* Gradient hairline — the brand's violet→blue signature line */}
+      <LinearGradient
+        start={{x: 0, y: 0}}
+        end={{x: 1, y: 0}}
+        colors={BRAND_GRADIENT_COLORS}
+        style={styles.brandHairline}
+      />
     </View>
   );
 });
