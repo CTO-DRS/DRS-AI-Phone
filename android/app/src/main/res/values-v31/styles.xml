@@ -19,6 +19,5 @@
         <item name="android:windowSplashScreenBackground">@color/drsai_indigo</item>
         <item name="android:windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
         <item name="android:windowSplashScreenBehavior">icon_preferred</item>
-        <item name="android:postSplashScreenTheme">@style/AppTheme</item>
     </style>
 </resources>
