@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 /**
  * Neural Audio Player
@@ -7,8 +7,8 @@
  * Provides a unified interface for playing synthesized audio
  */
 
-import NativeNeuralAudioPlayer from "../NativeAudioPlayer.js";
-import { float32ToBase64Int16 } from "../utils/AudioConverter.js";
+import NativeNeuralAudioPlayer from '../NativeAudioPlayer.js';
+import {float32ToBase64Int16} from '../utils/AudioConverter.js';
 /**
  * Neural Audio Player class
  * Manages playback of neural TTS audio
@@ -30,7 +30,7 @@ export class NeuralAudioPlayer {
       sampleRate: audioBuffer.sampleRate,
       channels: audioBuffer.channels,
       ducking: options?.ducking,
-      silentMode: options?.silentMode
+      silentMode: options?.silentMode,
     };
 
     // Play audio via native module
@@ -89,7 +89,7 @@ export class NeuralAudioPlayer {
       onProgress: NativeNeuralAudioPlayer.onProgress,
       onPause: NativeNeuralAudioPlayer.onPause,
       onResume: NativeNeuralAudioPlayer.onResume,
-      onStopped: NativeNeuralAudioPlayer.onStopped
+      onStopped: NativeNeuralAudioPlayer.onStopped,
     };
   }
 }

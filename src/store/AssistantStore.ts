@@ -1,19 +1,19 @@
 /**
- * LegacyStore - Dynamic Parameter Assistant Store
+ * AssistantStore - Dynamic Parameter Assistant Store
  *
- * This is the new assistant store that replaces the legacy LegacyStore with a flexible,
+ * This is the new assistant store that replaces the legacy AssistantStore with a flexible,
  * schema-driven approach that supports dynamic parameters and custom assistant types.
  *
  * KEY FEATURES:
  * - Dynamic parameter schemas: Create assistants with any custom parameters
- * - Unified UI: Single LegacySheet component works for all assistant types
+ * - Unified UI: Single AssistantSheet component works for all assistant types
  * - Drshub integration: Support for marketplace assistants with custom parameters
  * - Extensible: Easy to add new parameter types (text, select, datetime_tag)
- * - Migration: Automatically migrates data from legacy LegacyStore on startup
+ * - Migration: Automatically migrates data from legacy AssistantStore on startup
  *
  * @see src/types/assistant.ts for type definitions
  * @see src/utils/assistant-migration.ts for migration utilities
- * @see src/components/AssistantsSheets/LegacySheet.tsx for unified UI component
+ * @see src/components/AssistantSheets/AssistantSheet.tsx for unified UI component
  */
 
 import {v4 as uuidv4} from 'uuid';
@@ -47,15 +47,18 @@ import type {
 
 import {ModelOrigin} from '../utils/types';
 import type {Model} from '../utils/types';
-import {downloadAssistantThumbnail, deleteAssistantThumbnail} from '../utils/imageUtils';
+import {
+  downloadAssistantThumbnail,
+  deleteAssistantThumbnail,
+} from '../utils/imageUtils';
 
 // Track each built-in separately so future defaults can still be introduced.
 // TODO: when adding another built-in assistant, extract a shared seed-once helper
 // (check key, find existing, create, set key) instead of a third copy.
-const LOOKIE_SEEDED_KEY = 'LegacyStore.builtin.Lookie.seeded';
-const PIP_SEEDED_KEY = 'LegacyStore.builtin.Pip.seeded';
+const LOOKIE_SEEDED_KEY = 'AssistantStore.builtin.Lookie.seeded';
+const PIP_SEEDED_KEY = 'AssistantStore.builtin.Pip.seeded';
 
-class LegacyStore {
+class AssistantStore {
   // Core assistants storage
   assistants: Assistant[] = [];
 
@@ -174,7 +177,8 @@ class LegacyStore {
   private addAssistant = async (
     assistantData: Omit<Assistant, 'id' | 'created_at' | 'updated_at'>,
   ): Promise<Assistant> => {
-    const savedAssistant = await assistantRepository.createAssistant(assistantData);
+    const savedAssistant =
+      await assistantRepository.createAssistant(assistantData);
 
     runInAction(() => {
       this.assistants.push(savedAssistant);
@@ -195,9 +199,15 @@ class LegacyStore {
   /**
    * Updates an existing assistant
    */
-  updateAssistant = async (id: string, updates: Partial<Assistant>): Promise<void> => {
+  updateAssistant = async (
+    id: string,
+    updates: Partial<Assistant>,
+  ): Promise<void> => {
     try {
-      const updatedAssistant = await assistantRepository.updateAssistant(id, updates);
+      const updatedAssistant = await assistantRepository.updateAssistant(
+        id,
+        updates,
+      );
       if (updatedAssistant) {
         runInAction(() => {
           const assistantIndex = this.assistants.findIndex(p => p.id === id);
@@ -206,7 +216,9 @@ class LegacyStore {
           }
         });
       } else {
-        throw new Error('Failed to update assistant - no updated assistant returned');
+        throw new Error(
+          'Failed to update assistant - no updated assistant returned',
+        );
       }
     } catch (error) {
       console.error('Error updating assistant:', error);
@@ -221,7 +233,8 @@ class LegacyStore {
     try {
       // Find the assistant to get its thumbnail path before deletion
       const assistantIndex = this.assistants.findIndex(p => p.id === id);
-      const assistant = assistantIndex !== -1 ? this.assistants[assistantIndex] : null;
+      const assistant =
+        assistantIndex !== -1 ? this.assistants[assistantIndex] : null;
 
       const success = await assistantRepository.deleteAssistant(id);
       if (success) {
@@ -265,19 +278,24 @@ class LegacyStore {
   /**
    * Downloads a Drshub assistant and converts it to unified format
    */
-  downloadDrshubAssistant = async (drshubAssistant: DrshubAssistant): Promise<Assistant> => {
+  downloadDrshubAssistant = async (
+    drshubAssistant: DrshubAssistant,
+  ): Promise<Assistant> => {
     try {
       // For free assistants, allow direct download without ownership check
       // For premium assistants, check ownership first
       if (drshubAssistant.price_cents > 0) {
-        const ownership = await drshubService.checkAssistantOwnership(drshubAssistant.id);
+        const ownership = await drshubService.checkAssistantOwnership(
+          drshubAssistant.id,
+        );
         if (!ownership.owned) {
           throw new Error('You must own this Assistant to download it');
         }
       }
 
       // Convert Drshub assistant to local format
-      const assistant = await this.createLocalAssistantFromDrshub(drshubAssistant);
+      const assistant =
+        await this.createLocalAssistantFromDrshub(drshubAssistant);
       let relativeThumbnailPath: string | null = null;
 
       // Download thumbnail image if available
@@ -634,7 +652,9 @@ class LegacyStore {
   };
 
   getLocalAssistants = () => {
-    return this.assistants.filter(assistant => assistant.source === 'local' || !assistant.source);
+    return this.assistants.filter(
+      assistant => assistant.source === 'local' || !assistant.source,
+    );
   };
 
   getDownloadedDrshubAssistants = () => {
@@ -643,7 +663,9 @@ class LegacyStore {
 
   // Capability-based filtering methods
   getVideoAssistants = () => {
-    return this.assistants.filter(assistant => assistant.capabilities?.video === true);
+    return this.assistants.filter(
+      assistant => assistant.capabilities?.video === true,
+    );
   };
 
   getAllAssistants = () => {
@@ -727,7 +749,10 @@ class LegacyStore {
         const defaultModel = LOOKIE_DEFAULT_MODEL;
 
         // Create the Lookie assistant with all the original properties
-        const assistantData: Omit<Assistant, 'id' | 'created_at' | 'updated_at'> = {
+        const assistantData: Omit<
+          Assistant,
+          'id' | 'created_at' | 'updated_at'
+        > = {
           type: 'local',
           name: 'Lookie',
           description:
@@ -786,22 +811,23 @@ class LegacyStore {
         return;
       }
 
-      const assistantData: Omit<Assistant, 'id' | 'created_at' | 'updated_at'> = {
-        type: 'local',
-        name: 'Pip',
-        description:
-          'A friendly general-purpose assistant that runs entirely on your phone.',
-        systemPrompt:
-          'You are Pip, a friendly and helpful assistant who runs locally on the user’s phone. Keep replies concise and warm.',
-        isSystemPromptChanged: false,
-        useAIPrompt: false,
-        defaultModel: undefined,
-        parameters: {},
-        parameterSchema: [],
-        capabilities: {},
-        color: ['#0E0D0C', '#FAFAFA'],
-        source: 'local',
-      };
+      const assistantData: Omit<Assistant, 'id' | 'created_at' | 'updated_at'> =
+        {
+          type: 'local',
+          name: 'Pip',
+          description:
+            'A friendly general-purpose assistant that runs entirely on your phone.',
+          systemPrompt:
+            'You are Pip, a friendly and helpful assistant who runs locally on the user’s phone. Keep replies concise and warm.',
+          isSystemPromptChanged: false,
+          useAIPrompt: false,
+          defaultModel: undefined,
+          parameters: {},
+          parameterSchema: [],
+          capabilities: {},
+          color: ['#0E0D0C', '#FAFAFA'],
+          source: 'local',
+        };
 
       await this.addAssistant(assistantData);
       await AsyncStorage.setItem(PIP_SEEDED_KEY, 'true');
@@ -811,7 +837,7 @@ class LegacyStore {
   }
 }
 
-export const assistantStore = new LegacyStore();
+export const assistantStore = new AssistantStore();
 
 // Export types for external use
 export type {Assistant} from '../types/assistant';

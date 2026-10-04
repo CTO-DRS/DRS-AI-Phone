@@ -10,7 +10,7 @@ import {L10nContext} from '../../../../utils';
 
 import {createStyles} from './styles';
 
-import {assistantStore} from '../../../../store/LegacyStore';
+import {assistantStore} from '../../../../store/AssistantStore';
 
 import type {DrshubAssistant} from '../../../../types/drshub';
 

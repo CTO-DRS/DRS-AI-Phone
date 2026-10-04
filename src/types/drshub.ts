@@ -174,7 +174,7 @@ export interface DrshubAssistant {
    * snake_case (`required`) and includes a `version` integer. The local
    * `Assistant.pact` shape uses `necessity: 'required' | 'optional'` and has no
    * `version` field; the conversion happens once inside
-   * `LegacyStore.createLocalAssistantFromDrshub` (the single conversion site).
+   * `AssistantStore.createLocalAssistantFromDrshub` (the single conversion site).
    */
   pact?: {
     version: number;

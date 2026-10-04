@@ -25,7 +25,7 @@ class AssistantRepository {
       }
 
       // Check if old AsyncStorage data exists
-      const oldData = await AsyncStorage.getItem('LegacyStore');
+      const oldData = await AsyncStorage.getItem('AssistantStore');
 
       if (!oldData) {
         // No old data to migrate, mark as complete
@@ -39,7 +39,8 @@ class AssistantRepository {
 
       // Parse old data
       const parsedData = JSON.parse(oldData);
-      const legacyAssistants: LegacyAssistantData[] = parsedData.assistants || [];
+      const legacyAssistants: LegacyAssistantData[] =
+        parsedData.assistants || [];
 
       if (legacyAssistants.length === 0) {
         // No assistants to migrate
@@ -64,24 +65,34 @@ class AssistantRepository {
               record.originalSystemPrompt = assistant.originalSystemPrompt;
               record.isSystemPromptChanged = assistant.isSystemPromptChanged;
               record.useAIPrompt = assistant.useAIPrompt;
-              record.defaultModel = LocalAssistant.safeStringify(assistant.defaultModel);
+              record.defaultModel = LocalAssistant.safeStringify(
+                assistant.defaultModel,
+              );
               record.promptGenerationModel = LocalAssistant.safeStringify(
                 assistant.promptGenerationModel,
               );
               record.generatingPrompt = assistant.generatingPrompt;
               record.color = LocalAssistant.safeStringify(assistant.color);
-              record.capabilities = LocalAssistant.safeStringify(assistant.capabilities);
-              record.parameters = LocalAssistant.safeStringify(assistant.parameters);
+              record.capabilities = LocalAssistant.safeStringify(
+                assistant.capabilities,
+              );
+              record.parameters = LocalAssistant.safeStringify(
+                assistant.parameters,
+              );
               record.parameterSchema = LocalAssistant.safeStringifyArray(
                 assistant.parameterSchema || [],
               );
               record.source = assistant.source || 'local';
               record.drshubId = assistant.drshub_id;
-              record.creatorInfo = LocalAssistant.safeStringify(assistant.creator_info);
+              record.creatorInfo = LocalAssistant.safeStringify(
+                assistant.creator_info,
+              );
               record.categories = LocalAssistant.safeStringifyArray(
                 assistant.categories || [],
               );
-              record.tags = LocalAssistant.safeStringifyArray(assistant.tags || []);
+              record.tags = LocalAssistant.safeStringifyArray(
+                assistant.tags || [],
+              );
               record.rating = assistant.rating;
               record.reviewCount = assistant.review_count;
               record.protectionLevel = assistant.protection_level;
@@ -98,7 +109,7 @@ class AssistantRepository {
       await RNFS.writeFile(migrationFlagPath, 'true');
 
       // Optionally remove old data
-      await AsyncStorage.removeItem('LegacyStore');
+      await AsyncStorage.removeItem('AssistantStore');
 
       console.log(
         `Successfully migrated ${legacyAssistants.length} assistants to database`,
@@ -154,24 +165,34 @@ class AssistantRepository {
             record.originalSystemPrompt = assistantData.originalSystemPrompt;
             record.isSystemPromptChanged = assistantData.isSystemPromptChanged;
             record.useAIPrompt = assistantData.useAIPrompt;
-            record.defaultModel = LocalAssistant.safeStringify(assistantData.defaultModel);
+            record.defaultModel = LocalAssistant.safeStringify(
+              assistantData.defaultModel,
+            );
             record.promptGenerationModel = LocalAssistant.safeStringify(
               assistantData.promptGenerationModel,
             );
             record.generatingPrompt = assistantData.generatingPrompt;
             record.color = LocalAssistant.safeStringify(assistantData.color);
-            record.capabilities = LocalAssistant.safeStringify(assistantData.capabilities);
-            record.parameters = LocalAssistant.safeStringify(assistantData.parameters);
+            record.capabilities = LocalAssistant.safeStringify(
+              assistantData.capabilities,
+            );
+            record.parameters = LocalAssistant.safeStringify(
+              assistantData.parameters,
+            );
             record.parameterSchema = LocalAssistant.safeStringifyArray(
               assistantData.parameterSchema || [],
             );
             record.source = assistantData.source || 'local';
             record.drshubId = assistantData.drshub_id;
-            record.creatorInfo = LocalAssistant.safeStringify(assistantData.creator_info);
+            record.creatorInfo = LocalAssistant.safeStringify(
+              assistantData.creator_info,
+            );
             record.categories = LocalAssistant.safeStringifyArray(
               assistantData.categories || [],
             );
-            record.tags = LocalAssistant.safeStringifyArray(assistantData.tags || []);
+            record.tags = LocalAssistant.safeStringifyArray(
+              assistantData.tags || [],
+            );
             record.rating = assistantData.rating;
             record.reviewCount = assistantData.review_count;
             record.protectionLevel = assistantData.protection_level;
@@ -179,11 +200,14 @@ class AssistantRepository {
             record.isOwned = assistantData.is_owned;
             // Save generation settings (prefer local over Drshub)
             const generationSettings =
-              assistantData.completionSettings || assistantData.rawDrshubGenerationSettings;
+              assistantData.completionSettings ||
+              assistantData.rawDrshubGenerationSettings;
             record.generationSettings =
               LocalAssistant.safeStringify(generationSettings);
             record.pact = LocalAssistant.safeStringify(assistantData.pact);
-            record.greeting = LocalAssistant.safeStringify(assistantData.greeting);
+            record.greeting = LocalAssistant.safeStringify(
+              assistantData.greeting,
+            );
           });
       });
 
@@ -194,7 +218,10 @@ class AssistantRepository {
     }
   }
 
-  async updateAssistant(id: string, updates: Partial<Assistant>): Promise<Assistant | null> {
+  async updateAssistant(
+    id: string,
+    updates: Partial<Assistant>,
+  ): Promise<Assistant | null> {
     try {
       const updatedAssistant = await database.write(async () => {
         const localAssistant = await database.collections
@@ -224,7 +251,9 @@ class AssistantRepository {
             record.useAIPrompt = updates.useAIPrompt;
           }
           if (updates.defaultModel !== undefined) {
-            record.defaultModel = LocalAssistant.safeStringify(updates.defaultModel);
+            record.defaultModel = LocalAssistant.safeStringify(
+              updates.defaultModel,
+            );
           }
           if (updates.promptGenerationModel !== undefined) {
             record.promptGenerationModel = LocalAssistant.safeStringify(
@@ -238,10 +267,14 @@ class AssistantRepository {
             record.color = LocalAssistant.safeStringify(updates.color);
           }
           if (updates.capabilities !== undefined) {
-            record.capabilities = LocalAssistant.safeStringify(updates.capabilities);
+            record.capabilities = LocalAssistant.safeStringify(
+              updates.capabilities,
+            );
           }
           if (updates.parameters !== undefined) {
-            record.parameters = LocalAssistant.safeStringify(updates.parameters);
+            record.parameters = LocalAssistant.safeStringify(
+              updates.parameters,
+            );
           }
           if (updates.parameterSchema !== undefined) {
             record.parameterSchema = LocalAssistant.safeStringifyArray(
@@ -255,10 +288,14 @@ class AssistantRepository {
             record.drshubId = updates.drshub_id;
           }
           if (updates.creator_info !== undefined) {
-            record.creatorInfo = LocalAssistant.safeStringify(updates.creator_info);
+            record.creatorInfo = LocalAssistant.safeStringify(
+              updates.creator_info,
+            );
           }
           if (updates.categories !== undefined) {
-            record.categories = LocalAssistant.safeStringifyArray(updates.categories);
+            record.categories = LocalAssistant.safeStringifyArray(
+              updates.categories,
+            );
           }
           if (updates.tags !== undefined) {
             record.tags = LocalAssistant.safeStringifyArray(updates.tags);
@@ -352,7 +389,9 @@ class AssistantRepository {
   async getVideoAssistants(): Promise<Assistant[]> {
     try {
       const allAssistants = await this.getAllAssistants();
-      return allAssistants.filter(assistant => assistant.capabilities?.video === true);
+      return allAssistants.filter(
+        assistant => assistant.capabilities?.video === true,
+      );
     } catch (error) {
       console.error('Error fetching video assistants:', error);
       return [];
@@ -427,7 +466,8 @@ class AssistantRepository {
         const migratedSettings = migrateCompletionSettings(settings);
 
         await assistant.update((record: any) => {
-          record.generationSettings = LocalAssistant.safeStringify(migratedSettings);
+          record.generationSettings =
+            LocalAssistant.safeStringify(migratedSettings);
         });
       });
     } catch (error) {

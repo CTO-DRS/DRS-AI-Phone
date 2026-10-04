@@ -1,7 +1,7 @@
 import {runInAction} from 'mobx';
 import {Platform} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {assistantStore} from '../LegacyStore';
+import {assistantStore} from '../AssistantStore';
 import {drshubService} from '../../services';
 import {isUSStorefront} from '../../utils/region';
 import {assistantRepository} from '../../repositories/AssistantRepository';
@@ -83,7 +83,7 @@ jest.mock('../../specs/NativeExternalContentLink', () => ({
   },
 }));
 
-describe('LegacyStore', () => {
+describe('AssistantStore', () => {
   const mockAssistant: Assistant = {
     type: 'local',
     id: 'test-assistant-1',
@@ -134,15 +134,17 @@ describe('LegacyStore', () => {
 
     // Setup default mocks
     (assistantRepository.getAllAssistants as jest.Mock).mockResolvedValue([]);
-    (assistantRepository.checkAndMigrateFromJSON as jest.Mock).mockResolvedValue(
-      undefined,
-    );
+    (
+      assistantRepository.checkAndMigrateFromJSON as jest.Mock
+    ).mockResolvedValue(undefined);
   });
 
   describe('Initialization', () => {
     it('should initialize successfully', async () => {
       const mockAssistants = [mockAssistant];
-      (assistantRepository.getAllAssistants as jest.Mock).mockResolvedValue(mockAssistants);
+      (assistantRepository.getAllAssistants as jest.Mock).mockResolvedValue(
+        mockAssistants,
+      );
 
       // Create a new store instance to test initialization
       // eslint-disable-next-line no-new
@@ -157,7 +159,9 @@ describe('LegacyStore', () => {
 
     it('should handle initialization errors gracefully', async () => {
       const error = new Error('Database error');
-      (assistantRepository.getAllAssistants as jest.Mock).mockRejectedValue(error);
+      (assistantRepository.getAllAssistants as jest.Mock).mockRejectedValue(
+        error,
+      );
 
       const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
 
@@ -191,9 +195,9 @@ describe('LegacyStore', () => {
       new (assistantStore.constructor as any)();
       await new Promise(resolve => setTimeout(resolve, 100));
 
-      const lookieCall = (assistantRepository.createAssistant as jest.Mock).mock.calls.find(
-        call => call[0]?.name === 'Lookie',
-      );
+      const lookieCall = (
+        assistantRepository.createAssistant as jest.Mock
+      ).mock.calls.find(call => call[0]?.name === 'Lookie');
 
       expect(lookieCall).toBeDefined();
       expect(lookieCall![0].defaultModel).toBe(LOOKIE_DEFAULT_MODEL);
@@ -432,7 +436,9 @@ describe('LegacyStore', () => {
       (assistantRepository.createAssistant as jest.Mock).mockImplementation(
         async (data: Partial<Assistant>) => ({...mockAssistant, ...data}),
       );
-      (assistantRepository.deleteAssistant as jest.Mock).mockResolvedValue(true);
+      (assistantRepository.deleteAssistant as jest.Mock).mockResolvedValue(
+        true,
+      );
     });
 
     it('does not recreate a deleted default assistant on the next initialization', async () => {
@@ -463,7 +469,9 @@ describe('LegacyStore', () => {
 
     it('records existing default assistants before they are deleted', async () => {
       runInAction(() => {
-        assistantStore.assistants = [{...mockAssistant, name, capabilities: {video: true}}];
+        assistantStore.assistants = [
+          {...mockAssistant, name, capabilities: {video: true}},
+        ];
       });
       await seed();
       expect(assistantRepository.createAssistant).not.toHaveBeenCalled();
@@ -506,18 +514,24 @@ describe('LegacyStore', () => {
         };
 
         const createdAssistant = {...newAssistantData, ...mockAssistant};
-        (assistantRepository.createAssistant as jest.Mock).mockResolvedValue(createdAssistant);
+        (assistantRepository.createAssistant as jest.Mock).mockResolvedValue(
+          createdAssistant,
+        );
 
         const result = await assistantStore.createAssistant(newAssistantData);
 
-        expect(assistantRepository.createAssistant).toHaveBeenCalledWith(newAssistantData);
+        expect(assistantRepository.createAssistant).toHaveBeenCalledWith(
+          newAssistantData,
+        );
         expect(result).toEqual(createdAssistant);
         expect(assistantStore.assistants).toContainEqual(createdAssistant);
       });
 
       it('should handle creation errors', async () => {
         const error = new Error('Creation failed');
-        (assistantRepository.createAssistant as jest.Mock).mockRejectedValue(error);
+        (assistantRepository.createAssistant as jest.Mock).mockRejectedValue(
+          error,
+        );
 
         const newAssistantData = {
           name: 'New Test Assistant',
@@ -531,9 +545,9 @@ describe('LegacyStore', () => {
           type: 'local' as const,
         };
 
-        await expect(assistantStore.createAssistant(newAssistantData)).rejects.toThrow(
-          'Creation failed',
-        );
+        await expect(
+          assistantStore.createAssistant(newAssistantData),
+        ).rejects.toThrow('Creation failed');
         expect(assistantStore.assistants).not.toContain(
           expect.objectContaining({name: 'New Test Assistant'}),
         );
@@ -558,7 +572,9 @@ describe('LegacyStore', () => {
           updated_at: '2023-01-02T00:00:00Z',
         };
 
-        (assistantRepository.updateAssistant as jest.Mock).mockResolvedValue(updatedAssistant);
+        (assistantRepository.updateAssistant as jest.Mock).mockResolvedValue(
+          updatedAssistant,
+        );
 
         await assistantStore.updateAssistant(mockAssistant.id, updates);
 
@@ -571,7 +587,9 @@ describe('LegacyStore', () => {
 
       it('should handle update errors', async () => {
         const error = new Error('Update failed');
-        (assistantRepository.updateAssistant as jest.Mock).mockRejectedValue(error);
+        (assistantRepository.updateAssistant as jest.Mock).mockRejectedValue(
+          error,
+        );
 
         await expect(
           assistantStore.updateAssistant(mockAssistant.id, {name: 'Updated'}),
@@ -579,11 +597,15 @@ describe('LegacyStore', () => {
       });
 
       it('should handle case when updated assistant is not returned', async () => {
-        (assistantRepository.updateAssistant as jest.Mock).mockResolvedValue(null);
+        (assistantRepository.updateAssistant as jest.Mock).mockResolvedValue(
+          null,
+        );
 
         await expect(
           assistantStore.updateAssistant(mockAssistant.id, {name: 'Updated'}),
-        ).rejects.toThrow('Failed to update assistant - no updated assistant returned');
+        ).rejects.toThrow(
+          'Failed to update assistant - no updated assistant returned',
+        );
       });
     });
 
@@ -595,27 +617,36 @@ describe('LegacyStore', () => {
       });
 
       it('should delete a assistant successfully', async () => {
-        (assistantRepository.deleteAssistant as jest.Mock).mockResolvedValue(true);
+        (assistantRepository.deleteAssistant as jest.Mock).mockResolvedValue(
+          true,
+        );
         (imageUtils.deleteAssistantThumbnail as jest.Mock).mockResolvedValue(
           undefined,
         );
 
         await assistantStore.deleteAssistant(mockAssistant.id);
 
-        expect(assistantRepository.deleteAssistant).toHaveBeenCalledWith(mockAssistant.id);
+        expect(assistantRepository.deleteAssistant).toHaveBeenCalledWith(
+          mockAssistant.id,
+        );
         expect(assistantStore.assistants).not.toContain(mockAssistant);
       });
 
       it('should handle deletion errors gracefully', async () => {
         const error = new Error('Deletion failed');
-        (assistantRepository.deleteAssistant as jest.Mock).mockRejectedValue(error);
+        (assistantRepository.deleteAssistant as jest.Mock).mockRejectedValue(
+          error,
+        );
 
         const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
 
         // Should not throw, but should log error
         await assistantStore.deleteAssistant(mockAssistant.id);
 
-        expect(consoleSpy).toHaveBeenCalledWith('Error deleting assistant:', error);
+        expect(consoleSpy).toHaveBeenCalledWith(
+          'Error deleting assistant:',
+          error,
+        );
         expect(assistantStore.assistants).toContainEqual(mockAssistant); // Should still be there
 
         consoleSpy.mockRestore();
@@ -634,16 +665,24 @@ describe('LegacyStore', () => {
           has_more: false,
         };
 
-        (drshubService.getAssistants as jest.Mock).mockResolvedValue(mockResponse);
+        (drshubService.getAssistants as jest.Mock).mockResolvedValue(
+          mockResponse,
+        );
 
         expect(assistantStore.isLoadingDrshub).toBe(false);
         expect(assistantStore.syncState.status).toBe('idle');
 
-        const result = await assistantStore.searchDrshubAssistants({query: 'test'});
+        const result = await assistantStore.searchDrshubAssistants({
+          query: 'test',
+        });
 
-        expect(drshubService.getAssistants).toHaveBeenCalledWith({query: 'test'});
+        expect(drshubService.getAssistants).toHaveBeenCalledWith({
+          query: 'test',
+        });
         expect(result).toEqual(mockResponse);
-        expect(assistantStore.cachedDrshubAssistants).toEqual(mockResponse.assistants);
+        expect(assistantStore.cachedDrshubAssistants).toEqual(
+          mockResponse.assistants,
+        );
         expect(assistantStore.isLoadingDrshub).toBe(false);
         expect(assistantStore.syncState.status).toBe('success');
       });
@@ -782,10 +821,13 @@ describe('LegacyStore', () => {
           mockOwnership,
         );
 
-        const result = await assistantStore.checkAssistantOwnership('assistant-id');
+        const result =
+          await assistantStore.checkAssistantOwnership('assistant-id');
 
         expect(result).toEqual(mockOwnership);
-        expect(drshubService.checkAssistantOwnership).toHaveBeenCalledWith('assistant-id');
+        expect(drshubService.checkAssistantOwnership).toHaveBeenCalledWith(
+          'assistant-id',
+        );
       });
     });
 
@@ -834,7 +876,8 @@ describe('LegacyStore', () => {
           '/path/to/thumbnail.jpg',
         );
 
-        const result = await assistantStore.downloadDrshubAssistant(assistantToDownload);
+        const result =
+          await assistantStore.downloadDrshubAssistant(assistantToDownload);
 
         // Verify that the assistant was created with the provided information
         expect(assistantRepository.createAssistant).toHaveBeenCalledWith(
@@ -849,7 +892,9 @@ describe('LegacyStore', () => {
         );
 
         expect(result).toEqual(expectedLocalAssistant);
-        expect(assistantStore.assistants).toContainEqual(expectedLocalAssistant);
+        expect(assistantStore.assistants).toContainEqual(
+          expectedLocalAssistant,
+        );
       });
 
       it('should handle premium assistant ownership check before downloading', async () => {
@@ -889,9 +934,9 @@ describe('LegacyStore', () => {
           owned: false,
         });
 
-        await expect(assistantStore.downloadDrshubAssistant(premiumAssistant)).rejects.toThrow(
-          'You must own this Assistant to download it',
-        );
+        await expect(
+          assistantStore.downloadDrshubAssistant(premiumAssistant),
+        ).rejects.toThrow('You must own this Assistant to download it');
 
         // Verify ownership was checked
         expect(drshubService.checkAssistantOwnership).toHaveBeenCalledWith(
@@ -903,7 +948,9 @@ describe('LegacyStore', () => {
     describe('createLocalAssistantFromDrshub (via downloadDrshubAssistant)', () => {
       // Drive the private conversion through the public download entry point
       // and assert on the first argument of the assistantRepository.createAssistant mock.
-      const buildDrshubAssistant = (overrides: Partial<DrshubAssistant>): DrshubAssistant => ({
+      const buildDrshubAssistant = (
+        overrides: Partial<DrshubAssistant>,
+      ): DrshubAssistant => ({
         ...mockDrshubAssistant,
         id: 'conversion-test',
         ...overrides,

@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 /**
  * Character-level IPA Tokenizer for Kitten TTS
@@ -11,7 +11,7 @@
  * from the Kitten TTS TextCleaner.
  */
 
-import { buildDefaultVocab } from "./constants.js";
+import {buildDefaultVocab} from './constants.js';
 export class IPATokenizer {
   vocab = new Map();
   reverseVocab = new Map();
@@ -70,7 +70,9 @@ export class IPATokenizer {
    */
   encode(text) {
     if (!this.isInitialized) {
-      throw new Error('Tokenizer not initialized. Call loadFromData() or loadBuiltinVocab() first.');
+      throw new Error(
+        'Tokenizer not initialized. Call loadFromData() or loadBuiltinVocab() first.',
+      );
     }
 
     // Apply basic_english_tokenize: split into word/punctuation tokens, rejoin with spaces
@@ -112,7 +114,11 @@ export class IPATokenizer {
     if (!this.isInitialized) {
       throw new Error('Tokenizer not initialized');
     }
-    return tokenIds.filter(id => id !== this.boundaryTokenId).map(id => this.reverseVocab.get(id) ?? '').filter(char => char !== '').join('');
+    return tokenIds
+      .filter(id => id !== this.boundaryTokenId)
+      .map(id => this.reverseVocab.get(id) ?? '')
+      .filter(char => char !== '')
+      .join('');
   }
 
   /**

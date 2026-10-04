@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 /**
  * Dictionary loaders for the GPL-free phonemizer.
@@ -11,9 +11,9 @@
  * heap win.
  */
 
-import { loadAssetAsText } from "../utils/AssetLoader.js";
-import { JsDictSource } from "./JsDictSource.js";
-import { openNativeDict } from "./NativeDictSource.js";
+import {loadAssetAsText} from '../utils/AssetLoader.js';
+import {JsDictSource} from './JsDictSource.js';
+import {openNativeDict} from './NativeDictSource.js';
 const cache = new Map();
 
 /**
@@ -44,7 +44,9 @@ export async function loadDict(path) {
  * Strips the file:// prefix if present (native side wants a real path).
  */
 export async function loadNativeDict(path) {
-  const fsPath = path.startsWith('file://') ? path.slice('file://'.length) : path;
+  const fsPath = path.startsWith('file://')
+    ? path.slice('file://'.length)
+    : path;
   return openNativeDict(fsPath);
 }
 export function clearDictCache() {

@@ -226,7 +226,9 @@ export const mockNewAssistantData: Partial<Assistant> = {
 };
 
 // Factory function for creating custom assistants
-export const createAssistant = (overrides: Partial<Assistant> = {}): Assistant => ({
+export const createAssistant = (
+  overrides: Partial<Assistant> = {},
+): Assistant => ({
   ...mockLocalAssistant,
   ...overrides,
 });

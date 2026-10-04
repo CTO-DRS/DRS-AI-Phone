@@ -19,7 +19,9 @@ export interface AssistantGridRowData {
   items: AssistantGridItem[];
 }
 
-export const computeAssistantGridLayout = (width: number): AssistantGridLayout => {
+export const computeAssistantGridLayout = (
+  width: number,
+): AssistantGridLayout => {
   const available = width - 2 * H_PADDING;
   const fitting = Math.floor((available + GAP) / (MIN_CARD_WIDTH + GAP));
   const columns = Math.min(Math.max(fitting, MIN_COLUMNS), MAX_COLUMNS);

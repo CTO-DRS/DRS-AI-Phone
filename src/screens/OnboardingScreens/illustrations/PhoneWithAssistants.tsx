@@ -41,7 +41,9 @@ type Assistant = {
  *     hex in the file outside the inline Figma palette constants
  *     which are sourced 1:1 from the canonical file).
  */
-export const PhoneWithAssistants: React.FC<PhoneWithAssistantsProps> = ({width = 170}) => {
+export const PhoneWithAssistants: React.FC<PhoneWithAssistantsProps> = ({
+  width = 170,
+}) => {
   const theme = useTheme();
   const viewBoxW = 85;
   const viewBoxH = 143;
@@ -54,7 +56,13 @@ export const PhoneWithAssistants: React.FC<PhoneWithAssistantsProps> = ({width =
   //   [2] mid-right  = pink-peach
   //   [3] lower-left = pale blue
   //   [4] bottom     = coral / salmon
-  const assistantFills = ['#EAB06C', '#94A3A0', '#ECBFB6', '#D0DBE1', '#F1A184'];
+  const assistantFills = [
+    '#EAB06C',
+    '#94A3A0',
+    '#ECBFB6',
+    '#D0DBE1',
+    '#F1A184',
+  ];
   // Geometric centers in viewBox space. Shifted ~5 units right vs the
   // earlier port so the cluster centers in the phone interior (phone
   // mid-x ≈ 42.5) instead of skewing left.

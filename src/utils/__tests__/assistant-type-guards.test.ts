@@ -1,4 +1,8 @@
-import {isLocalAssistant, isDrshubAssistant, handleAssistantByType} from '../assistant-type-guards';
+import {
+  isLocalAssistant,
+  isDrshubAssistant,
+  handleAssistantByType,
+} from '../assistant-type-guards';
 import type {Assistant} from '../../types/assistant';
 import type {DrshubAssistant} from '../../types/drshub';
 
@@ -68,7 +72,9 @@ describe('assistant-type-guards', () => {
 
       handleAssistantByType(mockLocalAssistant, handlers);
 
-      expect(handlers.onLocalAssistant).toHaveBeenCalledWith(mockLocalAssistant);
+      expect(handlers.onLocalAssistant).toHaveBeenCalledWith(
+        mockLocalAssistant,
+      );
       expect(handlers.onDrshubAssistant).not.toHaveBeenCalled();
     });
 
@@ -80,7 +86,9 @@ describe('assistant-type-guards', () => {
 
       handleAssistantByType(mockDrshubAssistant, handlers);
 
-      expect(handlers.onDrshubAssistant).toHaveBeenCalledWith(mockDrshubAssistant);
+      expect(handlers.onDrshubAssistant).toHaveBeenCalledWith(
+        mockDrshubAssistant,
+      );
       expect(handlers.onLocalAssistant).not.toHaveBeenCalled();
     });
 
@@ -96,7 +104,10 @@ describe('assistant-type-guards', () => {
 
       handleAssistantByType(invalidAssistant, handlers);
 
-      expect(consoleSpy).toHaveBeenCalledWith('Unknown assistant type:', invalidAssistant);
+      expect(consoleSpy).toHaveBeenCalledWith(
+        'Unknown assistant type:',
+        invalidAssistant,
+      );
       expect(handlers.onLocalAssistant).not.toHaveBeenCalled();
       expect(handlers.onDrshubAssistant).not.toHaveBeenCalled();
 

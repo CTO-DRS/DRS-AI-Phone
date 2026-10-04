@@ -3,12 +3,15 @@ import {act, fireEvent, waitFor} from '@testing-library/react-native';
 
 import {render} from '../../../../jest/test-utils';
 
-import {LegacyScreen} from '../LegacyScreen';
+import {AssistantsScreen} from '../AssistantsScreen';
 import {AssistantGridRow} from '../components';
 
 import {authService, syncService} from '../../../services';
 import {assistantStore} from '../../../store';
-import {createAssistant, createDrshubAssistant} from '../../../../jest/fixtures/assistants';
+import {
+  createAssistant,
+  createDrshubAssistant,
+} from '../../../../jest/fixtures/assistants';
 
 // Mirrors the real hook: the width change re-renders from inside the component,
 // which is what rotation does. A parent re-render cannot, since observer() memoises.
@@ -34,7 +37,7 @@ jest.mock('react-native/Libraries/Utilities/useWindowDimensions', () => {
   return {__esModule: true, default: useMockWindowDimensions};
 });
 
-describe('LegacyScreen', () => {
+describe('AssistantsScreen', () => {
   beforeEach(() => {
     // Reset all mocks before each test
     jest.clearAllMocks();
@@ -55,7 +58,7 @@ describe('LegacyScreen', () => {
   });
 
   it('should render without crashing', () => {
-    render(<LegacyScreen />, {
+    render(<AssistantsScreen />, {
       withNavigation: true,
       withSafeArea: true,
       withBottomSheetProvider: true,
@@ -64,7 +67,7 @@ describe('LegacyScreen', () => {
     expect(true).toBe(true); // Placeholder assertion
   });
 
-  // Migration tests removed - migration is now handled by LegacyStore
+  // Migration tests removed - migration is now handled by AssistantStore
 
   it('should sync data on mount if user is authenticated and sync is needed', async () => {
     // const {authService, syncService} = require('../../services');
@@ -73,7 +76,7 @@ describe('LegacyScreen', () => {
     authService.isAuthenticated = true;
     (syncService.needsSync as jest.Mock).mockResolvedValue(true);
 
-    render(<LegacyScreen />, {
+    render(<AssistantsScreen />, {
       withNavigation: true,
       withSafeArea: true,
       withBottomSheetProvider: true,
@@ -92,7 +95,7 @@ describe('LegacyScreen', () => {
     // Set up the mock before rendering
     authService.isAuthenticated = false;
 
-    render(<LegacyScreen />, {
+    render(<AssistantsScreen />, {
       withNavigation: true,
       withSafeArea: true,
       withBottomSheetProvider: true,
@@ -115,7 +118,7 @@ describe('LegacyScreen', () => {
       new Error('Sync failed'),
     );
 
-    render(<LegacyScreen />, {
+    render(<AssistantsScreen />, {
       withNavigation: true,
       withSafeArea: true,
       withBottomSheetProvider: true,
@@ -136,8 +139,16 @@ describe('LegacyScreen', () => {
     beforeEach(() => {
       // Set up test data with different assistant types
       assistantStore.assistants = [
-        createAssistant({id: 'local-1', name: 'Local Assistant 1', source: 'local'}),
-        createAssistant({id: 'local-2', name: 'Local Assistant 2', source: 'local'}),
+        createAssistant({
+          id: 'local-1',
+          name: 'Local Assistant 1',
+          source: 'local',
+        }),
+        createAssistant({
+          id: 'local-2',
+          name: 'Local Assistant 2',
+          source: 'local',
+        }),
         createAssistant({
           id: 'video-1',
           name: 'Video Assistant',
@@ -152,7 +163,11 @@ describe('LegacyScreen', () => {
       ];
 
       assistantStore.cachedDrshubAssistants = [
-        createDrshubAssistant({id: 'hub-1', title: 'Free Hub Assistant', price_cents: 0}),
+        createDrshubAssistant({
+          id: 'hub-1',
+          title: 'Free Hub Assistant',
+          price_cents: 0,
+        }),
         createDrshubAssistant({
           id: 'hub-2',
           title: 'Premium Hub Assistant',
@@ -175,7 +190,7 @@ describe('LegacyScreen', () => {
     });
 
     it('should display all assistants when "all" filter is active', async () => {
-      const {getByText} = render(<LegacyScreen />, {
+      const {getByText} = render(<AssistantsScreen />, {
         withNavigation: true,
         withSafeArea: true,
         withBottomSheetProvider: true,
@@ -189,7 +204,7 @@ describe('LegacyScreen', () => {
     });
 
     it('should filter local assistants when "local" filter is pressed', async () => {
-      const {getByText, queryByText} = render(<LegacyScreen />, {
+      const {getByText, queryByText} = render(<AssistantsScreen />, {
         withNavigation: true,
         withSafeArea: true,
         withBottomSheetProvider: true,
@@ -215,7 +230,7 @@ describe('LegacyScreen', () => {
     });
 
     it('should filter video assistants when "video" filter is pressed', async () => {
-      const {getByText, queryByText} = render(<LegacyScreen />, {
+      const {getByText, queryByText} = render(<AssistantsScreen />, {
         withNavigation: true,
         withSafeArea: true,
         withBottomSheetProvider: true,
@@ -240,7 +255,7 @@ describe('LegacyScreen', () => {
     });
 
     it('should filter free assistants when "free" filter is pressed', async () => {
-      const {getByText, queryByText} = render(<LegacyScreen />, {
+      const {getByText, queryByText} = render(<AssistantsScreen />, {
         withNavigation: true,
         withSafeArea: true,
         withBottomSheetProvider: true,
@@ -265,11 +280,14 @@ describe('LegacyScreen', () => {
     });
 
     it('should filter premium assistants when "premium" filter is pressed', async () => {
-      const {getByText, queryByText, getByTestId} = render(<LegacyScreen />, {
-        withNavigation: true,
-        withSafeArea: true,
-        withBottomSheetProvider: true,
-      });
+      const {getByText, queryByText, getByTestId} = render(
+        <AssistantsScreen />,
+        {
+          withNavigation: true,
+          withSafeArea: true,
+          withBottomSheetProvider: true,
+        },
+      );
 
       // Wait for initial render
       await waitFor(() => {
@@ -294,7 +312,7 @@ describe('LegacyScreen', () => {
     it('should show auth bar when user is not authenticated', () => {
       authService.isAuthenticated = false;
 
-      const {getByTestId} = render(<LegacyScreen />, {
+      const {getByTestId} = render(<AssistantsScreen />, {
         withNavigation: true,
         withSafeArea: true,
         withBottomSheetProvider: true,
@@ -306,7 +324,7 @@ describe('LegacyScreen', () => {
     it('should not show auth bar when user is authenticated', () => {
       authService.isAuthenticated = true;
 
-      const {queryByTestId} = render(<LegacyScreen />, {
+      const {queryByTestId} = render(<AssistantsScreen />, {
         withNavigation: true,
         withSafeArea: true,
         withBottomSheetProvider: true,
@@ -318,7 +336,7 @@ describe('LegacyScreen', () => {
     it('should dismiss auth bar when dismiss button is pressed', async () => {
       authService.isAuthenticated = false;
 
-      const {getByTestId, queryByTestId} = render(<LegacyScreen />, {
+      const {getByTestId, queryByTestId} = render(<AssistantsScreen />, {
         withNavigation: true,
         withSafeArea: true,
         withBottomSheetProvider: true,
@@ -341,15 +359,23 @@ describe('LegacyScreen', () => {
   describe('Assistant Interactions', () => {
     beforeEach(() => {
       assistantStore.assistants = [
-        createAssistant({id: 'local-1', name: 'Local Test Assistant', source: 'local'}),
+        createAssistant({
+          id: 'local-1',
+          name: 'Local Test Assistant',
+          source: 'local',
+        }),
       ];
       assistantStore.cachedDrshubAssistants = [
-        createDrshubAssistant({id: 'hub-1', title: 'Hub Test Assistant', price_cents: 0}),
+        createDrshubAssistant({
+          id: 'hub-1',
+          title: 'Hub Test Assistant',
+          price_cents: 0,
+        }),
       ];
     });
 
     it('should open assistant sheet when local assistant is pressed', async () => {
-      const {getByText} = render(<LegacyScreen />, {
+      const {getByText} = render(<AssistantsScreen />, {
         withNavigation: true,
         withSafeArea: true,
         withBottomSheetProvider: true,
@@ -363,13 +389,13 @@ describe('LegacyScreen', () => {
       const assistantCard = getByText('Local Test Assistant');
       fireEvent.press(assistantCard);
 
-      // LegacySheet should open (we can't easily test this without mocking the sheet)
+      // AssistantSheet should open (we can't easily test this without mocking the sheet)
       // But we can verify the press handler was called without errors
       expect(assistantCard).toBeTruthy();
     });
 
     it('should open assistant detail sheet when Drshub assistant is pressed', async () => {
-      const {getByText} = render(<LegacyScreen />, {
+      const {getByText} = render(<AssistantsScreen />, {
         withNavigation: true,
         withSafeArea: true,
         withBottomSheetProvider: true,
@@ -393,24 +419,30 @@ describe('LegacyScreen', () => {
       assistantStore.assistants = [];
       assistantStore.cachedDrshubAssistants = [];
 
-      const {getByText} = render(<LegacyScreen />, {
+      const {getByText} = render(<AssistantsScreen />, {
         withNavigation: true,
         withSafeArea: true,
         withBottomSheetProvider: true,
       });
 
       await waitFor(() => {
-        expect(getByText(/No Assistants found|Create your first Assistant/i)).toBeTruthy();
+        expect(
+          getByText(/No Assistants found|Create your first Assistant/i),
+        ).toBeTruthy();
       });
     });
 
     it('should show appropriate empty state for local filter', async () => {
       assistantStore.assistants = [];
       assistantStore.cachedDrshubAssistants = [
-        createDrshubAssistant({id: 'hub-1', title: 'Hub Assistant', price_cents: 0}),
+        createDrshubAssistant({
+          id: 'hub-1',
+          title: 'Hub Assistant',
+          price_cents: 0,
+        }),
       ];
 
-      const {getByText} = render(<LegacyScreen />, {
+      const {getByText} = render(<AssistantsScreen />, {
         withNavigation: true,
         withSafeArea: true,
         withBottomSheetProvider: true,
@@ -429,10 +461,14 @@ describe('LegacyScreen', () => {
   describe('Pull to Refresh', () => {
     it('should have refresh control on FlatList', async () => {
       assistantStore.assistants = [
-        createAssistant({id: 'local-1', name: 'Test Assistant', source: 'local'}),
+        createAssistant({
+          id: 'local-1',
+          name: 'Test Assistant',
+          source: 'local',
+        }),
       ];
 
-      const {getByTestId} = render(<LegacyScreen />, {
+      const {getByTestId} = render(<AssistantsScreen />, {
         withNavigation: true,
         withSafeArea: true,
         withBottomSheetProvider: true,
@@ -449,7 +485,7 @@ describe('LegacyScreen', () => {
 
   describe('Bottom Action Bar', () => {
     it('should toggle search when search button is pressed', async () => {
-      const {getByTestId, queryByTestId} = render(<LegacyScreen />, {
+      const {getByTestId, queryByTestId} = render(<AssistantsScreen />, {
         withNavigation: true,
         withSafeArea: true,
         withBottomSheetProvider: true,
@@ -471,7 +507,7 @@ describe('LegacyScreen', () => {
     it('should show auth sheet when profile button is pressed and user is not authenticated', async () => {
       authService.isAuthenticated = false;
 
-      const {getByTestId} = render(<LegacyScreen />, {
+      const {getByTestId} = render(<AssistantsScreen />, {
         withNavigation: true,
         withSafeArea: true,
         withBottomSheetProvider: true,
@@ -488,7 +524,7 @@ describe('LegacyScreen', () => {
     it('should show profile sheet when profile button is pressed and user is authenticated', async () => {
       authService.isAuthenticated = true;
 
-      const {getByTestId} = render(<LegacyScreen />, {
+      const {getByTestId} = render(<AssistantsScreen />, {
         withNavigation: true,
         withSafeArea: true,
         withBottomSheetProvider: true,
@@ -506,13 +542,21 @@ describe('LegacyScreen', () => {
   describe('Data Loading', () => {
     it('should render without errors when data is available', async () => {
       assistantStore.assistants = [
-        createAssistant({id: 'local-1', name: 'Test Assistant', source: 'local'}),
+        createAssistant({
+          id: 'local-1',
+          name: 'Test Assistant',
+          source: 'local',
+        }),
       ];
       assistantStore.cachedDrshubAssistants = [
-        createDrshubAssistant({id: 'hub-1', title: 'Hub Assistant', price_cents: 0}),
+        createDrshubAssistant({
+          id: 'hub-1',
+          title: 'Hub Assistant',
+          price_cents: 0,
+        }),
       ];
 
-      const {getByText} = render(<LegacyScreen />, {
+      const {getByText} = render(<AssistantsScreen />, {
         withNavigation: true,
         withSafeArea: true,
         withBottomSheetProvider: true,
@@ -527,13 +571,21 @@ describe('LegacyScreen', () => {
     it('should render correctly when authenticated', async () => {
       authService.isAuthenticated = true;
       assistantStore.assistants = [
-        createAssistant({id: 'local-1', name: 'Local Assistant', source: 'local'}),
+        createAssistant({
+          id: 'local-1',
+          name: 'Local Assistant',
+          source: 'local',
+        }),
       ];
       assistantStore.userLibrary = [
-        createDrshubAssistant({id: 'lib-1', title: 'Library Assistant', price_cents: 0}),
+        createDrshubAssistant({
+          id: 'lib-1',
+          title: 'Library Assistant',
+          price_cents: 0,
+        }),
       ];
 
-      const {getByText, queryByTestId} = render(<LegacyScreen />, {
+      const {getByText, queryByTestId} = render(<AssistantsScreen />, {
         withNavigation: true,
         withSafeArea: true,
         withBottomSheetProvider: true,
@@ -550,10 +602,14 @@ describe('LegacyScreen', () => {
     it('should render correctly when not authenticated', async () => {
       authService.isAuthenticated = false;
       assistantStore.assistants = [
-        createAssistant({id: 'local-1', name: 'Local Assistant', source: 'local'}),
+        createAssistant({
+          id: 'local-1',
+          name: 'Local Assistant',
+          source: 'local',
+        }),
       ];
 
-      const {getByText, getByTestId} = render(<LegacyScreen />, {
+      const {getByText, getByTestId} = render(<AssistantsScreen />, {
         withNavigation: true,
         withSafeArea: true,
         withBottomSheetProvider: true,
@@ -574,7 +630,7 @@ describe('LegacyScreen', () => {
     );
 
     const renderScreen = () =>
-      render(<LegacyScreen />, {
+      render(<AssistantsScreen />, {
         withNavigation: true,
         withSafeArea: true,
         withBottomSheetProvider: true,
@@ -610,7 +666,11 @@ describe('LegacyScreen', () => {
       // A second section is what sends the screen down the sectioned path.
       assistantStore.assistants = fiveLocalAssistants;
       assistantStore.cachedDrshubAssistants = [
-        createDrshubAssistant({id: 'hub-1', title: 'Hub Assistant', price_cents: 0}),
+        createDrshubAssistant({
+          id: 'hub-1',
+          title: 'Hub Assistant',
+          price_cents: 0,
+        }),
       ];
       setWindowWidth(800);
 

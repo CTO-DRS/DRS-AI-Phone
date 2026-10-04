@@ -197,7 +197,7 @@
     "increaseContextReloading": "더 큰 컨텍스트로 모델을 다시 불러오는 중…",
     "increaseContextSuccess": "컨텍스트가 {{target}} 토큰으로 늘어났습니다.",
     "increaseContextFailure": "컨텍스트 크기를 늘릴 수 없습니다. 이전 설정으로 복원되었습니다.",
-    "assistantLoadHint": "이 Assistant은 현재 컨텍스트 크기보다 더 많은 공간이 필요한 편입니다.",
+    "assistantLoadHint": "이 어시스턴트은 현재 컨텍스트 크기보다 더 많은 공간이 필요한 편입니다.",
     "webSearch": {
       "searched": "검색함: {{query}}",
       "noResults": "결과 없음",
@@ -289,7 +289,7 @@
       "activateModelDescription": "모델을 선택하고 다운로드하세요. 다운로드가 완료되면 모델 옆의 불러오기 버튼을 눌러 채팅을 시작할 수 있습니다.",
       "activateModelButton": "모델 선택",
       "gettingReadyTitle": "{{name}}이 준비 중임",
-      "gettingReadyDescription": "Assistant이 채팅할 수 있게 준비되면 바로 알려드릴게요. 위쪽 배너를 탭하여 진행 상황을 확인하세요."
+      "gettingReadyDescription": "어시스턴트이 채팅할 수 있게 준비되면 바로 알려드릴게요. 위쪽 배너를 탭하여 진행 상황을 확인하세요."
     },
     "chatInput": {
       "inputPlaceholder": "메시지",
@@ -317,7 +317,7 @@
         "title": "성공",
         "message": "변경사항이 향후 모든 세션에 적용됩니다."
       },
-      "assistantSettings": "Assistant 설정",
+      "assistantSettings": "어시스턴트 설정",
       "settingsSource": "설정 소스"
     },
     "modelsResetDialog": {
@@ -338,14 +338,14 @@
     },
     "chatAssistantModelPickerSheet": {
       "modelsTab": "모델",
-      "assistantsTab": "Assistants",
-      "noAssistant": "Assistant 없음",
-      "disableAssistant": "활성화된 Assistant 해제",
+      "assistantsTab": "어시스턴트",
+      "noAssistant": "어시스턴트 없음",
+      "disableAssistant": "활성화된 어시스턴트 해제",
       "noDescription": "설명 없음",
       "assistantType": "어시스턴트",
       "roleplayType": "역할극",
       "confirmationTitle": "확인",
-      "modelSwitchMessage": "해당 Assistant에 설정된 기본 모델({{modelName}})이 현재 모델과 다릅니다. 모델을 전환하겠습니까?",
+      "modelSwitchMessage": "해당 어시스턴트에 설정된 기본 모델({{modelName}})이 현재 모델과 다릅니다. 모델을 전환하겠습니까?",
       "keepButton": "유지",
       "switchButton": "전환",
       "videoType": "비디오"
@@ -381,12 +381,12 @@
         "max": "최대"
       }
     },
-    "assistantLegacySheet": {
+    "assistantPersonaSheet": {
       "title": {
-        "create": "어시스턴트 Assistant 만들기",
-        "edit": "어시스턴트 Assistant 편집"
+        "create": "어시스턴트 만들기",
+        "edit": "어시스턴트 편집"
       },
-      "assistantName": "Assistant 이름",
+      "assistantName": "어시스턴트 이름",
       "assistantNamePlaceholder": "이름",
       "defaultModel": "기본 모델",
       "defaultModelPlaceholder": "모델 선택",
@@ -396,14 +396,14 @@
       },
       "create": "만들기"
     },
-    "roleplayLegacySheet": {
-      "assistantName": "Assistant 이름",
+    "roleplayPersonaSheet": {
+      "assistantName": "어시스턴트 이름",
       "assistantNamePlaceholder": "이름",
       "defaultModel": "기본 모델",
       "defaultModelPlaceholder": "모델 선택",
       "title": {
-        "create": "역할극 Assistant 만들기",
-        "edit": "역할극 Assistant 편집"
+        "create": "역할극 어시스턴트 만들기",
+        "edit": "역할극 어시스턴트 편집"
       },
       "descriptionSection": "설명",
       "world": "세계관",
@@ -470,7 +470,7 @@
       "menuItems": {
         "chat": "채팅",
         "models": "모델",
-        "assistants": "Assistant",
+        "assistants": "어시스턴트",
         "benchmark": "벤치마크",
         "settings": "설정",
         "appInfo": "앱 정보",
@@ -511,7 +511,12 @@
         "total": "총 용량: ",
         "usage": "점유율: "
       },
-      "byteSizes": ["바이트", "KB", "MB", "GB"]
+      "byteSizes": [
+        "바이트",
+        "KB",
+        "MB",
+        "GB"
+      ]
     },
     "exportUtils": {
       "fileSaved": "파일 저장됨",
@@ -601,10 +606,10 @@
       "pleaseCorrect": "아래 내용을 수정해 주세요:",
       "ok": "확인",
       "error": "오류",
-      "failedToSave": "Assistant 설정 저장에 실패했습니다.",
+      "failedToSave": "어시스턴트 설정 저장에 실패했습니다.",
       "resetToGlobal": "전체 기본값으로 재설정",
       "resetToSystem": "시스템 기본값으로 초기화",
-      "clearAssistantSettings": "Assistant 설정 지우기",
+      "clearAssistantSettings": "어시스턴트 설정 지우기",
       "customSettingsFor": "{{assistantName}} 개별 설정",
       "inheritedSettingsFor": "{{assistantName}}에 적용된 기본 설정"
     },
@@ -665,12 +670,12 @@
     },
     "assistantSheet": {
       "title": {
-        "edit": "Assistant 수정",
-        "newAssistant": "새 Assistant 만들기",
-        "newVideoAssistant": "새 Video Assistant 만들기"
+        "edit": "어시스턴트 수정",
+        "newAssistant": "새 어시스턴트 만들기",
+        "newVideoAssistant": "새 Video 어시스턴트 만들기"
       },
       "description": "설명",
-      "descriptionPlaceholder": "Assistant에 대한 간단한 설명을 입력해 주세요",
+      "descriptionPlaceholder": "어시스턴트에 대한 간단한 설명을 입력해 주세요",
       "parameters": "파라미터",
       "generationSettings": "생성 설정",
       "configureGenerationSettings": "생성 설정 구성",
@@ -698,19 +703,19 @@
         "removePromptLabel": "프롬프트 제거",
         "sectionLabel": "인사말",
         "textLabel": "환영 메시지",
-        "textPlaceholder": "채팅 시작 전 이 Assistant이 뭐라고 말해야 할까요?",
+        "textPlaceholder": "채팅 시작 전 이 어시스턴트이 뭐라고 말해야 할까요?",
         "suggestedPromptsLabel": "제안된 프롬프트",
         "addPromptButton": "프롬프트 추가",
         "promptPlaceholder": "칩에 대한 짧은 프롬프트"
       }
     },
-    "lookieLegacySheet": {
+    "lookiePersonaSheet": {
       "title": {
-        "create": "Lookie Assistant 만들기",
-        "edit": "Lookie Assistant 수정"
+        "create": "Lookie 어시스턴트 만들기",
+        "edit": "Lookie 어시스턴트 수정"
       },
-      "assistantName": "Assistant 이름",
-      "assistantNamePlaceholder": "Lookie Assistant의 이름을 입력하세요",
+      "assistantName": "어시스턴트 이름",
+      "assistantNamePlaceholder": "Lookie 어시스턴트의 이름을 입력하세요",
       "visionModel": "시각 모델",
       "visionModelPlaceholder": "시각 모델을 선택하세요",
       "requiredModelsSection": "필요한 모델",
@@ -728,10 +733,10 @@
       }
     },
     "assistantHeaderRight": {
-      "exportAllAssistants": "모든 Assistant 내보내기",
-      "importAssistants": "Assistant 가져오기",
-      "importSuccess": "{{count}}개의 Assistant을 성공적으로 가져왔습니다.",
-      "importError": "Assistant을 가져오지 못했습니다. 파일 형식을 확인해 주세요."
+      "exportAllAssistants": "모든 어시스턴트 내보내기",
+      "importAssistants": "어시스턴트 가져오기",
+      "importSuccess": "{{count}}개의 어시스턴트을 성공적으로 가져왔습니다.",
+      "importError": "어시스턴트을 가져오지 못했습니다. 파일 형식을 확인해 주세요."
     },
     "bubble": {
       "msPerToken": "{{value}}ms/토큰",
@@ -1054,7 +1059,7 @@
   "screenTitles": {
     "chat": "채팅",
     "models": "모델",
-    "assistants": "Assistants (실험 기능)",
+    "assistants": "어시스턴트 (실험 기능)",
     "benchmark": "벤치마크",
     "settings": "설정",
     "appInfo": "앱 정보",
@@ -1141,10 +1146,10 @@
     "useHfTokenDescription": "API 요청 시 토큰을 사용하려면 활성화하세요. 토큰으로 인해 인증 문제가 발생하는 경우 비활성화하세요.",
     "cacheStorageTitle": "캐시 및 저장공간",
     "clearAssistantCaches": "단축어 캐시 삭제",
-    "clearAssistantCachesDescription": "단축어 실행 속도를 높이는 데 사용된 캐시 데이터를 삭제합니다. 이 작업은 Assistants 또는 채팅 기록에는 영향을 주지 않습니다.",
+    "clearAssistantCachesDescription": "단축어 실행 속도를 높이는 데 사용된 캐시 데이터를 삭제합니다. 이 작업은 어시스턴트 또는 채팅 기록에는 영향을 주지 않습니다.",
     "clearCachesButton": "캐시 삭제",
     "clearCachesConfirmTitle": "단축어 캐시를 삭제하시겠습니까?",
-    "clearCachesConfirmMessage": "모든 캐시된 세션 데이터({{fileCount}}개 파일, {{size}})를 삭제합니다. 삭제 후 처음 실행할 때 단축어가 느려질 수 있습니다. Assistants 또는 채팅 기록에는 영향을 주지 않습니다.",
+    "clearCachesConfirmMessage": "모든 캐시된 세션 데이터({{fileCount}}개 파일, {{size}})를 삭제합니다. 삭제 후 처음 실행할 때 단축어가 느려질 수 있습니다. 어시스턴트 또는 채팅 기록에는 영향을 주지 않습니다.",
     "clearCachesSuccess": "캐시 파일 {{count}}개를 성공적으로 삭제했습니다.",
     "clearCachesError": "캐시를 삭제하지 못했습니다. 다시 시도해 주세요.",
     "noCachesToClear": "삭제할 캐시가 없습니다.",
@@ -1193,7 +1198,7 @@
     "serverTypeHelp": "자동으로 감지된 설정입니다. 틀린 부분이 있다면 변경해 주세요.",
     "internetSearch": {
       "title": "인터넷 검색",
-      "description": "Assistant이 자체 도구로 웹을 검색할 수 있도록 해보세요. 본인의 API 키만 가져오시면 됩니다 — DRS AI은 사용자의 키를 저장하거나 쿼리를 라우팅하지 않습니다.",
+      "description": "어시스턴트이 자체 도구로 웹을 검색할 수 있도록 해보세요. 본인의 API 키만 가져오시면 됩니다 — DRS AI은 사용자의 키를 저장하거나 쿼리를 라우팅하지 않습니다.",
       "providerLabel": "검색 제공자",
       "providerGated": "출시 예정",
       "keyLabel": "API 키",
@@ -1209,7 +1214,7 @@
       "resultCountLabel": "검색당 결과 수",
       "resultCountDescription": "결과가 적을수록 모델의 컨텍스트에 더 많은 공간이 유지됩니다.",
       "consentTitle": "검색어는 기기 외부로 전송됩니다",
-      "consentDescription": "Assistant이 웹을 검색하면 여러분의 검색어가 인터넷을 통해 선택한 제공자로 전송돼요. Assistant이 페이지를 읽을 때, 선택한 제공자에 자체 리더가 없으면 URL과 페이지 내용이 대신 기본 리더 서비스(r.jina.ai)로 전송될 수 있어요. 키와 검색어는 절대 DRS AI로 전송되지 않아요.",
+      "consentDescription": "어시스턴트이 웹을 검색하면 여러분의 검색어가 인터넷을 통해 선택한 제공자로 전송돼요. 어시스턴트이 페이지를 읽을 때, 선택한 제공자에 자체 리더가 없으면 URL과 페이지 내용이 대신 기본 리더 서비스(r.jina.ai)로 전송될 수 있어요. 키와 검색어는 절대 DRS AI로 전송되지 않아요.",
       "consentAccept": "확인했습니다",
       "consentRequired": "키를 설정하고 검색을 활성화하려면 위 고지에 동의해 주세요.",
       "consentGivenTitle": "웹 검색이 활성화됨",
@@ -1249,9 +1254,9 @@
   },
   "assistantsScreen": {
     "sectionTitles": {
-      "myAssistantsLocal": "내 Assistant (로컬)",
+      "myAssistantsLocal": "내 어시스턴트 (로컬)",
       "myLibrary": "내 라이브러리 (hub.drsai.app)",
-      "discoverAssistants": "Assistants 둘러보기 (hub.drsai.app)"
+      "discoverAssistants": "어시스턴트 둘러보기 (hub.drsai.app)"
     },
     "systemPrompt": "시스템 프롬프트",
     "videoAnalysis": "비디오 분석",
@@ -1266,26 +1271,26 @@
     "prompt": "프롬프트",
     "assistant": "어시스턴트",
     "video": "비디오",
-    "deleteAssistant": "Assistant 삭제",
-    "deleteAssistantMessage": "이 Assistant을 삭제하시겠습니까?",
+    "deleteAssistant": "어시스턴트 삭제",
+    "deleteAssistantMessage": "이 어시스턴트을 삭제하시겠습니까?",
     "missingModel": "모델 없음",
-    "missingModelMessage": "이 Assistant의 기본 모델 \"{{modelName}}\"은(는) 사용할 수 없습니다. 편집 시트에서 다운로드하시거나 다른 모델을 선택해 주세요.",
+    "missingModelMessage": "이 어시스턴트의 기본 모델 \"{{modelName}}\"은(는) 사용할 수 없습니다. 편집 시트에서 다운로드하시거나 다른 모델을 선택해 주세요.",
     "search": "검색",
     "profile": "프로필",
     "signIn": "로그인",
-    "addAssistant": "Assistant 만들기",
+    "addAssistant": "어시스턴트 만들기",
     "signInToAccessLibrary": "로그인하여 hub.drsai.app에서 귀하의 라이브러리에 접근하세요",
     "signOut": "로그아웃",
     "signOutConfirmation": "로그아웃 하시겠습니까?",
     "signOutError": "로그아웃에 실패했습니다. 다시 시도해 주세요.",
     "account": "계정",
     "signInToDrshub": "Drshub에 로그인하기",
-    "signInDescription": "라이브러리에 접근하고, 비공개 Assistants를 생성하며, 기기 간에 동기화하세요",
-    "searchAllAssistants": "모든 Assistants 검색...",
+    "signInDescription": "라이브러리에 접근하고, 비공개 어시스턴트를 생성하며, 기기 간에 동기화하세요",
+    "searchAllAssistants": "모든 어시스턴트 검색...",
     "deleteAssistantConfirmation": "\"{{assistantName}}\"을(를) 삭제하시겠습니까?",
     "filters": {
       "all": "전체",
-      "myAssistants": "내 Assistant",
+      "myAssistants": "내 어시스턴트",
       "local": "로컬",
       "video": "비디오",
       "free": "무료",
@@ -1298,8 +1303,8 @@
       "download": "다운로드",
       "getFree": "무료로 얻기"
     },
-    "premiumAssistantDescription": "Drshub.ai 커뮤니티에서 제작된 프리미엄 Assistant",
-    "premiumInfoText": "Drshub.ai를 방문하여 더 많은 Assistant을 찾아보세요",
+    "premiumAssistantDescription": "Drshub.ai 커뮤니티에서 제작된 프리미엄 어시스턴트",
+    "premiumInfoText": "Drshub.ai를 방문하여 더 많은 어시스턴트을 찾아보세요",
     "sortOptions": {
       "newest": "최신순",
       "oldest": "오래된순",
@@ -1319,18 +1324,18 @@
       "systemPrompt": "시스템 프롬프트",
       "downloaded": "다운로드됨",
       "success": "성공",
-      "assistantAddedToCollection": "Assistant이 귀하의 컬렉션에 추가되었습니다!",
+      "assistantAddedToCollection": "어시스턴트이 귀하의 컬렉션에 추가되었습니다!",
       "error": "오류",
-      "failedToLoadDetails": "Assistant 세부정보 로드에 실패함",
-      "failedToDownload": "Assistant 다운로드 실패",
-      "premiumAssistantMessage": "이 Assistant은 프리미엄입니다.\n• 이미 Drshub 계정으로 잠금을 해제하셨다면, 간단히 로그인하여 접근할 수 있습니다.\n• 아직 잠금 해제하지 않으셨나요? hub.drsai.app 앱을 방문하여 자세히 알아보세요.",
+      "failedToLoadDetails": "어시스턴트 세부정보 로드에 실패함",
+      "failedToDownload": "어시스턴트 다운로드 실패",
+      "premiumAssistantMessage": "이 어시스턴트은 프리미엄입니다.\n• 이미 Drshub 계정으로 잠금을 해제하셨다면, 간단히 로그인하여 접근할 수 있습니다.\n• 아직 잠금 해제하지 않으셨나요? hub.drsai.app 앱을 방문하여 자세히 알아보세요.",
       "notAvailable": "비어있음",
       "buyOnDrshub": "Drshub에서 구매하기",
       "finalizingPurchase": "구매를 마무리하는 중…",
       "processingPurchase": "처리 중 — 곧 잠금이 해제됩니다.",
       "checkoutSessionExpired": "세션이 만료되었습니다. 계속하려면 다시 로그인해 주세요.",
       "signInAgain": "다시 로그인하기",
-      "assistantNotAvailable": "이 Assistant은 현재 구매할 수 없습니다.",
+      "assistantNotAvailable": "이 어시스턴트은 현재 구매할 수 없습니다.",
       "checkoutFailed": "문제가 발생했습니다. 다시 시도해 주세요."
     }
   },
@@ -1353,7 +1358,7 @@
       "experimentalNotice": "이 기능은 실험적 기능입니다. 정확도는 선택한 모델에 따라 다를 수 있으며, 기기 사양에 따라 속도에 차이가 있을 수 있습니다. 또한 일부 모델은 작동하지 않을 수 있습니다.",
       "howToUse": "사용 방법:",
       "step1": "• 분석 방향을 설정하려면 프롬프트를 수정하세요. (선택 사항)",
-      "step4": "• 일반적인 텍스트 기반의 대화를 원하시면 다른 Assistant로 전환해 보세요."
+      "step4": "• 일반적인 텍스트 기반의 대화를 원하시면 다른 어시스턴트로 전환해 보세요."
     },
     "flip": "회전",
     "analyzing": "비디오 분석 중...",
@@ -1493,15 +1498,15 @@
       "brand": "DRS AI"
     },
     "screen1": {
-      "title": "당신의 Assistant을 만나보세요.",
-      "titleAccent": "Assistant.",
+      "title": "당신의 어시스턴트을 만나보세요.",
+      "titleAccent": "어시스턴트.",
       "body": "당신의 휴대폰 안에 사는 똑똑한 작은 친구들.\n설정을 시작해 보세요 - 시간이 잠시 걸립니다.",
       "cta": "둘러볼게요",
       "eyebrow": "DRS AI에 오신 걸 환영해요"
     },
     "screen2": {
       "title": "언제나,\n어디서나.",
-      "body": "Assistant은 여러분의 휴대폰 안에 살아요.\n인터넷도, 신호도 필요 없어요 - 비행기 안에서도, 오지에서도, 외딴 마을에서도 작동해요.",
+      "body": "어시스턴트은 여러분의 휴대폰 안에 살아요.\n인터넷도, 신호도 필요 없어요 - 비행기 안에서도, 오지에서도, 외딴 마을에서도 작동해요.",
       "highlight": "인터넷도, 신호도 필요 없어요",
       "cta": "다음",
       "eyebrow": "기본 아이디어",
@@ -1510,7 +1515,7 @@
     "screen3": {
       "title": "작지만,\n온전히 내 것.",
       "titleAccent": "작지만,",
-      "body": "휴대폰 속 Assistant은 빠르고 프라이버시를 지켜줘요 - 다만 클라우드 AI보다는 가벼워요. 모든 걸 아는 신탁이 아니라, 주머니 속 동반자라고 생각하면 돼요.",
+      "body": "휴대폰 속 어시스턴트은 빠르고 프라이버시를 지켜줘요 - 다만 클라우드 AI보다는 가벼워요. 모든 걸 아는 신탁이 아니라, 주머니 속 동반자라고 생각하면 돼요.",
       "highlight": "빠르고 프라이버시를 지켜줘요",
       "cta": "알겠어요",
       "eyebrow": "참고하세요"
@@ -1524,8 +1529,8 @@
       "eyebrow": "프라이버시 약속"
     },
     "screen5": {
-      "title": "Assistant을 어디에 쓰고 싶나요?",
-      "body": "이야기 나누고 싶은 주제를 골라 주세요 - 여러분의 휴대폰에 맞는 Assistant을 찾아드릴게요.",
+      "title": "어시스턴트을 어디에 쓰고 싶나요?",
+      "body": "이야기 나누고 싶은 주제를 골라 주세요 - 여러분의 휴대폰에 맞는 어시스턴트을 찾아드릴게요.",
       "topic": {
         "smartchat": "스마트 채팅",
         "coding": "코딩",
@@ -1540,7 +1545,7 @@
         "education": "학습, 설명, 퀴즈",
         "roleplay": "캐릭터, 시나리오",
         "creative_writing": "이야기, 아이디어, 초안",
-        "else": "나중에 앱에서 모든 Assistant을 둘러보세요"
+        "else": "나중에 앱에서 모든 어시스턴트을 둘러보세요"
       }
     },
     "screen6": {
@@ -1559,7 +1564,7 @@
       "subtitleTemplate": "{{name}}은(는) 휴대폰에서 작은 AI 모델로 생각해요 - 잘 맞는 모델을 골라 주세요.",
       "assistant": {
         "pip": {
-          "body": "여러분에게 딱 맞는 Assistant을 찾았어요 - 친근한 일상 동반자예요. 대부분의 일을 똑똑하게 처리하면서도, 어떤 휴대폰에서나 가볍게 돌아가요."
+          "body": "여러분에게 딱 맞는 어시스턴트을 찾았어요 - 친근한 일상 동반자예요. 대부분의 일을 똑똑하게 처리하면서도, 어떤 휴대폰에서나 가볍게 돌아가요."
         },
         "codie": {
           "body": "Codie를 소개할게요 — 휴대폰 안의 페어 프로그래머예요. 코드를 읽고, 코드를 쓰고, 까다로운 부분을 설명해 줘요. 그 모든 일이 휴대폰을 벗어나지 않아요."

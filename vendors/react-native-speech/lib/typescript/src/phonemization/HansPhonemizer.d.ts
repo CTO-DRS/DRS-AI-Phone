@@ -9,17 +9,17 @@
  *   5. hans00/phonemize G2P fallback for OOV, with stress relocation
  *   6. Per-word destress keyed by English spelling
  */
-import { type IPhonemizer } from '../engines/kokoro/Phonemizer';
-import type { DictSource } from './DictSource';
+import {type IPhonemizer} from '../engines/kokoro/Phonemizer';
+import type {DictSource} from './DictSource';
 export interface HansPhonemizerOptions {
-    dict: DictSource;
-    /** Optional post-processing (e.g. Kokoro IPA normalization) */
-    postProcess?: (phonemes: string, language: string) => string;
+  dict: DictSource;
+  /** Optional post-processing (e.g. Kokoro IPA normalization) */
+  postProcess?: (phonemes: string, language: string) => string;
 }
 export declare class HansPhonemizer implements IPhonemizer {
-    private readonly dict;
-    private readonly postProcess?;
-    constructor(options: HansPhonemizerOptions);
-    phonemize(text: string, language: string): Promise<string>;
+  private readonly dict;
+  private readonly postProcess?;
+  constructor(options: HansPhonemizerOptions);
+  phonemize(text: string, language: string): Promise<string>;
 }
 //# sourceMappingURL=HansPhonemizer.d.ts.map

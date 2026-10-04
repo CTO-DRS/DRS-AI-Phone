@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 /**
  * StreamingChunker — incremental sentence-aware text splitter for
@@ -146,7 +146,7 @@ export class StreamingChunker {
     const chunk = {
       text,
       startIndex: this.absoluteOffset,
-      endIndex: this.absoluteOffset + end
+      endIndex: this.absoluteOffset + end,
     };
     this.buffer = this.buffer.slice(end);
     this.absoluteOffset += end;
@@ -164,7 +164,7 @@ export class StreamingChunker {
     const chunk = {
       text: this.buffer,
       startIndex: this.absoluteOffset,
-      endIndex: this.absoluteOffset + this.buffer.length
+      endIndex: this.absoluteOffset + this.buffer.length,
     };
     this.absoluteOffset += this.buffer.length;
     this.buffer = '';

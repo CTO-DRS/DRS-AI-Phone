@@ -121,10 +121,13 @@ class CheckoutFlowStore {
     const cancelUrl = `${DRSHUB_API_BASE_URL}/app-return/checkout/cancel`;
 
     try {
-      const session = await drshubApiService.createCheckoutSession(assistantId, {
-        successUrl,
-        cancelUrl,
-      });
+      const session = await drshubApiService.createCheckoutSession(
+        assistantId,
+        {
+          successUrl,
+          cancelUrl,
+        },
+      );
       if (this.epoch !== myEpoch) {
         return;
       }
@@ -180,7 +183,11 @@ class CheckoutFlowStore {
         return;
       }
       this.setStatus('browser_open');
-      await this.openAuthAndHandle(authSession, assistantId, session.checkout_url);
+      await this.openAuthAndHandle(
+        authSession,
+        assistantId,
+        session.checkout_url,
+      );
     } catch (error) {
       if (this.epoch !== myEpoch) {
         return;
@@ -246,7 +253,11 @@ class CheckoutFlowStore {
   // Drive the flow from a captured callback. Ignored when it targets a
   // stale/closed flow. Success runs the ownership reconcile; cancel is silent.
   onReturn(assistantId: string | null, kind: 'success' | 'cancel') {
-    if (this.status === 'idle' || !this.assistantId || this.assistantId !== assistantId) {
+    if (
+      this.status === 'idle' ||
+      !this.assistantId ||
+      this.assistantId !== assistantId
+    ) {
       return;
     }
     if (kind === 'cancel') {
@@ -272,7 +283,8 @@ class CheckoutFlowStore {
         return;
       }
       try {
-        const {owned} = await drshubService.checkAssistantOwnership(assistantId);
+        const {owned} =
+          await drshubService.checkAssistantOwnership(assistantId);
         if (this.epoch !== myEpoch) {
           return;
         }

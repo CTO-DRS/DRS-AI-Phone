@@ -1382,7 +1382,7 @@ export const SettingsScreen: React.FC = observer(() => {
               <Card.Title title={l10n.settings.cacheStorageTitle} />
               <Card.Content>
                 <View style={styles.settingItemContainer}>
-                  {/* Clear Shortcuts Caches */}
+                  {/* Clear Assistant Caches */}
                   <View style={styles.switchContainer}>
                     <View style={styles.textContainer}>
                       <Text variant="titleMedium" style={styles.textLabel}>

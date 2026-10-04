@@ -57,7 +57,9 @@ export const DownloadBanner: React.FC = observer(() => {
   );
   const subject = assistant ? assistant.name : visible.model.name;
   const title = (
-    assistant ? l10n.downloadBanner.titleByAssistant : l10n.downloadBanner.titleByModel
+    assistant
+      ? l10n.downloadBanner.titleByAssistant
+      : l10n.downloadBanner.titleByModel
   ).replace('{{name}}', subject);
   const eta = visible.etaLabel || formatSize(visible.bytesTotal);
   const clamped = Math.max(0, Math.min(100, visible.progress));
@@ -84,7 +86,9 @@ export const DownloadBanner: React.FC = observer(() => {
           importantForAccessibility="no-hide-descendants"
           style={[
             styles.avatar,
-            assistant?.color?.[0] ? {backgroundColor: assistant.color[0]} : null,
+            assistant?.color?.[0]
+              ? {backgroundColor: assistant.color[0]}
+              : null,
           ]}
         />
         <View style={styles.content}>

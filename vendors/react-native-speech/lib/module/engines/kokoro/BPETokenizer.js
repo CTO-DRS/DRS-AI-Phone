@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 /**
  * Character-level Tokenizer for Kokoro TTS
@@ -21,7 +21,9 @@ export class BPETokenizer {
    * Load vocabulary from JSON objects
    * Note: Kokoro doesn't use BPE merges - it's character-level tokenization
    */
-  async loadFromData(vocabData, _mergesData // Ignored - Kokoro doesn't use merges
+  async loadFromData(
+    vocabData,
+    _mergesData, // Ignored - Kokoro doesn't use merges
   ) {
     // Load vocabulary
     for (const [token, id] of Object.entries(vocabData)) {
@@ -78,8 +80,10 @@ export class BPETokenizer {
     if (!this.isInitialized) {
       throw new Error('Tokenizer not initialized');
     }
-    const chars = tokenIds.filter(id => id !== this.boundaryTokenId) // Skip boundary tokens
-    .map(id => this.reverseVocab.get(id) ?? '').filter(char => char !== '');
+    const chars = tokenIds
+      .filter(id => id !== this.boundaryTokenId) // Skip boundary tokens
+      .map(id => this.reverseVocab.get(id) ?? '')
+      .filter(char => char !== '');
     return chars.join('');
   }
 
@@ -95,7 +99,7 @@ export class BPETokenizer {
       // No UNK - invalid chars are dropped
       bosTokenId: this.boundaryTokenId,
       eosTokenId: this.boundaryTokenId,
-      padTokenId: this.boundaryTokenId
+      padTokenId: this.boundaryTokenId,
     };
   }
 

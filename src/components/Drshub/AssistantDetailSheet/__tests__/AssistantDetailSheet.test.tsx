@@ -66,13 +66,17 @@ describe('AssistantDetailSheet', () => {
     // Clear the assistants array in the mock store
     assistantStore.assistants = [];
     // Reset drshubService mocks
-    (drshubService.getAssistant as jest.Mock).mockResolvedValue(mockDrshubAssistant);
-    // Ensure isDrshubAssistantDownloaded returns false by default
-    (assistantStore.isDrshubAssistantDownloaded as jest.Mock).mockImplementation(
-      () => false,
+    (drshubService.getAssistant as jest.Mock).mockResolvedValue(
+      mockDrshubAssistant,
     );
+    // Ensure isDrshubAssistantDownloaded returns false by default
+    (
+      assistantStore.isDrshubAssistantDownloaded as jest.Mock
+    ).mockImplementation(() => false);
     // Reset downloadDrshubAssistant to resolve successfully
-    (assistantStore.downloadDrshubAssistant as jest.Mock).mockResolvedValue(undefined);
+    (assistantStore.downloadDrshubAssistant as jest.Mock).mockResolvedValue(
+      undefined,
+    );
     // Reset isCheckoutEligible to false (default ineligible)
     (assistantStore as any).isCheckoutEligible = false;
     // Default to logged-out; authenticated tests opt in explicitly.
@@ -179,7 +183,9 @@ describe('AssistantDetailSheet', () => {
       render(<AssistantDetailSheet {...defaultProps} />);
 
       await waitFor(() => {
-        expect(drshubService.getAssistant).toHaveBeenCalledWith(mockDrshubAssistant.id);
+        expect(drshubService.getAssistant).toHaveBeenCalledWith(
+          mockDrshubAssistant.id,
+        );
       });
     });
 
@@ -197,7 +203,9 @@ describe('AssistantDetailSheet', () => {
 
     it('handles fetch error gracefully and falls back to basic assistant', async () => {
       const fetchError = new Error('Network error');
-      (drshubService.getAssistant as jest.Mock).mockRejectedValueOnce(fetchError);
+      (drshubService.getAssistant as jest.Mock).mockRejectedValueOnce(
+        fetchError,
+      );
 
       const {getByText} = render(<AssistantDetailSheet {...defaultProps} />);
 
@@ -232,7 +240,9 @@ describe('AssistantDetailSheet', () => {
 
       // Verify download was called
       await waitFor(() => {
-        expect(assistantStore.downloadDrshubAssistant).toHaveBeenCalledWith(mockDrshubAssistant);
+        expect(assistantStore.downloadDrshubAssistant).toHaveBeenCalledWith(
+          mockDrshubAssistant,
+        );
       });
 
       // Verify success alert was shown
@@ -244,7 +254,9 @@ describe('AssistantDetailSheet', () => {
     });
 
     it('shows downloaded state when assistant is already downloaded', async () => {
-      (assistantStore.isDrshubAssistantDownloaded as jest.Mock).mockReturnValue(true);
+      (assistantStore.isDrshubAssistantDownloaded as jest.Mock).mockReturnValue(
+        true,
+      );
 
       const {getByTestId} = render(<AssistantDetailSheet {...defaultProps} />);
 
@@ -287,7 +299,10 @@ describe('AssistantDetailSheet', () => {
       );
 
       const {getByTestId} = render(
-        <AssistantDetailSheet {...defaultProps} assistant={mockPremiumDrshubAssistant} />,
+        <AssistantDetailSheet
+          {...defaultProps}
+          assistant={mockPremiumDrshubAssistant}
+        />,
       );
 
       await waitFor(() => {
@@ -297,7 +312,10 @@ describe('AssistantDetailSheet', () => {
 
     it('does not show download button for unowned premium assistants', async () => {
       const {queryByText} = render(
-        <AssistantDetailSheet {...defaultProps} assistant={mockPremiumDrshubAssistant} />,
+        <AssistantDetailSheet
+          {...defaultProps}
+          assistant={mockPremiumDrshubAssistant}
+        />,
       );
 
       await waitFor(() => {
@@ -308,7 +326,10 @@ describe('AssistantDetailSheet', () => {
 
     it('shows informational text for unowned premium assistants', async () => {
       const {getByTestId} = render(
-        <AssistantDetailSheet {...defaultProps} assistant={mockPremiumDrshubAssistant} />,
+        <AssistantDetailSheet
+          {...defaultProps}
+          assistant={mockPremiumDrshubAssistant}
+        />,
       );
 
       await waitFor(() => {
@@ -318,7 +339,10 @@ describe('AssistantDetailSheet', () => {
 
     it('hides system prompt for unowned premium assistants', async () => {
       const {queryByText} = render(
-        <AssistantDetailSheet {...defaultProps} assistant={mockPremiumDrshubAssistant} />,
+        <AssistantDetailSheet
+          {...defaultProps}
+          assistant={mockPremiumDrshubAssistant}
+        />,
       );
 
       await waitFor(() => {
@@ -330,7 +354,10 @@ describe('AssistantDetailSheet', () => {
 
     it('shows premium assistant message for unowned premium assistants', async () => {
       const {getByTestId} = render(
-        <AssistantDetailSheet {...defaultProps} assistant={mockPremiumDrshubAssistant} />,
+        <AssistantDetailSheet
+          {...defaultProps}
+          assistant={mockPremiumDrshubAssistant}
+        />,
       );
 
       await waitFor(() => {
@@ -349,7 +376,10 @@ describe('AssistantDetailSheet', () => {
 
     it('shows download button for owned premium assistants', async () => {
       const {getByText} = render(
-        <AssistantDetailSheet {...defaultProps} assistant={mockOwnedPremiumAssistant} />,
+        <AssistantDetailSheet
+          {...defaultProps}
+          assistant={mockOwnedPremiumAssistant}
+        />,
       );
 
       await waitFor(() => {
@@ -359,7 +389,10 @@ describe('AssistantDetailSheet', () => {
 
     it('downloads owned premium assistant when download button is pressed', async () => {
       const {getByTestId} = render(
-        <AssistantDetailSheet {...defaultProps} assistant={mockOwnedPremiumAssistant} />,
+        <AssistantDetailSheet
+          {...defaultProps}
+          assistant={mockOwnedPremiumAssistant}
+        />,
       );
 
       // Wait for component to render with the button
@@ -381,7 +414,10 @@ describe('AssistantDetailSheet', () => {
 
     it('shows system prompt for owned premium assistants', async () => {
       const {getByText} = render(
-        <AssistantDetailSheet {...defaultProps} assistant={mockOwnedPremiumAssistant} />,
+        <AssistantDetailSheet
+          {...defaultProps}
+          assistant={mockOwnedPremiumAssistant}
+        />,
       );
 
       await waitFor(() => {
@@ -393,7 +429,10 @@ describe('AssistantDetailSheet', () => {
 
     it('does not show premium info text for owned premium assistants', async () => {
       const {getByTestId} = render(
-        <AssistantDetailSheet {...defaultProps} assistant={mockOwnedPremiumAssistant} />,
+        <AssistantDetailSheet
+          {...defaultProps}
+          assistant={mockOwnedPremiumAssistant}
+        />,
       );
 
       await waitFor(() => {
@@ -408,10 +447,15 @@ describe('AssistantDetailSheet', () => {
       const assistantWithoutCreator = createDrshubAssistant({
         creator: undefined,
       });
-      (drshubService.getAssistant as jest.Mock).mockResolvedValue(assistantWithoutCreator);
+      (drshubService.getAssistant as jest.Mock).mockResolvedValue(
+        assistantWithoutCreator,
+      );
 
       const {getByText} = render(
-        <AssistantDetailSheet {...defaultProps} assistant={assistantWithoutCreator} />,
+        <AssistantDetailSheet
+          {...defaultProps}
+          assistant={assistantWithoutCreator}
+        />,
       );
 
       await waitFor(() => {
@@ -428,7 +472,10 @@ describe('AssistantDetailSheet', () => {
       );
 
       const {getByText} = render(
-        <AssistantDetailSheet {...defaultProps} assistant={assistantWithoutDescription} />,
+        <AssistantDetailSheet
+          {...defaultProps}
+          assistant={assistantWithoutDescription}
+        />,
       );
 
       await waitFor(() => {
@@ -446,7 +493,10 @@ describe('AssistantDetailSheet', () => {
       );
 
       const {getByText} = render(
-        <AssistantDetailSheet {...defaultProps} assistant={assistantWithoutCategories} />,
+        <AssistantDetailSheet
+          {...defaultProps}
+          assistant={assistantWithoutCategories}
+        />,
       );
 
       await waitFor(() => {
@@ -458,10 +508,15 @@ describe('AssistantDetailSheet', () => {
       const assistantWithoutTags = createDrshubAssistant({
         tags: [],
       });
-      (drshubService.getAssistant as jest.Mock).mockResolvedValue(assistantWithoutTags);
+      (drshubService.getAssistant as jest.Mock).mockResolvedValue(
+        assistantWithoutTags,
+      );
 
       const {getByText} = render(
-        <AssistantDetailSheet {...defaultProps} assistant={assistantWithoutTags} />,
+        <AssistantDetailSheet
+          {...defaultProps}
+          assistant={assistantWithoutTags}
+        />,
       );
 
       await waitFor(() => {
@@ -561,7 +616,10 @@ describe('AssistantDetailSheet', () => {
       (assistantStore as any).isCheckoutEligible = true;
 
       const {getByTestId} = render(
-        <AssistantDetailSheet {...defaultProps} assistant={mockPremiumDrshubAssistant} />,
+        <AssistantDetailSheet
+          {...defaultProps}
+          assistant={mockPremiumDrshubAssistant}
+        />,
       );
 
       await waitFor(() => {
@@ -573,7 +631,10 @@ describe('AssistantDetailSheet', () => {
       (assistantStore as any).isCheckoutEligible = false;
 
       const {queryByTestId} = render(
-        <AssistantDetailSheet {...defaultProps} assistant={mockPremiumDrshubAssistant} />,
+        <AssistantDetailSheet
+          {...defaultProps}
+          assistant={mockPremiumDrshubAssistant}
+        />,
       );
 
       await waitFor(() => {
@@ -586,7 +647,10 @@ describe('AssistantDetailSheet', () => {
       (authService as any).isAuthenticated = true;
 
       const {getByTestId} = render(
-        <AssistantDetailSheet {...defaultProps} assistant={mockPremiumDrshubAssistant} />,
+        <AssistantDetailSheet
+          {...defaultProps}
+          assistant={mockPremiumDrshubAssistant}
+        />,
       );
 
       await waitFor(() => {
@@ -662,7 +726,10 @@ describe('AssistantDetailSheet', () => {
       );
 
       const {getByTestId, queryByTestId} = render(
-        <AssistantDetailSheet {...defaultProps} assistant={mockPremiumDrshubAssistant} />,
+        <AssistantDetailSheet
+          {...defaultProps}
+          assistant={mockPremiumDrshubAssistant}
+        />,
       );
       await waitFor(() => {
         expect(getByTestId('buy-button')).toBeTruthy();
@@ -691,7 +758,10 @@ describe('AssistantDetailSheet', () => {
       );
 
       const {queryByTestId} = render(
-        <AssistantDetailSheet {...defaultProps} assistant={mockOwnedPremiumAssistant} />,
+        <AssistantDetailSheet
+          {...defaultProps}
+          assistant={mockOwnedPremiumAssistant}
+        />,
       );
 
       await waitFor(() => {
@@ -701,10 +771,15 @@ describe('AssistantDetailSheet', () => {
 
     it('does not show buy button for free assistants', async () => {
       (assistantStore as any).isCheckoutEligible = true;
-      (drshubService.getAssistant as jest.Mock).mockResolvedValue(mockDrshubAssistant);
+      (drshubService.getAssistant as jest.Mock).mockResolvedValue(
+        mockDrshubAssistant,
+      );
 
       const {queryByTestId} = render(
-        <AssistantDetailSheet {...defaultProps} assistant={mockDrshubAssistant} />,
+        <AssistantDetailSheet
+          {...defaultProps}
+          assistant={mockDrshubAssistant}
+        />,
       );
 
       await waitFor(() => {
@@ -722,7 +797,10 @@ describe('AssistantDetailSheet', () => {
       );
 
       const {getByTestId, queryByTestId} = render(
-        <AssistantDetailSheet {...defaultProps} assistant={mockPremiumDrshubAssistant} />,
+        <AssistantDetailSheet
+          {...defaultProps}
+          assistant={mockPremiumDrshubAssistant}
+        />,
       );
 
       await waitFor(() => {
@@ -750,7 +828,10 @@ describe('AssistantDetailSheet', () => {
       );
 
       const {getByTestId, queryByTestId} = render(
-        <AssistantDetailSheet {...defaultProps} assistant={mockPremiumDrshubAssistant} />,
+        <AssistantDetailSheet
+          {...defaultProps}
+          assistant={mockPremiumDrshubAssistant}
+        />,
       );
 
       await waitFor(() => {
@@ -773,7 +854,10 @@ describe('AssistantDetailSheet', () => {
       });
 
       const {getByText} = render(
-        <AssistantDetailSheet {...defaultProps} assistant={mockPremiumDrshubAssistant} />,
+        <AssistantDetailSheet
+          {...defaultProps}
+          assistant={mockPremiumDrshubAssistant}
+        />,
       );
 
       await waitFor(() => {
@@ -789,7 +873,10 @@ describe('AssistantDetailSheet', () => {
       });
 
       const {getByText} = render(
-        <AssistantDetailSheet {...defaultProps} assistant={mockPremiumDrshubAssistant} />,
+        <AssistantDetailSheet
+          {...defaultProps}
+          assistant={mockPremiumDrshubAssistant}
+        />,
       );
 
       await waitFor(() => {
@@ -805,7 +892,10 @@ describe('AssistantDetailSheet', () => {
       });
 
       const {getByText, queryByTestId} = render(
-        <AssistantDetailSheet {...defaultProps} assistant={mockPremiumDrshubAssistant} />,
+        <AssistantDetailSheet
+          {...defaultProps}
+          assistant={mockPremiumDrshubAssistant}
+        />,
       );
 
       await waitFor(() => {
@@ -824,7 +914,10 @@ describe('AssistantDetailSheet', () => {
       });
 
       const {getByTestId} = render(
-        <AssistantDetailSheet {...defaultProps} assistant={mockPremiumDrshubAssistant} />,
+        <AssistantDetailSheet
+          {...defaultProps}
+          assistant={mockPremiumDrshubAssistant}
+        />,
       );
 
       let buyButton: ReturnType<typeof getByTestId>;
@@ -842,7 +935,10 @@ describe('AssistantDetailSheet', () => {
       (assistantStore as any).isCheckoutEligible = true;
 
       const {getByTestId} = render(
-        <AssistantDetailSheet {...defaultProps} assistant={mockPremiumDrshubAssistant} />,
+        <AssistantDetailSheet
+          {...defaultProps}
+          assistant={mockPremiumDrshubAssistant}
+        />,
       );
 
       await waitFor(() => {

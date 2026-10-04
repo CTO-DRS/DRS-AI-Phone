@@ -416,7 +416,10 @@ const transformImportAssistant = async (
     try {
       // Generate new ID for this imported assistant to avoid conflicts
       const newAssistantId = uuidv4();
-      thumbnailUrl = await saveBase64Image(assistant.thumbnail_data, newAssistantId);
+      thumbnailUrl = await saveBase64Image(
+        assistant.thumbnail_data,
+        newAssistantId,
+      );
     } catch (error) {
       console.warn('Failed to save imported thumbnail:', error);
       thumbnailUrl = undefined; // Fall back to no thumbnail
@@ -462,7 +465,9 @@ const transformImportAssistant = async (
 /**
  * Import a single assistant
  */
-const importSingleAssistant = async (assistant: ImportedAssistant): Promise<void> => {
+const importSingleAssistant = async (
+  assistant: ImportedAssistant,
+): Promise<void> => {
   try {
     const assistantData = await transformImportAssistant(assistant);
 

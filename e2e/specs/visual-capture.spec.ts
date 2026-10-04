@@ -31,7 +31,7 @@ import * as path from 'path';
 import {ChatPage} from '../pages/ChatPage';
 import {DrawerPage} from '../pages/DrawerPage';
 import {ModelsPage} from '../pages/ModelsPage';
-import {LegacySheetPage} from '../pages/LegacySheetPage';
+import {AssistantSheetPage} from '../pages/AssistantSheetPage';
 import {Selectors, byText} from '../helpers/selectors';
 import {
   downloadAndLoadModel,
@@ -62,7 +62,7 @@ interface VisualCaptureAssistant {
 const capturesJson = process.env.VISUAL_CAPTURES;
 const captures: VisualCapture[] = capturesJson ? JSON.parse(capturesJson) : [];
 
-const assistantJson = process.env.VISUAL_CAPTURE_PAL;
+const assistantJson = process.env.VISUAL_CAPTURE_ASSISTANT;
 const assistantConfig: VisualCaptureAssistant | null = assistantJson ? JSON.parse(assistantJson) : null;
 
 const models = getModelsToTest(true);
@@ -100,7 +100,7 @@ describe('Visual Capture', () => {
         assistantConfig.talents,
       );
       const drawerPage = new DrawerPage();
-      const assistantSheetPage = new LegacySheetPage();
+      const assistantSheetPage = new AssistantSheetPage();
 
       await chatPage.openDrawer();
       await drawerPage.navigateToAssistants();

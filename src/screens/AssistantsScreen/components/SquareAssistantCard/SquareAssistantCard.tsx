@@ -18,8 +18,8 @@ import {useTheme} from '../../../../hooks';
 
 import {createStyles} from './styles';
 
-import type {Assistant} from '../../../../store/LegacyStore';
-import {assistantStore} from '../../../../store/LegacyStore';
+import type {Assistant} from '../../../../store/AssistantStore';
+import {assistantStore} from '../../../../store/AssistantStore';
 import {chatSessionStore, modelStore} from '../../../../store';
 
 import type {DrshubAssistant} from '../../../../types/drshub';
@@ -32,7 +32,10 @@ import {getContrastColor} from '../../../../utils/colorUtils';
 import {getFullThumbnailUri} from '../../../../utils/imageUtils';
 import {getAssistantDisplayLabel} from '../../../../utils/drshub-display';
 import {hasVideoCapability} from '../../../../utils/assistant-capabilities';
-import {isLocalAssistant, isDrshubAssistant} from '../../../../utils/assistant-type-guards';
+import {
+  isLocalAssistant,
+  isDrshubAssistant,
+} from '../../../../utils/assistant-type-guards';
 
 interface SquareAssistantCardProps {
   assistant: DrshubAssistant | Assistant;
@@ -97,7 +100,9 @@ const getDisplayContent = (assistant: DrshubAssistant | Assistant): string => {
   }
 
   // Priority 3: Cleaned system prompt
-  const systemPrompt = isDrshubAssistant(assistant) ? assistant.system_prompt : assistant.systemPrompt;
+  const systemPrompt = isDrshubAssistant(assistant)
+    ? assistant.system_prompt
+    : assistant.systemPrompt;
 
   if (systemPrompt) {
     return cleanSystemPrompt(systemPrompt);
@@ -111,7 +116,10 @@ const getDisplayContent = (assistant: DrshubAssistant | Assistant): string => {
     }
 
     // Check if it has any advanced capabilities
-    if (assistant.capabilities && Object.keys(assistant.capabilities).length > 0) {
+    if (
+      assistant.capabilities &&
+      Object.keys(assistant.capabilities).length > 0
+    ) {
       return 'Advanced AI Assistant';
     }
 
@@ -129,7 +137,9 @@ const AssistantThumbnail: React.FC<{
   const theme = useTheme();
   const styles = createStyles(theme);
 
-  const assistantName = isDrshubAssistant(assistant) ? assistant.title : assistant.name;
+  const assistantName = isDrshubAssistant(assistant)
+    ? assistant.title
+    : assistant.name;
   const firstLetter = assistantName?.[0]?.toUpperCase() || 'P';
 
   // Get thumbnail image URL - convert relative paths to full URIs for Image component
@@ -188,18 +198,20 @@ const AssistantThumbnail: React.FC<{
 
       {/* Chat Navigation Button (only for downloaded/local assistants) */}
       {(isLocal ||
-        (isDrshubAssistant(assistant) && assistantStore.isDrshubAssistantDownloaded(assistant.id))) && (
+        (isDrshubAssistant(assistant) &&
+          assistantStore.isDrshubAssistantDownloaded(assistant.id))) && (
         <TouchableOpacity style={styles.chatButton} onPress={onChatPress}>
           {getChatNavigationIcon()}
         </TouchableOpacity>
       )}
 
       {/* Badges */}
-      {isDrshubAssistant(assistant) && assistant.protection_level === 'reveal_on_purchase' && (
-        <View style={styles.protectionBadge}>
-          <LockIcon stroke={theme.colors.onPrimary} width={10} height={10} />
-        </View>
-      )}
+      {isDrshubAssistant(assistant) &&
+        assistant.protection_level === 'reveal_on_purchase' && (
+          <View style={styles.protectionBadge}>
+            <LockIcon stroke={theme.colors.onPrimary} width={10} height={10} />
+          </View>
+        )}
     </View>
   );
 };
@@ -227,7 +239,9 @@ export const SquareAssistantCard: React.FC<SquareAssistantCardProps> = observer(
 
         if (isDrshubAssistant(assistant)) {
           // Check if this Drshub assistant is already downloaded
-          localAssistant = assistantStore.assistants.find(p => p.drshub_id === assistant.id);
+          localAssistant = assistantStore.assistants.find(
+            p => p.drshub_id === assistant.id,
+          );
 
           if (!localAssistant) {
             // Need to download first
@@ -282,7 +296,9 @@ export const SquareAssistantCard: React.FC<SquareAssistantCardProps> = observer(
           if (assistantDefaultModel) {
             await modelStore.selectModel(assistantDefaultModel);
           }
-        } else if (localAssistant.defaultModel.id !== modelStore.activeModelId) {
+        } else if (
+          localAssistant.defaultModel.id !== modelStore.activeModelId
+        ) {
           // Step 3: Different model loaded, ask user
           const assistantDefaultModel = modelStore.availableModels.find(
             m => m.id === localAssistant.defaultModel?.id,
@@ -311,7 +327,9 @@ export const SquareAssistantCard: React.FC<SquareAssistantCardProps> = observer(
 
     // Action handlers for local assistants only
     const handleDelete = () => {
-      const assistantName = isDrshubAssistant(assistant) ? assistant.title : assistant.name;
+      const assistantName = isDrshubAssistant(assistant)
+        ? assistant.title
+        : assistant.name;
       Alert.alert(
         l10n.assistantsScreen.deleteAssistant,
         t(l10n.assistantsScreen.deleteAssistantConfirmation, {assistantName}),
@@ -331,28 +349,43 @@ export const SquareAssistantCard: React.FC<SquareAssistantCardProps> = observer(
         await exportAssistant(assistant.id);
       } catch (error) {
         console.error('Error sharing assistant:', error);
-        Alert.alert('Share Error', 'Failed to share assistant. Please try again.', [
-          {text: 'OK'},
-        ]);
+        Alert.alert(
+          'Share Error',
+          'Failed to share assistant. Please try again.',
+          [{text: 'OK'}],
+        );
       }
     };
 
     // Get display label for assistant
-    const getDisplayLabel = (pal_: DrshubAssistant) => {
-      return getAssistantDisplayLabel(pal_);
+    const getDisplayLabel = (assistant_: DrshubAssistant) => {
+      return getAssistantDisplayLabel(assistant_);
     };
 
-    const assistantColors = isLocalAssistant(assistant) ? assistant.color : null;
-    const assistantName = isDrshubAssistant(assistant) ? assistant.title : assistant.name;
-    const assistantLabel = isDrshubAssistant(assistant) ? getDisplayLabel(assistant) : null;
-    const assistantRating = isDrshubAssistant(assistant) ? assistant.average_rating : assistant.rating;
+    const assistantColors = isLocalAssistant(assistant)
+      ? assistant.color
+      : null;
+    const assistantName = isDrshubAssistant(assistant)
+      ? assistant.title
+      : assistant.name;
+    const assistantLabel = isDrshubAssistant(assistant)
+      ? getDisplayLabel(assistant)
+      : null;
+    const assistantRating = isDrshubAssistant(assistant)
+      ? assistant.average_rating
+      : assistant.rating;
     const assistantReviewCount = isDrshubAssistant(assistant)
       ? assistant.review_count
       : assistant.review_count;
-    const assistantTags = isDrshubAssistant(assistant) ? assistant.tags : undefined;
-    const assistantCreator = isDrshubAssistant(assistant) ? assistant.creator : undefined;
+    const assistantTags = isDrshubAssistant(assistant)
+      ? assistant.tags
+      : undefined;
+    const assistantCreator = isDrshubAssistant(assistant)
+      ? assistant.creator
+      : undefined;
     const isProtected =
-      isDrshubAssistant(assistant) && assistant.protection_level === 'reveal_on_purchase';
+      isDrshubAssistant(assistant) &&
+      assistant.protection_level === 'reveal_on_purchase';
 
     // Create card style with optional color theming
     const cardStyle = [

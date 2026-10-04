@@ -62,7 +62,9 @@ interface AssistantEntryInput {
   sizeBytes: number;
 }
 
-const assistantEntry = (input: AssistantEntryInput): OnboardingAssistantModelEntry => ({
+const assistantEntry = (
+  input: AssistantEntryInput,
+): OnboardingAssistantModelEntry => ({
   tier: input.tier,
   recommended: input.recommended,
   repo: input.repo,
@@ -92,7 +94,7 @@ export interface OnboardingAssistantDef {
   name: string;
   /**
    * English description copied into `Assistant.description` on materialise.
-   * Shown on LegacyScreen / detail sheet. Not l10n'd for now — iterate
+   * Shown on AssistantsScreen / detail sheet. Not l10n'd for now — iterate
    * once the assistant set stabilises.
    */
   description: string;
@@ -354,7 +356,7 @@ export const ONBOARDING_ASSISTANTS: readonly OnboardingAssistantDef[] = [
   ONBOARDING_MUSE,
 ];
 
-export const TOPIC_TO_PAL: Record<TopicKey, OnboardingAssistantDef> = {
+export const TOPIC_TO_ASSISTANT: Record<TopicKey, OnboardingAssistantDef> = {
   smartchat: ONBOARDING_PIP,
   coding: ONBOARDING_CODIE,
   education: ONBOARDING_SAGE,
@@ -363,5 +365,6 @@ export const TOPIC_TO_PAL: Record<TopicKey, OnboardingAssistantDef> = {
   else: ONBOARDING_PIP,
 };
 
-export const resolveAssistantForTopic = (topic: TopicKey | null): OnboardingAssistantDef =>
-  TOPIC_TO_PAL[topic ?? 'else'];
+export const resolveAssistantForTopic = (
+  topic: TopicKey | null,
+): OnboardingAssistantDef => TOPIC_TO_ASSISTANT[topic ?? 'else'];

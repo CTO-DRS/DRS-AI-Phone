@@ -42,7 +42,10 @@ describe('imageUtils', () => {
       } as any);
 
       // Execute
-      const result = await downloadAssistantThumbnail(mockAssistantId, mockImageUrl);
+      const result = await downloadAssistantThumbnail(
+        mockAssistantId,
+        mockImageUrl,
+      );
 
       // Verify
       expect(mockRNFS.mkdir).toHaveBeenCalledWith(
@@ -64,7 +67,10 @@ describe('imageUtils', () => {
       mockRNFS.exists.mockResolvedValueOnce(true); // File exists
 
       // Execute
-      const result = await downloadAssistantThumbnail(mockAssistantId, mockImageUrl);
+      const result = await downloadAssistantThumbnail(
+        mockAssistantId,
+        mockImageUrl,
+      );
 
       // Verify
       expect(mockRNFS.downloadFile).not.toHaveBeenCalled();
@@ -185,7 +191,9 @@ describe('imageUtils', () => {
 
       // Should only delete the orphaned thumbnail
       expect(mockRNFS.unlink).toHaveBeenCalledTimes(1);
-      expect(mockRNFS.unlink).toHaveBeenCalledWith('/path/assistant-3_thumbnail.jpg');
+      expect(mockRNFS.unlink).toHaveBeenCalledWith(
+        '/path/assistant-3_thumbnail.jpg',
+      );
     });
 
     it('should handle missing directory gracefully', async () => {

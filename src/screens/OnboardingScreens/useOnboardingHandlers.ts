@@ -116,7 +116,10 @@ export const useOnboardingHandlers = (step: OnboardingStep) => {
         }
       } else {
         // First time finishing with this topic — materialise the assistant.
-        const assistantData: Omit<Assistant, 'id' | 'created_at' | 'updated_at'> = {
+        const assistantData: Omit<
+          Assistant,
+          'id' | 'created_at' | 'updated_at'
+        > = {
           type: 'local',
           name: assistantDef.name,
           description: assistantDef.description,

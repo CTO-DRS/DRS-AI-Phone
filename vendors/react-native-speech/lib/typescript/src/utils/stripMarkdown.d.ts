@@ -24,12 +24,12 @@
  * Options for markdown stripping. All default to sensible TTS behavior.
  */
 export interface StripMarkdownOptions {
-    /**
-     * If true (default), fenced code blocks (``` ... ```) are dropped
-     * entirely. If false, their contents are kept (fences removed). Most
-     * code is unreadable out loud, so dropping is usually better.
-     */
-    dropCodeBlocks?: boolean;
+  /**
+   * If true (default), fenced code blocks (``` ... ```) are dropped
+   * entirely. If false, their contents are kept (fences removed). Most
+   * code is unreadable out loud, so dropping is usually better.
+   */
+  dropCodeBlocks?: boolean;
 }
 /**
  * Strip markdown syntax from text, producing TTS-friendly prose.
@@ -37,7 +37,10 @@ export interface StripMarkdownOptions {
  * Idempotent: re-applying to already-stripped text is a no-op (no markdown
  * tokens to strip).
  */
-export declare function stripMarkdown(text: string, options?: StripMarkdownOptions): string;
+export declare function stripMarkdown(
+  text: string,
+  options?: StripMarkdownOptions,
+): string;
 /**
  * Line-buffered markdown stripper for streaming input.
  *
@@ -73,8 +76,10 @@ export declare function stripMarkdown(text: string, options?: StripMarkdownOptio
  * discarded so the TTS doesn't read code aloud.
  */
 export interface MarkdownStreamBuffer {
-    push(text: string): string;
-    flush(): string;
+  push(text: string): string;
+  flush(): string;
 }
-export declare function createMarkdownStreamBuffer(options?: StripMarkdownOptions): MarkdownStreamBuffer;
+export declare function createMarkdownStreamBuffer(
+  options?: StripMarkdownOptions,
+): MarkdownStreamBuffer;
 //# sourceMappingURL=stripMarkdown.d.ts.map

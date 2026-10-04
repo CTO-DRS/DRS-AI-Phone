@@ -18,7 +18,7 @@ import * as path from 'path';
 import {ChatPage} from '../../pages/ChatPage';
 import {DrawerPage} from '../../pages/DrawerPage';
 import {ModelsPage} from '../../pages/ModelsPage';
-import {LegacySheetPage} from '../../pages/LegacySheetPage';
+import {AssistantSheetPage} from '../../pages/AssistantSheetPage';
 import {Selectors, byText, byPartialText} from '../../helpers/selectors';
 import {
   downloadAndLoadModel,
@@ -47,12 +47,12 @@ const getAppBundleId = (): string =>
 describe('Assistant greeting editor round-trip', () => {
   let chatPage: ChatPage;
   let drawerPage: DrawerPage;
-  let assistantSheetPage: LegacySheetPage;
+  let assistantSheetPage: AssistantSheetPage;
 
   before(async () => {
     chatPage = new ChatPage();
     drawerPage = new DrawerPage();
-    assistantSheetPage = new LegacySheetPage();
+    assistantSheetPage = new AssistantSheetPage();
 
     await chatPage.waitForReady(TIMEOUTS.appReady);
 

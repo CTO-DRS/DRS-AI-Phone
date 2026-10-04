@@ -475,7 +475,7 @@
       "proceedWithReset": "Procéder à la réinitialisation",
       "confirmReset": "Confirmer la réinitialisation"
     },
-    "assistantLegacySheet": {
+    "assistantPersonaSheet": {
       "title": {
         "create": "Créer un assistant",
         "edit": "Modifier un assistant"
@@ -497,7 +497,7 @@
       "cancelDownload": "Annuler le téléchargement",
       "download": "Télécharger"
     },
-    "roleplayLegacySheet": {
+    "roleplayPersonaSheet": {
       "title": {
         "create": "Créer un assistant de jeu de rôle",
         "edit": "Modifier un assistant de jeu de rôle"
@@ -587,7 +587,12 @@
         "total": "Totale : ",
         "usage": "Utilisation : "
       },
-      "byteSizes": ["Octets", "Ko", "Mo", "Go"]
+      "byteSizes": [
+        "Octets",
+        "Ko",
+        "Mo",
+        "Go"
+      ]
     }
   },
   "validation": {

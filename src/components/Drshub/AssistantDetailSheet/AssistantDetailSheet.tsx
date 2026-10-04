@@ -34,14 +34,15 @@ interface AssistantDetailSheetProps {
   onSignInPress?: () => void;
 }
 
-export const AssistantDetailSheet: React.FC<AssistantDetailSheetProps> = observer(
-  ({assistant, isVisible, onClose, onSignInPress}) => {
+export const AssistantDetailSheet: React.FC<AssistantDetailSheetProps> =
+  observer(({assistant, isVisible, onClose, onSignInPress}) => {
     const theme = useTheme();
     const l10n = useContext(L10nContext);
     const styles = createStyles(theme);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [detailedAssistant, setDetailedAssistant] = useState<DrshubAssistant | null>(null);
+    const [detailedAssistant, setDetailedAssistant] =
+      useState<DrshubAssistant | null>(null);
     const [_isFetchingDetails, setIsFetchingDetails] = useState(false);
 
     // Use detailed assistant information if available, otherwise fall back to basic assistant
@@ -93,7 +94,9 @@ export const AssistantDetailSheet: React.FC<AssistantDetailSheetProps> = observe
       return null;
     }
 
-    const isDownloaded = assistantStore.isDrshubAssistantDownloaded(displayAssistant.id);
+    const isDownloaded = assistantStore.isDrshubAssistantDownloaded(
+      displayAssistant.id,
+    );
     const canViewContent = shouldShowAssistantContent(displayAssistant);
     const assistantLabel = getAssistantDisplayLabel(displayAssistant);
     const actionText = getAssistantActionText(
@@ -120,7 +123,10 @@ export const AssistantDetailSheet: React.FC<AssistantDetailSheetProps> = observe
             ? downloadError.message
             : l10n.assistantsScreen.assistantDetailSheet.failedToDownload;
         setError(errorMessage);
-        Alert.alert(l10n.assistantsScreen.assistantDetailSheet.error, errorMessage);
+        Alert.alert(
+          l10n.assistantsScreen.assistantDetailSheet.error,
+          errorMessage,
+        );
       } finally {
         setIsLoading(false);
       }
@@ -203,7 +209,9 @@ export const AssistantDetailSheet: React.FC<AssistantDetailSheetProps> = observe
           <View style={styles.thumbnailContainer}>
             {displayAssistant.thumbnail_url ? (
               <Image
-                source={{uri: getFullThumbnailUri(displayAssistant.thumbnail_url)}}
+                source={{
+                  uri: getFullThumbnailUri(displayAssistant.thumbnail_url),
+                }}
                 style={styles.thumbnail}
               />
             ) : (
@@ -265,7 +273,9 @@ export const AssistantDetailSheet: React.FC<AssistantDetailSheetProps> = observe
           </View>
 
           <View style={styles.statItem}>
-            <Text style={styles.statValue}>{displayAssistant.review_count || 0}</Text>
+            <Text style={styles.statValue}>
+              {displayAssistant.review_count || 0}
+            </Text>
             <Text style={styles.statLabel}>
               {l10n.assistantsScreen.assistantDetailSheet.reviews}
             </Text>
@@ -303,24 +313,26 @@ export const AssistantDetailSheet: React.FC<AssistantDetailSheetProps> = observe
             </Text>
             <Text style={styles.description}>
               {displayAssistant.description ||
-                l10n.assistantsScreen.assistantDetailSheet.noDescriptionAvailable}
+                l10n.assistantsScreen.assistantDetailSheet
+                  .noDescriptionAvailable}
             </Text>
           </View>
 
-          {displayAssistant.categories && displayAssistant.categories.length > 0 && (
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>
-                {l10n.assistantsScreen.assistantDetailSheet.categories}
-              </Text>
-              <View style={styles.categoriesContainer}>
-                {displayAssistant.categories.map((category, index) => (
-                  <View key={index} style={styles.category}>
-                    <Text style={styles.categoryText}>{category.name}</Text>
-                  </View>
-                ))}
+          {displayAssistant.categories &&
+            displayAssistant.categories.length > 0 && (
+              <View style={styles.section}>
+                <Text style={styles.sectionTitle}>
+                  {l10n.assistantsScreen.assistantDetailSheet.categories}
+                </Text>
+                <View style={styles.categoriesContainer}>
+                  {displayAssistant.categories.map((category, index) => (
+                    <View key={index} style={styles.category}>
+                      <Text style={styles.categoryText}>{category.name}</Text>
+                    </View>
+                  ))}
+                </View>
               </View>
-            </View>
-          )}
+            )}
 
           {displayAssistant.tags && displayAssistant.tags.length > 0 && (
             <View style={styles.section}>
@@ -354,7 +366,10 @@ export const AssistantDetailSheet: React.FC<AssistantDetailSheetProps> = observe
             <View style={styles.section}>
               <View style={styles.protectedContent}>
                 <Text style={styles.protectedText}>
-                  {l10n.assistantsScreen.assistantDetailSheet.premiumAssistantMessage}
+                  {
+                    l10n.assistantsScreen.assistantDetailSheet
+                      .premiumAssistantMessage
+                  }
                 </Text>
               </View>
             </View>
@@ -371,7 +386,8 @@ export const AssistantDetailSheet: React.FC<AssistantDetailSheetProps> = observe
           {/* Show action button for free assistants (regardless of ownership) or owned premium assistants */}
           {actionText &&
             (displayAssistant.price_cents === 0 ||
-              (displayAssistant.price_cents > 0 && displayAssistant.is_owned)) && (
+              (displayAssistant.price_cents > 0 &&
+                displayAssistant.is_owned)) && (
               <>
                 {isDownloaded ? (
                   <Button
@@ -427,5 +443,4 @@ export const AssistantDetailSheet: React.FC<AssistantDetailSheetProps> = observe
         </Sheet.Actions>
       </Sheet>
     );
-  },
-);
+  });

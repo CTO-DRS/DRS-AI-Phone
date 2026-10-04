@@ -11,9 +11,10 @@ export const createStyles = (theme: Theme) =>
       paddingHorizontal: 4,
       borderRadius: 12,
     },
-    iconContainer: {
+    iconGradient: {
       marginBottom: 4,
-      padding: 4,
+      alignItems: 'center',
+      justifyContent: 'center',
     },
     actionLabel: {
       fontSize: 11,

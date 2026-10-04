@@ -215,7 +215,10 @@ describe('systemPromptResolver', () => {
       );
 
       expect(result).toEqual([
-        {role: 'system', content: 'Assistant prompt\n\nFRAGMENT-A\n\nFRAGMENT-B'},
+        {
+          role: 'system',
+          content: 'Assistant prompt\n\nFRAGMENT-A\n\nFRAGMENT-B',
+        },
         user,
       ]);
     });
@@ -229,7 +232,10 @@ describe('systemPromptResolver', () => {
     it('leaves the assistant prompt untouched when no talent contributes a fragment', () => {
       const result = assembleMessages([sys('Assistant prompt')], [], [user]);
 
-      expect(result).toEqual([{role: 'system', content: 'Assistant prompt'}, user]);
+      expect(result).toEqual([
+        {role: 'system', content: 'Assistant prompt'},
+        user,
+      ]);
     });
 
     it('drops empty and whitespace-only parts', () => {

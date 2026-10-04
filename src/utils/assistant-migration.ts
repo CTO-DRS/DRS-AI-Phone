@@ -1,10 +1,14 @@
 import {v4 as uuidv4} from 'uuid';
 import type {Assistant, LegacyAssistantType} from '../types/assistant';
 import {createCapabilitiesFromLegacyType} from './assistant-capabilities';
-import {ROLEPLAY_SCHEMA, ASSISTANT_SCHEMA, VIDEO_SCHEMA} from '../types/assistant';
+import {
+  ROLEPLAY_SCHEMA,
+  ASSISTANT_SCHEMA,
+  VIDEO_SCHEMA,
+} from '../types/assistant';
 import {Model} from './types';
 
-// Migration-specific types (moved from AssistantsSheets/types.ts)
+// Migration-specific types (moved from AssistantSheets/types.ts)
 export enum AssistantType {
   ROLEPLAY = 'roleplay',
   ASSISTANT = 'assistant',
@@ -56,7 +60,9 @@ export type LegacyAssistantData =
 /**
  * Migrates a legacy assistant to the new format
  */
-export function migrateLegacyAssistantToNew(legacyAssistant: LegacyAssistantData): Assistant {
+export function migrateLegacyAssistantToNew(
+  legacyAssistant: LegacyAssistantData,
+): Assistant {
   const baseAssistant: Omit<Assistant, 'parameters' | 'parameterSchema'> = {
     type: 'local',
     id: legacyAssistant.id || uuidv4(),
@@ -69,7 +75,9 @@ export function migrateLegacyAssistantToNew(legacyAssistant: LegacyAssistantData
     promptGenerationModel: legacyAssistant.promptGenerationModel,
     generatingPrompt: legacyAssistant.generatingPrompt,
     color: legacyAssistant.color,
-    capabilities: createCapabilitiesFromLegacyType(legacyAssistant.assistantType),
+    capabilities: createCapabilitiesFromLegacyType(
+      legacyAssistant.assistantType,
+    ),
     source: 'local',
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
@@ -101,7 +109,8 @@ export function migrateLegacyAssistantToNew(legacyAssistant: LegacyAssistantData
       return {
         ...baseAssistant,
         parameters: {
-          captureInterval: legacyAssistant.captureInterval?.toString() || '3000',
+          captureInterval:
+            legacyAssistant.captureInterval?.toString() || '3000',
         },
         parameterSchema: VIDEO_SCHEMA,
       };
@@ -120,7 +129,9 @@ export function migrateLegacyAssistantToNew(legacyAssistant: LegacyAssistantData
  * Detects the legacy assistant type from a assistant using capabilities and schema
  * Clean detection without parameter inference
  */
-export function detectLegacyAssistantType(assistant: Assistant): LegacyAssistantType {
+export function detectLegacyAssistantType(
+  assistant: Assistant,
+): LegacyAssistantType {
   // First check capabilities (most reliable)
   if (assistant.capabilities?.video === true) {
     return 'video';
@@ -138,7 +149,9 @@ export function detectLegacyAssistantType(assistant: Assistant): LegacyAssistant
   }
 
   // Check categories if available
-  if (assistant.categories?.some(cat => cat.toLowerCase().includes('roleplay'))) {
+  if (
+    assistant.categories?.some(cat => cat.toLowerCase().includes('roleplay'))
+  ) {
     return 'roleplay';
   }
   if (assistant.categories?.some(cat => cat.toLowerCase().includes('video'))) {
@@ -153,7 +166,9 @@ export function detectLegacyAssistantType(assistant: Assistant): LegacyAssistant
  * Get legacy assistant type for UI components (backward compatibility)
  * This is only used for determining which UI template to show
  */
-export function getLegacyAssistantTypeForUI(assistant: Assistant): LegacyAssistantType {
+export function getLegacyAssistantTypeForUI(
+  assistant: Assistant,
+): LegacyAssistantType {
   return detectLegacyAssistantType(assistant);
 }
 

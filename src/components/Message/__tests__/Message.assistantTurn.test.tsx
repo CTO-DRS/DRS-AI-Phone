@@ -306,7 +306,7 @@ describe('Message — AssistantTurn renderer', () => {
       (n: any) =>
         n.type === Text &&
         typeof n.props.children === 'string' &&
-        n.props.children === 'P',
+        n.props.children === 'A',
     );
     expect(initials).toHaveLength(1);
   });

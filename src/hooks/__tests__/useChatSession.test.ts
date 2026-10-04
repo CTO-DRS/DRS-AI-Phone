@@ -558,7 +558,9 @@ describe('useChatSession', () => {
     // Strict templates reject a second system message ("must be at the
     // beginning"), so grounding folds into the assistant's system message.
     it('sends exactly one system message carrying both the assistant prompt and the grounding', async () => {
-      const assistant = useSessionWithAssistant('You are a research assistant.');
+      const assistant = useSessionWithAssistant(
+        'You are a research assistant.',
+      );
       await activateSearchTools();
       const captured = captureMessages();
 

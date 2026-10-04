@@ -53,7 +53,8 @@ describe('ModelStore.registerOnboardingAssistantModel', () => {
   it('synthesizes and registers an HF entry; returned Model.id matches `${repo}/${filename}`', async () => {
     const expectedId = `${codieBalanced.repo}/${codieBalanced.filename}`;
 
-    const result = await modelStore.registerOnboardingAssistantModel(codieBalanced);
+    const result =
+      await modelStore.registerOnboardingAssistantModel(codieBalanced);
 
     expect(result).toBeDefined();
     expect(result!.id).toBe(expectedId);
@@ -66,8 +67,10 @@ describe('ModelStore.registerOnboardingAssistantModel', () => {
   });
 
   it('is idempotent: a second call with the same entry returns the existing Model and does not append a row', async () => {
-    const first = await modelStore.registerOnboardingAssistantModel(codieBalanced);
-    const second = await modelStore.registerOnboardingAssistantModel(codieBalanced);
+    const first =
+      await modelStore.registerOnboardingAssistantModel(codieBalanced);
+    const second =
+      await modelStore.registerOnboardingAssistantModel(codieBalanced);
 
     expect(modelStore.models).toHaveLength(1);
     expect(second!.id).toBe(first!.id);

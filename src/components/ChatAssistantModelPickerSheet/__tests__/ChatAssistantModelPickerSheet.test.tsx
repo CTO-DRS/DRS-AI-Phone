@@ -39,13 +39,13 @@ jest.mock('../../../store', () => ({
   assistantStore: {
     assistants: [
       {
-        id: 'pal1',
+        id: 'assistant1',
         name: 'Test Assistant',
         assistantType: 'assistant', // Use string literal instead of enum
         defaultModel: {id: 'model1', name: 'Test Model 1'},
       },
       {
-        id: 'pal2',
+        id: 'assistant2',
         name: 'Test Roleplay',
         assistantType: 'roleplay', // Use string literal instead of enum
         defaultModel: {id: 'model2', name: 'Test Model 2'},
@@ -53,7 +53,7 @@ jest.mock('../../../store', () => ({
     ],
   },
   chatSessionStore: {
-    activeAssistantId: 'pal1',
+    activeAssistantId: 'assistant1',
     setActiveAssistant: jest.fn(),
   },
 }));
@@ -270,8 +270,10 @@ describe('ChatAssistantModelPickerSheet', () => {
     fireEvent.press(assistantItem);
 
     await waitFor(() => {
-      expect(chatSessionStore.setActiveAssistant).toHaveBeenCalledWith('pal1');
-      expect(defaultProps.onAssistantSelect).toHaveBeenCalledWith('pal1');
+      expect(chatSessionStore.setActiveAssistant).toHaveBeenCalledWith(
+        'assistant1',
+      );
+      expect(defaultProps.onAssistantSelect).toHaveBeenCalledWith('assistant1');
       expect(defaultProps.onClose).toHaveBeenCalled();
     });
   });

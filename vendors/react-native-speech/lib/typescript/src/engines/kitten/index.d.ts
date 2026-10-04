@@ -1,2 +1,2 @@
-export { KittenEngine } from './KittenEngine';
+export {KittenEngine} from './KittenEngine';
 //# sourceMappingURL=index.d.ts.map

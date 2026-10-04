@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 /**
  * Supertonic TTS Engine Constants
@@ -52,7 +52,40 @@ export const SUPERTONIC_CONSTANTS = {
   // per-version subsets — it just wraps text in `<lang>...</lang>` and lets
   // the model handle it. `'na'` produces a `<na>...</na>` tag (matching
   // upstream `helper.py`), which only the v3 model was trained on.
-  AVAILABLE_LANGS: ['na', 'en', 'ko', 'ja', 'ar', 'bg', 'cs', 'da', 'de', 'el', 'es', 'et', 'fi', 'fr', 'hi', 'hr', 'hu', 'id', 'it', 'lt', 'lv', 'nl', 'pl', 'pt', 'ro', 'ru', 'sk', 'sl', 'sv', 'tr', 'uk', 'vi']
+  AVAILABLE_LANGS: [
+    'na',
+    'en',
+    'ko',
+    'ja',
+    'ar',
+    'bg',
+    'cs',
+    'da',
+    'de',
+    'el',
+    'es',
+    'et',
+    'fi',
+    'fr',
+    'hi',
+    'hr',
+    'hu',
+    'id',
+    'it',
+    'lt',
+    'lv',
+    'nl',
+    'pl',
+    'pt',
+    'ro',
+    'ru',
+    'sk',
+    'sl',
+    'sv',
+    'tr',
+    'uk',
+    'vi',
+  ],
 };
 
 /**

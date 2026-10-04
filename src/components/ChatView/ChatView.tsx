@@ -259,7 +259,9 @@ export const ChatView = observer(
     const [_selectedModel, setSelectedModel] = React.useState<string | null>(
       null,
     );
-    const [_selectedAssistant, setSelectedAssistant] = React.useState<string | undefined>();
+    const [_selectedAssistant, setSelectedAssistant] = React.useState<
+      string | undefined
+    >();
 
     // Image viewer state
     const [isImageViewVisible, setIsImageViewVisible] = React.useState(false);
@@ -345,7 +347,10 @@ export const ChatView = observer(
     }, [reloadSnackbar]);
 
     // One-shot assistant-load hint snackbar (separate surface from the banner).
-    const assistantLoadHint = useAssistantLoadHint({activeAssistant, isFocused});
+    const assistantLoadHint = useAssistantLoadHint({
+      activeAssistant,
+      isFocused,
+    });
 
     // ============ COMPONENT SIZE TRACKING ============
     const {onLayout, size} = useComponentSize();
@@ -1084,10 +1089,13 @@ export const ChatView = observer(
       setIsPickerVisible(false);
     }, []);
 
-    const handleAssistantSelect = React.useCallback((assistant: string | undefined) => {
-      setSelectedAssistant(assistant);
-      setIsPickerVisible(false);
-    }, []);
+    const handleAssistantSelect = React.useCallback(
+      (assistant: string | undefined) => {
+        setSelectedAssistant(assistant);
+        setIsPickerVisible(false);
+      },
+      [],
+    );
 
     // ============ COMPUTED VALUES ============
     const inputBackgroundColor = activeAssistant?.color?.[1]
@@ -1158,7 +1166,8 @@ export const ChatView = observer(
                   chatInputHeight,
                   inputBackgroundColor,
                   onCancelEdit: handleCancelEdit,
-                  onAssistantBtnPress: () => setIsPickerVisible(!isPickerVisible),
+                  onAssistantBtnPress: () =>
+                    setIsPickerVisible(!isPickerVisible),
                   isStopVisible,
                   isPickerVisible,
                   sendButtonVisibilityMode,
@@ -1169,7 +1178,9 @@ export const ChatView = observer(
                   textInputProps: {
                     ...textInputProps,
                     // Only override value and onChangeText if not using promptText
-                    ...(!(activeAssistant && hasVideoCapability(activeAssistant)) && {
+                    ...(!(
+                      activeAssistant && hasVideoCapability(activeAssistant)
+                    ) && {
                       value: inputText,
                       onChangeText: setInputText,
                     }),
@@ -1284,7 +1295,9 @@ export const ChatView = observer(
           </Snackbar>
 
           <Snackbar
-            visible={isFocused && assistantLoadHint.hintVisible && !reloadSnackbar}
+            visible={
+              isFocused && assistantLoadHint.hintVisible && !reloadSnackbar
+            }
             onDismiss={assistantLoadHint.dismiss}
             duration={6000}
             action={{

@@ -1,16 +1,20 @@
 import {
-  createNewAssistantAssistant,
+  createNewAssistant,
   createNewRoleplayAssistant,
   createNewVideoAssistant,
   prepareAssistantForEditing,
 } from '../assistant-templates';
-import {ASSISTANT_SCHEMA, ROLEPLAY_SCHEMA, VIDEO_SCHEMA} from '../../types/assistant';
+import {
+  ASSISTANT_SCHEMA,
+  ROLEPLAY_SCHEMA,
+  VIDEO_SCHEMA,
+} from '../../types/assistant';
 import type {Assistant} from '../../types/assistant';
 
 describe('Assistant Templates', () => {
-  describe('createNewAssistantAssistant', () => {
-    it('should create a new assistant assistant with correct defaults', () => {
-      const assistant = createNewAssistantAssistant();
+  describe('createNewAssistant', () => {
+    it('should create a new assistant-type assistant with correct defaults', () => {
+      const assistant = createNewAssistant();
 
       expect(assistant).toEqual({
         type: 'local',
@@ -28,7 +32,7 @@ describe('Assistant Templates', () => {
     });
 
     it('should not have an id (for new assistant creation)', () => {
-      const assistant = createNewAssistantAssistant();
+      const assistant = createNewAssistant();
       expect(assistant.id).toBeUndefined();
     });
   });

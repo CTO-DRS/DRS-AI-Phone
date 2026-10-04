@@ -26,7 +26,9 @@ class DrshubService {
   constructor() {}
 
   // Browse and search Assistants - Using REST API
-  async getAssistants(query: AssistantsQuery = {}): Promise<AssistantsResponse> {
+  async getAssistants(
+    query: AssistantsQuery = {},
+  ): Promise<AssistantsResponse> {
     return drshubApiService.getAssistants(query);
   }
 

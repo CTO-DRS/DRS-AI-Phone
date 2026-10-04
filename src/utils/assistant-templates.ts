@@ -8,15 +8,15 @@ import {
 
 /**
  * Factory functions for creating new assistant objects with appropriate defaults.
- * These functions provide pre-configured assistant objects that can be passed to LegacySheet
+ * These functions provide pre-configured assistant objects that can be passed to AssistantSheet
  * for both creation and editing scenarios.
  */
 
 /**
- * Creates a new assistant assistant object with default values.
+ * Creates a new assistant-type assistant object with default values.
  * Assistant assistants have no custom parameters and use a simple system prompt.
  */
-export const createNewAssistantAssistant = (): Partial<Assistant> => ({
+export const createNewAssistant = (): Partial<Assistant> => ({
   type: 'local',
   name: '',
   description: '',
@@ -83,12 +83,15 @@ export const createNewVideoAssistant = (): Partial<Assistant> => ({
  * Helper function to create a assistant object for editing.
  * This ensures the assistant object has all required fields for the form.
  */
-export const prepareAssistantForEditing = (assistant: Assistant): Partial<Assistant> => {
+export const prepareAssistantForEditing = (
+  assistant: Assistant,
+): Partial<Assistant> => {
   return {
     ...assistant,
     // Ensure all required form fields are present
     description: assistant.description || '',
-    originalSystemPrompt: assistant.originalSystemPrompt || assistant.systemPrompt,
+    originalSystemPrompt:
+      assistant.originalSystemPrompt || assistant.systemPrompt,
     parameters: assistant.parameters || {},
     parameterSchema: assistant.parameterSchema || [],
     capabilities: assistant.capabilities || {},

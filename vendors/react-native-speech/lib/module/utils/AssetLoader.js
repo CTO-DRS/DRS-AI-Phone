@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 /**
  * Unified Asset Loader for Neural TTS Engines
@@ -24,7 +24,9 @@ export async function loadAssetAsJSON(path) {
     const content = await loadAssetAsText(path);
     return JSON.parse(content);
   } catch (error) {
-    throw new Error(`Failed to load JSON asset ${path}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    throw new Error(
+      `Failed to load JSON asset ${path}: ${error instanceof Error ? error.message : 'Unknown error'}`,
+    );
   }
 }
 
@@ -54,7 +56,9 @@ export async function loadAssetAsText(path) {
     }
     return response.text();
   }
-  throw new Error('loadAssetAsText requires file:// or https:// URL. Provide absolute paths to assets.');
+  throw new Error(
+    'loadAssetAsText requires file:// or https:// URL. Provide absolute paths to assets.',
+  );
 }
 
 /**
@@ -87,9 +91,13 @@ export async function loadAssetAsArrayBuffer(path) {
       }
       return response.arrayBuffer();
     }
-    throw new Error('loadAssetAsArrayBuffer requires file:// or https:// URL. Provide absolute paths to model files.');
+    throw new Error(
+      'loadAssetAsArrayBuffer requires file:// or https:// URL. Provide absolute paths to model files.',
+    );
   } catch (error) {
-    throw new Error(`Failed to load binary asset ${path}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    throw new Error(
+      `Failed to load binary asset ${path}: ${error instanceof Error ? error.message : 'Unknown error'}`,
+    );
   }
 }
 

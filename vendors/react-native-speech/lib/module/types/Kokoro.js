@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 /**
  * Kokoro TTS specific types
@@ -20,7 +20,7 @@ export const CoreMlFlag = {
   ONLY_ENABLE_DEVICE_WITH_ANE: 0x004,
   ONLY_ALLOW_STATIC_INPUT_SHAPES: 0x008,
   CREATE_MLPROGRAM: 0x010,
-  USE_CPU_AND_GPU: 0x020
+  USE_CPU_AND_GPU: 0x020,
 };
 
 /**
@@ -30,8 +30,8 @@ export const CoreMlFlag = {
  * that hurts most models.
  */
 export const DEFAULT_COREML_FLAGS =
-// eslint-disable-next-line no-bitwise
-CoreMlFlag.ENABLE_ON_SUBGRAPH | CoreMlFlag.USE_CPU_AND_GPU;
+  // eslint-disable-next-line no-bitwise
+  CoreMlFlag.ENABLE_ON_SUBGRAPH | CoreMlFlag.USE_CPU_AND_GPU;
 
 /**
  * CoreML execution provider options for iOS.

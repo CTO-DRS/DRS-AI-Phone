@@ -43,7 +43,9 @@ export const Onboarding6Screen: React.FC = observer(() => {
   // different assistant's list and would otherwise leave the radio in an
   // unselectable state. User taps after that override the seed.
   useEffect(() => {
-    const inAssistantList = assistant.models.some(m => entryId(m) === selectedId);
+    const inAssistantList = assistant.models.some(
+      m => entryId(m) === selectedId,
+    );
     if (!inAssistantList) {
       const recommended = assistant.models.find(m => m.recommended);
       if (recommended) {
@@ -87,7 +89,10 @@ export const Onboarding6Screen: React.FC = observer(() => {
           .replace('{{name}}', assistant.name)
           .replace('{{size}}', sizeLabel)
       : t.screen6.cta.replace('{{name}}', assistant.name);
-  const subtitle = t.screen6.subtitleTemplate.replace('{{name}}', assistant.name);
+  const subtitle = t.screen6.subtitleTemplate.replace(
+    '{{name}}',
+    assistant.name,
+  );
   return (
     <OnboardingScaffold
       step={6}

@@ -24,10 +24,15 @@ describe('BottomNavBar', () => {
 
   it('templates testID per item and marks selected', () => {
     const {getByTestId} = render(
-      <BottomNavBar items={items} selectedValue="assistants" onSelect={() => {}} />,
+      <BottomNavBar
+        items={items}
+        selectedValue="assistants"
+        onSelect={() => {}}
+      />,
     );
     expect(
-      getByTestId('ui-bottom-nav-item-assistants').props.accessibilityState?.selected,
+      getByTestId('ui-bottom-nav-item-assistants').props.accessibilityState
+        ?.selected,
     ).toBe(true);
   });
 

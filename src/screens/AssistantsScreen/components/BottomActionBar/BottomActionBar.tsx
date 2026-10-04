@@ -81,7 +81,6 @@ export const BottomActionBar: React.FC<BottomActionBarProps> = observer(
 
           {/* Add Assistant Menu */}
           <AddAssistantMenu
-            iconColor={iconColor}
             iconSize={iconSize}
             onCreateAssistant={onCreateAssistant}
           />
@@ -90,7 +89,9 @@ export const BottomActionBar: React.FC<BottomActionBarProps> = observer(
           <ActionButton
             action="profile"
             label={
-              isAuthenticated ? l10n.assistantsScreen.profile : l10n.assistantsScreen.signIn
+              isAuthenticated
+                ? l10n.assistantsScreen.profile
+                : l10n.assistantsScreen.signIn
             }
             icon={
               <UserIcon stroke={iconColor} width={iconSize} height={iconSize} />

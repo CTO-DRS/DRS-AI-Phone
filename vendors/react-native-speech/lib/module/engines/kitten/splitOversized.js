@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 /**
  * Helpers for recovering from oversized chunks in the Kitten pipeline.
@@ -43,17 +43,21 @@ export function splitOversizedSource(text) {
   const trimmed = text.trim();
   if (!trimmed) return [];
   const tieredPatterns = [
-  // Tier 1: sentence boundaries (highest prosody quality).
-  /(?<=[.!?])\s+/,
-  // Tier 2: clause boundaries.
-  /(?<=[,;:])\s+/,
-  // Tier 3: bare newline runs not preceded by `.!?,;:` (those are
-  // already covered above). Use a lookbehind to skip cases where the
-  // newline follows a punctuation mark — splitting there twice would
-  // produce duplicate empty pieces after trim.
-  /(?<![.!?,;:])\n+/];
+    // Tier 1: sentence boundaries (highest prosody quality).
+    /(?<=[.!?])\s+/,
+    // Tier 2: clause boundaries.
+    /(?<=[,;:])\s+/,
+    // Tier 3: bare newline runs not preceded by `.!?,;:` (those are
+    // already covered above). Use a lookbehind to skip cases where the
+    // newline follows a punctuation mark — splitting there twice would
+    // produce duplicate empty pieces after trim.
+    /(?<![.!?,;:])\n+/,
+  ];
   for (const re of tieredPatterns) {
-    const pieces = trimmed.split(new RegExp(re.source, re.flags + 'g')).map(s => s.trim()).filter(Boolean);
+    const pieces = trimmed
+      .split(new RegExp(re.source, re.flags + 'g'))
+      .map(s => s.trim())
+      .filter(Boolean);
     if (pieces.length > 1) return pieces;
   }
 
@@ -103,7 +107,9 @@ export function concatAudioBuffers(buffers) {
   const first = buffers[0];
   for (const b of buffers) {
     if (b.sampleRate !== first.sampleRate || b.channels !== first.channels) {
-      throw new Error(`concatAudioBuffers: mismatch (got ${b.sampleRate}Hz/${b.channels}ch, expected ${first.sampleRate}Hz/${first.channels}ch)`);
+      throw new Error(
+        `concatAudioBuffers: mismatch (got ${b.sampleRate}Hz/${b.channels}ch, expected ${first.sampleRate}Hz/${first.channels}ch)`,
+      );
     }
   }
   const total = buffers.reduce((sum, b) => sum + b.samples.length, 0);
@@ -117,7 +123,7 @@ export function concatAudioBuffers(buffers) {
     samples: out,
     sampleRate: first.sampleRate,
     channels: first.channels,
-    duration: total / first.sampleRate
+    duration: total / first.sampleRate,
   };
 }
 //# sourceMappingURL=splitOversized.js.map

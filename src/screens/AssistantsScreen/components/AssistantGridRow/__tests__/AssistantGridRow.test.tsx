@@ -13,7 +13,10 @@ jest.mock('@react-navigation/native', () => ({
 }));
 
 describe('AssistantGridRow', () => {
-  const items = [createAssistant({id: 'cell-a'}), createAssistant({id: 'cell-b'})];
+  const items = [
+    createAssistant({id: 'cell-a'}),
+    createAssistant({id: 'cell-b'}),
+  ];
 
   const renderCells = () => {
     const {UNSAFE_getAllByType} = render(

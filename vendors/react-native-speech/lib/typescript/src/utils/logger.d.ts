@@ -22,22 +22,22 @@ export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
  * // Output: [Kokoro][Engine] Initializing...
  */
 export declare function createLogger(prefix: string): {
-    /**
-     * Log debug message (only in development)
-     */
-    debug: (component: string, message: string, ...args: unknown[]) => void;
-    /**
-     * Log info message
-     */
-    info: (component: string, message: string, ...args: unknown[]) => void;
-    /**
-     * Log warning message
-     */
-    warn: (component: string, message: string, ...args: unknown[]) => void;
-    /**
-     * Log error message
-     */
-    error: (component: string, message: string, ...args: unknown[]) => void;
+  /**
+   * Log debug message (only in development)
+   */
+  debug: (component: string, message: string, ...args: unknown[]) => void;
+  /**
+   * Log info message
+   */
+  info: (component: string, message: string, ...args: unknown[]) => void;
+  /**
+   * Log warning message
+   */
+  warn: (component: string, message: string, ...args: unknown[]) => void;
+  /**
+   * Log error message
+   */
+  error: (component: string, message: string, ...args: unknown[]) => void;
 };
 /**
  * Create a component-scoped logger
@@ -51,46 +51,49 @@ export declare function createLogger(prefix: string): {
  * log.debug('Initializing...');
  * // Output: [Kokoro][Engine] Initializing...
  */
-export declare function createComponentLogger(prefix: string, component: string): {
-    debug: (message: string, ...args: unknown[]) => void;
-    info: (message: string, ...args: unknown[]) => void;
-    warn: (message: string, ...args: unknown[]) => void;
-    error: (message: string, ...args: unknown[]) => void;
+export declare function createComponentLogger(
+  prefix: string,
+  component: string,
+): {
+  debug: (message: string, ...args: unknown[]) => void;
+  info: (message: string, ...args: unknown[]) => void;
+  warn: (message: string, ...args: unknown[]) => void;
+  error: (message: string, ...args: unknown[]) => void;
 };
 export declare const kokoroLogger: {
-    /**
-     * Log debug message (only in development)
-     */
-    debug: (component: string, message: string, ...args: unknown[]) => void;
-    /**
-     * Log info message
-     */
-    info: (component: string, message: string, ...args: unknown[]) => void;
-    /**
-     * Log warning message
-     */
-    warn: (component: string, message: string, ...args: unknown[]) => void;
-    /**
-     * Log error message
-     */
-    error: (component: string, message: string, ...args: unknown[]) => void;
+  /**
+   * Log debug message (only in development)
+   */
+  debug: (component: string, message: string, ...args: unknown[]) => void;
+  /**
+   * Log info message
+   */
+  info: (component: string, message: string, ...args: unknown[]) => void;
+  /**
+   * Log warning message
+   */
+  warn: (component: string, message: string, ...args: unknown[]) => void;
+  /**
+   * Log error message
+   */
+  error: (component: string, message: string, ...args: unknown[]) => void;
 };
 export declare const supertonicLogger: {
-    /**
-     * Log debug message (only in development)
-     */
-    debug: (component: string, message: string, ...args: unknown[]) => void;
-    /**
-     * Log info message
-     */
-    info: (component: string, message: string, ...args: unknown[]) => void;
-    /**
-     * Log warning message
-     */
-    warn: (component: string, message: string, ...args: unknown[]) => void;
-    /**
-     * Log error message
-     */
-    error: (component: string, message: string, ...args: unknown[]) => void;
+  /**
+   * Log debug message (only in development)
+   */
+  debug: (component: string, message: string, ...args: unknown[]) => void;
+  /**
+   * Log info message
+   */
+  info: (component: string, message: string, ...args: unknown[]) => void;
+  /**
+   * Log warning message
+   */
+  warn: (component: string, message: string, ...args: unknown[]) => void;
+  /**
+   * Log error message
+   */
+  error: (component: string, message: string, ...args: unknown[]) => void;
 };
 //# sourceMappingURL=logger.d.ts.map

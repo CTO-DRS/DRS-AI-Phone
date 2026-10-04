@@ -16,7 +16,7 @@ import {
 import {chatSessionRepository} from '../repositories/ChatSessionRepository';
 import {defaultCompletionParams} from '../utils/completionSettingsVersions';
 import {derivedText} from '../utils/chat';
-import {assistantStore} from './LegacyStore';
+import {assistantStore} from './AssistantStore';
 import {deriveToolSchemas} from '../services/talents';
 import {AgentUiState, initialAgentUiState} from '../services/agent';
 
@@ -508,7 +508,9 @@ class ChatSessionStore {
       // Resolve settings using the selected settings source so the
       // session snapshot matches what the model actually receives
       const assistantIdForSettings =
-        this.newChatSettingsSource === 'assistant' ? this.newChatAssistantId : undefined;
+        this.newChatSettingsSource === 'assistant'
+          ? this.newChatAssistantId
+          : undefined;
       const settings = await this.resolveCompletionSettings(
         undefined,
         assistantIdForSettings,
@@ -1490,7 +1492,9 @@ class ChatSessionStore {
     // Apply assistant-specific settings if available
     if (assistantId) {
       // Use in-memory assistant store as the source of truth (avoids cache invalidation issues)
-      const assistant = assistantStore.assistants.find(p => p.id === assistantId);
+      const assistant = assistantStore.assistants.find(
+        p => p.id === assistantId,
+      );
       const assistantSettings = assistant?.completionSettings;
 
       if (assistantSettings) {
@@ -1555,7 +1559,8 @@ class ChatSessionStore {
    */
   async getCurrentCompletionSettings(): Promise<CompletionParams> {
     const activeAssistantId = this.activeSessionId
-      ? this.sessions.find(s => s.id === this.activeSessionId)?.activeAssistantId
+      ? this.sessions.find(s => s.id === this.activeSessionId)
+          ?.activeAssistantId
       : this.newChatAssistantId;
 
     return this.resolveCompletionSettings(

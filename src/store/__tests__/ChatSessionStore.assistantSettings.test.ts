@@ -1,8 +1,8 @@
 import {chatSessionStore} from '../ChatSessionStore';
-import {assistantStore} from '../LegacyStore';
+import {assistantStore} from '../AssistantStore';
 import {defaultCompletionSettings} from '../ChatSessionStore';
 import {CompletionParams} from '../../utils/completionTypes';
-import type {Assistant} from '../LegacyStore';
+import type {Assistant} from '../AssistantStore';
 import {buildReasoningPayload} from '../../api/openai';
 
 describe('ChatSessionStore - Assistant Settings', () => {
@@ -224,7 +224,9 @@ describe('ChatSessionStore - Assistant Settings', () => {
     });
 
     it('override wins over assistant in no-session resolve (default assistant flips OFF)', async () => {
-      assistantStore.assistants.push(makeThinkingAssistant('assistantX', true, {temperature: 0.5}));
+      assistantStore.assistants.push(
+        makeThinkingAssistant('assistantX', true, {temperature: 0.5}),
+      );
       chatSessionStore.newChatAssistantId = 'assistantX';
       chatSessionStore.newChatThinkingOverride = false;
 
@@ -244,7 +246,9 @@ describe('ChatSessionStore - Assistant Settings', () => {
 
     it('override wins over assistant in no-session resolve (authored assistant flips ON)', async () => {
       // Assistant has enable_thinking: false; user flips to true via override.
-      assistantStore.assistants.push(makeThinkingAssistant('assistantX', false));
+      assistantStore.assistants.push(
+        makeThinkingAssistant('assistantX', false),
+      );
       chatSessionStore.newChatAssistantId = 'assistantX';
       chatSessionStore.newChatThinkingOverride = true;
 
@@ -261,7 +265,9 @@ describe('ChatSessionStore - Assistant Settings', () => {
       // The whole point of carrying the override on `reasoning`: a brand-new
       // remote chat opened with thinking OFF must produce a real OFF wire
       // payload, not an empty object.
-      assistantStore.assistants.push(makeThinkingAssistant('assistantRemote', true));
+      assistantStore.assistants.push(
+        makeThinkingAssistant('assistantRemote', true),
+      );
       chatSessionStore.newChatAssistantId = 'assistantRemote';
       chatSessionStore.newChatThinkingOverride = false;
 

@@ -22,7 +22,10 @@ export function resolveSystemPrompt(
   if (assistant?.systemPrompt) {
     // Check if the assistant has parameters that need rendering
     if (assistant.parameters && Object.keys(assistant.parameters).length > 0) {
-      return generateFinalSystemPrompt(assistant.systemPrompt, assistant.parameters);
+      return generateFinalSystemPrompt(
+        assistant.systemPrompt,
+        assistant.parameters,
+      );
     } else {
       return assistant.systemPrompt;
     }

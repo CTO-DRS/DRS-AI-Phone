@@ -34,25 +34,70 @@
  * surface but their shape may change between minor releases. Pin the
  * library version if you depend on them.
  */
-export { default } from './Speech';
-export type { VoiceProps, EventProps, VoiceOptions, ProgressEventProps, EngineProps, } from './NativeSpeech';
-export { TTSEngine } from './types';
-export { isPhonemeInput } from './types';
-export type { TTSEngineInterface, EngineStreamHandle, AudioBuffer, SynthesisOptions, SpeechInput, PhonemeInput, EngineStatus, ChunkProgressEvent, ChunkProgressCallback, SpeechStream, SpeechStreamOptions, StreamProgressEvent, } from './types';
-export type { KokoroVoice, KokoroConfig, KokoroSynthesisOptions, SupportedLanguage, ExecutionProvider, CoreMLExecutionProviderOption, XNNPackExecutionProviderOption, CPUExecutionProviderOption, } from './types';
-export { CoreMlFlag, DEFAULT_COREML_FLAGS } from './types';
-export type { SupertonicVoice, SupertonicConfig, SupertonicSynthesisOptions, SupertonicLanguage, SupertonicModelPaths, InferenceSteps, } from './types';
-export type { KittenVoice, KittenConfig, KittenSynthesisOptions, KittenLanguage, KittenBuiltinVoice, } from './types';
-export type { HighlightedTextProps, HighlightedSegmentArgs, HighlightedSegmentProps, } from './components/types';
-export { default as HighlightedText } from './components/HighlightedText';
+export {default} from './Speech';
+export type {
+  VoiceProps,
+  EventProps,
+  VoiceOptions,
+  ProgressEventProps,
+  EngineProps,
+} from './NativeSpeech';
+export {TTSEngine} from './types';
+export {isPhonemeInput} from './types';
+export type {
+  TTSEngineInterface,
+  EngineStreamHandle,
+  AudioBuffer,
+  SynthesisOptions,
+  SpeechInput,
+  PhonemeInput,
+  EngineStatus,
+  ChunkProgressEvent,
+  ChunkProgressCallback,
+  SpeechStream,
+  SpeechStreamOptions,
+  StreamProgressEvent,
+} from './types';
+export type {
+  KokoroVoice,
+  KokoroConfig,
+  KokoroSynthesisOptions,
+  SupportedLanguage,
+  ExecutionProvider,
+  CoreMLExecutionProviderOption,
+  XNNPackExecutionProviderOption,
+  CPUExecutionProviderOption,
+} from './types';
+export {CoreMlFlag, DEFAULT_COREML_FLAGS} from './types';
+export type {
+  SupertonicVoice,
+  SupertonicConfig,
+  SupertonicSynthesisOptions,
+  SupertonicLanguage,
+  SupertonicModelPaths,
+  InferenceSteps,
+} from './types';
+export type {
+  KittenVoice,
+  KittenConfig,
+  KittenSynthesisOptions,
+  KittenLanguage,
+  KittenBuiltinVoice,
+} from './types';
+export type {
+  HighlightedTextProps,
+  HighlightedSegmentArgs,
+  HighlightedSegmentProps,
+} from './components/types';
+export {default as HighlightedText} from './components/HighlightedText';
 /** @internal Advanced: low-level engine registry. */
-export { engineManager } from './engines/EngineManager';
+export {engineManager} from './engines/EngineManager';
 /** @internal Advanced: OS native engine class. */
-export { OSEngine } from './engines/OSEngine';
+export {OSEngine} from './engines/OSEngine';
 /** @internal Advanced: Kokoro neural engine class. */
-export { KokoroEngine } from './engines/kokoro';
+export {KokoroEngine} from './engines/kokoro';
 /** @internal Advanced: Supertonic neural engine class. */
-export { SupertonicEngine } from './engines/supertonic';
+export {SupertonicEngine} from './engines/supertonic';
 /** @internal Advanced: Kitten neural engine class. */
-export { KittenEngine } from './engines/kitten';
+export {KittenEngine} from './engines/kitten';
 //# sourceMappingURL=index.d.ts.map

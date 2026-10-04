@@ -108,14 +108,17 @@ export function getAssistantDescription(assistant: DrshubAssistant): string {
 
   // For premium assistants, we can show description but not pricing details
   return (
-    assistant.description || l10n[uiStore.language].assistantsScreen.premiumAssistantDescription
+    assistant.description ||
+    l10n[uiStore.language].assistantsScreen.premiumAssistantDescription
   );
 }
 
 /**
  * Check if we should show full assistant content based on ownership and protection level
  */
-export function shouldShowAssistantContent(assistant: DrshubAssistant): boolean {
+export function shouldShowAssistantContent(
+  assistant: DrshubAssistant,
+): boolean {
   // Always show free content if protect level is public
   if (isAssistantFree(assistant)) {
     return assistant.protection_level === 'public';
@@ -155,9 +158,18 @@ export function categorizeAssistantsForDisplay(assistants: DrshubAssistant[]): {
  * Get sort options for assistants
  */
 export const ASSISTANT_SORT_OPTIONS = [
-  {key: 'newest', label: l10n[uiStore.language].assistantsScreen.sortOptions.newest},
-  {key: 'oldest', label: l10n[uiStore.language].assistantsScreen.sortOptions.oldest},
-  {key: 'rating', label: l10n[uiStore.language].assistantsScreen.sortOptions.rating},
+  {
+    key: 'newest',
+    label: l10n[uiStore.language].assistantsScreen.sortOptions.newest,
+  },
+  {
+    key: 'oldest',
+    label: l10n[uiStore.language].assistantsScreen.sortOptions.oldest,
+  },
+  {
+    key: 'rating',
+    label: l10n[uiStore.language].assistantsScreen.sortOptions.rating,
+  },
   {
     key: 'popular',
     label: l10n[uiStore.language].assistantsScreen.sortOptions.popular,

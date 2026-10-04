@@ -1,7 +1,10 @@
-import type {Assistant, LegacyAssistantData} from '../../src/store/LegacyStore';
+import type {
+  Assistant,
+  LegacyAssistantData,
+} from '../../src/store/AssistantStore';
 import {migrateLegacyAssistantToNew} from '../../src/utils/assistant-migration';
 
-class MockLegacyStore {
+class MockAssistantStore {
   assistants: Assistant[] = [];
   isCheckoutEligible: boolean = false;
 
@@ -18,7 +21,9 @@ class MockLegacyStore {
   });
 
   createAssistant = jest.fn(
-    async (assistantData: Omit<Assistant, 'id' | 'created_at' | 'updated_at'>) => {
+    async (
+      assistantData: Omit<Assistant, 'id' | 'created_at' | 'updated_at'>,
+    ) => {
       const newAssistant: Assistant = {
         id: 'mock-uuid-' + Math.random(),
         created_at: new Date().toISOString(),
@@ -75,5 +80,5 @@ class MockLegacyStore {
   downloadDrshubAssistant = jest.fn(async () => {});
 }
 
-export const mockLegacyStore = new MockLegacyStore();
-export const assistantStore = mockLegacyStore; // For compatibility
+export const mockAssistantStore = new MockAssistantStore();
+export const assistantStore = mockAssistantStore; // For compatibility

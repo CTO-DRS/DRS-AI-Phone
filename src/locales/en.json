@@ -164,11 +164,11 @@
     "useHfTokenLabel": "Use HF Token",
     "useHfTokenDescription": "Enable to use token for API requests. Disable if token is causing authentication issues.",
     "cacheStorageTitle": "Cache & Storage",
-    "clearAssistantCaches": "Clear Shortcuts Caches",
-    "clearAssistantCachesDescription": "Clears cached data used to speed up Shortcuts. This won't affect your Assistants or chat history.",
+    "clearAssistantCaches": "Clear Assistant Caches",
+    "clearAssistantCachesDescription": "Clears cached data used to speed up Assistants. This won't affect your Assistants or chat history.",
     "clearCachesButton": "Clear Caches",
-    "clearCachesConfirmTitle": "Clear Shortcuts Caches?",
-    "clearCachesConfirmMessage": "This will clear all cached session data ({{fileCount}} files, {{size}}). Shortcuts may be slower on first use after clearing. This won't affect your Assistants or chat history.",
+    "clearCachesConfirmTitle": "Clear Assistant Caches?",
+    "clearCachesConfirmMessage": "This will clear all cached session data ({{fileCount}} files, {{size}}). Assistants may be slower on first use after clearing. This won't affect your Assistants or chat history.",
     "clearCachesSuccess": "Successfully cleared {{count}} cache file(s).",
     "clearCachesError": "Failed to clear caches. Please try again.",
     "noCachesToClear": "No caches to clear.",
@@ -873,10 +873,10 @@
         "removePromptLabel": "Remove prompt"
       }
     },
-    "assistantLegacySheet": {
+    "assistantPersonaSheet": {
       "title": {
-        "create": "Create Assistant Assistant",
-        "edit": "Edit Assistant Assistant"
+        "create": "Create Assistant",
+        "edit": "Edit Assistant"
       },
       "assistantName": "Assistant Name",
       "assistantNamePlaceholder": "Name",
@@ -897,7 +897,7 @@
       "cancelDownload": "Cancel download",
       "download": "Download"
     },
-    "roleplayLegacySheet": {
+    "roleplayPersonaSheet": {
       "title": {
         "create": "Create Roleplay Assistant",
         "edit": "Edit Roleplay Assistant"
@@ -927,7 +927,7 @@
       },
       "create": "Create"
     },
-    "lookieLegacySheet": {
+    "lookiePersonaSheet": {
       "title": {
         "create": "Create Lookie Assistant",
         "edit": "Edit Lookie Assistant"
@@ -1038,6 +1038,9 @@
       "importAssistants": "Import assistants",
       "importSuccess": "Successfully imported {{count}} assistant(s).",
       "importError": "Failed to import assistants. Please check the file format."
+    },
+    "brandHeader": {
+      "tagline": "Your private on-device AI"
     }
   },
   "assistantsScreen": {

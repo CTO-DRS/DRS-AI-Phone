@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 /**
  * splitCamelCase — insert spaces at camelCase / PascalCase boundaries

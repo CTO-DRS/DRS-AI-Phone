@@ -1,5 +1,5 @@
 /**
- * LegacySheet Page Object
+ * AssistantSheet Page Object
  * Handles interactions with the Assistant create/edit bottom sheet
  *
  * Uses shared Selectors utility for consistent cross-platform selectors.
@@ -12,7 +12,7 @@ import {Gestures} from '../helpers/gestures';
 
 declare const browser: WebdriverIO.Browser;
 
-export class LegacySheetPage extends BasePage {
+export class AssistantSheetPage extends BasePage {
   /**
    * Set the assistant name using the FormField testID.
    * FormField renders with testID="form-field-name".

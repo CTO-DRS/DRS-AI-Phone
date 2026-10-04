@@ -377,7 +377,11 @@ describe('ChatScreen', () => {
       });
       assistantStore.assistants = [assistantWithTalents];
       jest
-        .spyOn(require('../../../store').chatSessionStore, 'activeAssistantId', 'get')
+        .spyOn(
+          require('../../../store').chatSessionStore,
+          'activeAssistantId',
+          'get',
+        )
         .mockReturnValue(assistantWithTalents.id);
       return render(<ChatScreen />, {withNavigation: true});
     };

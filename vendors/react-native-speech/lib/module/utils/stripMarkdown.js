@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 /**
  * Strip markdown formatting so the output reads cleanly through a TTS
@@ -28,7 +28,7 @@
  */
 
 const DEFAULTS = {
-  dropCodeBlocks: true
+  dropCodeBlocks: true,
 };
 
 /**
@@ -40,14 +40,18 @@ const DEFAULTS = {
 export function stripMarkdown(text, options = {}) {
   const opts = {
     ...DEFAULTS,
-    ...options
+    ...options,
   };
   let out = text;
 
   // 1. Fenced code blocks — handle first so their contents don't get parsed
   // as markdown. Match ```lang\n...\n``` and ~~~lang\n...\n~~~ variants.
-  out = out.replace(/^```[^\n]*\n([\s\S]*?)\n```[ \t]*$/gm, (_m, code) => opts.dropCodeBlocks ? '' : code);
-  out = out.replace(/^~~~[^\n]*\n([\s\S]*?)\n~~~[ \t]*$/gm, (_m, code) => opts.dropCodeBlocks ? '' : code);
+  out = out.replace(/^```[^\n]*\n([\s\S]*?)\n```[ \t]*$/gm, (_m, code) =>
+    opts.dropCodeBlocks ? '' : code,
+  );
+  out = out.replace(/^~~~[^\n]*\n([\s\S]*?)\n~~~[ \t]*$/gm, (_m, code) =>
+    opts.dropCodeBlocks ? '' : code,
+  );
 
   // 2. Images: ![alt](url) → alt (or empty if no alt). Drop the URL.
   // Keep this before links since the syntax is a superset.
@@ -75,17 +79,26 @@ export function stripMarkdown(text, options = {}) {
   // colons `|:---:|`). Require at least two dashes so we don't eat real
   // content that happens to contain a single hyphen between pipes. Require
   // a leading/trailing `|` for the same reason.
-  out = out.replace(/^[ \t]*\|[\s:|-]*-{2,}[\s:|-]*\|?[ \t]*$|^[ \t]*\|?[\s:|-]*-{2,}[\s:|-]*\|[ \t]*$/gm, '');
+  out = out.replace(
+    /^[ \t]*\|[\s:|-]*-{2,}[\s:|-]*\|?[ \t]*$|^[ \t]*\|?[\s:|-]*-{2,}[\s:|-]*\|[ \t]*$/gm,
+    '',
+  );
   // 6b. Convert data/header rows to comma-joined sentences. The line must
   // (a) start with `|` and have another `|`, or (b) end with `|` and have
   // another `|`. This keeps prose sentences with a stray single pipe
   // untouched ("use | to pipe output" stays verbatim).
-  out = out.replace(/^[ \t]*\|(.+\|.*)[ \t]*$|^[ \t]*(.*\|.+)\|[ \t]*$/gm, (_line, leading, trailing) => {
-    const inner = leading ?? trailing ?? '';
-    const cells = inner.split('|').map(c => c.trim()).filter(c => c.length > 0);
-    if (cells.length < 2) return _line;
-    return cells.join(', ') + '.';
-  });
+  out = out.replace(
+    /^[ \t]*\|(.+\|.*)[ \t]*$|^[ \t]*(.*\|.+)\|[ \t]*$/gm,
+    (_line, leading, trailing) => {
+      const inner = leading ?? trailing ?? '';
+      const cells = inner
+        .split('|')
+        .map(c => c.trim())
+        .filter(c => c.length > 0);
+      if (cells.length < 2) return _line;
+      return cells.join(', ') + '.';
+    },
+  );
 
   // 7. Emphasis markers: strip `**`, `__`, `*`, `_`, `~~` around text.
   // MUST run before headers + lists — otherwise a header like
@@ -98,15 +111,27 @@ export function stripMarkdown(text, options = {}) {
   // prose (`*.txt`, `C * pointer`) from getting chewed.
   const emphasisPre = '(^|[\\s({\\[])';
   const emphasisPost = '(?=[\\s.,;:!?)}\\]]|$)';
-  out = out.replace(new RegExp(`${emphasisPre}\\*\\*([^*\\n]+?)\\*\\*${emphasisPost}`, 'g'), '$1$2');
+  out = out.replace(
+    new RegExp(`${emphasisPre}\\*\\*([^*\\n]+?)\\*\\*${emphasisPost}`, 'g'),
+    '$1$2',
+  );
   // Note: no `__...__` pass. Python dunders (`__init__`, `__main__`) show
   // up in technical prose often enough that preserving them matters more
   // than handling the rare CommonMark `__bold__` form — almost everyone
   // uses `**` for bold. If an LLM emits `__foo__` it'll pass through
   // intact; that's a better failure mode than destroying identifiers.
-  out = out.replace(new RegExp(`${emphasisPre}~~([^~\\n]+?)~~${emphasisPost}`, 'g'), '$1$2');
-  out = out.replace(new RegExp(`${emphasisPre}\\*([^*\\n]+?)\\*${emphasisPost}`, 'g'), '$1$2');
-  out = out.replace(new RegExp(`${emphasisPre}_([^_\\n]+?)_${emphasisPost}`, 'g'), '$1$2');
+  out = out.replace(
+    new RegExp(`${emphasisPre}~~([^~\\n]+?)~~${emphasisPost}`, 'g'),
+    '$1$2',
+  );
+  out = out.replace(
+    new RegExp(`${emphasisPre}\\*([^*\\n]+?)\\*${emphasisPost}`, 'g'),
+    '$1$2',
+  );
+  out = out.replace(
+    new RegExp(`${emphasisPre}_([^_\\n]+?)_${emphasisPost}`, 'g'),
+    '$1$2',
+  );
 
   // 8. List markers.
   //   - Bullets `-`/`*`/`+` at line start: strip entirely (no spoken form).
@@ -143,12 +168,15 @@ export function stripMarkdown(text, options = {}) {
   // with a dashes title". The negative lookahead prevents the FIRST body
   // from being eaten as a heading when what follows is actually more
   // hrules.
-  out = out.replace(/^(.+)\n[-]{2,}[ \t]*$(?!\n[ \t]*[-]{2,})/gm, (_m, body) => {
-    const trimmed = body.trim();
-    if (!trimmed) return _m;
-    if (/^[-*_ \t]+$/.test(trimmed)) return _m;
-    return /[.!?:]$/.test(trimmed) ? trimmed : trimmed + '.';
-  });
+  out = out.replace(
+    /^(.+)\n[-]{2,}[ \t]*$(?!\n[ \t]*[-]{2,})/gm,
+    (_m, body) => {
+      const trimmed = body.trim();
+      if (!trimmed) return _m;
+      if (/^[-*_ \t]+$/.test(trimmed)) return _m;
+      return /[.!?:]$/.test(trimmed) ? trimmed : trimmed + '.';
+    },
+  );
 
   // 9. Horizontal rules — `---`, `***`, `___` on their own line → `.`
   // (inject a sentence break so the chunker splits here).
@@ -188,7 +216,10 @@ export function stripMarkdown(text, options = {}) {
   // within a line. Stripping `![](url)` or stray `**` mid-sentence otherwise
   // leaves a double space ("Before  after") that pins brittle assertions.
   // Single spaces and newlines are preserved; tabs collapse too.
-  out = out.split('\n').map(line => line.replace(/[ \t]+/g, ' ').replace(/ $/, '')).join('\n');
+  out = out
+    .split('\n')
+    .map(line => line.replace(/[ \t]+/g, ' ').replace(/ $/, ''))
+    .join('\n');
 
   // 18. Collapse redundant `.` lines left behind by hrule/header rules:
   //   - when the preceding line already ended with a terminator, drop the
@@ -248,7 +279,7 @@ const BLOCK_START_RE = /^[ \t]*(?:#{1,6}\s|[-*+]\s|\d+[.)]\s|>|\||`{3}|~{3})/;
 export function createMarkdownStreamBuffer(options = {}) {
   const opts = {
     ...DEFAULTS,
-    ...options
+    ...options,
   };
   let buffer = '';
   let inFence = false;
@@ -331,7 +362,7 @@ export function createMarkdownStreamBuffer(options = {}) {
       const out = stripMarkdown(buffer, opts);
       buffer = '';
       return out;
-    }
+    },
   };
 }
 //# sourceMappingURL=stripMarkdown.js.map
