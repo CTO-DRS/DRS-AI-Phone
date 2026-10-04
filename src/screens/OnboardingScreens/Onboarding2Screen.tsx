@@ -1,12 +1,12 @@
 import React from 'react';
 import {observer} from 'mobx-react';
 
+import {RobotMascot} from './illustrations/AnimatedRobot';
 import {OnboardingScaffold} from './components/OnboardingScaffold';
 import {OnboardingBottomBar} from './components/OnboardingBottomBar';
 import {OnboardingContent} from './components/OnboardingContent';
 import {ItalicAccentTitle} from './components/ItalicAccentTitle';
 import {HighlightText} from './components/HighlightText';
-import {PhoneWithPals} from './illustrations/PhoneWithPals';
 import {useOnboardingHandlers} from './useOnboardingHandlers';
 
 export const Onboarding2Screen: React.FC = observer(() => {
@@ -15,7 +15,7 @@ export const Onboarding2Screen: React.FC = observer(() => {
   return (
     <OnboardingScaffold
       step={2}
-      illustration={<PhoneWithPals width={85} />}
+      illustration={<RobotMascot size={150} mood="idle" badge="wifi-off" />}
       content={
         <OnboardingContent
           eyebrow={t.screen2.eyebrow}

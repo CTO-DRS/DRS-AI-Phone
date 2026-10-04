@@ -67,6 +67,15 @@ jest.mock('@react-native-clipboard/clipboard', () => mockClipboard);
 
 jest.mock('react-native/Libraries/EventEmitter/NativeEventEmitter');
 
+// Mock NativeRestart TurboModule (used by LanguageSelector for the RTL
+// restart flow; the native module does not exist under jest).
+jest.mock('../src/specs/NativeRestart', () => ({
+  __esModule: true,
+  default: {
+    restart: jest.fn(),
+  },
+}));
+
 // Mock NativeHardwareInfo TurboModule
 jest.mock('../src/specs/NativeHardwareInfo', () => ({
   __esModule: true,
