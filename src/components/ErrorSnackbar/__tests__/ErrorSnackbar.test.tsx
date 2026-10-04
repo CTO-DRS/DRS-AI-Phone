@@ -5,6 +5,12 @@ import {ErrorSnackbar} from '../ErrorSnackbar';
 import {ErrorState, NetworkError, ServerError} from '../../../utils/errors';
 import {createErrorState} from '../../../utils/errors';
 import {l10n} from '../../../locales';
+// NOTE: the real uiStore singleton (not the jest store barrel mock) —
+// createErrorState() resolves messages through it. Pin English so the
+// assertions match en.json regardless of the app's Arabic-first default.
+import {uiStore} from '../../../store/UIStore';
+
+uiStore.setLanguage('en');
 
 describe('ErrorSnackbar', () => {
   const mockDismiss = jest.fn();

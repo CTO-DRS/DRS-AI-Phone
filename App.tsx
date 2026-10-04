@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 
 import {observer} from 'mobx-react';
+import {when} from 'mobx';
 import {isHydrated} from 'mobx-persist-store';
 import {NavigationContainer} from '@react-navigation/native';
 import {Provider as PaperProvider} from 'react-native-paper';
@@ -21,13 +22,19 @@ import {
   GestureHandlerRootView,
 } from 'react-native-gesture-handler';
 
-import {ttsStore, uiStore} from './src/store';
+import {ttsStore, uiStore, UIStore} from './src/store';
 import {useTheme} from './src/hooks';
 import {useDeepLinking} from './src/hooks/useDeepLinking';
 import {Theme} from './src/utils/types';
 
-import {l10n, initLocale} from './src/locales';
+import {
+  l10n,
+  initLocale,
+  supportedLanguages,
+  type AvailableLanguage,
+} from './src/locales';
 import {L10nContext} from './src/utils';
+import NativeRestart from './src/specs/NativeRestart';
 import {ROUTES} from './src/utils/navigationConstants';
 
 import {
@@ -103,18 +110,56 @@ const App = observer(() => {
     I18nManager.allowRTL(true);
   }, []);
 
-  // First launch: adopt the device locale if the app ships it (e.g.
-  // Arabic devices get the Arabic UI out of the box). Skipped once the
-  // user has explicitly picked a language.
+  // First launch: adopt the device language when the app ships it, and
+  // fall back to Arabic — the app's default audience language — when the
+  // device runs something we don't offer. Runs once hydration completes
+  // and is skipped forever once the user explicitly picks a language.
   React.useEffect(() => {
-    if (!isHydrated(uiStore) || uiStore._languageManuallySet) {
-      return;
-    }
-    const deviceLocale: string | undefined =
-      NativeModules.I18nManager?.localeIdentifier;
-    if (deviceLocale?.startsWith('ar') && uiStore.language !== 'ar') {
-      uiStore.setLanguage('ar');
-    }
+    const disposer = when(
+      () => isHydrated(uiStore),
+      () => {
+        if (uiStore._languageManuallySet) {
+          return;
+        }
+        const deviceLocale: string | undefined = (() => {
+          try {
+            return (
+              NativeModules.I18nManager?.localeIdentifier ??
+              Intl.DateTimeFormat().resolvedOptions().locale
+            );
+          } catch {
+            return NativeModules.I18nManager?.localeIdentifier;
+          }
+        })();
+        const normalized = deviceLocale?.replace('-', '_');
+        const primary = normalized?.split('_')[0];
+        const supported = supportedLanguages as readonly string[];
+        // Prefer an exact regional match (pt-BR → pt_BR), then the bare
+        // language code, then the Arabic default.
+        let target: AvailableLanguage = 'ar';
+        if (normalized && supported.includes(normalized)) {
+          target = normalized as AvailableLanguage;
+        } else if (primary && supported.includes(primary)) {
+          target = primary as AvailableLanguage;
+        }
+        if (target !== uiStore.language) {
+          uiStore.setLanguage(target);
+        }
+        // Keep the layout direction in sync with the adopted language.
+        // A fresh install on an RTL device is already laid out RTL by the
+        // OS, so a restart is only needed when we adopt an RTL language
+        // on an LTR device (or vice versa).
+        const targetRTL = UIStore.RTL_LANGUAGES.includes(target);
+        if (targetRTL !== I18nManager.isRTL) {
+          I18nManager.allowRTL(targetRTL);
+          I18nManager.forceRTL(targetRTL);
+          // One-time silent restart during cold start so Android applies
+          // the new direction before the user reads anything.
+          setTimeout(() => NativeRestart.restart(), 600);
+        }
+      },
+    );
+    return () => disposer();
   }, []);
 
   // Initialize TTS store (memory gate + AppState/session listeners).
