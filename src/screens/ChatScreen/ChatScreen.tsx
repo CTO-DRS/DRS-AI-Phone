@@ -9,7 +9,7 @@ import {
   ErrorSnackbar,
   ModelErrorReportSheet,
 } from '../../components';
-import {LegacySheet} from '../../components/AssistantsSheets';
+import {AssistantSheet} from '../../components/AssistantSheets';
 
 import {useChatSession} from '../../hooks';
 import {usePendingMessage} from '../../hooks/useDeepLinking';
@@ -63,10 +63,11 @@ export const ChatScreen: React.FC = observer(() => {
   const activeAssistant = activeAssistantId
     ? assistantStore.assistants.find(p => p.id === activeAssistantId)
     : undefined;
-  const isVideoAssistant = activeAssistant && hasVideoCapability(activeAssistant);
+  const isVideoAssistant =
+    activeAssistant && hasVideoCapability(activeAssistant);
 
   // State for assistant sheet
-  const [isLegacySheetVisible, setIsLegacySheetVisible] = useState(false);
+  const [isAssistantSheetVisible, setIsAssistantSheetVisible] = useState(false);
 
   // State for model error report sheet
   const [isErrorReportVisible, setIsErrorReportVisible] = useState(false);
@@ -82,12 +83,15 @@ export const ChatScreen: React.FC = observer(() => {
   const {pendingMessage, clearPendingMessage} = usePendingMessage();
 
   // Callback handler for opening assistant sheet
-  const handleOpenLegacySheet = React.useCallback((_assistant: Assistant) => {
-    setIsLegacySheetVisible(true);
-  }, []);
+  const handleOpenAssistantSheet = React.useCallback(
+    (_assistant: Assistant) => {
+      setIsAssistantSheetVisible(true);
+    },
+    [],
+  );
 
-  const handleCloseLegacySheet = React.useCallback(() => {
-    setIsLegacySheetVisible(false);
+  const handleCloseAssistantSheet = React.useCallback(() => {
+    setIsAssistantSheetVisible(false);
   }, []);
 
   // Handlers for model error report
@@ -262,7 +266,7 @@ export const ChatScreen: React.FC = observer(() => {
         activeAssistant={activeAssistant}
         onSendPress={handleSendPress}
         onStopPress={handleStopPress}
-        onAssistantSettingsSelect={handleOpenLegacySheet}
+        onAssistantSettingsSelect={handleOpenAssistantSheet}
         user={user}
         isStopVisible={modelStore.inferencing}
         isStreaming={modelStore.isStreaming}
@@ -307,9 +311,9 @@ export const ChatScreen: React.FC = observer(() => {
         error={errorToReport}
       />
       {activeAssistant && (
-        <LegacySheet
-          isVisible={isLegacySheetVisible}
-          onClose={handleCloseLegacySheet}
+        <AssistantSheet
+          isVisible={isAssistantSheetVisible}
+          onClose={handleCloseAssistantSheet}
           assistant={activeAssistant}
         />
       )}

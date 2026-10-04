@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 /**
  * Style Loader for Supertonic TTS
@@ -9,8 +9,8 @@
  * - style_ttl: Style embedding for text-to-latent
  */
 
-import { loadAssetAsJSON } from "../../utils/AssetLoader.js";
-import { createComponentLogger } from "../../utils/logger.js";
+import {loadAssetAsJSON} from '../../utils/AssetLoader.js';
+import {createComponentLogger} from '../../utils/logger.js';
 const log = createComponentLogger('Supertonic', 'StyleLoader');
 
 /**
@@ -20,54 +20,64 @@ const log = createComponentLogger('Supertonic', 'StyleLoader');
 const OFFICIAL_VOICE_DATA = {
   F1: {
     name: 'Sarah',
-    description: 'A calm female voice with a slightly low tone; steady and composed.',
-    gender: 'f'
+    description:
+      'A calm female voice with a slightly low tone; steady and composed.',
+    gender: 'f',
   },
   F2: {
     name: 'Lily',
-    description: 'A bright, cheerful female voice; lively, playful, and youthful.',
-    gender: 'f'
+    description:
+      'A bright, cheerful female voice; lively, playful, and youthful.',
+    gender: 'f',
   },
   F3: {
     name: 'Jessica',
-    description: 'A clear, professional announcer-style female voice; articulate and broadcast-ready.',
-    gender: 'f'
+    description:
+      'A clear, professional announcer-style female voice; articulate and broadcast-ready.',
+    gender: 'f',
   },
   F4: {
     name: 'Olivia',
-    description: 'A crisp, confident female voice; distinct and expressive with strong delivery.',
-    gender: 'f'
+    description:
+      'A crisp, confident female voice; distinct and expressive with strong delivery.',
+    gender: 'f',
   },
   F5: {
     name: 'Emily',
-    description: 'A kind, gentle female voice; soft-spoken, calm, and naturally soothing.',
-    gender: 'f'
+    description:
+      'A kind, gentle female voice; soft-spoken, calm, and naturally soothing.',
+    gender: 'f',
   },
   M1: {
     name: 'Alex',
-    description: 'A lively, upbeat male voice with confident energy and a standard, clear tone.',
-    gender: 'm'
+    description:
+      'A lively, upbeat male voice with confident energy and a standard, clear tone.',
+    gender: 'm',
   },
   M2: {
     name: 'James',
-    description: 'A deep, robust male voice; calm, composed, and serious with a grounded presence.',
-    gender: 'm'
+    description:
+      'A deep, robust male voice; calm, composed, and serious with a grounded presence.',
+    gender: 'm',
   },
   M3: {
     name: 'Robert',
-    description: 'A polished, authoritative male voice; confident and trustworthy.',
-    gender: 'm'
+    description:
+      'A polished, authoritative male voice; confident and trustworthy.',
+    gender: 'm',
   },
   M4: {
     name: 'Sam',
-    description: 'A soft, neutral-toned male voice; gentle and approachable with a youthful quality.',
-    gender: 'm'
+    description:
+      'A soft, neutral-toned male voice; gentle and approachable with a youthful quality.',
+    gender: 'm',
   },
   M5: {
     name: 'Daniel',
-    description: 'A warm, soft-spoken male voice; calm and soothing with a natural storytelling quality.',
-    gender: 'm'
-  }
+    description:
+      'A warm, soft-spoken male voice; calm and soothing with a natural storytelling quality.',
+    gender: 'm',
+  },
 };
 
 /**
@@ -112,12 +122,19 @@ function flattenDeep(arr) {
 function toFloat32Array(data) {
   // Check for tensor format (HuggingFace style with nested data array)
   // Keys can be: data, dims, type (or dtype)
-  if (data && typeof data === 'object' && !Array.isArray(data) && 'data' in data) {
+  if (
+    data &&
+    typeof data === 'object' &&
+    !Array.isArray(data) &&
+    'data' in data
+  ) {
     const tensorLike = data;
     if (Array.isArray(tensorLike.data)) {
       // Flatten the nested data array (can be 3D like [[[...]]])
       const flattened = flattenDeep(tensorLike.data);
-      log.debug(`toFloat32Array: tensor format with nested data, flattened length: ${flattened.length}`);
+      log.debug(
+        `toFloat32Array: tensor format with nested data, flattened length: ${flattened.length}`,
+      );
       return new Float32Array(flattened);
     }
   }
@@ -127,7 +144,9 @@ function toFloat32Array(data) {
     // Check if first element is also an array (nested)
     if (Array.isArray(data[0])) {
       const flattened = flattenDeep(data);
-      log.debug(`toFloat32Array: nested array flattened, length: ${flattened.length}`);
+      log.debug(
+        `toFloat32Array: nested array flattened, length: ${flattened.length}`,
+      );
       return new Float32Array(flattened);
     }
     // Flat array of numbers
@@ -183,7 +202,9 @@ export class StyleLoader {
     // For directory mode, we'll need the manifest or voice list
     // Since we can't list directory contents in React Native easily,
     // we require a manifest file
-    throw new Error('Directory loading requires a manifest file. Use loadFromManifest() instead.');
+    throw new Error(
+      'Directory loading requires a manifest file. Use loadFromManifest() instead.',
+    );
   }
 
   /**
@@ -196,27 +217,41 @@ export class StyleLoader {
    */
   loadVoiceFromData(voiceId, data) {
     if (!data.style_dp || !data.style_ttl) {
-      throw new Error(`Voice style ${voiceId} missing required fields (style_dp, style_ttl)`);
+      throw new Error(
+        `Voice style ${voiceId} missing required fields (style_dp, style_ttl)`,
+      );
     }
 
     // Debug: log what we received
-    log.debug(`Raw style_dp type: ${typeof data.style_dp}, keys: ${typeof data.style_dp === 'object' ? Object.keys(data.style_dp).join(',') : 'N/A'}`);
-    log.debug(`Raw style_ttl type: ${typeof data.style_ttl}, keys: ${typeof data.style_ttl === 'object' ? Object.keys(data.style_ttl).join(',') : 'N/A'}`);
+    log.debug(
+      `Raw style_dp type: ${typeof data.style_dp}, keys: ${typeof data.style_dp === 'object' ? Object.keys(data.style_dp).join(',') : 'N/A'}`,
+    );
+    log.debug(
+      `Raw style_ttl type: ${typeof data.style_ttl}, keys: ${typeof data.style_ttl === 'object' ? Object.keys(data.style_ttl).join(',') : 'N/A'}`,
+    );
     const styleDp = toFloat32Array(data.style_dp);
     const styleTtl = toFloat32Array(data.style_ttl);
 
     // Validate converted arrays are not empty
     if (styleDp.length === 0) {
-      throw new Error(`Voice style ${voiceId}: style_dp is empty after conversion. ` + `Data format may be unsupported.`);
+      throw new Error(
+        `Voice style ${voiceId}: style_dp is empty after conversion. ` +
+          `Data format may be unsupported.`,
+      );
     }
     if (styleTtl.length === 0) {
-      throw new Error(`Voice style ${voiceId}: style_ttl is empty after conversion. ` + `Data format may be unsupported.`);
+      throw new Error(
+        `Voice style ${voiceId}: style_ttl is empty after conversion. ` +
+          `Data format may be unsupported.`,
+      );
     }
-    log.debug(`Converted styleDp length: ${styleDp.length}, styleTtl length: ${styleTtl.length}`);
+    log.debug(
+      `Converted styleDp length: ${styleDp.length}, styleTtl length: ${styleTtl.length}`,
+    );
     const style = {
       voiceId,
       styleDp,
-      styleTtl
+      styleTtl,
     };
     this.styles.set(voiceId, style);
 
@@ -224,7 +259,9 @@ export class StyleLoader {
     if (!this.voiceMetadata.has(voiceId)) {
       this.voiceMetadata.set(voiceId, this.createVoiceMetadata(voiceId));
     }
-    log.info(`Loaded voice ${voiceId}: styleDp=${style.styleDp.length}, styleTtl=${style.styleTtl.length}`);
+    log.info(
+      `Loaded voice ${voiceId}: styleDp=${style.styleDp.length}, styleTtl=${style.styleTtl.length}`,
+    );
   }
 
   /**
@@ -290,7 +327,9 @@ export class StyleLoader {
       const data = await loadAssetAsJSON(voicePath);
       this.loadVoiceFromData(voiceId, data);
     } catch (error) {
-      throw new Error(`Failed to load voice '${voiceId}': ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to load voice '${voiceId}': ${error instanceof Error ? error.message : 'Unknown error'}`,
+      );
     }
   }
 
@@ -368,7 +407,7 @@ export class StyleLoader {
         id: voiceId,
         name: officialData.name,
         gender: officialData.gender,
-        description: officialData.description
+        description: officialData.description,
       };
     }
 
@@ -387,14 +426,14 @@ export class StyleLoader {
         id: voiceId,
         name,
         gender,
-        description: `Supertonic ${genderName.toLowerCase()} voice ${voiceNumber}`
+        description: `Supertonic ${genderName.toLowerCase()} voice ${voiceNumber}`,
       };
     }
     return {
       id: voiceId,
       name,
       gender,
-      description: `Supertonic ${gender === 'f' ? 'female' : 'male'} voice`
+      description: `Supertonic ${gender === 'f' ? 'female' : 'male'} voice`,
     };
   }
 

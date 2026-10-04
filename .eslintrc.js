@@ -19,6 +19,7 @@ module.exports = {
     'build/',
     'dist/',
     'e2e/',
+    'vendors/react-native-speech/lib/',
   ],
   rules: {
     'prettier/prettier': 'error',

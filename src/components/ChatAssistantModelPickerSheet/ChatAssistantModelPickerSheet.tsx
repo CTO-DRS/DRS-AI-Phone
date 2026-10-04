@@ -169,16 +169,22 @@ export const ChatAssistantModelPickerSheet = observer(
           if (assistantDefaultModel) {
             Alert.alert(
               l10n.components.chatAssistantModelPickerSheet.confirmationTitle,
-              t(l10n.components.chatAssistantModelPickerSheet.modelSwitchMessage, {
-                modelName: assistantDefaultModel.name,
-              }),
+              t(
+                l10n.components.chatAssistantModelPickerSheet
+                  .modelSwitchMessage,
+                {
+                  modelName: assistantDefaultModel.name,
+                },
+              ),
               [
                 {
-                  text: l10n.components.chatAssistantModelPickerSheet.keepButton,
+                  text: l10n.components.chatAssistantModelPickerSheet
+                    .keepButton,
                   style: 'cancel',
                 },
                 {
-                  text: l10n.components.chatAssistantModelPickerSheet.switchButton,
+                  text: l10n.components.chatAssistantModelPickerSheet
+                    .switchButton,
                   onPress: () => {
                     modelStore.selectModel(assistantDefaultModel);
                   },
@@ -190,7 +196,11 @@ export const ChatAssistantModelPickerSheet = observer(
         onAssistantSelect?.(assistant?.id);
         onClose();
       },
-      [onAssistantSelect, onClose, l10n.components.chatAssistantModelPickerSheet],
+      [
+        onAssistantSelect,
+        onClose,
+        l10n.components.chatAssistantModelPickerSheet,
+      ],
     );
 
     const renderDisableAssistantItem = React.useCallback(() => {
@@ -264,11 +274,15 @@ export const ChatAssistantModelPickerSheet = observer(
 
     const renderAssistantItem = React.useCallback(
       (assistant: (typeof assistantStore.assistants)[0]) => {
-        const isActiveAssistant = assistant.id === chatSessionStore.activeAssistantId;
+        const isActiveAssistant =
+          assistant.id === chatSessionStore.activeAssistantId;
         return (
           <Pressable
             key={assistant.id}
-            style={[styles.listItem, isActiveAssistant && styles.activeListItem]}
+            style={[
+              styles.listItem,
+              isActiveAssistant && styles.activeListItem,
+            ]}
             onPress={() => handleAssistantSelect(assistant)}>
             <View style={styles.itemContent}>
               <View style={styles.itemTextContent}>
@@ -287,24 +301,26 @@ export const ChatAssistantModelPickerSheet = observer(
                   {getCapabilityText(assistant)}
                 </Text>
               </View>
-              {isActiveAssistant && assistant.type === 'local' && onAssistantSettingsSelect && (
-                <Pressable
-                  style={styles.settingsButton}
-                  onPress={e => {
-                    e.stopPropagation();
-                    onAssistantSettingsSelect(assistant);
-                  }}>
-                  <SettingsIcon
-                    width={16}
-                    height={16}
-                    stroke={
-                      isActiveAssistant
-                        ? styles.activeItemTitle.color
-                        : styles.itemSubtitle.color
-                    }
-                  />
-                </Pressable>
-              )}
+              {isActiveAssistant &&
+                assistant.type === 'local' &&
+                onAssistantSettingsSelect && (
+                  <Pressable
+                    style={styles.settingsButton}
+                    onPress={e => {
+                      e.stopPropagation();
+                      onAssistantSettingsSelect(assistant);
+                    }}>
+                    <SettingsIcon
+                      width={16}
+                      height={16}
+                      stroke={
+                        isActiveAssistant
+                          ? styles.activeItemTitle.color
+                          : styles.itemSubtitle.color
+                      }
+                    />
+                  </Pressable>
+                )}
             </View>
           </Pressable>
         );
@@ -332,11 +348,19 @@ export const ChatAssistantModelPickerSheet = observer(
             contentContainerStyle={{paddingBottom: chatInputHeight + 66}}>
             {item.id === 'models'
               ? modelStore.availableModels.map(renderModelItem)
-              : [renderDisableAssistantItem(), ...assistantStore.assistants.map(renderAssistantItem)]}
+              : [
+                  renderDisableAssistantItem(),
+                  ...assistantStore.assistants.map(renderAssistantItem),
+                ]}
           </BottomSheetScrollView>
         </View>
       ),
-      [chatInputHeight, renderDisableAssistantItem, renderModelItem, renderAssistantItem],
+      [
+        chatInputHeight,
+        renderDisableAssistantItem,
+        renderModelItem,
+        renderAssistantItem,
+      ],
     );
 
     const onViewableItemsChanged = React.useCallback(

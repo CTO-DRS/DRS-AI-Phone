@@ -40,7 +40,9 @@ describe('assistant-capabilities', () => {
 
     it('should detect multimodal capability', () => {
       const assistantWithMultimodal = createMockAssistant({multimodal: true});
-      const assistantWithoutMultimodal = createMockAssistant({multimodal: false});
+      const assistantWithoutMultimodal = createMockAssistant({
+        multimodal: false,
+      });
 
       expect(hasMultimodalCapability(assistantWithMultimodal)).toBe(true);
       expect(hasMultimodalCapability(assistantWithoutMultimodal)).toBe(false);

@@ -79,7 +79,10 @@ const DatabaseInspectorScreen = () => {
   const resetAssistantMigration = async () => {
     try {
       await assistantRepository.resetMigration();
-      Alert.alert('Assistant migration reset successful', 'Please restart the app.');
+      Alert.alert(
+        'Assistant migration reset successful',
+        'Please restart the app.',
+      );
     } catch (error) {
       console.error('Failed to reset assistant migration:', error);
       Alert.alert(

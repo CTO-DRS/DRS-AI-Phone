@@ -100,7 +100,9 @@ describe('VideoAssistantScreen', () => {
 
     const alertSpy = jest.spyOn(Alert, 'alert');
 
-    const {getByLabelText} = render(<VideoAssistantScreen activeAssistant={videoAssistant} />);
+    const {getByLabelText} = render(
+      <VideoAssistantScreen activeAssistant={videoAssistant} />,
+    );
 
     fireEvent.press(getByLabelText('Start video analysis'));
 
@@ -131,7 +133,9 @@ describe('VideoAssistantScreen', () => {
 
     const alertSpy = jest.spyOn(Alert, 'alert');
 
-    const {getByLabelText} = render(<VideoAssistantScreen activeAssistant={videoAssistant} />);
+    const {getByLabelText} = render(
+      <VideoAssistantScreen activeAssistant={videoAssistant} />,
+    );
 
     fireEvent.press(getByLabelText('Start video analysis'));
 

@@ -25,7 +25,7 @@ import {expect} from '@wdio/globals';
 import {ChatPage} from '../../pages/ChatPage';
 import {DrawerPage} from '../../pages/DrawerPage';
 import {ModelsPage} from '../../pages/ModelsPage';
-import {LegacySheetPage} from '../../pages/LegacySheetPage';
+import {AssistantSheetPage} from '../../pages/AssistantSheetPage';
 import {Selectors, byText} from '../../helpers/selectors';
 import {
   downloadAndLoadModel,
@@ -65,12 +65,12 @@ const getAppBundleId = (): string =>
 describe('Thinking Toggle Override (with assistant active)', () => {
   let chatPage: ChatPage;
   let drawerPage: DrawerPage;
-  let assistantSheetPage: LegacySheetPage;
+  let assistantSheetPage: AssistantSheetPage;
 
   before(async () => {
     chatPage = new ChatPage();
     drawerPage = new DrawerPage();
-    assistantSheetPage = new LegacySheetPage();
+    assistantSheetPage = new AssistantSheetPage();
 
     await chatPage.waitForReady(TIMEOUTS.appReady);
 
@@ -100,7 +100,7 @@ describe('Thinking Toggle Override (with assistant active)', () => {
     await assistantSheetPage.setName(ASSISTANT_NAME);
     await assistantSheetPage.submit();
 
-    // Returning from LegacyScreen to Chat via drawer is unreliable
+    // Returning from AssistantsScreen to Chat via drawer is unreliable
     // (gesture conflicts). Restart and re-load the model. Assistant persists in DB.
     await browser.pause(1000);
     await driver.terminateApp(getAppBundleId());

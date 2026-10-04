@@ -179,7 +179,11 @@ describe('importUtils', () => {
       it('should import multiple assistants', async () => {
         const multipleAssistants = [
           mockImportedAssistant,
-          {...mockImportedAssistant, id: 'imported-assistant-2', name: 'Second Assistant'},
+          {
+            ...mockImportedAssistant,
+            id: 'imported-assistant-2',
+            name: 'Second Assistant',
+          },
         ];
         (RNFS.readFile as jest.Mock).mockResolvedValue(
           JSON.stringify(multipleAssistants),
@@ -224,7 +228,8 @@ describe('importUtils', () => {
         await importAssistants();
 
         expect(assistantStore.createAssistant).toHaveBeenCalledTimes(1);
-        const created = (assistantStore.createAssistant as jest.Mock).mock.calls[0][0];
+        const created = (assistantStore.createAssistant as jest.Mock).mock
+          .calls[0][0];
         expect(created.pact).toEqual(assistantWithTalents.pact);
         expect(created.greeting).toEqual(assistantWithTalents.greeting);
       });

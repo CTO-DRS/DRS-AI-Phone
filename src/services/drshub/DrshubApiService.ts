@@ -234,7 +234,9 @@ class DrshubApiService {
   }
 
   // Transform API assistant response to internal format
-  private transformApiAssistant(apiAssistant: ApiAssistantResponse): DrshubAssistant {
+  private transformApiAssistant(
+    apiAssistant: ApiAssistantResponse,
+  ): DrshubAssistant {
     return {
       type: 'drshub' as const,
       id: apiAssistant.id,
@@ -292,7 +294,9 @@ class DrshubApiService {
   }
 
   // Browse and search Assistants
-  async getAssistants(query: AssistantsQuery = {}): Promise<AssistantsResponse> {
+  async getAssistants(
+    query: AssistantsQuery = {},
+  ): Promise<AssistantsResponse> {
     try {
       const params = new URLSearchParams();
 
@@ -337,7 +341,9 @@ class DrshubApiService {
       const response = await this.apiRequest<ApiAssistantsResponse>(endpoint);
 
       return {
-        assistants: response.assistants.map(assistant => this.transformApiAssistant(assistant)),
+        assistants: response.assistants.map(assistant =>
+          this.transformApiAssistant(assistant),
+        ),
         total_count: response.pagination.total,
         page: response.pagination.page,
         limit: response.pagination.limit,
@@ -458,7 +464,9 @@ class DrshubApiService {
       const response = await this.apiRequest<ApiLibraryResponse>(endpoint);
 
       return {
-        assistants: response.assistants.map(assistant => this.transformApiAssistant(assistant)),
+        assistants: response.assistants.map(assistant =>
+          this.transformApiAssistant(assistant),
+        ),
         total_count: response.pagination.total,
         page: response.pagination.page,
         limit: response.pagination.limit,
@@ -507,7 +515,9 @@ class DrshubApiService {
       const response = await this.apiRequest<ApiMyAssistantsResponse>(endpoint);
 
       return {
-        assistants: response.assistants.map(assistant => this.transformApiAssistant(assistant)),
+        assistants: response.assistants.map(assistant =>
+          this.transformApiAssistant(assistant),
+        ),
         total_count: response.pagination.total,
         page: response.pagination.page,
         limit: response.pagination.limit,

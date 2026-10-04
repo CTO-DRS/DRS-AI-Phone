@@ -1,15 +1,27 @@
 import {
   ONBOARDING_ASSISTANTS,
-  TOPIC_TO_PAL,
+  TOPIC_TO_ASSISTANT,
   entryId,
   resolveAssistantForTopic,
+  type OnboardingAssistantDef,
+  type OnboardingAssistantModelEntry,
+  type OnboardingModelTier,
 } from '../onboardingAssistants';
 import {TOPIC_KEYS} from '../types';
 
 const ID_PATTERN = /^[^/]+\/[^/]+\/[^/]+\.gguf$/;
 
-const allEntries = ONBOARDING_ASSISTANTS.flatMap(p =>
-  p.models.map(m => [p.key, m.tier, m] as const),
+const allEntries: Array<
+  [string, OnboardingModelTier, OnboardingAssistantModelEntry]
+> = ONBOARDING_ASSISTANTS.flatMap(p =>
+  p.models.map(
+    m =>
+      [p.key, m.tier, m] as [
+        string,
+        OnboardingModelTier,
+        OnboardingAssistantModelEntry,
+      ],
+  ),
 );
 
 describe('onboardingAssistants', () => {
@@ -25,17 +37,19 @@ describe('onboardingAssistants', () => {
 
   it('maps every topic key to a assistant; else falls back to pip', () => {
     for (const key of TOPIC_KEYS) {
-      expect(TOPIC_TO_PAL[key]).toBeDefined();
+      expect(TOPIC_TO_ASSISTANT[key]).toBeDefined();
     }
-    expect(TOPIC_TO_PAL.else.key).toBe('pip');
-    expect(TOPIC_TO_PAL.smartchat.key).toBe('pip');
+    expect(TOPIC_TO_ASSISTANT.else.key).toBe('pip');
+    expect(TOPIC_TO_ASSISTANT.smartchat.key).toBe('pip');
   });
 
   it('resolveAssistantForTopic handles null (treated as else → pip)', () => {
     expect(resolveAssistantForTopic(null).key).toBe('pip');
   });
 
-  it.each(ONBOARDING_ASSISTANTS.map(p => [p.key, p] as const))(
+  it.each<[string, OnboardingAssistantDef]>(
+    ONBOARDING_ASSISTANTS.map(p => [p.key, p]),
+  )(
     'assistant %s has 3 tiers in quick/balanced/best order with exactly one recommended (balanced)',
     (_key, assistant) => {
       expect(assistant.models).toHaveLength(3);
@@ -50,7 +64,9 @@ describe('onboardingAssistants', () => {
     },
   );
 
-  it.each(allEntries)(
+  it.each<[string, OnboardingModelTier, OnboardingAssistantModelEntry]>(
+    allEntries,
+  )(
     '%s/%s entry has non-empty repo/filename and id matches the canonical shape',
     (_assistantKey, _tier, entry) => {
       expect(entry.repo.length).toBeGreaterThan(0);
@@ -59,7 +75,9 @@ describe('onboardingAssistants', () => {
     },
   );
 
-  it.each(allEntries)(
+  it.each<[string, OnboardingModelTier, OnboardingAssistantModelEntry]>(
+    allEntries,
+  )(
     '%s/%s entry downloadUrl equals huggingface.co/<repo>/resolve/main/<filename>',
     (_assistantKey, _tier, entry) => {
       expect(entry.downloadUrl).toBe(
@@ -68,7 +86,9 @@ describe('onboardingAssistants', () => {
     },
   );
 
-  it.each(allEntries)(
+  it.each<[string, OnboardingModelTier, OnboardingAssistantModelEntry]>(
+    allEntries,
+  )(
     '%s/%s entry has populated picker fields (sizeBytes, params, displayName, author)',
     (_assistantKey, _tier, entry) => {
       expect(entry.sizeBytes).toBeGreaterThan(0);

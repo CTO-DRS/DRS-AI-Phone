@@ -9,9 +9,13 @@ import {
 } from '../../../../../../jest/test-utils';
 import {SquareAssistantCard} from '../SquareAssistantCard';
 
-import {assistantStore, chatSessionStore, modelStore} from '../../../../../store';
+import {
+  assistantStore,
+  chatSessionStore,
+  modelStore,
+} from '../../../../../store';
 import {downloadedModel} from '../../../../../../jest/fixtures/models';
-import type {Assistant} from '../../../../../store/LegacyStore';
+import type {Assistant} from '../../../../../store/AssistantStore';
 import type {DrshubAssistant} from '../../../../../types/drshub';
 
 // Mock navigation
@@ -34,7 +38,9 @@ describe('SquareAssistantCard', () => {
   const mockOnPress = jest.fn();
 
   // Create a basic local assistant fixture
-  const createLocalAssistant = (overrides: Partial<Assistant> = {}): Assistant => ({
+  const createLocalAssistant = (
+    overrides: Partial<Assistant> = {},
+  ): Assistant => ({
     type: 'local',
     id: 'test-assistant-1',
     name: 'Test Assistant',
@@ -53,7 +59,9 @@ describe('SquareAssistantCard', () => {
   });
 
   // Create a Drshub assistant fixture
-  const createDrshubAssistant = (overrides: Partial<DrshubAssistant> = {}): DrshubAssistant => ({
+  const createDrshubAssistant = (
+    overrides: Partial<DrshubAssistant> = {},
+  ): DrshubAssistant => ({
     type: 'drshub',
     id: 'ph-assistant-1',
     title: 'Drshub Test Assistant',
@@ -105,7 +113,11 @@ describe('SquareAssistantCard', () => {
     it('renders local assistant correctly', () => {
       const assistant = createLocalAssistant();
       const {getByText} = render(
-        <SquareAssistantCard assistant={assistant} onPress={mockOnPress} isLocal={true} />,
+        <SquareAssistantCard
+          assistant={assistant}
+          onPress={mockOnPress}
+          isLocal={true}
+        />,
       );
 
       expect(getByText('Test Assistant')).toBeTruthy();
@@ -124,7 +136,10 @@ describe('SquareAssistantCard', () => {
     });
 
     it('renders rating and review count for Drshub assistant', () => {
-      const assistant = createDrshubAssistant({average_rating: 4.5, review_count: 10});
+      const assistant = createDrshubAssistant({
+        average_rating: 4.5,
+        review_count: 10,
+      });
       const {getByText} = render(
         <SquareAssistantCard assistant={assistant} onPress={mockOnPress} />,
       );
@@ -179,7 +194,11 @@ describe('SquareAssistantCard', () => {
         thumbnail_url: 'https://example.com/thumb.jpg',
       });
       const {UNSAFE_getByType} = render(
-        <SquareAssistantCard assistant={assistant} onPress={mockOnPress} isLocal={true} />,
+        <SquareAssistantCard
+          assistant={assistant}
+          onPress={mockOnPress}
+          isLocal={true}
+        />,
       );
 
       const images = UNSAFE_getByType(require('react-native').Image);
@@ -189,14 +208,20 @@ describe('SquareAssistantCard', () => {
     it('renders first letter when no thumbnail available', () => {
       const assistant = createLocalAssistant({name: 'Test Assistant'});
       const {getByText} = render(
-        <SquareAssistantCard assistant={assistant} onPress={mockOnPress} isLocal={true} />,
+        <SquareAssistantCard
+          assistant={assistant}
+          onPress={mockOnPress}
+          isLocal={true}
+        />,
       );
 
       expect(getByText('T')).toBeTruthy(); // First letter
     });
 
     it('renders protection badge for protected Drshub assistants', () => {
-      const assistant = createDrshubAssistant({protection_level: 'reveal_on_purchase'});
+      const assistant = createDrshubAssistant({
+        protection_level: 'reveal_on_purchase',
+      });
       const {UNSAFE_getAllByType} = render(
         <SquareAssistantCard assistant={assistant} onPress={mockOnPress} />,
       );
@@ -213,7 +238,11 @@ describe('SquareAssistantCard', () => {
     it('calls onPress when card is pressed', () => {
       const assistant = createLocalAssistant();
       const {getByText} = render(
-        <SquareAssistantCard assistant={assistant} onPress={mockOnPress} isLocal={true} />,
+        <SquareAssistantCard
+          assistant={assistant}
+          onPress={mockOnPress}
+          isLocal={true}
+        />,
       );
 
       fireEvent.press(getByText('Test Assistant'));
@@ -224,7 +253,11 @@ describe('SquareAssistantCard', () => {
       jest.spyOn(Alert, 'alert');
       const assistant = createLocalAssistant();
       const {UNSAFE_getAllByType} = render(
-        <SquareAssistantCard assistant={assistant} onPress={mockOnPress} isLocal={true} />,
+        <SquareAssistantCard
+          assistant={assistant}
+          onPress={mockOnPress}
+          isLocal={true}
+        />,
       );
 
       // Find and press delete button (IconButton with TrashIcon)
@@ -241,7 +274,11 @@ describe('SquareAssistantCard', () => {
     it('calls exportAssistant when share button is pressed', async () => {
       const assistant = createLocalAssistant();
       const {UNSAFE_getAllByType} = render(
-        <SquareAssistantCard assistant={assistant} onPress={mockOnPress} isLocal={true} />,
+        <SquareAssistantCard
+          assistant={assistant}
+          onPress={mockOnPress}
+          isLocal={true}
+        />,
       );
 
       // Find and press share button (IconButton with ShareIcon)
@@ -268,7 +305,11 @@ describe('SquareAssistantCard', () => {
       modelStore.models = [downloadedModel];
 
       const {UNSAFE_getAllByType} = render(
-        <SquareAssistantCard assistant={assistant} onPress={mockOnPress} isLocal={true} />,
+        <SquareAssistantCard
+          assistant={assistant}
+          onPress={mockOnPress}
+          isLocal={true}
+        />,
       );
 
       // Find chat button - it's a TouchableOpacity inside the thumbnail
@@ -283,7 +324,9 @@ describe('SquareAssistantCard', () => {
       });
 
       await waitFor(() => {
-        expect(chatSessionStore.setActiveAssistant).toHaveBeenCalledWith(assistant.id);
+        expect(chatSessionStore.setActiveAssistant).toHaveBeenCalledWith(
+          assistant.id,
+        );
         expect(mockNavigate).toHaveBeenCalledWith('Chat');
       });
     });
@@ -318,7 +361,11 @@ describe('SquareAssistantCard', () => {
       modelStore.isModelAvailable = jest.fn().mockReturnValue(false);
 
       const {getByText} = render(
-        <SquareAssistantCard assistant={assistant} onPress={mockOnPress} isLocal={true} />,
+        <SquareAssistantCard
+          assistant={assistant}
+          onPress={mockOnPress}
+          isLocal={true}
+        />,
       );
 
       // Check for warning text (from l10n.components.modelNotAvailable.modelNotDownloadedShort)
@@ -332,7 +379,11 @@ describe('SquareAssistantCard', () => {
       modelStore.isModelAvailable = jest.fn().mockReturnValue(false);
 
       const {getByText} = render(
-        <SquareAssistantCard assistant={assistant} onPress={mockOnPress} isLocal={true} />,
+        <SquareAssistantCard
+          assistant={assistant}
+          onPress={mockOnPress}
+          isLocal={true}
+        />,
       );
 
       expect(getByText('A helpful test assistant').props.numberOfLines).toBe(1);
@@ -344,7 +395,11 @@ describe('SquareAssistantCard', () => {
       modelStore.isModelAvailable = jest.fn().mockReturnValue(true);
 
       const {queryByText} = render(
-        <SquareAssistantCard assistant={assistant} onPress={mockOnPress} isLocal={true} />,
+        <SquareAssistantCard
+          assistant={assistant}
+          onPress={mockOnPress}
+          isLocal={true}
+        />,
       );
 
       expect(queryByText('Model not downloaded')).toBeNull();
@@ -366,7 +421,11 @@ describe('SquareAssistantCard', () => {
       const assistant = createLocalAssistant({description: longDescription});
 
       const {getByText} = render(
-        <SquareAssistantCard assistant={assistant} onPress={mockOnPress} isLocal={true} />,
+        <SquareAssistantCard
+          assistant={assistant}
+          onPress={mockOnPress}
+          isLocal={true}
+        />,
       );
 
       const displayedText = getByText(longDescription);
@@ -379,7 +438,11 @@ describe('SquareAssistantCard', () => {
       const assistant = createLocalAssistant({description});
 
       const {getByText} = render(
-        <SquareAssistantCard assistant={assistant} onPress={mockOnPress} isLocal={true} />,
+        <SquareAssistantCard
+          assistant={assistant}
+          onPress={mockOnPress}
+          isLocal={true}
+        />,
       );
 
       const displayedText = getByText(description);
@@ -390,10 +453,17 @@ describe('SquareAssistantCard', () => {
 
     it('renders a long cleaned system prompt in full, with nothing appended', () => {
       const systemPrompt = 'B'.repeat(1200);
-      const assistant = createLocalAssistant({description: undefined, systemPrompt});
+      const assistant = createLocalAssistant({
+        description: undefined,
+        systemPrompt,
+      });
 
       const {getByText} = render(
-        <SquareAssistantCard assistant={assistant} onPress={mockOnPress} isLocal={true} />,
+        <SquareAssistantCard
+          assistant={assistant}
+          onPress={mockOnPress}
+          isLocal={true}
+        />,
       );
 
       const displayedText = getByText(systemPrompt);
@@ -409,7 +479,11 @@ describe('SquareAssistantCard', () => {
       });
 
       const {getByText} = render(
-        <SquareAssistantCard assistant={assistant} onPress={mockOnPress} isLocal={true} />,
+        <SquareAssistantCard
+          assistant={assistant}
+          onPress={mockOnPress}
+          isLocal={true}
+        />,
       );
 
       // Should remove "You are" prefix
@@ -428,7 +502,11 @@ describe('SquareAssistantCard', () => {
       });
 
       const {getByText} = render(
-        <SquareAssistantCard assistant={assistant} onPress={mockOnPress} isLocal={true} />,
+        <SquareAssistantCard
+          assistant={assistant}
+          onPress={mockOnPress}
+          isLocal={true}
+        />,
       );
 
       // Should display parameter values joined with bullet
@@ -446,7 +524,11 @@ describe('SquareAssistantCard', () => {
       });
 
       const {getByText} = render(
-        <SquareAssistantCard assistant={assistant} onPress={mockOnPress} isLocal={true} />,
+        <SquareAssistantCard
+          assistant={assistant}
+          onPress={mockOnPress}
+          isLocal={true}
+        />,
       );
 
       // When video capability is enabled, it shows "Video AI Assistant"
@@ -462,7 +544,11 @@ describe('SquareAssistantCard', () => {
       });
 
       const {getByText} = render(
-        <SquareAssistantCard assistant={assistant} onPress={mockOnPress} isLocal={true} />,
+        <SquareAssistantCard
+          assistant={assistant}
+          onPress={mockOnPress}
+          isLocal={true}
+        />,
       );
 
       expect(getByText('AI Assistant')).toBeTruthy();
@@ -473,7 +559,11 @@ describe('SquareAssistantCard', () => {
     it('shows share and delete buttons for local assistants', () => {
       const assistant = createLocalAssistant();
       const {UNSAFE_getAllByType} = render(
-        <SquareAssistantCard assistant={assistant} onPress={mockOnPress} isLocal={true} />,
+        <SquareAssistantCard
+          assistant={assistant}
+          onPress={mockOnPress}
+          isLocal={true}
+        />,
       );
 
       const iconButtons = UNSAFE_getAllByType(
@@ -499,12 +589,19 @@ describe('SquareAssistantCard', () => {
 
     it('shows chat button for downloaded Drshub assistant', () => {
       const drshubAssistant = createDrshubAssistant();
-      const localAssistant = createLocalAssistant({drshub_id: drshubAssistant.id});
+      const localAssistant = createLocalAssistant({
+        drshub_id: drshubAssistant.id,
+      });
       assistantStore.assistants = [localAssistant];
-      assistantStore.isDrshubAssistantDownloaded = jest.fn().mockReturnValue(true);
+      assistantStore.isDrshubAssistantDownloaded = jest
+        .fn()
+        .mockReturnValue(true);
 
       const {UNSAFE_getAllByType} = render(
-        <SquareAssistantCard assistant={drshubAssistant} onPress={mockOnPress} />,
+        <SquareAssistantCard
+          assistant={drshubAssistant}
+          onPress={mockOnPress}
+        />,
       );
 
       // Should have chat button - check for ChatIcon or CameraIcon
@@ -525,7 +622,11 @@ describe('SquareAssistantCard', () => {
       });
 
       const {UNSAFE_getAllByType} = render(
-        <SquareAssistantCard assistant={assistant} onPress={mockOnPress} isLocal={true} />,
+        <SquareAssistantCard
+          assistant={assistant}
+          onPress={mockOnPress}
+          isLocal={true}
+        />,
       );
 
       const cameraIcons = UNSAFE_getAllByType(
@@ -538,7 +639,11 @@ describe('SquareAssistantCard', () => {
       const assistant = createLocalAssistant({capabilities: {}});
 
       const {UNSAFE_getAllByType} = render(
-        <SquareAssistantCard assistant={assistant} onPress={mockOnPress} isLocal={true} />,
+        <SquareAssistantCard
+          assistant={assistant}
+          onPress={mockOnPress}
+          isLocal={true}
+        />,
       );
 
       const chatIcons = UNSAFE_getAllByType(
@@ -572,7 +677,11 @@ describe('SquareAssistantCard', () => {
 
       const assistant = createLocalAssistant();
       const {UNSAFE_getAllByType} = render(
-        <SquareAssistantCard assistant={assistant} onPress={mockOnPress} isLocal={true} />,
+        <SquareAssistantCard
+          assistant={assistant}
+          onPress={mockOnPress}
+          isLocal={true}
+        />,
       );
 
       const iconButtons = UNSAFE_getAllByType(
@@ -601,7 +710,11 @@ describe('SquareAssistantCard', () => {
 
       const assistant = createLocalAssistant();
       const {UNSAFE_getAllByType} = render(
-        <SquareAssistantCard assistant={assistant} onPress={mockOnPress} isLocal={true} />,
+        <SquareAssistantCard
+          assistant={assistant}
+          onPress={mockOnPress}
+          isLocal={true}
+        />,
       );
 
       const touchables = UNSAFE_getAllByType(

@@ -562,12 +562,14 @@ export const useChatSession = (
     const activeSession = chatSessionStore.sessions.find(
       s => s.id === chatSessionStore.activeSessionId,
     );
-    const assistant = activeSession?.activeAssistantId
-      ? assistantStore.assistants.find(p => p.id === activeSession.activeAssistantId)
+    const activeAssistant = activeSession?.activeAssistantId
+      ? assistantStore.assistants.find(
+          p => p.id === activeSession.activeAssistantId,
+        )
       : null;
 
     const systemMessages = resolveSystemMessages({
-      assistant,
+      assistant: activeAssistant,
       model: modelStore.activeModel,
     });
 
@@ -587,7 +589,9 @@ export const useChatSession = (
 
     // Allowed talent names for this Assistant. The runner rejects any
     // tool call whose function.name isn't in this list.
-    const assistantTalents = (assistant?.pact?.talents ?? []).map(t => t.name);
+    const assistantTalents = (activeAssistant?.pact?.talents ?? []).map(
+      t => t.name,
+    );
 
     abortRef.current = new AbortController();
     const completionStartTime = Date.now();

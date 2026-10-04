@@ -185,7 +185,7 @@
       "resultCountLabel": "Liczba wyników na wyszukiwanie",
       "resultCountDescription": "Mniej wyników zostawia więcej miejsca w kontekście modelu.",
       "consentTitle": "Wyszukiwania opuszczają Twoje urządzenie",
-      "consentDescription": "Gdy Kumpel przeszukuje internet, Twoje zapytanie jest wysyłane przez internet do wybranego dostawcy. Gdy Kumpel odczytuje stronę, jej adres URL i zawartość mogą zostać wysłane do domyślnej usługi odczytu (r.jina.ai), jeśli wybrany dostawca nie ma własnego mechanizmu odczytu. Klucze i zapytania nigdy nie są wysyłane do DRS AI.",
+      "consentDescription": "Gdy Asystent przeszukuje internet, Twoje zapytanie jest wysyłane przez internet do wybranego dostawcy. Gdy Asystent odczytuje stronę, jej adres URL i zawartość mogą zostać wysłane do domyślnej usługi odczytu (r.jina.ai), jeśli wybrany dostawca nie ma własnego mechanizmu odczytu. Klucze i zapytania nigdy nie są wysyłane do DRS AI.",
       "consentAccept": "Rozumiem",
       "consentRequired": "Zaakceptuj powyższą informację, aby ustawić klucz i włączyć wyszukiwanie.",
       "consentGivenTitle": "Wyszukiwanie w internecie jest włączone",
@@ -668,7 +668,7 @@
     },
     "chatAssistantModelPickerSheet": {
       "modelsTab": "Modele",
-      "assistantsTab": "Kumple",
+      "assistantsTab": "Asystenci",
       "noAssistant": "Brak Kumpli",
       "disableAssistant": "Wyłącz aktywnego Kumpla",
       "noDescription": "Brak opisu",
@@ -676,7 +676,7 @@
       "roleplayType": "Odgrywanie ról",
       "videoType": "Wideo",
       "confirmationTitle": "Potwierdzenie",
-      "modelSwitchMessage": "Ten Kumpel ma inny model domyślny ({{modelName}}). Czy chcesz przełączyć się na model domyślny tego Kumpla?",
+      "modelSwitchMessage": "Ten Asystent ma inny model domyślny ({{modelName}}). Czy chcesz przełączyć się na model domyślny tego Kumpla?",
       "keepButton": "Zachowaj",
       "switchButton": "Przełącz"
     },
@@ -779,8 +779,8 @@
     "assistantSheet": {
       "title": {
         "edit": "Edytuj Kumpla",
-        "newAssistant": "Nowy Kumpel",
-        "newVideoAssistant": "Nowy Kumpel Wideo"
+        "newAssistant": "Nowy Asystent",
+        "newVideoAssistant": "Nowy Asystent Wideo"
       },
       "talentNames": {
         "datetime": "Data i czas",
@@ -805,7 +805,7 @@
       "greeting": {
         "sectionLabel": "Przywitanie",
         "textLabel": "Wiadomość powitalna",
-        "textPlaceholder": "Co ten kumpel powinien napisać na pustym czacie?",
+        "textPlaceholder": "Co ten asystent powinien napisać na pustym czacie?",
         "suggestedPromptsLabel": "Proponowane prompty",
         "addPromptButton": "Dodaj prompt",
         "removePromptLabel": "Usuń prompt",
@@ -821,7 +821,7 @@
       "loading": "Ładowanie...",
       "activateModelButton": "Wybierz Model",
       "gettingReadyTitle": "{{name}} przygotowuje się",
-      "gettingReadyDescription": "Poinformujemy Cię, gdy tylko Twój kumpel będzie mógł rozpocząć czat. Kliknij baner u góry, aby sprawdzić, jak mu idzie.",
+      "gettingReadyDescription": "Poinformujemy Cię, gdy tylko Twój asystent będzie mógł rozpocząć czat. Kliknij baner u góry, aby sprawdzić, jak mu idzie.",
       "noModelsTitle": "Brak Dostępnych Modeli",
       "noModelsDescription": "Pobierz model, aby rozpocząć rozmowę w DRS AI",
       "noModelsButton": "Pobierz Model",
@@ -840,7 +840,7 @@
       }
     },
     "modelNotAvailable": {
-      "defaultModelNotDownloaded": "Ten kumpel poleca konkretny model, który należy pobrać, ale można też wybrać inny model.",
+      "defaultModelNotDownloaded": "Ten asystent poleca konkretny model, który należy pobrać, ale można też wybrać inny model.",
       "modelNotDownloadedShort": "Model nie został pobrany",
       "recommendedModel": "Zalecany Model",
       "cancelDownload": "Anuluj pobieranie",
@@ -848,7 +848,7 @@
       "noModelsDownloaded": "Nie masz jeszcze żadnych pobranych modeli. Najpierw pobierz model.",
       "downloadAModel": "Pobierz model"
     },
-    "roleplayLegacySheet": {
+    "roleplayPersonaSheet": {
       "title": {
         "create": "Stwórz Kumpla do Odgrywania ról",
         "edit": "Edytuj Kumpla do Odgrywania ról"
@@ -878,7 +878,7 @@
       },
       "create": "Utwórz"
     },
-    "lookieLegacySheet": {
+    "lookiePersonaSheet": {
       "title": {
         "create": "Utwórz Kumpla Lookie",
         "edit": "Edytuj Kumpla Lookie"
@@ -927,7 +927,7 @@
       "menuItems": {
         "chat": "Czat",
         "models": "Modele",
-        "assistants": "Kumple",
+        "assistants": "Asystenci",
         "benchmark": "Benchmark",
         "settings": "Ustawienia",
         "appInfo": "Informacje o Aplikacji",
@@ -968,7 +968,12 @@
         "total": "Łącznie: ",
         "usage": "Wykorzystanie: "
       },
-      "byteSizes": ["Bajtów", "KB", "MB", "GB"]
+      "byteSizes": [
+        "Bajtów",
+        "KB",
+        "MB",
+        "GB"
+      ]
     },
     "chatView": {
       "menuItems": {
@@ -980,12 +985,12 @@
       }
     },
     "assistantHeaderRight": {
-      "exportAllAssistants": "Eksportuj wszystkich kumpli",
-      "importAssistants": "Importuj kumpli",
+      "exportAllAssistants": "Eksportuj wszystkich asystentów",
+      "importAssistants": "Importuj asystentów",
       "importSuccess": "Pomyślnie zaimportowano {{count}} kumpla(i).",
-      "importError": "Nie udało się zaimportować kumpli. Sprawdź format pliku."
+      "importError": "Nie udało się zaimportować asystentów. Sprawdź format pliku."
     },
-    "assistantLegacySheet": {
+    "assistantPersonaSheet": {
       "validation": {
         "generatingPromptRequired": "Prompt generowania jest wymagany",
         "promptModelRequired": "Model generowania promptów jest wymagany"
@@ -1030,11 +1035,11 @@
     "account": "Konto",
     "signInToDrshub": "Zaloguj Się do Serwisu Drshub",
     "signInDescription": "Uzyskaj dostęp do swojej biblioteki, twórz prywatnych Kumpli i synchronizuj dane między urządzeniami",
-    "searchAllAssistants": "Szukaj wśród Kumpli...",
+    "searchAllAssistants": "Szukaj wśród asystentów...",
     "deleteAssistantConfirmation": "Czy na pewno chcesz usunąć \"{{assistantName}}\"?",
     "filters": {
       "all": "Wszystko",
-      "myAssistants": "Moi Kumple",
+      "myAssistants": "Moi Asystenci",
       "local": "Lokalne",
       "video": "Wideo",
       "free": "Darmowe",
@@ -1047,7 +1052,7 @@
       "download": "Pobierz",
       "getFree": "Pobierz za darmo"
     },
-    "premiumAssistantDescription": "Kumpel premium ze społeczności hub.drsai.app",
+    "premiumAssistantDescription": "Asystent premium ze społeczności hub.drsai.app",
     "premiumInfoText": "Odwiedź stronę hub.drsai.app, aby poznać więcej Kumpli",
     "sortOptions": {
       "newest": "Najnowsze",
@@ -1068,22 +1073,22 @@
       "systemPrompt": "Prompt Systemowy",
       "downloaded": "Pobrane",
       "success": "Sukces",
-      "assistantAddedToCollection": "Kumpel został dodany do twojej kolekcji!",
+      "assistantAddedToCollection": "Asystent został dodany do twojej kolekcji!",
       "error": "Błąd",
       "failedToLoadDetails": "Nie udało się załadować szczegółów Kumpla",
       "failedToDownload": "Nie udało się pobrać Kumpla",
-      "premiumAssistantMessage": "To jest Kumpel Premium.\n• Jeśli odblokowałeś go już za pomocą swojego konta Drshub, po prostu zaloguj się, aby uzyskać dostęp do wszystkich szczegółów.\n• Jeszcze go nie odblokowałeś? Odwiedź stronę hub.drsai.app, aby dowiedzieć się więcej.",
+      "premiumAssistantMessage": "To jest Asystent Premium.\n• Jeśli odblokowałeś go już za pomocą swojego konta Drshub, po prostu zaloguj się, aby uzyskać dostęp do wszystkich szczegółów.\n• Jeszcze go nie odblokowałeś? Odwiedź stronę hub.drsai.app, aby dowiedzieć się więcej.",
       "notAvailable": "nie dot.",
       "buyOnDrshub": "Kup na Drshub",
       "finalizingPurchase": "Finalizujemy Twój zakup…",
       "processingPurchase": "Przetwarzanie — dostęp zostanie wkrótce odblokowany.",
       "checkoutSessionExpired": "Twoja sesja wygasła. Zaloguj się ponownie, aby kontynuować.",
       "signInAgain": "Zaloguj się ponownie",
-      "assistantNotAvailable": "Ten Kumpel nie jest obecnie dostępny w sprzedaży.",
+      "assistantNotAvailable": "Ten Asystent nie jest obecnie dostępny w sprzedaży.",
       "checkoutFailed": "Coś poszło nie tak. Spróbuj ponownie."
     },
     "sectionTitles": {
-      "myAssistantsLocal": "Moi Kumple (lokalni)",
+      "myAssistantsLocal": "Moi Asystenci (lokalni)",
       "myLibrary": "Moja Biblioteka (hub.drsai.app)",
       "discoverAssistants": "Odkryj Kumpli (hub.drsai.app)"
     },
@@ -1395,7 +1400,7 @@
         "creative_writing": "Pisanie Twórcze",
         "else": "Szukasz czegoś innego?"
       },
-      "title": "Do czego służy twój kumpel?"
+      "title": "Do czego służy twój asystent?"
     },
     "screen6": {
       "cta": "Pobierz {{name}}",
@@ -1436,7 +1441,7 @@
       "brand": "DRS AI"
     },
     "screen1": {
-      "title": "Poznaj swoich kumpli.",
+      "title": "Poznaj swoich asystentów.",
       "titleAccent": "kumple.",
       "body": "Sprytni mali przyjaciele, którzy mieszkają w Twoim telefonie.\nZacznijmy konfigurację – to zajmie tylko chwilę.",
       "cta": "Oprowadź mnie",
@@ -1447,7 +1452,7 @@
       "eyebrow": "Uwaga",
       "title": "Mniejszy,\nale za to Twój.",
       "titleAccent": "Mniejszy,",
-      "body": "Kumple na Twoim telefonie działają szybko i zapewniają prywatność – ale są mniej rozbudowani niż sztuczna inteligencja w chmurze. Pomyśl o nich raczej jak o kieszonkowych towarzyszach, a nie wszechwiedzących wyroczniach.",
+      "body": "Asystenci na Twoim telefonie działają szybko i zapewniają prywatność – ale są mniej rozbudowani niż sztuczna inteligencja w chmurze. Pomyśl o nich raczej jak o kieszonkowych towarzyszach, a nie wszechwiedzących wyroczniach.",
       "highlight": "szybko i dyskretnie"
     },
     "screen4": {
@@ -1460,7 +1465,7 @@
     },
     "screen2": {
       "title": "Kiedy chcesz,\nGdzie chcesz.",
-      "body": "Twoi Kumple żyją w Twoim telefonie.\nBez internetu, bez zasięgu – działają w samolotach, poza siecią, w odległych wioskach.",
+      "body": "Twoi Asystenci żyją w Twoim telefonie.\nBez internetu, bez zasięgu – działają w samolotach, poza siecią, w odległych wioskach.",
       "highlight": "Bez internetu, bez sieci",
       "cta": "Następny",
       "eyebrow": "Pomysł",
@@ -1496,7 +1501,7 @@
   "screenTitles": {
     "chat": "Czat",
     "models": "Modele",
-    "assistants": "Kumple (w fazie testów)",
+    "assistants": "Asystenci (w fazie testów)",
     "benchmark": "Benchmark",
     "settings": "Ustawienia",
     "appInfo": "Informacje o Aplikacji",
@@ -1544,7 +1549,7 @@
     "increaseContextReloading": "Przeładowywanie modelu z uwzględnieniem szerszego kontekstu…",
     "increaseContextSuccess": "Kontekst został zwiększony do {{target}} tokenów.",
     "increaseContextFailure": "Nie udało się zwiększyć rozmiaru kontekstu. Przywrócono poprzednie ustawienie.",
-    "assistantLoadHint": "Ten kumpel zazwyczaj wymaga więcej miejsca, niż pozwala na to obecny rozmiar kontekstu.",
+    "assistantLoadHint": "Ten asystent zazwyczaj wymaga więcej miejsca, niż pozwala na to obecny rozmiar kontekstu.",
     "generatingPreview": "Generowanie podglądu… ({{tokens}} tokenów)",
     "generatingPreviewPending": "Generowanie podglądu…",
     "toolUsedChip": "użyto {{name}}",

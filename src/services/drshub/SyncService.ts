@@ -3,7 +3,11 @@ import {makeAutoObservable} from 'mobx';
 
 import {database} from '../../database';
 import type {EntityType} from '../../database/models/SyncStatus';
-import type {CachedAssistant, UserLibrary, SyncStatus} from '../../database/models';
+import type {
+  CachedAssistant,
+  UserLibrary,
+  SyncStatus,
+} from '../../database/models';
 
 import {authService} from './AuthService';
 import {drshubService} from './DrshubService';
@@ -234,12 +238,15 @@ class SyncService {
   // Update metadata for cached Assistants
   async syncCachedAssistantsMetadata(): Promise<void> {
     try {
-      const cachedAssistantsCollection = database.get<CachedAssistant>('cached_assistants');
+      const cachedAssistantsCollection =
+        database.get<CachedAssistant>('cached_assistants');
       const cachedAssistants = await cachedAssistantsCollection.query().fetch();
 
       for (const cachedAssistant of cachedAssistants) {
         try {
-          const updatedAssistant = await drshubService.getAssistant(cachedAssistant.drshubId);
+          const updatedAssistant = await drshubService.getAssistant(
+            cachedAssistant.drshubId,
+          );
 
           await database.write(async () => {
             await cachedAssistant.update((assistant: CachedAssistant) => {
@@ -273,7 +280,8 @@ class SyncService {
 
   // Cache a Assistant for offline browsing
   async cacheAssistant(assistant: DrshubAssistant): Promise<void> {
-    const cachedAssistantsCollection = database.get<CachedAssistant>('cached_assistants');
+    const cachedAssistantsCollection =
+      database.get<CachedAssistant>('cached_assistants');
 
     await database.write(async () => {
       // Check if already cached
@@ -284,13 +292,21 @@ class SyncService {
       if (existing.length > 0) {
         // Update existing
         await existing[0].update((cachedAssistant: CachedAssistant) => {
-          this.updateCachedAssistantFromDrshubAssistant(cachedAssistant, assistant);
+          this.updateCachedAssistantFromDrshubAssistant(
+            cachedAssistant,
+            assistant,
+          );
         });
       } else {
         // Create new
-        await cachedAssistantsCollection.create((cachedAssistant: CachedAssistant) => {
-          this.updateCachedAssistantFromDrshubAssistant(cachedAssistant, assistant);
-        });
+        await cachedAssistantsCollection.create(
+          (cachedAssistant: CachedAssistant) => {
+            this.updateCachedAssistantFromDrshubAssistant(
+              cachedAssistant,
+              assistant,
+            );
+          },
+        );
       }
     });
   }
@@ -315,9 +331,13 @@ class SyncService {
     cachedAssistant.categories = JSON.stringify(
       assistant.categories?.map(c => c.name) || [],
     );
-    cachedAssistant.tags = JSON.stringify(assistant.tags?.map(t => t.name) || []);
+    cachedAssistant.tags = JSON.stringify(
+      assistant.tags?.map(t => t.name) || [],
+    );
     cachedAssistant.systemPrompt = assistant.system_prompt;
-    cachedAssistant.modelSettings = JSON.stringify(assistant.model_settings || {});
+    cachedAssistant.modelSettings = JSON.stringify(
+      assistant.model_settings || {},
+    );
     cachedAssistant.cachedAt = Date.now();
   }
 
@@ -364,11 +384,14 @@ class SyncService {
   // Clear all cached data
   async clearCache(): Promise<void> {
     await database.write(async () => {
-      const cachedAssistantsCollection = database.get<CachedAssistant>('cached_assistants');
+      const cachedAssistantsCollection =
+        database.get<CachedAssistant>('cached_assistants');
       const userLibraryCollection = database.get<UserLibrary>('user_library');
       const syncStatusCollection = database.get<SyncStatus>('sync_status');
 
-      const allCachedAssistants = await cachedAssistantsCollection.query().fetch();
+      const allCachedAssistants = await cachedAssistantsCollection
+        .query()
+        .fetch();
       const allUserLibrary = await userLibraryCollection.query().fetch();
       const allSyncStatus = await syncStatusCollection.query().fetch();
 

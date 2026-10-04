@@ -10,7 +10,12 @@ import {Alert, Linking} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {deepLinkService, DeepLinkParams} from '../services/DeepLinkService';
 import {isHubLink, parseHubRunURL} from '../services/hubRunLink';
-import {chatSessionStore, assistantStore, deepLinkStore, uiStore} from '../store';
+import {
+  chatSessionStore,
+  assistantStore,
+  deepLinkStore,
+  uiStore,
+} from '../store';
 import {ROUTES} from '../utils/navigationConstants';
 import {
   isBenchmarkRunnerUrl,
@@ -28,10 +33,14 @@ export const useDeepLinking = () => {
     async (assistantId: string, assistantName?: string, message?: string) => {
       try {
         // Find the assistant
-        const assistant = assistantStore.assistants.find(p => p.id === assistantId);
+        const assistant = assistantStore.assistants.find(
+          p => p.id === assistantId,
+        );
 
         if (!assistant) {
-          console.error(`Assistant not found: ${assistantId} (${assistantName})`);
+          console.error(
+            `Assistant not found: ${assistantId} (${assistantName})`,
+          );
 
           // Show user-friendly error message
           Alert.alert(

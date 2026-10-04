@@ -17,7 +17,7 @@ import * as path from 'path';
 import {ChatPage} from '../../pages/ChatPage';
 import {DrawerPage} from '../../pages/DrawerPage';
 import {ModelsPage} from '../../pages/ModelsPage';
-import {LegacySheetPage} from '../../pages/LegacySheetPage';
+import {AssistantSheetPage} from '../../pages/AssistantSheetPage';
 import {Selectors, byTestId, byText} from '../../helpers/selectors';
 import {
   downloadAndLoadModel,
@@ -55,7 +55,7 @@ const HTML_PROMPT = 'Create a simple hello world webpage with a blue heading';
 describe('Talent Tool-Use Pipeline', () => {
   let chatPage: ChatPage;
   let drawerPage: DrawerPage;
-  let assistantSheetPage: LegacySheetPage;
+  let assistantSheetPage: AssistantSheetPage;
 
   before(async function (this: Mocha.Context) {
     // Qwen3-1.7B (~1 GB) is re-downloaded every run on Android (fullReset) and
@@ -65,7 +65,7 @@ describe('Talent Tool-Use Pipeline', () => {
 
     chatPage = new ChatPage();
     drawerPage = new DrawerPage();
-    assistantSheetPage = new LegacySheetPage();
+    assistantSheetPage = new AssistantSheetPage();
 
     await chatPage.waitForReady(TIMEOUTS.appReady);
 
@@ -103,7 +103,7 @@ describe('Talent Tool-Use Pipeline', () => {
     await chatPage.openDrawer();
     await drawerPage.navigateToAssistants();
 
-    // Wait for LegacyScreen to fully load
+    // Wait for AssistantsScreen to fully load
     const addBtn = browser.$(Selectors.assistantsScreen.addButton);
     await addBtn.waitForDisplayed({timeout: 15000});
     await addBtn.click();
@@ -115,7 +115,7 @@ describe('Talent Tool-Use Pipeline', () => {
     await assistantItem.click();
     await browser.pause(500);
 
-    // Fill in the LegacySheet
+    // Fill in the AssistantSheet
     await assistantSheetPage.setName(ASSISTANT_NAME);
     await assistantSheetPage.setSystemPrompt(SYSTEM_PROMPT);
 
@@ -127,7 +127,7 @@ describe('Talent Tool-Use Pipeline', () => {
 
     // === Phase 2: Return to Chat ===
 
-    // After submit we're on LegacyScreen. Opening the drawer from LegacyScreen
+    // After submit we're on AssistantsScreen. Opening the drawer from AssistantsScreen
     // is unreliable (gesture conflicts with BottomActionBar/sheet dismiss).
     // Restart the app — it always opens on Chat, the Assistant persists in DB.
     await browser.pause(1000);

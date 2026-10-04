@@ -1,23 +1,23 @@
 import React, {useState, useContext} from 'react';
-import {View, TouchableOpacity} from 'react-native';
+import {TouchableOpacity} from 'react-native';
 import {Text} from 'react-native-paper';
 import {observer} from 'mobx-react-lite';
 
 import {PlusIcon} from '../../../../assets/icons';
 import {Menu} from '../../../../components/Menu';
+import {BrandGradient} from '../../../../components/BrandGradient';
 
 import {useTheme} from '../../../../hooks';
 import {L10nContext} from '../../../../utils';
 import {createStyles} from './styles';
 
 interface AddAssistantMenuProps {
-  iconColor: string;
   iconSize: number;
   onCreateAssistant: (type: 'assistant' | 'roleplay' | 'video') => void;
 }
 
 export const AddAssistantMenu: React.FC<AddAssistantMenuProps> = observer(
-  ({iconColor, iconSize, onCreateAssistant}) => {
+  ({iconSize, onCreateAssistant}) => {
     const theme = useTheme();
     const styles = createStyles(theme);
     const l10n = useContext(L10nContext);
@@ -51,10 +51,12 @@ export const AddAssistantMenu: React.FC<AddAssistantMenuProps> = observer(
             style={styles.addButton}
             onPress={openMenu}
             testID="bottom-action-add">
-            <View style={styles.iconContainer}>
-              <PlusIcon stroke={iconColor} width={iconSize} height={iconSize} />
-            </View>
-            <Text style={styles.actionLabel}>{l10n.assistantsScreen.addAssistant}</Text>
+            <BrandGradient circle={36} style={styles.iconGradient}>
+              <PlusIcon stroke="#FFFFFF" width={iconSize} height={iconSize} />
+            </BrandGradient>
+            <Text style={styles.actionLabel}>
+              {l10n.assistantsScreen.addAssistant}
+            </Text>
           </TouchableOpacity>
         }>
         <Menu.Item

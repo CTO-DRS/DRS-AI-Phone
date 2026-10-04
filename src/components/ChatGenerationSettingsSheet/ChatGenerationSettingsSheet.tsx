@@ -107,7 +107,8 @@ export const ChatGenerationSettingsSheet = ({
 
   // For existing sessions, use session's activeAssistantId
   // For new chat sessions, use newChatAssistantId
-  const effectiveAssistantId = session?.activeAssistantId || chatSessionStore.newChatAssistantId;
+  const effectiveAssistantId =
+    session?.activeAssistantId || chatSessionStore.newChatAssistantId;
   const activeAssistant = effectiveAssistantId
     ? assistantStore.assistants.find(p => p.id === effectiveAssistantId)
     : undefined;

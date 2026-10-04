@@ -1334,19 +1334,19 @@ describe('chatSessionStore', () => {
         date: new Date().toISOString(),
         messages: [],
         completionSettings: defaultCompletionSettings,
-        activeAssistantId: 'pal1',
+        activeAssistantId: 'assistant1',
         settingsSource: 'assistant' as 'assistant' | 'custom',
       };
       chatSessionStore.sessions = [session];
       chatSessionStore.activeSessionId = 'session1';
 
-      expect(chatSessionStore.activeAssistantId).toBe('pal1');
+      expect(chatSessionStore.activeAssistantId).toBe('assistant1');
     });
 
     it('gets active assistant ID from newChatAssistantId when no active session', () => {
-      chatSessionStore.newChatAssistantId = 'pal2';
+      chatSessionStore.newChatAssistantId = 'assistant2';
 
-      expect(chatSessionStore.activeAssistantId).toBe('pal2');
+      expect(chatSessionStore.activeAssistantId).toBe('assistant2');
     });
 
     it('sets active assistant ID for active session', async () => {
@@ -1361,15 +1361,15 @@ describe('chatSessionStore', () => {
       chatSessionStore.sessions = [session];
       chatSessionStore.activeSessionId = 'session1';
 
-      await chatSessionStore.setActiveAssistant('pal1');
+      await chatSessionStore.setActiveAssistant('assistant1');
 
-      expect(chatSessionStore.sessions[0].activeAssistantId).toBe('pal1');
+      expect(chatSessionStore.sessions[0].activeAssistantId).toBe('assistant1');
     });
 
     it('sets newChatAssistantId when no active session', async () => {
-      await chatSessionStore.setActiveAssistant('pal2');
+      await chatSessionStore.setActiveAssistant('assistant2');
 
-      expect(chatSessionStore.newChatAssistantId).toBe('pal2');
+      expect(chatSessionStore.newChatAssistantId).toBe('assistant2');
     });
 
     it('preserves active assistant ID when resetting active session', () => {
@@ -1379,7 +1379,7 @@ describe('chatSessionStore', () => {
         date: new Date().toISOString(),
         messages: [],
         completionSettings: defaultCompletionSettings,
-        activeAssistantId: 'pal1',
+        activeAssistantId: 'assistant1',
         settingsSource: 'assistant' as 'assistant' | 'custom',
       };
       chatSessionStore.sessions = [session];
@@ -1387,16 +1387,16 @@ describe('chatSessionStore', () => {
 
       chatSessionStore.resetActiveSession();
 
-      expect(chatSessionStore.newChatAssistantId).toBe('pal1');
+      expect(chatSessionStore.newChatAssistantId).toBe('assistant1');
       expect(chatSessionStore.activeSessionId).toBeNull();
     });
 
     it('applies newChatAssistantId when creating a new session', async () => {
-      chatSessionStore.newChatAssistantId = 'pal1';
+      chatSessionStore.newChatAssistantId = 'assistant1';
 
       await chatSessionStore.createNewSession('New Session');
 
-      expect(chatSessionStore.sessions[0].activeAssistantId).toBe('pal1');
+      expect(chatSessionStore.sessions[0].activeAssistantId).toBe('assistant1');
       expect(chatSessionStore.newChatAssistantId).toBeUndefined();
     });
   });
@@ -2305,9 +2305,13 @@ describe('chatSessionStore', () => {
 
     describe('markAssistantLoadHintSeen', () => {
       it('records a signature once', () => {
-        chatSessionStore.markAssistantLoadHintSeen('assistant-1|2048|render_html');
+        chatSessionStore.markAssistantLoadHintSeen(
+          'assistant-1|2048|render_html',
+        );
         expect(
-          chatSessionStore.assistantLoadHintSeen.has('assistant-1|2048|render_html'),
+          chatSessionStore.assistantLoadHintSeen.has(
+            'assistant-1|2048|render_html',
+          ),
         ).toBe(true);
       });
 

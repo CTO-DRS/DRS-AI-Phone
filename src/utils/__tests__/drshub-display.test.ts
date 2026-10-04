@@ -30,7 +30,10 @@ describe('drshub-display', () => {
     it('returns locked label for private paid assistants', () => {
       // mockPrivateDrshubAssistant has price_cents: 0 (inherited from free assistant),
       // so we need a paid private assistant to trigger the 'locked' label
-      const paidPrivateAssistant = {...mockPrivateDrshubAssistant, price_cents: 500};
+      const paidPrivateAssistant = {
+        ...mockPrivateDrshubAssistant,
+        price_cents: 500,
+      };
       const label = getAssistantDisplayLabel(paidPrivateAssistant);
       expect(label.type).toBe('locked');
       expect(label.showLabel).toBe(true);
@@ -88,7 +91,9 @@ describe('drshub-display', () => {
     });
 
     it('returns false for unowned premium assistants', () => {
-      expect(shouldShowAssistantContent(mockPremiumDrshubAssistant)).toBe(false);
+      expect(shouldShowAssistantContent(mockPremiumDrshubAssistant)).toBe(
+        false,
+      );
     });
 
     it('returns true for owned premium assistants', () => {

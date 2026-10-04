@@ -169,7 +169,7 @@ describe('PACT cleanup: deriveToolSchemas()', () => {
 
   it('schemas are usable as completionSettings.tools payload', () => {
     const tools = deriveToolSchemas();
-    // Simulate what LegacyStore does: embed in completionSettings
+    // Simulate what AssistantStore does: embed in completionSettings
     const completionSettings = {
       tools,
       tool_choice: 'auto' as const,

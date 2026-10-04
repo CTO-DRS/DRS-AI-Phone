@@ -1,7 +1,10 @@
 import {renderHook, act} from '@testing-library/react-hooks';
 
 import {uiStore, assistantStore, modelStore} from '../../../store';
-import {TOPIC_TO_PAL, entryId} from '../../../store/onboarding/onboardingAssistants';
+import {
+  TOPIC_TO_ASSISTANT,
+  entryId,
+} from '../../../store/onboarding/onboardingAssistants';
 import {ROUTES} from '../../../utils/navigationConstants';
 import {useOnboardingHandlers} from '../useOnboardingHandlers';
 
@@ -18,10 +21,10 @@ jest.mock('@react-navigation/native', () => ({
 }));
 
 const PIP_BALANCED_ID = entryId(
-  TOPIC_TO_PAL.smartchat.models.find(m => m.recommended)!,
+  TOPIC_TO_ASSISTANT.smartchat.models.find(m => m.recommended)!,
 );
 const CODIE_BALANCED_ID = entryId(
-  TOPIC_TO_PAL.coding.models.find(m => m.recommended)!,
+  TOPIC_TO_ASSISTANT.coding.models.find(m => m.recommended)!,
 );
 
 describe('useOnboardingHandlers', () => {
@@ -141,7 +144,8 @@ describe('useOnboardingHandlers', () => {
 
       expect(assistantStore.createAssistant).not.toHaveBeenCalled();
       expect(assistantStore.updateAssistant).toHaveBeenCalledTimes(1);
-      const [assistantId, patch] = (assistantStore.updateAssistant as jest.Mock).mock.calls[0];
+      const [assistantId, patch] = (assistantStore.updateAssistant as jest.Mock)
+        .mock.calls[0];
       expect(assistantId).toBe('pip-id');
       expect(patch.defaultModel?.id).toBe(PIP_BALANCED_ID);
 
@@ -165,9 +169,12 @@ describe('useOnboardingHandlers', () => {
       });
 
       expect(assistantStore.createAssistant).toHaveBeenCalledTimes(1);
-      const assistantData = (assistantStore.createAssistant as jest.Mock).mock.calls[0][0];
+      const assistantData = (assistantStore.createAssistant as jest.Mock).mock
+        .calls[0][0];
       expect(assistantData.name).toBe('Codie');
-      expect(assistantData.systemPrompt).toBe(TOPIC_TO_PAL.coding.systemPrompt);
+      expect(assistantData.systemPrompt).toBe(
+        TOPIC_TO_ASSISTANT.coding.systemPrompt,
+      );
       expect(assistantData.defaultModel?.id).toBe(CODIE_BALANCED_ID);
       expect(assistantData.source).toBe('local');
 
@@ -192,12 +199,15 @@ describe('useOnboardingHandlers', () => {
       });
 
       expect(assistantStore.createAssistant).toHaveBeenCalledTimes(1);
-      const assistantData = (assistantStore.createAssistant as jest.Mock).mock.calls[0][0];
+      const assistantData = (assistantStore.createAssistant as jest.Mock).mock
+        .calls[0][0];
       expect(assistantData.name).toBe('Pip');
     });
 
     it('with selectedModelId=null, completes onboarding without touching the assistant store or download queue', async () => {
-      assistantStore.assistants = [{id: 'pip-id', name: 'Pip', source: 'local'} as any];
+      assistantStore.assistants = [
+        {id: 'pip-id', name: 'Pip', source: 'local'} as any,
+      ];
       uiStore.onboardingState.selectedModelId = null;
       uiStore.onboardingState.selectedTopic = 'smartchat';
 
@@ -227,9 +237,12 @@ describe('useOnboardingHandlers', () => {
         await result.current.finish();
       });
 
-      expect(modelStore.registerOnboardingAssistantModel).toHaveBeenCalledTimes(1);
-      const entryArg = (modelStore.registerOnboardingAssistantModel as jest.Mock).mock
-        .calls[0][0];
+      expect(modelStore.registerOnboardingAssistantModel).toHaveBeenCalledTimes(
+        1,
+      );
+      const entryArg = (
+        modelStore.registerOnboardingAssistantModel as jest.Mock
+      ).mock.calls[0][0];
       expect(entryId(entryArg)).toBe(CODIE_BALANCED_ID);
       expect(modelStore.checkSpaceAndDownload).toHaveBeenCalledWith(
         CODIE_BALANCED_ID,
@@ -251,7 +264,7 @@ describe('useOnboardingHandlers', () => {
           capabilities: {},
         } as any,
       ];
-      const sage = TOPIC_TO_PAL.education;
+      const sage = TOPIC_TO_ASSISTANT.education;
       const sageBest = sage.models.find(m => m.tier === 'best')!;
       const sageBestId = entryId(sageBest);
 
@@ -263,14 +276,18 @@ describe('useOnboardingHandlers', () => {
         await result.current.finish();
       });
 
-      expect(modelStore.registerOnboardingAssistantModel).toHaveBeenCalledTimes(1);
-      const registered = (modelStore.registerOnboardingAssistantModel as jest.Mock)
-        .mock.calls[0][0];
+      expect(modelStore.registerOnboardingAssistantModel).toHaveBeenCalledTimes(
+        1,
+      );
+      const registered = (
+        modelStore.registerOnboardingAssistantModel as jest.Mock
+      ).mock.calls[0][0];
       expect(entryId(registered)).toBe(sageBestId);
 
       expect(assistantStore.createAssistant).not.toHaveBeenCalled();
       expect(assistantStore.updateAssistant).toHaveBeenCalledTimes(1);
-      const [assistantId, patch] = (assistantStore.updateAssistant as jest.Mock).mock.calls[0];
+      const [assistantId, patch] = (assistantStore.updateAssistant as jest.Mock)
+        .mock.calls[0];
       expect(assistantId).toBe('sage-id');
       expect(patch.defaultModel?.id).toBe(sageBestId);
       expect(modelStore.checkSpaceAndDownload).toHaveBeenCalledWith(sageBestId);
@@ -302,7 +319,9 @@ describe('useOnboardingHandlers', () => {
       // checkSpaceAndDownload is swallowed by the in-handler .catch.
       expect(threw).toBeNull();
       // Side-effects up to checkSpaceAndDownload still ran.
-      expect(modelStore.registerOnboardingAssistantModel).toHaveBeenCalledTimes(1);
+      expect(modelStore.registerOnboardingAssistantModel).toHaveBeenCalledTimes(
+        1,
+      );
       expect(assistantStore.createAssistant).toHaveBeenCalledTimes(1);
       expect(uiStore.completeOnboarding).toHaveBeenCalled();
     });
@@ -319,7 +338,9 @@ describe('useOnboardingHandlers', () => {
       const {result} = renderHook(() => useOnboardingHandlers(6));
       act(() => result.current.skip());
 
-      expect(modelStore.registerOnboardingAssistantModel).not.toHaveBeenCalled();
+      expect(
+        modelStore.registerOnboardingAssistantModel,
+      ).not.toHaveBeenCalled();
       expect(assistantStore.createAssistant).not.toHaveBeenCalled();
       expect(assistantStore.updateAssistant).not.toHaveBeenCalled();
       expect(modelStore.checkSpaceAndDownload).not.toHaveBeenCalled();

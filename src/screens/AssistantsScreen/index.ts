@@ -1,1 +1,1 @@
-export {LegacyScreen, default} from './LegacyScreen';
+export {AssistantsScreen, default} from './AssistantsScreen';

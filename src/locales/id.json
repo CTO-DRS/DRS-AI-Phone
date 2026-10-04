@@ -115,10 +115,10 @@
     "useHfTokenDescription": "Aktifkan untuk menggunakan token dalam permintaan API. Nonaktifkan jika token menyebabkan masalah autentikasi.",
     "cacheStorageTitle": "Cache & Penyimpanan",
     "clearAssistantCaches": "Bersihkan Cache Shortcut",
-    "clearAssistantCachesDescription": "Menghapus data cache yang digunakan untuk mempercepat Shortcut. Tidak memengaruhi Assistant atau riwayat obrolan Anda.",
+    "clearAssistantCachesDescription": "Menghapus data cache yang digunakan untuk mempercepat Shortcut. Tidak memengaruhi Asisten atau riwayat obrolan Anda.",
     "clearCachesButton": "Bersihkan Cache",
     "clearCachesConfirmTitle": "Bersihkan Cache Shortcut?",
-    "clearCachesConfirmMessage": "Ini akan menghapus semua data sesi cache ({{fileCount}} file, {{size}}). Shortcut mungkin lebih lambat saat pertama kali digunakan setelah dibersihkan. Tidak memengaruhi Assistant atau riwayat obrolan Anda.",
+    "clearCachesConfirmMessage": "Ini akan menghapus semua data sesi cache ({{fileCount}} file, {{size}}). Shortcut mungkin lebih lambat saat pertama kali digunakan setelah dibersihkan. Tidak memengaruhi Asisten atau riwayat obrolan Anda.",
     "clearCachesSuccess": "Berhasil membersihkan {{count}} file cache.",
     "clearCachesError": "Gagal membersihkan cache. Silakan coba lagi.",
     "noCachesToClear": "Tidak ada cache untuk dibersihkan.",
@@ -167,7 +167,7 @@
     "serverTypeHelp": "Terdeteksi otomatis; ubah jika keliru.",
     "internetSearch": {
       "title": "Pencarian Internet",
-      "description": "Izinkan Assistant mencari di web dengan alat mereka sendiri. Bawa kunci API Anda sendiri — DRS AI tidak pernah menyimpan kunci Anda atau merutekan kueri Anda.",
+      "description": "Izinkan Asisten mencari di web dengan alat mereka sendiri. Bawa kunci API Anda sendiri — DRS AI tidak pernah menyimpan kunci Anda atau merutekan kueri Anda.",
       "providerLabel": "Penyedia pencarian",
       "providerGated": "Segera hadir",
       "keyLabel": "Kunci API",
@@ -183,7 +183,7 @@
       "resultCountLabel": "Hasil per pencarian",
       "resultCountDescription": "Lebih sedikit hasil menyisakan lebih banyak ruang dalam konteks model.",
       "consentTitle": "Pencarian meninggalkan perangkat Anda",
-      "consentDescription": "Saat Assistant mencari di web, kueri Anda dikirim ke penyedia yang dipilih melalui internet. Saat Assistant membaca halaman, URL dan konten halaman dapat dikirim ke layanan pembaca default (r.jina.ai) jika penyedia yang dipilih tidak memiliki pembaca bawaan. Kunci dan kueri tidak pernah dikirim ke DRS AI.",
+      "consentDescription": "Saat Asisten mencari di web, kueri Anda dikirim ke penyedia yang dipilih melalui internet. Saat Asisten membaca halaman, URL dan konten halaman dapat dikirim ke layanan pembaca default (r.jina.ai) jika penyedia yang dipilih tidak memiliki pembaca bawaan. Kunci dan kueri tidak pernah dikirim ke DRS AI.",
       "consentAccept": "Saya mengerti",
       "consentRequired": "Terima pengungkapan di atas untuk mengatur kunci dan mengaktifkan pencarian.",
       "consentGivenTitle": "Pencarian web diaktifkan",
@@ -365,7 +365,7 @@
         "sortRelevance": "Relevansi",
         "sortDownloads": "Jumlah Unduhan",
         "sortRecent": "Terbaru Diperbarui",
-        "sortLikes": "Paling Disukai"
+        "sortLikes": "Asistening Disukai"
       }
     },
     "modelCard": {
@@ -676,7 +676,7 @@
         "title": "Berhasil",
         "message": "Pengaturan ini akan diterapkan ke semua sesi mendatang"
       },
-      "assistantSettings": "Pengaturan Assistant",
+      "assistantSettings": "Pengaturan Asisten",
       "settingsSource": "Sumber Pengaturan"
     },
     "assistantGenerationSettingsSheet": {
@@ -689,7 +689,7 @@
       "failedToSave": "Gagal menyimpan pengaturan assistant",
       "resetToGlobal": "Atur Ulang ke Default Global",
       "resetToSystem": "Atur Ulang ke Default Sistem",
-      "clearAssistantSettings": "Hapus Pengaturan Assistant",
+      "clearAssistantSettings": "Hapus Pengaturan Asisten",
       "customSettingsFor": "Pengaturan khusus untuk {{assistantName}}",
       "inheritedSettingsFor": "Pengaturan warisan untuk {{assistantName}}"
     },
@@ -701,15 +701,15 @@
     },
     "chatAssistantModelPickerSheet": {
       "modelsTab": "Model",
-      "assistantsTab": "Assistant",
-      "noAssistant": "Tidak Ada Assistant",
+      "assistantsTab": "Asisten",
+      "noAssistant": "Tidak Ada Asisten",
       "disableAssistant": "Nonaktifkan assistant aktif",
       "noDescription": "Tidak ada deskripsi",
       "assistantType": "Asisten",
       "roleplayType": "Bermain Peran",
       "videoType": "Video",
       "confirmationTitle": "Konfirmasi",
-      "modelSwitchMessage": "Assistant ini memiliki model default berbeda ({{modelName}}). Apakah Anda ingin beralih ke model default assistant tersebut?",
+      "modelSwitchMessage": "Asisten ini memiliki model default berbeda ({{modelName}}). Apakah Anda ingin beralih ke model default assistant tersebut?",
       "keepButton": "Pertahankan",
       "switchButton": "Alihkan"
     },
@@ -811,12 +811,12 @@
     },
     "assistantSheet": {
       "title": {
-        "edit": "Sunting Assistant",
-        "newAssistant": "Assistant Baru",
-        "newVideoAssistant": "Assistant Video Baru"
+        "edit": "Sunting Asisten",
+        "newAssistant": "Asisten Baru",
+        "newVideoAssistant": "Asisten Video Baru"
       },
       "description": "Deskripsi",
-      "descriptionPlaceholder": "Masukkan deskripsi singkat Assistant Anda",
+      "descriptionPlaceholder": "Masukkan deskripsi singkat Asisten Anda",
       "parameters": "Parameter",
       "generationSettings": "Pengaturan Generasi",
       "configureGenerationSettings": "Konfigurasi Pengaturan Generasi",
@@ -850,12 +850,12 @@
         "removePromptLabel": "Hapus prompt"
       }
     },
-    "assistantLegacySheet": {
+    "assistantPersonaSheet": {
       "title": {
-        "create": "Buat Assistant Asisten",
-        "edit": "Edit Assistant Asisten"
+        "create": "Buat Asisten",
+        "edit": "Edit Asisten"
       },
-      "assistantName": "Nama Assistant",
+      "assistantName": "Nama Asisten",
       "assistantNamePlaceholder": "Nama",
       "defaultModel": "Model Default",
       "defaultModelPlaceholder": "Pilih model",
@@ -868,18 +868,18 @@
     "modelNotAvailable": {
       "noModelsDownloaded": "Anda belum mengunduh model apa pun. Harap unduh model terlebih dahulu.",
       "downloadAModel": "Unduh model",
-      "defaultModelNotDownloaded": "Assistant ini merekomendasikan model tertentu yang perlu diunduh, atau Anda dapat memilih model lain.",
+      "defaultModelNotDownloaded": "Asisten ini merekomendasikan model tertentu yang perlu diunduh, atau Anda dapat memilih model lain.",
       "modelNotDownloadedShort": "Model belum diunduh",
       "recommendedModel": "Model yang Direkomendasikan",
       "cancelDownload": "Batalkan unduhan",
       "download": "Unduh"
     },
-    "roleplayLegacySheet": {
+    "roleplayPersonaSheet": {
       "title": {
-        "create": "Buat Assistant Bermain Peran",
-        "edit": "Edit Assistant Bermain Peran"
+        "create": "Buat Asisten Bermain Peran",
+        "edit": "Edit Asisten Bermain Peran"
       },
-      "assistantName": "Nama Assistant",
+      "assistantName": "Nama Asisten",
       "assistantNamePlaceholder": "Nama",
       "defaultModel": "Model Default",
       "defaultModelPlaceholder": "Pilih model",
@@ -904,13 +904,13 @@
       },
       "create": "Buat"
     },
-    "lookieLegacySheet": {
+    "lookiePersonaSheet": {
       "title": {
-        "create": "Buat Assistant Lookie",
-        "edit": "Edit Assistant Lookie"
+        "create": "Buat Asisten Lookie",
+        "edit": "Edit Asisten Lookie"
       },
-      "assistantName": "Nama Assistant",
-      "assistantNamePlaceholder": "Masukkan nama untuk Assistant Lookie Anda",
+      "assistantName": "Nama Asisten",
+      "assistantNamePlaceholder": "Masukkan nama untuk Asisten Lookie Anda",
       "visionModel": "Model Visi",
       "visionModelPlaceholder": "Pilih model visi",
       "requiredModelsSection": "Model yang Diperlukan",
@@ -931,7 +931,7 @@
       },
       "generatingPrompt": {
         "label": "Tujuan & Konteks",
-        "placeholder": "Jelaskan peran, tujuan, atau skenario untuk Assistant ini..."
+        "placeholder": "Jelaskan peran, tujuan, atau skenario untuk Asisten ini..."
       },
       "buttons": {
         "loadingModel": "Memuat model...",
@@ -953,7 +953,7 @@
       "menuItems": {
         "chat": "Obrolan",
         "models": "Model",
-        "assistants": "Assistant",
+        "assistants": "Asisten",
         "benchmark": "Benchmark",
         "settings": "Pengaturan",
         "appInfo": "Info Aplikasi",
@@ -994,7 +994,12 @@
         "total": "Total: ",
         "usage": "Penggunaan: "
       },
-      "byteSizes": ["Byte", "KB", "MB", "GB"]
+      "byteSizes": [
+        "Byte",
+        "KB",
+        "MB",
+        "GB"
+      ]
     },
     "chatView": {
       "menuItems": {
@@ -1033,9 +1038,9 @@
   },
   "assistantsScreen": {
     "sectionTitles": {
-      "myAssistantsLocal": "Assistant Saya (lokal)",
+      "myAssistantsLocal": "Asisten Saya (lokal)",
       "myLibrary": "Pustaka Saya (hub.drsai.app)",
-      "discoverAssistants": "Temukan Assistant (hub.drsai.app)"
+      "discoverAssistants": "Temukan Asisten (hub.drsai.app)"
     },
     "systemPrompt": "Prompt Sistem",
     "videoAnalysis": "Analisis Video",
@@ -1050,26 +1055,26 @@
     "assistant": "Asisten",
     "roleplay": "Bermain Peran",
     "video": "Video",
-    "deleteAssistant": "Hapus Assistant",
+    "deleteAssistant": "Hapus Asisten",
     "deleteAssistantMessage": "Yakin ingin menghapus assistant ini?",
     "missingModel": "Model Tidak Ditemukan",
     "missingModelMessage": "Model default \"{{modelName}}\" untuk assistant ini tidak tersedia. Harap unduh di lembar edit atau pilih model lain.",
     "search": "Cari",
     "profile": "Profil",
     "signIn": "Masuk",
-    "addAssistant": "Tambah Assistant",
+    "addAssistant": "Tambah Asisten",
     "signInToAccessLibrary": "Masuk untuk mengakses pustaka Anda dari hub.drsai.app",
     "signOut": "Keluar",
     "signOutConfirmation": "Yakin ingin keluar?",
     "signOutError": "Gagal keluar. Silakan coba lagi.",
     "account": "Akun",
     "signInToDrshub": "Masuk ke Drshub",
-    "signInDescription": "Akses pustaka Anda, buat Assistant pribadi, dan sinkronkan lintas perangkat",
-    "searchAllAssistants": "Cari semua Assistant...",
+    "signInDescription": "Akses pustaka Anda, buat Asisten pribadi, dan sinkronkan lintas perangkat",
+    "searchAllAssistants": "Cari semua Asisten...",
     "deleteAssistantConfirmation": "Yakin ingin menghapus \"{{assistantName}}\"?",
     "filters": {
       "all": "Semua",
-      "myAssistants": "Assistant Saya",
+      "myAssistants": "Asisten Saya",
       "local": "Lokal",
       "video": "Video",
       "free": "Gratis",
@@ -1082,13 +1087,13 @@
       "download": "Unduh",
       "getFree": "Dapatkan Gratis"
     },
-    "premiumAssistantDescription": "Assistant premium dari komunitas hub.drsai.app",
+    "premiumAssistantDescription": "Asisten premium dari komunitas hub.drsai.app",
     "premiumInfoText": "Kunjungi hub.drsai.app untuk menjelajahi lebih banyak assistant",
     "sortOptions": {
       "newest": "Terbaru",
       "oldest": "Terlama",
       "rating": "Rating Tertinggi",
-      "popular": "Paling Populer"
+      "popular": "Asistening Populer"
     },
     "assistantDetailSheet": {
       "by": "oleh",
@@ -1103,18 +1108,18 @@
       "systemPrompt": "Prompt Sistem",
       "downloaded": "Diunduh",
       "success": "Berhasil",
-      "assistantAddedToCollection": "Assistant telah ditambahkan ke koleksi Anda!",
+      "assistantAddedToCollection": "Asisten telah ditambahkan ke koleksi Anda!",
       "error": "Kesalahan",
       "failedToLoadDetails": "Gagal memuat detail assistant",
       "failedToDownload": "Gagal mengunduh assistant",
-      "premiumAssistantMessage": "Ini adalah Assistant Premium.\n• Jika Anda sudah membukanya dengan akun Drshub, cukup masuk untuk mengakses detail lengkapnya.\n• Belum membukanya? Kunjungi aplikasi hub.drsai.app untuk informasi lebih lanjut.",
+      "premiumAssistantMessage": "Ini adalah Asisten Premium.\n• Jika Anda sudah membukanya dengan akun Drshub, cukup masuk untuk mengakses detail lengkapnya.\n• Belum membukanya? Kunjungi aplikasi hub.drsai.app untuk informasi lebih lanjut.",
       "notAvailable": "T/A",
       "buyOnDrshub": "Beli di Drshub",
       "finalizingPurchase": "Menyelesaikan pembelian Anda…",
       "processingPurchase": "Memproses — akan segera terbuka.",
       "checkoutSessionExpired": "Sesi Anda telah berakhir. Masuk lagi untuk melanjutkan.",
       "signInAgain": "Masuk Lagi",
-      "assistantNotAvailable": "Assistant ini sedang tidak tersedia untuk dibeli saat ini.",
+      "assistantNotAvailable": "Asisten ini sedang tidak tersedia untuk dibeli saat ini.",
       "checkoutFailed": "Terjadi kesalahan. Silakan coba lagi."
     }
   },
@@ -1171,7 +1176,7 @@
   "screenTitles": {
     "chat": "Obrolan",
     "models": "Model",
-    "assistants": "Assistant (eksperimental)",
+    "assistants": "Asisten (eksperimental)",
     "benchmark": "Benchmark",
     "settings": "Pengaturan",
     "appInfo": "Info Aplikasi",
@@ -1229,7 +1234,7 @@
     "increaseContextReloading": "Memuat ulang model dengan konteks yang lebih besar…",
     "increaseContextSuccess": "Konteks ditingkatkan menjadi {{target}} token.",
     "increaseContextFailure": "Gagal meningkatkan ukuran konteks. Pengaturan sebelumnya telah dipulihkan.",
-    "assistantLoadHint": "Assistant ini cenderung membutuhkan lebih banyak ruang daripada yang diizinkan ukuran konteks saat ini.",
+    "assistantLoadHint": "Asisten ini cenderung membutuhkan lebih banyak ruang daripada yang diizinkan ukuran konteks saat ini.",
     "webSearch": {
       "searched": "Dicari: {{query}}",
       "noResults": "Tidak ada hasil",
@@ -1419,7 +1424,7 @@
     "stepsCount": "{{steps}} langkah",
     "engineKittenTagline": "Ukuran paling kecil. Andal. Terbaik untuk perangkat lama.",
     "engineKokoroTagline": "Kualitas tertinggi. Lebih lambat saat memulai. Beberapa suara mungkin tidak berfungsi di semua perangkat.",
-    "engineSupertonicTagline": "Paling cepat memulai. Menggunakan lebih banyak RAM. Mungkin sesekali menghilangkan kata.",
+    "engineSupertonicTagline": "Asistening cepat memulai. Menggunakan lebih banyak RAM. Mungkin sesekali menghilangkan kata.",
     "engineSystemTagline": "Suara bawaan sistem operasi. Selalu tersedia, tanpa instalasi.",
     "engineSystemTitleIos": "Suara iOS",
     "engineSystemTitleAndroid": "Suara Android",
@@ -1501,7 +1506,7 @@
     },
     "screen2": {
       "title": "Kapan Saja,\nDi Mana Saja.",
-      "body": "Assistant Anda tinggal di dalam ponsel Anda.\nTanpa internet, tanpa sinyal - mereka bekerja di pesawat, di luar jaringan, di desa terpencil.",
+      "body": "Asisten Anda tinggal di dalam ponsel Anda.\nTanpa internet, tanpa sinyal - mereka bekerja di pesawat, di luar jaringan, di desa terpencil.",
       "highlight": "Tanpa internet, tanpa sinyal",
       "cta": "Lanjut",
       "eyebrow": "Konsepnya",
@@ -1510,7 +1515,7 @@
     "screen3": {
       "title": "Lebih Kecil,\ntapi Milik Anda.",
       "titleAccent": "Lebih Kecil,",
-      "body": "Assistant di ponsel Anda cepat dan pribadi - namun lebih ringan dari AI Cloud. Anggap saja teman saku, bukan oracle yang tahu segalanya.",
+      "body": "Asisten di ponsel Anda cepat dan pribadi - namun lebih ringan dari AI Cloud. Anggap saja teman saku, bukan oracle yang tahu segalanya.",
       "highlight": "cepat dan pribadi",
       "cta": "Mengerti",
       "eyebrow": "Peringatan"

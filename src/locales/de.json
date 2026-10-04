@@ -113,10 +113,10 @@
     "useHfTokenDescription": "Aktivieren, um Token für API-Abfragen zu verwenden. Deaktivieren, wenn Token Authentifizierungsprobleme verursacht.",
     "cacheStorageTitle": "Cache & Speicher",
     "clearAssistantCaches": "Verknüpfungscache löschen",
-    "clearAssistantCachesDescription": "Daten im Cache löschen um Verknüpfungen zu beschleunigen. Beeinflusst weder Deine Assistants noch den Chat Verlauf.",
+    "clearAssistantCachesDescription": "Daten im Cache löschen um Verknüpfungen zu beschleunigen. Beeinflusst weder Deine Assistents noch den Chat Verlauf.",
     "clearCachesButton": "Caches löschen",
     "clearCachesConfirmTitle": "Verknüpfungscaches löschen?",
-    "clearCachesConfirmMessage": "Dies löscht alle zwischengespeicherten Daten ({{fileCount}} Dateien, {{size}}). Verknüpfungen laden nach dem Löschen evtl. zunächst langsamer. Beeinflusst weder Deine Assistants noch den Chatverlauf.",
+    "clearCachesConfirmMessage": "Dies löscht alle zwischengespeicherten Daten ({{fileCount}} Dateien, {{size}}). Verknüpfungen laden nach dem Löschen evtl. zunächst langsamer. Beeinflusst weder Deine Assistents noch den Chatverlauf.",
     "clearCachesSuccess": "{{count}} Dateien im Cache erfolgreich gelöscht.",
     "clearCachesError": "Cache löschen fehlgeschlagen. Bitte erneut versuchen.",
     "noCachesToClear": "Keine Caches zum Löschen vorhanden.",
@@ -607,7 +607,7 @@
         "title": "Erfolgreich",
         "message": "Diese Einstellungen werden auf alle zukünftigen Sitzungen angewendet"
       },
-      "assistantSettings": "Assistant-Einstellungen",
+      "assistantSettings": "Assistent-Einstellungen",
       "settingsSource": "Einstellungen Quelle"
     },
     "assistantGenerationSettingsSheet": {
@@ -617,10 +617,10 @@
       "pleaseCorrect": "Bitte korrigieren Sie Folgendes:",
       "ok": "OK",
       "error": "Fehler",
-      "failedToSave": "Speichern der Assistant-Einstellungen gescheitert",
+      "failedToSave": "Speichern der Assistent-Einstellungen gescheitert",
       "resetToGlobal": "Auf globale Standardwerte zurücksetzen",
       "resetToSystem": "Standardwerte laden",
-      "clearAssistantSettings": "Lösche Assistant-Einstellungen",
+      "clearAssistantSettings": "Lösche Assistent-Einstellungen",
       "customSettingsFor": "Benutzerdefinierte Einstellungen für {{assistantName}}",
       "inheritedSettingsFor": "Geerbte Einstellungen für {{assistantName}}"
     },
@@ -632,15 +632,15 @@
     },
     "chatAssistantModelPickerSheet": {
       "modelsTab": "Modelle",
-      "assistantsTab": "Assistants",
-      "noAssistant": "Kein Assistant",
-      "disableAssistant": "Aktiven Assistant deaktivieren",
+      "assistantsTab": "Assistents",
+      "noAssistant": "Kein Assistent",
+      "disableAssistant": "Aktiven Assistent deaktivieren",
       "noDescription": "Keine Beschreibung",
       "assistantType": "Assistent",
       "roleplayType": "Rollenspiele",
       "videoType": "Video",
       "confirmationTitle": "Bestätigung",
-      "modelSwitchMessage": "Dieser Assistant nutzt ein anderes Standardmodell ({{modelName}}). Möchten Sie zum Standardmodell des Assistants wechseln?",
+      "modelSwitchMessage": "Dieser Assistent nutzt ein anderes Standardmodell ({{modelName}}). Möchten Sie zum Standardmodell des Assistents wechseln?",
       "keepButton": "Behalten",
       "switchButton": "Wechseln"
     },
@@ -728,12 +728,12 @@
     },
     "assistantSheet": {
       "title": {
-        "edit": "Assistant bearbeiten",
-        "newAssistant": "Neuer Assistant",
-        "newVideoAssistant": "Neuer Video Assistant"
+        "edit": "Assistent bearbeiten",
+        "newAssistant": "Neuer Assistent",
+        "newVideoAssistant": "Neuer Video Assistent"
       },
       "description": "Beschreibung",
-      "descriptionPlaceholder": "Geben Sie eine kurze Beschreibung Ihres Assistants ein",
+      "descriptionPlaceholder": "Geben Sie eine kurze Beschreibung Ihres Assistents ein",
       "parameters": "Parameter",
       "generationSettings": "Generierungseinstellungen",
       "configureGenerationSettings": "Erzeugungseinstellungen konfigurieren",
@@ -743,12 +743,12 @@
         "promptModelRequired": "Prompt-Generierung Modell ist erforderlich, bei der Nutzung von AI-Prompt"
       }
     },
-    "assistantLegacySheet": {
+    "assistantPersonaSheet": {
       "title": {
-        "create": "Assistent Assistant erstellen",
-        "edit": "Assistent Assistant bearbeiten"
+        "create": "Assistent erstellen",
+        "edit": "Assistent bearbeiten"
       },
-      "assistantName": "Assistant Name",
+      "assistantName": "Assistent Name",
       "assistantNamePlaceholder": "Name",
       "defaultModel": "Standardmodell",
       "defaultModelPlaceholder": "Modell auswählen",
@@ -761,18 +761,18 @@
     "modelNotAvailable": {
       "noModelsDownloaded": "Sie haben noch keine Modelle heruntergeladen. Bitte laden Sie zuerst ein Modell herunter.",
       "downloadAModel": "Modell herunterladen",
-      "defaultModelNotDownloaded": "Dieser Assistant empfiehlt ein bestimmtes Modell, das heruntergeladen werden muss. Sie können auch ein anderes Modell auswählen.",
+      "defaultModelNotDownloaded": "Dieser Assistent empfiehlt ein bestimmtes Modell, das heruntergeladen werden muss. Sie können auch ein anderes Modell auswählen.",
       "modelNotDownloadedShort": "Modell nicht heruntergeladen",
       "recommendedModel": "Empfohlenes Modell",
       "cancelDownload": "Download abbrechen",
       "download": "Download"
     },
-    "roleplayLegacySheet": {
+    "roleplayPersonaSheet": {
       "title": {
-        "create": "Rollenspiel Assistant erstellen",
-        "edit": "Rollenspiel Assistant bearbeiten"
+        "create": "Rollenspiel Assistent erstellen",
+        "edit": "Rollenspiel Assistent bearbeiten"
       },
-      "assistantName": "Assistant Name",
+      "assistantName": "Assistent Name",
       "assistantNamePlaceholder": "Name",
       "defaultModel": "Standardmodell",
       "defaultModelPlaceholder": "Modell auswählen",
@@ -797,13 +797,13 @@
       },
       "create": "Erstellen"
     },
-    "lookieLegacySheet": {
+    "lookiePersonaSheet": {
       "title": {
-        "create": "Erstellen Sie Lookie Assistant",
-        "edit": "Bearbeite Lookie Assistant"
+        "create": "Erstellen Sie Lookie Assistent",
+        "edit": "Bearbeite Lookie Assistent"
       },
-      "assistantName": "Assistant Name",
-      "assistantNamePlaceholder": "Geben Sie einen Namen für Ihren Lookie Assistant",
+      "assistantName": "Assistent Name",
+      "assistantNamePlaceholder": "Geben Sie einen Namen für Ihren Lookie Assistent",
       "visionModel": "Vision Modell",
       "visionModelPlaceholder": "Wählen Sie ein Vision-Modell",
       "requiredModelsSection": "Erforderliche Modelle",
@@ -823,7 +823,7 @@
       },
       "generatingPrompt": {
         "label": "Zweck & Kontext",
-        "placeholder": "Beschreib die Rolle, Zweck, oder Szenario für diesen Assistant..."
+        "placeholder": "Beschreib die Rolle, Zweck, oder Szenario für diesen Assistent..."
       },
       "buttons": {
         "loadingModel": "Lade Model...",
@@ -845,7 +845,7 @@
       "menuItems": {
         "chat": "Chat",
         "models": "Modelle",
-        "assistants": "Assistants",
+        "assistants": "Assistents",
         "benchmark": "Benchmark",
         "settings": "Einstellungen",
         "appInfo": "App-Info",
@@ -883,7 +883,12 @@
         "total": "Insgesamt ",
         "usage": "Verwendung: "
       },
-      "byteSizes": ["Bytes", "KB", "MB", "GB"]
+      "byteSizes": [
+        "Bytes",
+        "KB",
+        "MB",
+        "GB"
+      ]
     },
     "chatView": {
       "menuItems": {
@@ -895,17 +900,17 @@
       }
     },
     "assistantHeaderRight": {
-      "exportAllAssistants": "Exportiere alle Assistants",
-      "importAssistants": "Importiere Assistants",
-      "importSuccess": "Erfolgreich {{count}} Assistant(s) importiert.",
-      "importError": "Import der Assistants gescheitert. Bitte überprüfen Sie das Dateiformat."
+      "exportAllAssistants": "Exportiere alle Assistents",
+      "importAssistants": "Importiere Assistents",
+      "importSuccess": "Erfolgreich {{count}} Assistent(s) importiert.",
+      "importError": "Import der Assistents gescheitert. Bitte überprüfen Sie das Dateiformat."
     }
   },
   "assistantsScreen": {
     "sectionTitles": {
-      "myAssistantsLocal": "Meine Assistants (lokal)",
+      "myAssistantsLocal": "Meine Assistents (lokal)",
       "myLibrary": "Meine Bibliothek (hub.drsai.app)",
-      "discoverAssistants": "Entdecken Sie Assistants (hub.drsai.app)"
+      "discoverAssistants": "Entdecken Sie Assistents (hub.drsai.app)"
     },
     "systemPrompt": "System Prompt",
     "videoAnalysis": "Videoanalyse",

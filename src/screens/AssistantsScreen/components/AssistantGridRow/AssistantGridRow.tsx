@@ -7,7 +7,10 @@ import {styles} from './styles';
 
 import {isLocalAssistant} from '../../../../utils/assistant-type-guards';
 
-import type {AssistantGridItem, AssistantGridRowData} from '../../assistantGridLayout';
+import type {
+  AssistantGridItem,
+  AssistantGridRowData,
+} from '../../assistantGridLayout';
 
 interface AssistantGridRowProps {
   row: AssistantGridRowData;

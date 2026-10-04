@@ -31,15 +31,15 @@ import {
   ProfileSheet,
 } from './components';
 
-import {SectionDivider} from '../../components/AssistantsSheets/SectionDivider';
+import {SectionDivider} from '../../components/AssistantSheets/SectionDivider';
 
 // Unified assistant sheet component
-import {LegacySheet} from '../../components/AssistantsSheets';
+import {AssistantSheet} from '../../components/AssistantSheets';
 import {AuthSheet, AssistantDetailSheet} from '../../components/Drshub';
 
 // Assistant template factories
 import {
-  createNewAssistantAssistant,
+  createNewAssistant,
   createNewRoleplayAssistant,
   createNewVideoAssistant,
   prepareAssistantForEditing,
@@ -71,7 +71,7 @@ const SectionGrid: React.FC<{
   </View>
 );
 
-export const LegacyScreen: React.FC = observer(() => {
+export const AssistantsScreen: React.FC = observer(() => {
   const theme = useTheme();
   const styles = createStyles(theme);
   const l10n = useContext(L10nContext);
@@ -89,11 +89,13 @@ export const LegacyScreen: React.FC = observer(() => {
   const [showProfile, setShowProfile] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
   const [showAssistantDetail, setShowAssistantDetail] = useState(false);
-  const [selectedAssistant, setSelectedAssistant] = useState<DrshubAssistant | null>(null);
+  const [selectedAssistant, setSelectedAssistant] =
+    useState<DrshubAssistant | null>(null);
 
   // Unified assistant sheet state
-  const [showLegacySheet, setShowLegacySheet] = useState(false);
-  const [currentAssistant, setCurrentAssistant] = useState<Partial<Assistant> | null>(null);
+  const [showAssistantSheet, setShowAssistantSheet] = useState(false);
+  const [currentAssistant, setCurrentAssistant] =
+    useState<Partial<Assistant> | null>(null);
 
   // Loading state
   const [refreshing, setRefreshing] = useState(false);
@@ -130,7 +132,7 @@ export const LegacyScreen: React.FC = observer(() => {
 
     switch (type) {
       case 'assistant':
-        newAssistant = createNewAssistantAssistant();
+        newAssistant = createNewAssistant();
         break;
       case 'roleplay':
         newAssistant = createNewRoleplayAssistant();
@@ -139,17 +141,20 @@ export const LegacyScreen: React.FC = observer(() => {
         newAssistant = createNewVideoAssistant();
         break;
       default:
-        newAssistant = createNewAssistantAssistant();
+        newAssistant = createNewAssistant();
     }
 
     setCurrentAssistant(newAssistant);
-    setShowLegacySheet(true);
+    setShowAssistantSheet(true);
   };
 
   const loadData = async () => {
     try {
       // Load public assistants for browsing
-      await assistantStore.searchDrshubAssistants({sortBy: 'newest', limit: 20});
+      await assistantStore.searchDrshubAssistants({
+        sortBy: 'newest',
+        limit: 20,
+      });
       if (authService.isAuthenticated) {
         await Promise.all([
           assistantStore.loadUserLibrary(),
@@ -206,7 +211,7 @@ export const LegacyScreen: React.FC = observer(() => {
   const handleEditAssistant = (assistant: Assistant) => {
     const preparedAssistant = prepareAssistantForEditing(assistant);
     setCurrentAssistant(preparedAssistant);
-    setShowLegacySheet(true);
+    setShowAssistantSheet(true);
   };
 
   // Get filtered data based on current filter and search
@@ -238,7 +243,10 @@ export const LegacyScreen: React.FC = observer(() => {
           ),
         ];
       case 'free':
-        return [...localAssistants, ...hubAssistants.filter(p => p.price_cents === 0)];
+        return [
+          ...localAssistants,
+          ...hubAssistants.filter(p => p.price_cents === 0),
+        ];
       case 'premium':
         return hubAssistants.filter(p => p.price_cents > 0);
       case 'all':
@@ -261,10 +269,16 @@ export const LegacyScreen: React.FC = observer(() => {
 
     switch (activeFilter) {
       case 'all': {
-        const sections: Array<{title: string; data: (DrshubAssistant | Assistant)[]}> = [];
+        const sections: Array<{
+          title: string;
+          data: (DrshubAssistant | Assistant)[];
+        }> = [];
 
         // Add local assistants section (includes both local and downloaded assistants)
-        const allLocalAssistants = [...localAssistants, ...downloadedAssistants];
+        const allLocalAssistants = [
+          ...localAssistants,
+          ...downloadedAssistants,
+        ];
         if (allLocalAssistants.length > 0) {
           sections.push({
             title: l10n.assistantsScreen.sectionTitles.myAssistantsLocal,
@@ -296,10 +310,16 @@ export const LegacyScreen: React.FC = observer(() => {
         return sections;
       }
       case 'my-assistants': {
-        const sections: Array<{title: string; data: (DrshubAssistant | Assistant)[]}> = [];
+        const sections: Array<{
+          title: string;
+          data: (DrshubAssistant | Assistant)[];
+        }> = [];
 
         // Add local assistants section (includes both local and downloaded assistants)
-        const allLocalAssistants = [...localAssistants, ...downloadedAssistants];
+        const allLocalAssistants = [
+          ...localAssistants,
+          ...downloadedAssistants,
+        ];
         if (allLocalAssistants.length > 0) {
           sections.push({
             title: l10n.assistantsScreen.sectionTitles.myAssistantsLocal,
@@ -447,7 +467,7 @@ export const LegacyScreen: React.FC = observer(() => {
         <AuthSheet isVisible={showAuth} onClose={() => setShowAuth(false)} />
       )}
 
-      {/* Palhub's Assistant Detail Sheet */}
+      {/* Drshub's Assistant Detail Sheet */}
       {selectedAssistant && (
         <AssistantDetailSheet
           isVisible={showAssistantDetail}
@@ -461,11 +481,11 @@ export const LegacyScreen: React.FC = observer(() => {
       )}
 
       {/* Unified Assistant Creation/Editing Sheet */}
-      {showLegacySheet && currentAssistant && (
-        <LegacySheet
-          isVisible={showLegacySheet}
+      {showAssistantSheet && currentAssistant && (
+        <AssistantSheet
+          isVisible={showAssistantSheet}
           onClose={() => {
-            setShowLegacySheet(false);
+            setShowAssistantSheet(false);
             setCurrentAssistant(null);
           }}
           assistant={currentAssistant}
@@ -475,4 +495,4 @@ export const LegacyScreen: React.FC = observer(() => {
   );
 });
 
-export default LegacyScreen;
+export default AssistantsScreen;

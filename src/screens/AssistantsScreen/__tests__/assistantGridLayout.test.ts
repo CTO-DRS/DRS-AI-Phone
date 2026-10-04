@@ -8,15 +8,24 @@ import {
 
 describe('computeAssistantGridLayout', () => {
   it('keeps two columns on a 320dp phone', () => {
-    expect(computeAssistantGridLayout(320)).toEqual({columns: 2, cardWidth: 136});
+    expect(computeAssistantGridLayout(320)).toEqual({
+      columns: 2,
+      cardWidth: 136,
+    });
   });
 
   it('keeps two columns on a 360dp phone', () => {
-    expect(computeAssistantGridLayout(360)).toEqual({columns: 2, cardWidth: 156});
+    expect(computeAssistantGridLayout(360)).toEqual({
+      columns: 2,
+      cardWidth: 156,
+    });
   });
 
   it('uses four columns on an 800dp tablet', () => {
-    expect(computeAssistantGridLayout(800)).toEqual({columns: 4, cardWidth: 180});
+    expect(computeAssistantGridLayout(800)).toEqual({
+      columns: 4,
+      cardWidth: 180,
+    });
   });
 
   it('caps the column count on a very wide window', () => {
@@ -24,7 +33,10 @@ describe('computeAssistantGridLayout', () => {
   });
 
   it('uses four columns at the Jest default window width', () => {
-    expect(computeAssistantGridLayout(750)).toEqual({columns: 4, cardWidth: 167.5});
+    expect(computeAssistantGridLayout(750)).toEqual({
+      columns: 4,
+      cardWidth: 167.5,
+    });
   });
 
   it.each([320, 360, 750, 800, 1024, 1738])(
@@ -59,7 +71,9 @@ describe('chunkIntoRows', () => {
   });
 
   it('keeps row keys distinct when every id is identical', () => {
-    const duplicates = ['dup', 'dup', 'dup', 'dup'].map(id => createAssistant({id}));
+    const duplicates = ['dup', 'dup', 'dup', 'dup'].map(id =>
+      createAssistant({id}),
+    );
 
     const keys = chunkIntoRows(duplicates, 2).map(row => row.key);
 

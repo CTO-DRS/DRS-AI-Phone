@@ -11,7 +11,12 @@ import {
 
 import {useChatSession} from '../useChatSession';
 
-import {chatSessionStore, modelStore, assistantStore, serverStore} from '../../store';
+import {
+  chatSessionStore,
+  modelStore,
+  assistantStore,
+  serverStore,
+} from '../../store';
 
 const mockAssistant = {id: 'assistant-1'};
 

@@ -120,10 +120,10 @@
     "useHfTokenDescription": "Ativar para usar o token em requisições de API. Desative se o token estiver causando problemas de autenticação.",
     "cacheStorageTitle": "Cache e Armazenamento",
     "clearAssistantCaches": "Limpar Caches de Atalhos",
-    "clearAssistantCachesDescription": "Limpa os dados em cache usados para acelerar os Atalhos. Isso não afetará seus Assistants nem o histórico de chats.",
+    "clearAssistantCachesDescription": "Limpa os dados em cache usados para acelerar os Atalhos. Isso não afetará seus Assistentes nem o histórico de chats.",
     "clearCachesButton": "Limpar Caches",
     "clearCachesConfirmTitle": "Limpar Caches de Atalhos?",
-    "clearCachesConfirmMessage": "Isso limpará todos os dados de sessão em cache ({{fileCount}} arquivos, {{size}}). Os Atalhos podem ficar mais lentos no primeiro uso após a limpeza. Isso não afetará seus Assistants nem o histórico de chats.",
+    "clearCachesConfirmMessage": "Isso limpará todos os dados de sessão em cache ({{fileCount}} arquivos, {{size}}). Os Atalhos podem ficar mais lentos no primeiro uso após a limpeza. Isso não afetará seus Assistentes nem o histórico de chats.",
     "clearCachesSuccess": "{{count}} arquivo(s) de cache excluído(s) com sucesso.",
     "clearCachesError": "Falha ao limpar caches. Tente novamente.",
     "noCachesToClear": "Nenhum cache para limpar.",
@@ -167,7 +167,7 @@
     "serverTypeHelp": "Detectado automaticamente; altere se estiver errado.",
     "internetSearch": {
       "title": "Busca na internet",
-      "description": "Deixe os Assistants pesquisarem na web com as próprias ferramentas. Use sua própria chave de API — o DRS AI nunca guarda suas chaves nem encaminha suas consultas.",
+      "description": "Deixe os Assistentes pesquisarem na web com as próprias ferramentas. Use sua própria chave de API — o DRS AI nunca guarda suas chaves nem encaminha suas consultas.",
       "providerLabel": "Provedor de busca",
       "providerGated": "Em breve",
       "keyLabel": "Chave de API",
@@ -183,7 +183,7 @@
       "resultCountLabel": "Resultados por busca",
       "resultCountDescription": "Menos resultados deixam mais espaço no contexto do modelo.",
       "consentTitle": "As buscas saem do seu dispositivo",
-      "consentDescription": "Quando um Assistant faz uma busca na web, sua consulta é enviada ao provedor selecionado pela internet. Quando um Assistant lê uma página, a URL e o conteúdo da página podem, em vez disso, ser enviados a um serviço de leitura padrão (r.jina.ai) caso o provedor selecionado não tenha um leitor nativo. Chaves e consultas nunca são enviadas ao DRS AI.",
+      "consentDescription": "Quando um Assistente faz uma busca na web, sua consulta é enviada ao provedor selecionado pela internet. Quando um Assistente lê uma página, a URL e o conteúdo da página podem, em vez disso, ser enviados a um serviço de leitura padrão (r.jina.ai) caso o provedor selecionado não tenha um leitor nativo. Chaves e consultas nunca são enviadas ao DRS AI.",
       "consentAccept": "Entendi",
       "consentRequired": "Aceite o aviso acima para definir uma chave e ativar a busca.",
       "consentGivenTitle": "A busca na web está ativada",
@@ -695,7 +695,7 @@
         "title": "Sucesso",
         "message": "Essas configurações serão aplicadas a todas as sessões futuras"
       },
-      "assistantSettings": "Configurações do Assistant",
+      "assistantSettings": "Configurações do Assistente",
       "settingsSource": "Origem das Configurações"
     },
     "assistantGenerationSettingsSheet": {
@@ -708,7 +708,7 @@
       "failedToSave": "Falha ao salvar as configurações do assistant",
       "resetToGlobal": "Redefinir para os Padrões Globais",
       "resetToSystem": "Redefinir para os Padrões do Sistema",
-      "clearAssistantSettings": "Limpar Configurações do Assistant",
+      "clearAssistantSettings": "Limpar Configurações do Assistente",
       "customSettingsFor": "Configurações personalizadas para {{assistantName}}",
       "inheritedSettingsFor": "Configurações herdadas para {{assistantName}}"
     },
@@ -720,8 +720,8 @@
     },
     "chatAssistantModelPickerSheet": {
       "modelsTab": "Modelos",
-      "assistantsTab": "Assistants",
-      "noAssistant": "Nenhum Assistant",
+      "assistantsTab": "Assistentes",
+      "noAssistant": "Nenhum Assistente",
       "disableAssistant": "Desativar assistant ativo",
       "noDescription": "Sem descrição",
       "assistantType": "Assistente",
@@ -830,9 +830,9 @@
     },
     "assistantSheet": {
       "title": {
-        "edit": "Editar Assistant",
-        "newAssistant": "Novo Assistant",
-        "newVideoAssistant": "Novo Assistant de Vídeo"
+        "edit": "Editar Assistente",
+        "newAssistant": "Novo Assistente",
+        "newVideoAssistant": "Novo Assistente de Vídeo"
       },
       "description": "Descrição",
       "descriptionPlaceholder": "Insira uma breve descrição do seu assistant",
@@ -869,12 +869,12 @@
         "removePromptLabel": "Remover prompt"
       }
     },
-    "assistantLegacySheet": {
+    "assistantPersonaSheet": {
       "title": {
-        "create": "Criar Assistant Assistente",
-        "edit": "Editar Assistant Assistente"
+        "create": "Criar Assistente Assistente",
+        "edit": "Editar Assistente Assistente"
       },
-      "assistantName": "Nome do Assistant",
+      "assistantName": "Nome do Assistente",
       "assistantNamePlaceholder": "Nome",
       "defaultModel": "Modelo Padrão",
       "defaultModelPlaceholder": "Selecionar modelo",
@@ -893,12 +893,12 @@
       "cancelDownload": "Cancelar download",
       "download": "Baixar"
     },
-    "roleplayLegacySheet": {
+    "roleplayPersonaSheet": {
       "title": {
-        "create": "Criar Assistant de Interpretação",
-        "edit": "Editar Assistant de Interpretação"
+        "create": "Criar Assistente de Interpretação",
+        "edit": "Editar Assistente de Interpretação"
       },
-      "assistantName": "Nome do Assistant",
+      "assistantName": "Nome do Assistente",
       "assistantNamePlaceholder": "Nome",
       "defaultModel": "Modelo Padrão",
       "defaultModelPlaceholder": "Selecionar modelo",
@@ -923,13 +923,13 @@
       },
       "create": "Criar"
     },
-    "lookieLegacySheet": {
+    "lookiePersonaSheet": {
       "title": {
-        "create": "Criar Assistant Lookie",
-        "edit": "Editar Assistant Lookie"
+        "create": "Criar Assistente Lookie",
+        "edit": "Editar Assistente Lookie"
       },
-      "assistantName": "Nome do Assistant",
-      "assistantNamePlaceholder": "Digite um nome para o seu Assistant Lookie",
+      "assistantName": "Nome do Assistente",
+      "assistantNamePlaceholder": "Digite um nome para o seu Assistente Lookie",
       "visionModel": "Modelo de Visão",
       "visionModelPlaceholder": "Selecione um modelo de visão",
       "requiredModelsSection": "Modelos Necessários",
@@ -972,7 +972,7 @@
       "menuItems": {
         "chat": "Chat",
         "models": "Modelos",
-        "assistants": "Assistants",
+        "assistants": "Assistentes",
         "benchmark": "Benchmark",
         "settings": "Configurações",
         "appInfo": "Sobre o App",
@@ -1013,7 +1013,12 @@
         "total": "Total: ",
         "usage": "Uso: "
       },
-      "byteSizes": ["Bytes", "KB", "MB", "GB"]
+      "byteSizes": [
+        "Bytes",
+        "KB",
+        "MB",
+        "GB"
+      ]
     },
     "chatView": {
       "menuItems": {
@@ -1033,9 +1038,9 @@
   },
   "assistantsScreen": {
     "sectionTitles": {
-      "myAssistantsLocal": "Meus Assistants (local)",
+      "myAssistantsLocal": "Meus Assistentes (local)",
       "myLibrary": "Minha Biblioteca (hub.drsai.app)",
-      "discoverAssistants": "Descobrir Assistants (hub.drsai.app)"
+      "discoverAssistants": "Descobrir Assistentes (hub.drsai.app)"
     },
     "systemPrompt": "Prompt de Sistema",
     "videoAnalysis": "Análise de Vídeo",
@@ -1050,26 +1055,26 @@
     "assistant": "Assistente",
     "roleplay": "Interpretação",
     "video": "Vídeo",
-    "deleteAssistant": "Excluir Assistant",
+    "deleteAssistant": "Excluir Assistente",
     "deleteAssistantMessage": "Tem certeza de que deseja excluir este assistant?",
     "missingModel": "Modelo Ausente",
     "missingModelMessage": "O modelo padrão \"{{modelName}}\" para este assistant não está disponível. Baixe-o na tela de edição ou selecione um modelo diferente.",
     "search": "Pesquisar",
     "profile": "Perfil",
     "signIn": "Entrar",
-    "addAssistant": "Adicionar Assistant",
+    "addAssistant": "Adicionar Assistente",
     "signInToAccessLibrary": "Entre para acessar sua biblioteca do hub.drsai.app",
     "signOut": "Sair",
     "signOutConfirmation": "Tem certeza de que deseja sair?",
     "signOutError": "Falha ao sair. Tente novamente.",
     "account": "Conta",
     "signInToDrshub": "Entrar no Drshub",
-    "signInDescription": "Acesse sua biblioteca, crie Assistants privados e sincronize entre dispositivos",
-    "searchAllAssistants": "Pesquisar todos os Assistants...",
+    "signInDescription": "Acesse sua biblioteca, crie Assistentes privados e sincronize entre dispositivos",
+    "searchAllAssistants": "Pesquisar todos os Assistentes...",
     "deleteAssistantConfirmation": "Tem certeza de que deseja excluir \"{{assistantName}}\"?",
     "filters": {
       "all": "Todos",
-      "myAssistants": "Meus Assistants",
+      "myAssistants": "Meus Assistentes",
       "local": "Local",
       "video": "Vídeo",
       "free": "Grátis",
@@ -1082,7 +1087,7 @@
       "download": "Baixar",
       "getFree": "Obter Grátis"
     },
-    "premiumAssistantDescription": "Assistant premium da comunidade hub.drsai.app",
+    "premiumAssistantDescription": "Assistente premium da comunidade hub.drsai.app",
     "premiumInfoText": "Visite hub.drsai.app para explorar mais assistants",
     "sortOptions": {
       "newest": "Mais Recentes",
@@ -1107,7 +1112,7 @@
       "error": "Erro",
       "failedToLoadDetails": "Falha ao carregar os detalhes do assistant",
       "failedToDownload": "Falha ao baixar o assistant",
-      "premiumAssistantMessage": "Este é um Assistant Premium.\n• Se você já o desbloqueou com sua conta Drshub, basta entrar para acessar todos os detalhes.\n• Ainda não desbloqueou? Visite o app hub.drsai.app para saber mais.",
+      "premiumAssistantMessage": "Este é um Assistente Premium.\n• Se você já o desbloqueou com sua conta Drshub, basta entrar para acessar todos os detalhes.\n• Ainda não desbloqueou? Visite o app hub.drsai.app para saber mais.",
       "notAvailable": "N/D",
       "buyOnDrshub": "Comprar no Drshub",
       "finalizingPurchase": "Finalizando sua compra…",
@@ -1171,7 +1176,7 @@
   "screenTitles": {
     "chat": "Chat",
     "models": "Modelos",
-    "assistants": "Assistants (experimental)",
+    "assistants": "Assistentes (experimental)",
     "benchmark": "Benchmark",
     "settings": "Configurações",
     "appInfo": "Sobre o App",

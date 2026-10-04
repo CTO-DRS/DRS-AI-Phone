@@ -120,10 +120,13 @@ describe('DrshubApiService', () => {
         .fn()
         .mockResolvedValue({ok: true, json: async () => session});
 
-      const result = await drshubApiService.createCheckoutSession('assistant-1', {
-        successUrl: 'https://host.test/app-return/success',
-        cancelUrl: 'https://host.test/app-return/cancel',
-      });
+      const result = await drshubApiService.createCheckoutSession(
+        'assistant-1',
+        {
+          successUrl: 'https://host.test/app-return/success',
+          cancelUrl: 'https://host.test/app-return/cancel',
+        },
+      );
 
       expect(result).toEqual(session);
       const [url, options] = (global.fetch as jest.Mock).mock.calls[0];
@@ -165,9 +168,9 @@ describe('DrshubApiService', () => {
     });
 
     it('maps a 400 "already own" message to already_owned', async () => {
-      expect(await mapStatus(400, {error: 'You already own this assistant'})).toBe(
-        'already_owned',
-      );
+      expect(
+        await mapStatus(400, {error: 'You already own this assistant'}),
+      ).toBe('already_owned');
     });
 
     it('maps a 400 with explicit already_owned code to already_owned', async () => {
@@ -432,7 +435,7 @@ describe('DrshubApiService', () => {
       // Wire-boundary forwarding is verbatim — snake_case preserved, no
       // shape conversion. The snake_case to camelCase rename and the
       // strict-boolean to necessity mapping happen at the next boundary
-      // (LegacyStore.createLocalAssistantFromDrshub).
+      // (AssistantStore.createLocalAssistantFromDrshub).
       expect(result.pact).toEqual({
         version: 1,
         talents: [

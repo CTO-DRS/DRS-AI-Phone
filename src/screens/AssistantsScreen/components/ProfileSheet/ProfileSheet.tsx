@@ -75,7 +75,9 @@ export const ProfileSheet: React.FC<ProfileSheetProps> = observer(
           <Divider style={styles.divider} />
 
           <View style={styles.actions}>
-            <Text style={styles.sectionTitle}>{l10n.assistantsScreen.account}</Text>
+            <Text style={styles.sectionTitle}>
+              {l10n.assistantsScreen.account}
+            </Text>
 
             <Button
               mode="outlined"

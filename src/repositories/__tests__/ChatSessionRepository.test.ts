@@ -49,7 +49,9 @@ describe('ChatSessionRepository', () => {
       'function',
     );
     expect(typeof chatSessionRepository.updateSessionTitle).toBe('function');
-    expect(typeof chatSessionRepository.setSessionActiveAssistant).toBe('function');
+    expect(typeof chatSessionRepository.setSessionActiveAssistant).toBe(
+      'function',
+    );
     expect(typeof chatSessionRepository.deleteMessage).toBe('function');
     // These might be private methods, so we don't test for them
     // expect(typeof chatSessionRepository.resetMigration).toBe('function');

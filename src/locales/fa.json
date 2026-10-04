@@ -115,10 +115,10 @@
     "useHfTokenDescription": "فعال کنید تا از توکن برای درخواست‌های API استفاده شود. اگر توکن مشکل احراز هویت ایجاد می‌کند غیرفعال کنید.",
     "cacheStorageTitle": "کش و فضای ذخیره‌سازی",
     "clearAssistantCaches": "پاک کردن کش میانبرها",
-    "clearAssistantCachesDescription": "داده‌های کش‌شده برای سرعت‌بخشی به میانبرها پاک می‌شود. این کار روی پَل‌ها یا تاریخچه چت تأثیری ندارد.",
+    "clearAssistantCachesDescription": "داده‌های کش‌شده برای سرعت‌بخشی به میانبرها پاک می‌شود. این کار روی دستیارها یا تاریخچه چت تأثیری ندارد.",
     "clearCachesButton": "پاک کردن کش",
     "clearCachesConfirmTitle": "کش میانبرها پاک شود؟",
-    "clearCachesConfirmMessage": "تمام داده‌های کش‌شده جلسات پاک می‌شود ({{fileCount}} فایل، {{size}}). میانبرها ممکن است در اولین استفاده بعد از پاک‌سازی کندتر باشند. این کار روی پَل‌ها یا تاریخچه چت تأثیری ندارد.",
+    "clearCachesConfirmMessage": "تمام داده‌های کش‌شده جلسات پاک می‌شود ({{fileCount}} فایل، {{size}}). میانبرها ممکن است در اولین استفاده بعد از پاک‌سازی کندتر باشند. این کار روی دستیارها یا تاریخچه چت تأثیری ندارد.",
     "clearCachesSuccess": "{{count}} فایل کش با موفقیت پاک شد.",
     "clearCachesError": "پاک کردن کش ناموفق بود. لطفاً دوباره تلاش کنید.",
     "noCachesToClear": "کشی برای پاک کردن وجود ندارد.",
@@ -167,7 +167,7 @@
     "serverTypeHelp": "به‌صورت خودکار تشخیص داده می‌شود؛ اگر درست نیست تغییرش بدهید.",
     "internetSearch": {
       "title": "جستجوی اینترنتی",
-      "description": "بگذارید پَل‌ها با ابزارهای خودشان در وب جستجو کنند. کلید API خودتان را بیاورید — DRS AI هرگز کلیدهای شما را نگه نمی‌دارد و درخواست‌هایتان را هدایت نمی‌کند.",
+      "description": "بگذارید دستیارها با ابزارهای خودشان در وب جستجو کنند. کلید API خودتان را بیاورید — DRS AI هرگز کلیدهای شما را نگه نمی‌دارد و درخواست‌هایتان را هدایت نمی‌کند.",
       "providerLabel": "ارائه‌دهنده جستجو",
       "providerGated": "به‌زودی",
       "keyLabel": "کلید API",
@@ -183,7 +183,7 @@
       "resultCountLabel": "تعداد نتایج در هر جستجو",
       "resultCountDescription": "نتایج کمتر فضای بیشتری در context مدل باقی می‌گذارد.",
       "consentTitle": "جستجوها از دستگاه شما خارج می‌شوند",
-      "consentDescription": "وقتی یک پَل در وب جستجو می‌کند، درخواست شما از طریق اینترنت به ارائه‌دهنده انتخاب‌شده ارسال می‌شود. وقتی یک پَل صفحه‌ای را می‌خواند، اگر ارائه‌دهنده انتخاب‌شده خواننده اختصاصی نداشته باشد، ممکن است به‌جای آن آدرس و محتوای صفحه به یک سرویس خواننده پیش‌فرض (r.jina.ai) ارسال شود. کلیدها و درخواست‌ها هرگز به DRS AI ارسال نمی‌شوند.",
+      "consentDescription": "وقتی یک دستیار در وب جستجو می‌کند، درخواست شما از طریق اینترنت به ارائه‌دهنده انتخاب‌شده ارسال می‌شود. وقتی یک دستیار صفحه‌ای را می‌خواند، اگر ارائه‌دهنده انتخاب‌شده خواننده اختصاصی نداشته باشد، ممکن است به‌جای آن آدرس و محتوای صفحه به یک سرویس خواننده پیش‌فرض (r.jina.ai) ارسال شود. کلیدها و درخواست‌ها هرگز به DRS AI ارسال نمی‌شوند.",
       "consentAccept": "متوجه شدم",
       "consentRequired": "برای تنظیم کلید و فعال‌سازی جستجو، توضیحات بالا را بپذیرید.",
       "consentGivenTitle": "جستجوی وب فعال است",
@@ -590,7 +590,7 @@
       "activateModelButton": "انتخاب مدل",
       "loading": "در حال بارگذاری...",
       "gettingReadyTitle": "{{name}} در حال آماده‌شدن است",
-      "gettingReadyDescription": "همین که پَل شما آماده گفتگو شد به شما خبر می‌دهیم. روی نوار بالای صفحه بزنید تا روند کار را ببینید."
+      "gettingReadyDescription": "همین که دستیار شما آماده گفتگو شد به شما خبر می‌دهیم. روی نوار بالای صفحه بزنید تا روند کار را ببینید."
     },
     "chatInput": {
       "inputPlaceholder": "پیام",
@@ -676,7 +676,7 @@
         "title": "انجام شد",
         "message": "این تنظیمات روی تمام جلسات آینده اعمال خواهد شد"
       },
-      "assistantSettings": "تنظیمات پَل",
+      "assistantSettings": "تنظیمات دستیار",
       "settingsSource": "منبع تنظیمات"
     },
     "assistantGenerationSettingsSheet": {
@@ -686,10 +686,10 @@
       "pleaseCorrect": "لطفاً موارد زیر را اصلاح کنید:",
       "ok": "باشه",
       "error": "خطا",
-      "failedToSave": "ذخیره تنظیمات پَل ممکن نشد",
+      "failedToSave": "ذخیره تنظیمات دستیار ممکن نشد",
       "resetToGlobal": "بازنشانی به پیش‌فرض کلی",
       "resetToSystem": "بازنشانی به پیش‌فرض سیستم",
-      "clearAssistantSettings": "پاک‌سازی تنظیمات پَل",
+      "clearAssistantSettings": "پاک‌سازی تنظیمات دستیار",
       "customSettingsFor": "تنظیمات سفارشی برای {{assistantName}}",
       "inheritedSettingsFor": "تنظیمات ارثی برای {{assistantName}}"
     },
@@ -701,15 +701,15 @@
     },
     "chatAssistantModelPickerSheet": {
       "modelsTab": "مدل‌ها",
-      "assistantsTab": "پَل‌ها",
-      "noAssistant": "بدون پَل",
-      "disableAssistant": "غیرفعال‌سازی پَل فعال",
+      "assistantsTab": "دستیارها",
+      "noAssistant": "بدون دستیار",
+      "disableAssistant": "غیرفعال‌سازی دستیار فعال",
       "noDescription": "بدون توضیحات",
       "assistantType": "دستیار",
       "roleplayType": "نقش‌آفرینی",
       "videoType": "ویدیو",
       "confirmationTitle": "تأیید",
-      "modelSwitchMessage": "این پَل مدل پیش‌فرض متفاوتی دارد ({{modelName}}). می‌خواهید به مدل پیش‌فرض پَل تغییر دهید؟",
+      "modelSwitchMessage": "این دستیار مدل پیش‌فرض متفاوتی دارد ({{modelName}}). می‌خواهید به مدل پیش‌فرض دستیار تغییر دهید؟",
       "keepButton": "نگه‌دار",
       "switchButton": "تغییر بده"
     },
@@ -811,12 +811,12 @@
     },
     "assistantSheet": {
       "title": {
-        "edit": "ویرایش پَل",
-        "newAssistant": "پَل جدید",
-        "newVideoAssistant": "پَل ویدیویی جدید"
+        "edit": "ویرایش دستیار",
+        "newAssistant": "دستیار جدید",
+        "newVideoAssistant": "دستیار ویدیویی جدید"
       },
       "description": "توضیحات",
-      "descriptionPlaceholder": "یک توضیح کوتاه درباره پَل خود بنویسید",
+      "descriptionPlaceholder": "یک توضیح کوتاه درباره دستیار خود بنویسید",
       "parameters": "پارامترها",
       "generationSettings": "تنظیمات تولید",
       "configureGenerationSettings": "پیکربندی تنظیمات تولید",
@@ -843,19 +843,19 @@
       "greeting": {
         "sectionLabel": "خوش‌آمدگویی",
         "textLabel": "پیام خوش‌آمدگویی",
-        "textPlaceholder": "این پَل در چت خالی چه بگوید؟",
+        "textPlaceholder": "این دستیار در چت خالی چه بگوید؟",
         "suggestedPromptsLabel": "پرامپت‌های پیشنهادی",
         "addPromptButton": "افزودن پرامپت",
         "promptPlaceholder": "یک پرامپت کوتاه برای چیپ",
         "removePromptLabel": "حذف پرامپت"
       }
     },
-    "assistantLegacySheet": {
+    "assistantPersonaSheet": {
       "title": {
-        "create": "ایجاد پَل دستیار",
-        "edit": "ویرایش پَل دستیار"
+        "create": "ایجاد دستیار",
+        "edit": "ویرایش دستیار"
       },
-      "assistantName": "نام پَل",
+      "assistantName": "نام دستیار",
       "assistantNamePlaceholder": "نام",
       "defaultModel": "مدل پیش‌فرض",
       "defaultModelPlaceholder": "انتخاب مدل",
@@ -868,18 +868,18 @@
     "modelNotAvailable": {
       "noModelsDownloaded": "هنوز هیچ مدلی دانلود نکرده‌اید. لطفاً ابتدا یک مدل دانلود کنید.",
       "downloadAModel": "دانلود یک مدل",
-      "defaultModelNotDownloaded": "این پَل یک مدل خاص پیشنهاد می‌دهد که باید دانلود شود، یا می‌توانید مدل دیگری انتخاب کنید.",
+      "defaultModelNotDownloaded": "این دستیار یک مدل خاص پیشنهاد می‌دهد که باید دانلود شود، یا می‌توانید مدل دیگری انتخاب کنید.",
       "modelNotDownloadedShort": "مدل دانلود نشده",
       "recommendedModel": "مدل پیشنهادی",
       "cancelDownload": "لغو دانلود",
       "download": "دانلود"
     },
-    "roleplayLegacySheet": {
+    "roleplayPersonaSheet": {
       "title": {
-        "create": "ایجاد پَل نقش‌آفرینی",
-        "edit": "ویرایش پَل نقش‌آفرینی"
+        "create": "ایجاد دستیار نقش‌آفرینی",
+        "edit": "ویرایش دستیار نقش‌آفرینی"
       },
-      "assistantName": "نام پَل",
+      "assistantName": "نام دستیار",
       "assistantNamePlaceholder": "نام",
       "defaultModel": "مدل پیش‌فرض",
       "defaultModelPlaceholder": "انتخاب مدل",
@@ -904,13 +904,13 @@
       },
       "create": "ایجاد"
     },
-    "lookieLegacySheet": {
+    "lookiePersonaSheet": {
       "title": {
-        "create": "ایجاد پَل Lookie",
-        "edit": "ویرایش پَل Lookie"
+        "create": "ایجاد دستیار Lookie",
+        "edit": "ویرایش دستیار Lookie"
       },
-      "assistantName": "نام پَل",
-      "assistantNamePlaceholder": "یک نام برای پَل Lookie خود وارد کنید",
+      "assistantName": "نام دستیار",
+      "assistantNamePlaceholder": "یک نام برای دستیار Lookie خود وارد کنید",
       "visionModel": "مدل بینایی",
       "visionModelPlaceholder": "یک مدل بینایی انتخاب کنید",
       "requiredModelsSection": "مدل‌های مورد نیاز",
@@ -931,7 +931,7 @@
       },
       "generatingPrompt": {
         "label": "هدف و زمینه",
-        "placeholder": "نقش، هدف یا سناریوی این پَل را توضیح دهید..."
+        "placeholder": "نقش، هدف یا سناریوی این دستیار را توضیح دهید..."
       },
       "buttons": {
         "loadingModel": "در حال بارگذاری مدل...",
@@ -953,7 +953,7 @@
       "menuItems": {
         "chat": "چت",
         "models": "مدل‌ها",
-        "assistants": "پَل‌ها",
+        "assistants": "دستیارها",
         "benchmark": "بنچمارک",
         "settings": "تنظیمات",
         "appInfo": "درباره برنامه",
@@ -994,7 +994,12 @@
         "total": "کل: ",
         "usage": "مصرف: "
       },
-      "byteSizes": ["Bytes", "KB", "MB", "GB"]
+      "byteSizes": [
+        "Bytes",
+        "KB",
+        "MB",
+        "GB"
+      ]
     },
     "chatView": {
       "menuItems": {
@@ -1006,10 +1011,10 @@
       }
     },
     "assistantHeaderRight": {
-      "exportAllAssistants": "خروجی از همه پَل‌ها",
-      "importAssistants": "وارد کردن پَل‌ها",
-      "importSuccess": "{{count}} پَل با موفقیت وارد شد.",
-      "importError": "وارد کردن پَل‌ها انجام نشد. لطفاً فرمت فایل را بررسی کنید."
+      "exportAllAssistants": "خروجی از همه دستیارها",
+      "importAssistants": "وارد کردن دستیارها",
+      "importSuccess": "{{count}} دستیار با موفقیت وارد شد.",
+      "importError": "وارد کردن دستیارها انجام نشد. لطفاً فرمت فایل را بررسی کنید."
     },
     "bubble": {
       "msPerToken": "{{value}}ms/توکن",
@@ -1033,9 +1038,9 @@
   },
   "assistantsScreen": {
     "sectionTitles": {
-      "myAssistantsLocal": "پَل‌های من (محلی)",
+      "myAssistantsLocal": "دستیارهای من (محلی)",
       "myLibrary": "کتابخانه من (hub.drsai.app)",
-      "discoverAssistants": "کشف پَل‌ها (hub.drsai.app)"
+      "discoverAssistants": "کشف دستیارها (hub.drsai.app)"
     },
     "systemPrompt": "پرامپت سیستم",
     "videoAnalysis": "تحلیل ویدیو",
@@ -1050,26 +1055,26 @@
     "assistant": "دستیار",
     "roleplay": "نقش‌آفرینی",
     "video": "ویدیو",
-    "deleteAssistant": "حذف پَل",
-    "deleteAssistantMessage": "آیا مطمئنید می‌خواهید این پَل را حذف کنید؟",
+    "deleteAssistant": "حذف دستیار",
+    "deleteAssistantMessage": "آیا مطمئنید می‌خواهید این دستیار را حذف کنید؟",
     "missingModel": "مدل موجود نیست",
-    "missingModelMessage": "مدل پیش‌فرض «{{modelName}}» برای این پَل در دسترس نیست. لطفاً آن را در صفحه ویرایش دانلود کنید یا مدل دیگری انتخاب کنید.",
+    "missingModelMessage": "مدل پیش‌فرض «{{modelName}}» برای این دستیار در دسترس نیست. لطفاً آن را در صفحه ویرایش دانلود کنید یا مدل دیگری انتخاب کنید.",
     "search": "جستجو",
     "profile": "پروفایل",
     "signIn": "ورود",
-    "addAssistant": "افزودن پَل",
+    "addAssistant": "افزودن دستیار",
     "signInToAccessLibrary": "برای دسترسی به کتابخانه‌تان از hub.drsai.app وارد شوید",
     "signOut": "خروج",
     "signOutConfirmation": "آیا مطمئنید می‌خواهید خارج شوید؟",
     "signOutError": "خروج با مشکل مواجه شد. لطفاً دوباره تلاش کنید.",
     "account": "حساب کاربری",
     "signInToDrshub": "ورود به Drshub",
-    "signInDescription": "به کتابخانه‌تان دسترسی پیدا کنید، پَل‌های خصوصی بسازید و بین دستگاه‌ها همگام‌سازی کنید",
-    "searchAllAssistants": "جستجو در همه پَل‌ها...",
+    "signInDescription": "به کتابخانه‌تان دسترسی پیدا کنید، دستیارهای خصوصی بسازید و بین دستگاه‌ها همگام‌سازی کنید",
+    "searchAllAssistants": "جستجو در همه دستیارها...",
     "deleteAssistantConfirmation": "آیا مطمئنید می‌خواهید «{{assistantName}}» را حذف کنید؟",
     "filters": {
       "all": "همه",
-      "myAssistants": "پَل‌های من",
+      "myAssistants": "دستیارهای من",
       "local": "محلی",
       "video": "ویدیو",
       "free": "رایگان",
@@ -1082,8 +1087,8 @@
       "download": "دانلود",
       "getFree": "دریافت رایگان"
     },
-    "premiumAssistantDescription": "پَل ویژه از جامعه hub.drsai.app",
-    "premiumInfoText": "برای کشف پَل‌های بیشتر به hub.drsai.app سر بزنید",
+    "premiumAssistantDescription": "دستیار ویژه از جامعه hub.drsai.app",
+    "premiumInfoText": "برای کشف دستیارهای بیشتر به hub.drsai.app سر بزنید",
     "sortOptions": {
       "newest": "جدیدترین",
       "oldest": "قدیمی‌ترین",
@@ -1103,18 +1108,18 @@
       "systemPrompt": "پرامپت سیستم",
       "downloaded": "دانلود شد",
       "success": "موفق",
-      "assistantAddedToCollection": "پَل به مجموعه شما اضافه شد!",
+      "assistantAddedToCollection": "دستیار به مجموعه شما اضافه شد!",
       "error": "خطا",
-      "failedToLoadDetails": "بارگذاری جزئیات پَل با مشکل مواجه شد",
-      "failedToDownload": "دانلود پَل با مشکل مواجه شد",
-      "premiumAssistantMessage": "این یک پَل ویژه است.\n• اگر قبلاً با حساب Drshub خود آن را فعال کرده‌اید، کافی است وارد شوید تا به جزئیات کامل دسترسی پیدا کنید.\n• هنوز فعال نکرده‌اید؟ برای اطلاعات بیشتر به برنامه hub.drsai.app مراجعه کنید.",
+      "failedToLoadDetails": "بارگذاری جزئیات دستیار با مشکل مواجه شد",
+      "failedToDownload": "دانلود دستیار با مشکل مواجه شد",
+      "premiumAssistantMessage": "این یک دستیار ویژه است.\n• اگر قبلاً با حساب Drshub خود آن را فعال کرده‌اید، کافی است وارد شوید تا به جزئیات کامل دسترسی پیدا کنید.\n• هنوز فعال نکرده‌اید؟ برای اطلاعات بیشتر به برنامه hub.drsai.app مراجعه کنید.",
       "notAvailable": "ندارد",
       "buyOnDrshub": "خرید در Drshub",
       "finalizingPurchase": "در حال نهایی‌سازی خرید شما…",
       "processingPurchase": "در حال پردازش — به‌زودی فعال می‌شود.",
       "checkoutSessionExpired": "نشست شما منقضی شد. برای ادامه دوباره وارد شوید.",
       "signInAgain": "ورود مجدد",
-      "assistantNotAvailable": "این پَل در حال حاضر برای خرید در دسترس نیست.",
+      "assistantNotAvailable": "این دستیار در حال حاضر برای خرید در دسترس نیست.",
       "checkoutFailed": "مشکلی پیش آمد. لطفاً دوباره تلاش کنید."
     }
   },
@@ -1165,13 +1170,13 @@
       "step1": "• پرامپت را ویرایش کنید (اختیاری) تا تحلیل را هدایت کنید",
       "step2": "• دکمه دوربین را بزنید تا تحلیل زنده ویدیو شروع شود",
       "step3": "• فرکانس تصویربرداری را هنگام فعال بودن دوربین تنظیم کنید",
-      "step4": "• به پَل دیگری بروید برای چت متنی معمولی"
+      "step4": "• به دستیار دیگری بروید برای چت متنی معمولی"
     }
   },
   "screenTitles": {
     "chat": "چت",
     "models": "مدل‌ها",
-    "assistants": "پَل‌ها (آزمایشی)",
+    "assistants": "دستیارها (آزمایشی)",
     "benchmark": "بنچمارک",
     "settings": "تنظیمات",
     "appInfo": "درباره برنامه",
@@ -1225,7 +1230,7 @@
     "increaseContextReloading": "در حال بارگذاری مجدد مدل با context بزرگ‌تر…",
     "increaseContextSuccess": "context به {{target}} توکن افزایش یافت.",
     "increaseContextFailure": "افزایش اندازه context ممکن نشد. تنظیم قبلی شما بازگردانده شد.",
-    "assistantLoadHint": "این پَل معمولاً به فضای بیشتری از اندازه context فعلی نیاز دارد.",
+    "assistantLoadHint": "این دستیار معمولاً به فضای بیشتری از اندازه context فعلی نیاز دارد.",
     "generatingPreview": "در حال تولید پیش‌نمایش… ({{tokens}} توکن)",
     "generatingPreviewPending": "در حال تولید پیش‌نمایش…",
     "toolUsedChip": "از {{name}} استفاده شد",
@@ -1493,15 +1498,15 @@
       "brand": "DRS AI"
     },
     "screen1": {
-      "title": "با پَل‌هایت آشنا شو.",
-      "titleAccent": "پَل‌هایت.",
+      "title": "با دستیارهایت آشنا شو.",
+      "titleAccent": "دستیارهایت.",
       "body": "دوستان کوچک و باهوشی که داخل گوشی تو زندگی می‌کنند.\nبیا با هم آماده‌ات کنیم - فقط یک دقیقه طول می‌کشد.",
       "cta": "بگرد و نشانم بده",
       "eyebrow": "به DRS AI خوش آمدی"
     },
     "screen2": {
       "title": "هر زمان،\nهر جا.",
-      "body": "پَل‌هایت داخل گوشی تو زندگی می‌کنند.\nبدون اینترنت، بدون آنتن - توی هواپیما، دور از شبکه و در روستاهای دورافتاده هم کار می‌کنند.",
+      "body": "دستیارهایت داخل گوشی تو زندگی می‌کنند.\nبدون اینترنت، بدون آنتن - توی هواپیما، دور از شبکه و در روستاهای دورافتاده هم کار می‌کنند.",
       "highlight": "بدون اینترنت، بدون آنتن",
       "cta": "بعدی",
       "eyebrow": "ایده",
@@ -1510,7 +1515,7 @@
     "screen3": {
       "title": "کوچک‌تر،\nاما مال خودت.",
       "titleAccent": "کوچک‌تر،",
-      "body": "پَل‌های روی گوشی‌ات سریع و خصوصی‌اند - اما سبک‌تر از هوش مصنوعی ابری. مثل یک همراه جیبی، نه یک پیشگوی همه‌چیزدان.",
+      "body": "دستیارهای روی گوشی‌ات سریع و خصوصی‌اند - اما سبک‌تر از هوش مصنوعی ابری. مثل یک همراه جیبی، نه یک پیشگوی همه‌چیزدان.",
       "highlight": "سریع و خصوصی",
       "cta": "متوجه شدم",
       "eyebrow": "یک یادآوری"
@@ -1524,8 +1529,8 @@
       "eyebrow": "تضمین حریم خصوصی"
     },
     "screen5": {
-      "title": "پَلت را برای چه می‌خواهی؟",
-      "body": "انتخاب کن دوست داری درباره چه چیزی صحبت کنی - ما پَلی متناسب با گوشی‌ات پیدا می‌کنیم.",
+      "title": "دستیارت را برای چه می‌خواهی؟",
+      "body": "انتخاب کن دوست داری درباره چه چیزی صحبت کنی - ما دستیاری متناسب با گوشی‌ات پیدا می‌کنیم.",
       "topic": {
         "smartchat": "گفتگوی هوشمند",
         "coding": "برنامه‌نویسی",
@@ -1540,7 +1545,7 @@
         "education": "یادگیری، توضیح، آزمون",
         "roleplay": "شخصیت‌ها، سناریوها",
         "creative_writing": "داستان‌ها، ایده‌ها، پیش‌نویس‌ها",
-        "else": "بعداً همه پَل‌ها را در برنامه ببین"
+        "else": "بعداً همه دستیارها را در برنامه ببین"
       }
     },
     "screen6": {
@@ -1559,7 +1564,7 @@
       "subtitleTemplate": "{{name}} با یک مدل هوش مصنوعی کوچک روی گوشی‌ات فکر می‌کند - یکی را که مناسب است انتخاب کن.",
       "assistant": {
         "pip": {
-          "body": "یک پَل عالی برایت پیدا کردیم - یک همراه صمیمی روزمره. به اندازه کافی باهوش برای بیشتر کارها، و به اندازه کافی سبک برای هر گوشی."
+          "body": "یک دستیار عالی برایت پیدا کردیم - یک همراه صمیمی روزمره. به اندازه کافی باهوش برای بیشتر کارها، و به اندازه کافی سبک برای هر گوشی."
         },
         "codie": {
           "body": "با Codie آشنا شو — هم‌برنامه‌نویس محلی تو. کد می‌خواند، کد می‌نویسد و بخش‌های پیچیده را توضیح می‌دهد، بدون اینکه هرگز از گوشی‌ات بیرون برود."

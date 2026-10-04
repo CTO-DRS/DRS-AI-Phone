@@ -2,6 +2,8 @@
 
 <img src="src/assets/drs-ai-mark.png" alt="DRS AI logo" width="120" />
 
+<img src="assets/images and logos/banner.png" alt="DRS AI — Run AI models privately on your phone" width="100%" />
+
 # DRS AI
 
 **A private AI assistant that runs entirely on your phone.**
@@ -73,7 +75,7 @@ DRS AI is a four-layer stack, from the silicon up to the chat UI. Each layer has
 3. From Hugging Face, search GGUF models and choose a quantization that fits your device's memory and storage — download now or bookmark for later.
 4. After downloading, tap **Load** (or use the chevron icon left of the chat input to load right from the chat screen).
 
-<img src="assets/images and logos/Download_models.png" alt="Download Models" width="100%">
+<img src="assets/images and logos/feature-models.png" alt="Download models" width="60%">
 </details>
 
 <details>
@@ -87,7 +89,7 @@ DRS AI is a four-layer stack, from the silicon up to the chat UI. Each layer has
 4. **Copy** a full response with the copy icon, or long-press a paragraph to copy just that.
 5. **Edit** any of your messages with a long-press — the AI regenerates from your change. Hit **retry** for a fresh answer, optionally with a different model.
 
-<img src="assets/images and logos/Chat.png" alt="Chat" width="83%">
+<img src="assets/images and logos/feature-chat.png" alt="Private chat" width="60%">
 </details>
 
 <details>
@@ -97,13 +99,12 @@ DRS AI is a four-layer stack, from the silicon up to the chat UI. Each layer has
 
 Create personalized assistants:
 
-- **Assistant Assistant** — pick a default model, set a system prompt (write it yourself or have the app generate one), and customize the chat input color.
+- **Assistant** — pick a default model, set a system prompt (write it yourself or have the app generate one), and customize the chat input color.
 - **Roleplay Assistant** — everything above, plus location, the AI's role, and other contextual parameters.
 
 Switch personas with the Assistant picker on the chat page.
 
-<img src="assets/images and logos/Assistants.png" alt="Assistant Assistant" width="100%">
-<p><em>Creating a cocktail-recipe assistant</em></p>
+<img src="assets/images and logos/feature-assistants.png" alt="Create your own assistants" width="60%">
 </details>
 
 <details>
@@ -115,7 +116,7 @@ Switch personas with the Assistant picker on the chat page.
 2. Run performance tests to compare speed and efficiency across models.
 3. Review tokens/sec and memory usage.
 
-<img src="assets/images and logos/Benchmark.png" alt="Benchmark" width="100%">
+<img src="assets/images and logos/feature-benchmark.png" alt="Benchmark" width="60%">
 </details>
 
 <details>
@@ -126,7 +127,6 @@ Switch personas with the Assistant picker on the chat page.
 1. Create an access token in your Hugging Face account ([docs](https://huggingface.co/docs/hub/en/security-tokens)).
 2. In DRS AI, go to **Settings → Set Token**, paste it, and save.
 
-<img src="assets/images and logos/Token_in_drs-ai.png" alt="Token setup" width="66%">
 </details>
 
 <details>
@@ -136,7 +136,6 @@ Switch personas with the Assistant picker on the chat page.
 
 Go to **App Info → "Sharing your thoughts"**, type your feedback — feature requests, suggestions, anything — and submit.
 
-<img src="assets/images and logos/Send_Feedback.png" alt="Send feedback" width="50%">
 </details>
 
 ## For developers

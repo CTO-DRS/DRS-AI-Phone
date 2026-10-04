@@ -76,7 +76,10 @@ describe('AssistantGenerationSettingsSheet', () => {
     it('does not render when not visible', () => {
       const {queryByTestId} = render(
         <L10nContext.Provider value={l10n.en}>
-          <AssistantGenerationSettingsSheet {...defaultProps} isVisible={false} />
+          <AssistantGenerationSettingsSheet
+            {...defaultProps}
+            isVisible={false}
+          />
         </L10nContext.Provider>,
       );
 
@@ -104,7 +107,8 @@ describe('AssistantGenerationSettingsSheet', () => {
       expect(
         getByText(
           t(
-            l10n.en.components.assistantGenerationSettingsSheet.inheritedSettingsFor,
+            l10n.en.components.assistantGenerationSettingsSheet
+              .inheritedSettingsFor,
             {assistantName: 'Test Assistant'},
           ),
         ),
@@ -123,9 +127,13 @@ describe('AssistantGenerationSettingsSheet', () => {
 
       expect(
         getByText(
-          t(l10n.en.components.assistantGenerationSettingsSheet.customSettingsFor, {
-            assistantName: 'Test Assistant',
-          }),
+          t(
+            l10n.en.components.assistantGenerationSettingsSheet
+              .customSettingsFor,
+            {
+              assistantName: 'Test Assistant',
+            },
+          ),
         ),
       ).toBeTruthy();
     });
@@ -322,7 +330,8 @@ describe('AssistantGenerationSettingsSheet', () => {
       fireEvent.press(resetButton);
 
       const clearButton = getByText(
-        l10n.en.components.assistantGenerationSettingsSheet.clearAssistantSettings,
+        l10n.en.components.assistantGenerationSettingsSheet
+          .clearAssistantSettings,
       );
       fireEvent.press(clearButton);
 

@@ -140,7 +140,10 @@ export const clearSessionCacheForAssistant = async (
     const sessionExists = await RNFS.exists(sessionFile);
     if (sessionExists) {
       await RNFS.unlink(sessionFile);
-      console.log('[CacheUtils] Deleted session file for assistant:', assistantId);
+      console.log(
+        '[CacheUtils] Deleted session file for assistant:',
+        assistantId,
+      );
       deletedAny = true;
     }
 
@@ -148,7 +151,10 @@ export const clearSessionCacheForAssistant = async (
     const metadataExists = await RNFS.exists(metadataFile);
     if (metadataExists) {
       await RNFS.unlink(metadataFile);
-      console.log('[CacheUtils] Deleted metadata file for assistant:', assistantId);
+      console.log(
+        '[CacheUtils] Deleted metadata file for assistant:',
+        assistantId,
+      );
       deletedAny = true;
     }
 

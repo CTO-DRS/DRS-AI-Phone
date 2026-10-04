@@ -110,7 +110,10 @@ export const downloadAssistantThumbnail = async (
 
     // Generate filename and absolute path
     const filename = generateThumbnailFilename(assistantId, imageUrl);
-    const absolutePath = getAbsoluteThumbnailPathForAssistant(assistantId, imageUrl);
+    const absolutePath = getAbsoluteThumbnailPathForAssistant(
+      assistantId,
+      imageUrl,
+    );
 
     // Check if file already exists
     const exists = await RNFS.exists(absolutePath);
@@ -148,7 +151,9 @@ export const downloadAssistantThumbnail = async (
  * Delete a local thumbnail image
  * @param filename - The thumbnail filename like "assistantId_thumbnail.jpg"
  */
-export const deleteAssistantThumbnail = async (filename: string): Promise<void> => {
+export const deleteAssistantThumbnail = async (
+  filename: string,
+): Promise<void> => {
   try {
     // Convert to absolute path for file operations
     const absolutePath = getAbsoluteThumbnailPath(filename);

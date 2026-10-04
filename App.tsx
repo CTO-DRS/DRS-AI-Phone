@@ -52,7 +52,7 @@ import {
   // Dev tools screen. Only available in debug mode.
   DevToolsScreen,
 } from './src/screens';
-import LegacyScreen from './src/screens/LegacyScreen';
+import AssistantsScreen from './src/screens/AssistantsScreen';
 import {OnboardingStack} from './src/screens/OnboardingScreens';
 
 // Check if app is in debug mode
@@ -163,7 +163,7 @@ const App = observer(() => {
                           />
                           <Drawer.Screen
                             name={ROUTES.ASSISTANTS}
-                            component={gestureHandlerRootHOC(LegacyScreen)}
+                            component={gestureHandlerRootHOC(AssistantsScreen)}
                             options={{
                               headerRight: () => <AssistantHeaderRight />,
                               headerStyle: styles.headerWithoutDivider,

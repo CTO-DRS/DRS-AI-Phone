@@ -294,8 +294,10 @@ describe('chat', () => {
 
     beforeEach(() => {
       chatSessionStore.assistantLoadHintSeen = new Set();
-      (chatSessionStore.markAssistantLoadHintSeen as jest.Mock).mockImplementation(
-        (sig: string) => chatSessionStore.assistantLoadHintSeen.add(sig),
+      (
+        chatSessionStore.markAssistantLoadHintSeen as jest.Mock
+      ).mockImplementation((sig: string) =>
+        chatSessionStore.assistantLoadHintSeen.add(sig),
       );
       (chatSessionStore.resetActiveSession as jest.Mock).mockClear();
       // The sheet's mount effect awaits getTotalMemory(); the central mock

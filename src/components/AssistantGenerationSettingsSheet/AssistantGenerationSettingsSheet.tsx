@@ -67,7 +67,10 @@ const ResetButton = ({
       />
       <Menu.Item
         onPress={handleResetToDefault}
-        label={l10n.components.assistantGenerationSettingsSheet.clearAssistantSettings}
+        label={
+          l10n.components.assistantGenerationSettingsSheet
+            .clearAssistantSettings
+        }
       />
     </Menu>
   );
@@ -95,12 +98,20 @@ const SettingsLevelIndicator = ({
       />
       <Text variant="bodySmall" style={styles.settingsLevelText}>
         {hasCustomSettings
-          ? t(l10n.components.assistantGenerationSettingsSheet.customSettingsFor, {
-              assistantName,
-            })
-          : t(l10n.components.assistantGenerationSettingsSheet.inheritedSettingsFor, {
-              assistantName,
-            })}
+          ? t(
+              l10n.components.assistantGenerationSettingsSheet
+                .customSettingsFor,
+              {
+                assistantName,
+              },
+            )
+          : t(
+              l10n.components.assistantGenerationSettingsSheet
+                .inheritedSettingsFor,
+              {
+                assistantName,
+              },
+            )}
       </Text>
     </View>
   );
@@ -230,7 +241,9 @@ export const AssistantGenerationSettingsSheet = ({
 
   return (
     <Sheet
-      title={t(l10n.components.assistantGenerationSettingsSheet.title, {assistantName})}
+      title={t(l10n.components.assistantGenerationSettingsSheet.title, {
+        assistantName,
+      })}
       isVisible={isVisible}
       onClose={onCloseSheet}>
       <Sheet.ScrollView

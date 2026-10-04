@@ -517,7 +517,9 @@ describe('exportUtils', () => {
       it('should throw error if assistant not found', async () => {
         assistantStore.assistants = [];
 
-        await expect(exportAssistant('nonexistent')).rejects.toThrow('Assistant not found');
+        await expect(exportAssistant('nonexistent')).rejects.toThrow(
+          'Assistant not found',
+        );
       });
 
       // pact (talent set) and greeting are first-class persisted state.

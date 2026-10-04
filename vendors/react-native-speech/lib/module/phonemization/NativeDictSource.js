@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 /**
  * NativeDictSource — DictSource backed by the RNSpeech Turbo Module's
@@ -7,7 +7,7 @@
  * One open dict at a time per process; calling openNativeDict() replaces
  * any previously-open dict.
  */
-import TurboSpeech from "../NativeSpeech.js";
+import TurboSpeech from '../NativeSpeech.js';
 export class NativeDictSource {
   /** Path the dict was opened from. Informational only. */
 

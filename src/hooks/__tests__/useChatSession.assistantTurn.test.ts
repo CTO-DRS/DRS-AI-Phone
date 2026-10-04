@@ -9,7 +9,12 @@ import {
 } from '../../../jest/fixtures/models';
 
 import {useChatSession} from '../useChatSession';
-import {chatSessionStore, modelStore, assistantStore, serverStore} from '../../store';
+import {
+  chatSessionStore,
+  modelStore,
+  assistantStore,
+  serverStore,
+} from '../../store';
 import {resolveBannerVariant} from '../../utils/bannerVariantResolver';
 import {ModelOrigin} from '../../utils/types';
 import {assistant} from '../../utils/chat';

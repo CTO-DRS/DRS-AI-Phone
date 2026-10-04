@@ -29,7 +29,12 @@ import {useTheme} from '../../hooks';
 
 import {createStyles} from './styles';
 
-import {chatSessionStore, modelStore, assistantStore, uiStore} from '../../store';
+import {
+  chatSessionStore,
+  modelStore,
+  assistantStore,
+  uiStore,
+} from '../../store';
 
 import {MessageType} from '../../utils/types';
 import {L10nContext, UserContext} from '../../utils';
@@ -151,7 +156,9 @@ export const ChatInput = observer(
     const editBarHeight = React.useRef(new Animated.Value(0)).current;
     const iconRotation = React.useRef(new Animated.Value(0)).current;
     const activeAssistantId = chatSessionStore.activeAssistantId;
-    const currentActiveAssistant = assistantStore.assistants.find(assistant => assistant.id === activeAssistantId);
+    const currentActiveAssistant = assistantStore.assistants.find(
+      assistant => assistant.id === activeAssistantId,
+    );
 
     // Camera permission hook from react-native-vision-camera
     const {hasPermission, requestPermission} = useCameraPermission();
@@ -370,7 +377,8 @@ export const ChatInput = observer(
       outputRange: ['0deg', '180deg'],
     });
 
-    const onSurfaceColor = currentActiveAssistant?.color?.[0] || theme.colors.text;
+    const onSurfaceColor =
+      currentActiveAssistant?.color?.[0] || theme.colors.text;
     const onSurfaceColorVariant = onSurfaceColor + '55'; // for disabled state or placeholder text
     // // Plus button state
     const isPlusButtonEnabled = !isStreaming && isVisionEnabled;

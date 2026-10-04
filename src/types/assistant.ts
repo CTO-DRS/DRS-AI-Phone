@@ -346,7 +346,7 @@ export function getDefaultTemplateForAssistantType(
     case 'roleplay':
       return ROLEPLAY_DEFAULT_TEMPLATE;
     case 'assistant':
-      return undefined; // No default template for assistant assistants
+      return undefined; // No default template for assistant-type assistants
     case 'video':
       return undefined; // No default template for video assistants
     default:

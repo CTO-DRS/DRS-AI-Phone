@@ -650,7 +650,10 @@ class ChatSessionRepository {
   }
 
   // Set active assistant for a session
-  async setSessionActiveAssistant(sessionId: string, assistantId?: string): Promise<void> {
+  async setSessionActiveAssistant(
+    sessionId: string,
+    assistantId?: string,
+  ): Promise<void> {
     const session = await database.collections
       .get('chat_sessions')
       .find(sessionId)

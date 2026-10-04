@@ -29,7 +29,8 @@ import NativeExternalContentLink from '../../specs/NativeExternalContentLink';
 import {checkoutFlowStore} from '../CheckoutFlowStore';
 
 const createSession = drshubApiService.createCheckoutSession as jest.Mock;
-const checkAssistantOwnership = drshubService.checkAssistantOwnership as jest.Mock;
+const checkAssistantOwnership =
+  drshubService.checkAssistantOwnership as jest.Mock;
 const openAuth = (NativeAuthSession as unknown as {openAuth: jest.Mock})
   .openAuth;
 const prepareExternalLink = (

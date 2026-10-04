@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 /**
  * SpeechStream — incremental text input for TTS.
@@ -29,7 +29,7 @@
  * keeps it trivially unit-testable).
  */
 
-import { createComponentLogger } from "../utils/logger.js";
+import {createComponentLogger} from '../utils/logger.js';
 const log = createComponentLogger('SpeechStream', 'Api');
 const DEFAULT_TARGET_CHARS = 300;
 
@@ -86,13 +86,18 @@ export class SpeechStreamImpl {
     this.synthesize = config.synthesize;
     this.stopFn = config.stop;
     this.subscribeProgress = config.subscribeProgress;
-    this.targetChars = Math.max(1, config.options?.targetChars ?? DEFAULT_TARGET_CHARS);
+    this.targetChars = Math.max(
+      1,
+      config.options?.targetChars ?? DEFAULT_TARGET_CHARS,
+    );
     this.onError = config.options?.onError;
     if (config.engineStreamFactory) {
       log.info('stream created: Tier 3 pass-through, t+0ms');
       this.engineStream = config.engineStreamFactory(config.options);
     } else {
-      log.info(`stream created: Tier 1 batcher, targetChars=${this.targetChars}, t+0ms`);
+      log.info(
+        `stream created: Tier 1 batcher, targetChars=${this.targetChars}, t+0ms`,
+      );
     }
   }
   onProgress(cb) {
@@ -107,10 +112,10 @@ export class SpeechStreamImpl {
           chunkText: event.chunkText,
           streamRange: {
             start: event.textRange.start,
-            end: event.textRange.end
+            end: event.textRange.end,
           },
           chunkIndex: event.chunkIndex,
-          batchIndex: 0
+          batchIndex: 0,
         };
         for (const listener of this.progressListeners) {
           try {
@@ -145,7 +150,9 @@ export class SpeechStreamImpl {
     }
     this.buffer += text;
     this.totalAppendedChars += text.length;
-    log.debug(`append: +${text.length}, buffer=${this.buffer.length}, t+${this.rel()}ms`);
+    log.debug(
+      `append: +${text.length}, buffer=${this.buffer.length}, t+${this.rel()}ms`,
+    );
     this.tryFlush();
   }
 
@@ -175,7 +182,9 @@ export class SpeechStreamImpl {
       }
       return;
     }
-    log.info(`finalize: tailBuffer=${this.buffer.length}, totalAppended=${this.totalAppendedChars}, t+${this.rel()}ms`);
+    log.info(
+      `finalize: tailBuffer=${this.buffer.length}, totalAppended=${this.totalAppendedChars}, t+${this.rel()}ms`,
+    );
     this.tryFlush();
     await this.waitForDrain();
     log.info(`drained: batches=${this.batchCount}, elapsed=${this.rel()}ms`);
@@ -259,7 +268,11 @@ export class SpeechStreamImpl {
     if (split) {
       const startOffset = this.totalAppendedChars - this.buffer.length;
       this.buffer = split.tail;
-      this.enqueueBatch(split.head, startOffset, sizeThresholdHit ? 'target-chars' : 'underrun');
+      this.enqueueBatch(
+        split.head,
+        startOffset,
+        sizeThresholdHit ? 'target-chars' : 'underrun',
+      );
     }
   }
   enqueueBatch(text, startOffset, reason) {
@@ -267,11 +280,13 @@ export class SpeechStreamImpl {
     if (trimmed.length === 0) {
       return;
     }
-    log.info(`flush[${reason}]: ${text.length} chars, buffer_after=${this.buffer.length}, t+${this.rel()}ms`);
+    log.info(
+      `flush[${reason}]: ${text.length} chars, buffer_after=${this.buffer.length}, t+${this.rel()}ms`,
+    );
     this.queue.push({
       text,
       startOffset,
-      batchIndex: this.batchCount
+      batchIndex: this.batchCount,
     });
     this.pump();
   }
@@ -301,36 +316,45 @@ export class SpeechStreamImpl {
     // unhidden dead-air between batches — if it's large, it's the
     // first-chunk synth time of this batch (confirm with engine's
     // "Chunk done: inference=Xms" log below).
-    const gapFromPrev = this.lastBatchEndTs !== null ? batchStartTs - this.lastBatchEndTs : null;
-    log.info(`batch#${batchId} START: ${batch.text.length} chars` + (gapFromPrev !== null ? `, gap_since_prev_end=${gapFromPrev}ms` : '') + `, preview="${previewText(batch.text)}", t+${this.rel()}ms`);
+    const gapFromPrev =
+      this.lastBatchEndTs !== null ? batchStartTs - this.lastBatchEndTs : null;
+    log.info(
+      `batch#${batchId} START: ${batch.text.length} chars` +
+        (gapFromPrev !== null ? `, gap_since_prev_end=${gapFromPrev}ms` : '') +
+        `, preview="${previewText(batch.text)}", t+${this.rel()}ms`,
+    );
     const unsubscribeProgress = this.installProgressForwarder(batch);
-    this.inflight = this.synthesize(batch.text).catch(err => {
-      const error = err instanceof Error ? err : new Error(String(err));
-      if (!this.firstError) {
-        this.firstError = error;
-      }
-      if (this.onError) {
-        try {
-          this.onError(error);
-        } catch (cbErr) {
-          log.warn('onError callback threw:', cbErr);
+    this.inflight = this.synthesize(batch.text)
+      .catch(err => {
+        const error = err instanceof Error ? err : new Error(String(err));
+        if (!this.firstError) {
+          this.firstError = error;
         }
-      }
-    }).then(() => {
-      if (unsubscribeProgress) {
-        try {
-          unsubscribeProgress();
-        } catch (e) {
-          log.warn('unsubscribeProgress threw:', e);
+        if (this.onError) {
+          try {
+            this.onError(error);
+          } catch (cbErr) {
+            log.warn('onError callback threw:', cbErr);
+          }
         }
-      }
-      const endTs = Date.now();
-      this.lastBatchEndTs = endTs;
-      log.info(`batch#${batchId} DONE: synth+play=${endTs - batchStartTs}ms, t+${this.rel()}ms`);
-      this.inflight = null;
-      this.pump();
-      this.tryFlush();
-    });
+      })
+      .then(() => {
+        if (unsubscribeProgress) {
+          try {
+            unsubscribeProgress();
+          } catch (e) {
+            log.warn('unsubscribeProgress threw:', e);
+          }
+        }
+        const endTs = Date.now();
+        this.lastBatchEndTs = endTs;
+        log.info(
+          `batch#${batchId} DONE: synth+play=${endTs - batchStartTs}ms, t+${this.rel()}ms`,
+        );
+        this.inflight = null;
+        this.pump();
+        this.tryFlush();
+      });
   }
 
   /**
@@ -353,10 +377,10 @@ export class SpeechStreamImpl {
           chunkText: event.chunkText,
           streamRange: {
             start: batch.startOffset + event.textRange.start,
-            end: batch.startOffset + event.textRange.end
+            end: batch.startOffset + event.textRange.end,
           },
           chunkIndex: event.chunkIndex,
-          batchIndex: batch.batchIndex
+          batchIndex: batch.batchIndex,
         };
         for (const listener of this.progressListeners) {
           try {
@@ -380,7 +404,11 @@ export class SpeechStreamImpl {
     });
   }
   isIdle() {
-    return this.inflight === null && this.queue.length === 0 && this.buffer.length === 0;
+    return (
+      this.inflight === null &&
+      this.queue.length === 0 &&
+      this.buffer.length === 0
+    );
   }
   maybeResolveDrain() {
     if (!this.isIdle() && !this.cancelled) {
@@ -422,7 +450,7 @@ function extractFirstSentence(text) {
   }
   return {
     head,
-    tail: text.slice(end)
+    tail: text.slice(end),
   };
 }
 
@@ -447,7 +475,7 @@ function extractAllCompleteSentences(text) {
   }
   return {
     head,
-    tail: text.slice(lastEnd)
+    tail: text.slice(lastEnd),
   };
 }
 //# sourceMappingURL=SpeechStream.js.map

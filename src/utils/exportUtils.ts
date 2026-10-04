@@ -131,7 +131,9 @@ export const exportAllChatSessions = async (): Promise<void> => {
  */
 export const exportAssistant = async (assistantId: string): Promise<void> => {
   try {
-    const assistant = assistantStore.getAssistants().find(p => p.id === assistantId);
+    const assistant = assistantStore
+      .getAssistants()
+      .find(p => p.id === assistantId);
     if (!assistant) {
       throw new Error('Assistant not found');
     }
@@ -139,8 +141,10 @@ export const exportAssistant = async (assistantId: string): Promise<void> => {
     const exportData = await transformExportAssistant(assistant);
 
     const timestamp = format(new Date(), 'yyyy-MM-dd_HH-mm-ss');
-    const sanitizedName = assistant.name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-    const filename = `pal_${sanitizedName}_v${exportData.version}_${timestamp}.json`;
+    const sanitizedName = assistant.name
+      .replace(/[^a-z0-9]/gi, '_')
+      .toLowerCase();
+    const filename = `assistant_${sanitizedName}_v${exportData.version}_${timestamp}.json`;
 
     const jsonData = JSON.stringify(exportData, null, 2);
 
@@ -179,7 +183,10 @@ const transformExportAssistant = async (assistant: Assistant) => {
   let thumbnailData: string | undefined;
   let thumbnailUrl: string | undefined = assistant.thumbnail_url;
 
-  if (assistant.thumbnail_url && isLocalThumbnailPath(assistant.thumbnail_url)) {
+  if (
+    assistant.thumbnail_url &&
+    isLocalThumbnailPath(assistant.thumbnail_url)
+  ) {
     try {
       // Convert local image to base64 for export
       const absolutePath = getAbsoluteThumbnailPath(assistant.thumbnail_url);

@@ -54,7 +54,10 @@ export const AssistantHeaderRight = observer(() => {
       }
     } catch (error) {
       console.error('Error importing assistants:', error);
-      Alert.alert('Import Error', l10n.components.assistantHeaderRight.importError);
+      Alert.alert(
+        'Import Error',
+        l10n.components.assistantHeaderRight.importError,
+      );
     }
     closeMenu();
   };

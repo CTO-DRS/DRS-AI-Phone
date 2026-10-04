@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 /**
  * Kitten TTS Engine
@@ -14,27 +14,34 @@
  * - 8 built-in voices, English only
  */
 
-import { Platform } from 'react-native';
-import { isPhonemeInput } from "../../types/index.js";
-import { IPATokenizer } from "./IPATokenizer.js";
-import { VoiceLoader } from "./VoiceLoader.js";
-import { KITTEN_CONSTANTS, KITTEN_VOICE_ALIASES, KITTEN_SPEED_PRIORS } from "./constants.js";
-import { neuralAudioPlayer } from "../NeuralAudioPlayer.js";
-import { createPhonemizer, NoOpPhonemizer } from "../kokoro/Phonemizer.js";
-import { TextPreprocessor, loadNativeDict } from "../../phonemization/index.js";
-import { chunkTextWithPositions } from "./chunkTextWithPositions.js";
-import { splitOversizedSource, concatAudioBuffers } from "./splitOversized.js";
-import { DEFAULT_COREML_FLAGS } from "../../types/Kokoro.js";
-import { EngineStreamSession } from "../EngineStreamSession.js";
-import { createComponentLogger } from "../../utils/logger.js";
-import { stripMarkdown, createMarkdownStreamBuffer } from "../../utils/stripMarkdown.js";
+import {Platform} from 'react-native';
+import {isPhonemeInput} from '../../types/index.js';
+import {IPATokenizer} from './IPATokenizer.js';
+import {VoiceLoader} from './VoiceLoader.js';
+import {
+  KITTEN_CONSTANTS,
+  KITTEN_VOICE_ALIASES,
+  KITTEN_SPEED_PRIORS,
+} from './constants.js';
+import {neuralAudioPlayer} from '../NeuralAudioPlayer.js';
+import {createPhonemizer, NoOpPhonemizer} from '../kokoro/Phonemizer.js';
+import {TextPreprocessor, loadNativeDict} from '../../phonemization/index.js';
+import {chunkTextWithPositions} from './chunkTextWithPositions.js';
+import {splitOversizedSource, concatAudioBuffers} from './splitOversized.js';
+import {DEFAULT_COREML_FLAGS} from '../../types/Kokoro.js';
+import {EngineStreamSession} from '../EngineStreamSession.js';
+import {createComponentLogger} from '../../utils/logger.js';
+import {
+  stripMarkdown,
+  createMarkdownStreamBuffer,
+} from '../../utils/stripMarkdown.js';
 const log = createComponentLogger('Kitten', 'Engine');
 const {
   SAMPLE_RATE,
   DEFAULT_MAX_CHUNK_SIZE,
   TRIM_SAMPLES,
   PHONEMIZER_LANGUAGE,
-  MAX_PHONEME_TOKENS
+  MAX_PHONEME_TOKENS,
 } = KITTEN_CONSTANTS;
 
 // Lazy-loaded ONNX Runtime
@@ -46,10 +53,17 @@ function getOnnxRuntime() {
       const onnx = require('onnxruntime-react-native');
       OnnxRuntime = {
         InferenceSession: onnx.InferenceSession,
-        Tensor: onnx.Tensor
+        Tensor: onnx.Tensor,
       };
     } catch {
-      throw new Error('onnxruntime-react-native is required to use the Kitten engine.\n\n' + 'Install it with:\n' + '  npm install onnxruntime-react-native\n' + '  # or\n' + '  yarn add onnxruntime-react-native\n\n' + 'Then rebuild your app.');
+      throw new Error(
+        'onnxruntime-react-native is required to use the Kitten engine.\n\n' +
+          'Install it with:\n' +
+          '  npm install onnxruntime-react-native\n' +
+          '  # or\n' +
+          '  yarn add onnxruntime-react-native\n\n' +
+          'Then rebuild your app.',
+      );
     }
   }
   return OnnxRuntime;
@@ -61,10 +75,14 @@ function getOnnxRuntime() {
  */
 function getDefaultExecutionProviders() {
   if (Platform.OS === 'ios') {
-    return [{
-      name: 'coreml',
-      coreMlFlags: DEFAULT_COREML_FLAGS
-    }, 'xnnpack', 'cpu'];
+    return [
+      {
+        name: 'coreml',
+        coreMlFlags: DEFAULT_COREML_FLAGS,
+      },
+      'xnnpack',
+      'cpu',
+    ];
   }
   return ['xnnpack', 'cpu'];
 }
@@ -93,7 +111,7 @@ export class KittenEngine {
     // Real phonemizer is created in initialize() once the dict is loaded.
     this.phonemizer = new NoOpPhonemizer();
     this.preprocessor = new TextPreprocessor({
-      removePunctuation: false
+      removePunctuation: false,
     });
   }
 
@@ -132,11 +150,14 @@ export class KittenEngine {
 
       // Load IPA dictionary and build JS phonemizer (raw IPA mode).
       if (!config.dictPath) {
-        throw new Error('Kitten requires `dictPath` in config ' + '(path to the IPA dictionary .bin file, EPD1 format).');
+        throw new Error(
+          'Kitten requires `dictPath` in config ' +
+            '(path to the IPA dictionary .bin file, EPD1 format).',
+        );
       }
       const dict = await loadNativeDict(config.dictPath);
       this.phonemizer = createPhonemizer('js-ipa', {
-        dict
+        dict,
       });
 
       // Load tokenizer (external vocab or built-in symbols)
@@ -146,9 +167,12 @@ export class KittenEngine {
         this.tokenizer.loadBuiltinVocab();
         // Verify key mappings match the reference TextCleaner
         const testVocab = require('./constants').buildDefaultVocab();
-        log.debug(`Built-in vocab: size=${Object.keys(testVocab).length}, ` +
-        // eslint-disable-next-line dot-notation
-        `space=${testVocab[' ']}, A=${testVocab['A']}, a=${testVocab['a']}, ` + `ɪ=${testVocab['ɪ']}, ð=${testVocab['ð']}`);
+        log.debug(
+          `Built-in vocab: size=${Object.keys(testVocab).length}, ` +
+            // eslint-disable-next-line dot-notation
+            `space=${testVocab[' ']}, A=${testVocab['A']}, a=${testVocab['a']}, ` +
+            `ɪ=${testVocab['ɪ']}, ð=${testVocab['ð']}`,
+        );
       }
 
       // Load voice embeddings
@@ -159,7 +183,9 @@ export class KittenEngine {
       this.isInitialized = true;
       this.isLoading = false;
       log.info(`engine_init_ms=${Date.now() - initStart}`);
-      log.info('Kitten uses KittenML kitten-tts (Apache-2.0, commercial use allowed).');
+      log.info(
+        'Kitten uses KittenML kitten-tts (Apache-2.0, commercial use allowed).',
+      );
     } catch (error) {
       this.isLoading = false;
       this.initError = error instanceof Error ? error.message : 'Unknown error';
@@ -167,7 +193,12 @@ export class KittenEngine {
     }
   }
   async isReady() {
-    return this.isInitialized && this.session !== null && this.tokenizer.isReady() && this.voiceLoader.isReady();
+    return (
+      this.isInitialized &&
+      this.session !== null &&
+      this.tokenizer.isReady() &&
+      this.voiceLoader.isReady()
+    );
   }
 
   /**
@@ -183,7 +214,9 @@ export class KittenEngine {
     if (!inputStr || inputStr.trim().length === 0) {
       // The text-path message predates phoneme input and is observable
       // behaviour (and matches Supertonic) — keep it unchanged.
-      throw new Error(isPhonemes ? 'Phonemes cannot be empty' : 'Text cannot be empty');
+      throw new Error(
+        isPhonemes ? 'Phonemes cannot be empty' : 'Text cannot be empty',
+      );
     }
     this.isSynthesizing = true;
     try {
@@ -208,15 +241,18 @@ export class KittenEngine {
     this.isSynthesizing = true;
     const voiceId = options?.voiceId || this.defaultVoiceId;
     const maxChunkSize = this.config?.maxChunkSize ?? DEFAULT_MAX_CHUNK_SIZE;
-    const volumeAdjust = options?.volume !== undefined && options.volume !== 1.0 ? buf => {
-      const v = Math.max(0, Math.min(1, options.volume));
-      for (let i = 0; i < buf.samples.length; i++) {
-        const s = buf.samples[i];
-        if (s !== undefined) {
-          buf.samples[i] = Math.max(-1, Math.min(1, s * v));
-        }
-      }
-    } : undefined;
+    const volumeAdjust =
+      options?.volume !== undefined && options.volume !== 1.0
+        ? buf => {
+            const v = Math.max(0, Math.min(1, options.volume));
+            for (let i = 0; i < buf.samples.length; i++) {
+              const s = buf.samples[i];
+              if (s !== undefined) {
+                buf.samples[i] = Math.max(-1, Math.min(1, s * v));
+              }
+            }
+          }
+        : undefined;
     const stripMd = options?.stripMarkdown !== false;
     // See KokoroEngine.synthesizeStream for the rationale: strip markdown
     // BEFORE StreamingChunker (via the line-buffered md stream buffer) so
@@ -232,10 +268,12 @@ export class KittenEngine {
       maxChunkSize,
       playbackOptions: {
         ducking: options?.ducking,
-        silentMode: options?.silentMode
+        silentMode: options?.silentMode,
       },
       postProcess: volumeAdjust,
-      onChunkProgress: this.chunkProgressCallback ? event => this.emitChunkProgress(event) : undefined
+      onChunkProgress: this.chunkProgressCallback
+        ? event => this.emitChunkProgress(event)
+        : undefined,
     });
     this.activeStreamSession = session;
     const wrapFinalize = async () => {
@@ -278,7 +316,7 @@ export class KittenEngine {
         }
         return wrapFinalize();
       },
-      cancel: wrapCancel
+      cancel: wrapCancel,
     };
   }
   createStopSignal() {
@@ -304,7 +342,9 @@ export class KittenEngine {
     const utteranceId = this.currentUtteranceId;
     const stopSignal = this.createStopSignal();
     const voiceId = options?.voiceId || this.defaultVoiceId;
-    log.debug(`Synthesis start: voice=${voiceId}, text="${text.substring(0, 50)}..."`);
+    log.debug(
+      `Synthesis start: voice=${voiceId}, text="${text.substring(0, 50)}..."`,
+    );
 
     // Phoneme input is never sentence-chunked or preprocessed — the IPA
     // is fed as one unit (the token-cap split below still guards the
@@ -313,11 +353,13 @@ export class KittenEngine {
     const maxChunkSize = this.config?.maxChunkSize ?? DEFAULT_MAX_CHUNK_SIZE;
     let chunks;
     if (raw) {
-      chunks = [{
-        text,
-        startIndex: 0,
-        endIndex: text.length
-      }];
+      chunks = [
+        {
+          text,
+          startIndex: 0,
+          endIndex: text.length,
+        },
+      ];
     } else {
       // Strip markdown first (default on) so structural markers become
       // sentence breaks the chunker can split on. Consumers who wire
@@ -325,7 +367,8 @@ export class KittenEngine {
       // `stripMarkdown: false` — note that textRange indices then track
       // the original string, which is not the case when stripping is
       // active.
-      const sourceText = options?.stripMarkdown === false ? text : stripMarkdown(text);
+      const sourceText =
+        options?.stripMarkdown === false ? text : stripMarkdown(text);
 
       // Chunk the ORIGINAL text first (so textRange indices match what
       // the consumer passed to speak and stay aligned with
@@ -339,7 +382,7 @@ export class KittenEngine {
       chunks = sentenceChunks.map(c => ({
         text: this.preprocessor.process(c.text),
         startIndex: c.startIndex,
-        endIndex: c.endIndex
+        endIndex: c.endIndex,
       }));
     }
     log.debug(`Text chunked into ${chunks.length} chunks`);
@@ -352,7 +395,7 @@ export class KittenEngine {
         return undefined;
       }
       const chunk = chunks[chunkIndex];
-      const progress = Math.round(chunkIndex / chunks.length * 100);
+      const progress = Math.round((chunkIndex / chunks.length) * 100);
       log.debug(`Processing chunk ${chunkIndex + 1}/${chunks.length}`);
       this.emitChunkProgress({
         id: utteranceId,
@@ -361,9 +404,9 @@ export class KittenEngine {
         chunkText: chunk.text,
         textRange: {
           start: chunk.startIndex,
-          end: chunk.endIndex
+          end: chunk.endIndex,
         },
-        progress
+        progress,
       });
 
       // Get current chunk audio (from pipeline or synthesize now)
@@ -373,13 +416,22 @@ export class KittenEngine {
           audioBuffer = await this.raceWithStop(nextAudioPromise, stopSignal);
           nextAudioPromise = null;
         } else {
-          audioBuffer = await this.raceWithStop(this.synthesizeTextChunk(chunk.text, voiceId, options, raw), stopSignal);
+          audioBuffer = await this.raceWithStop(
+            this.synthesizeTextChunk(chunk.text, voiceId, options, raw),
+            stopSignal,
+          );
         }
       } catch (synthError) {
-        log.error(`Chunk synthesis error: ${synthError instanceof Error ? synthError.message : String(synthError)}`);
+        log.error(
+          `Chunk synthesis error: ${synthError instanceof Error ? synthError.message : String(synthError)}`,
+        );
         throw synthError;
       }
-      if (audioBuffer === null || this.stopRequested || audioBuffer.samples.length === 0) {
+      if (
+        audioBuffer === null ||
+        this.stopRequested ||
+        audioBuffer.samples.length === 0
+      ) {
         log.debug('Stop requested, aborting before playback');
         return undefined;
       }
@@ -388,14 +440,22 @@ export class KittenEngine {
       const nextChunkIndex = chunkIndex + 1;
       if (!this.stopRequested && nextChunkIndex < chunks.length) {
         const nextChunk = chunks[nextChunkIndex];
-        nextAudioPromise = this.synthesizeTextChunk(nextChunk.text, voiceId, options, raw);
+        nextAudioPromise = this.synthesizeTextChunk(
+          nextChunk.text,
+          voiceId,
+          options,
+          raw,
+        );
       }
 
       // Play current chunk
-      await this.raceWithStop(neuralAudioPlayer.play(audioBuffer, {
-        ducking: options?.ducking,
-        silentMode: options?.silentMode
-      }), stopSignal);
+      await this.raceWithStop(
+        neuralAudioPlayer.play(audioBuffer, {
+          ducking: options?.ducking,
+          silentMode: options?.silentMode,
+        }),
+        stopSignal,
+      );
     }
     log.debug('Synthesis complete');
     return undefined;
@@ -409,7 +469,7 @@ export class KittenEngine {
       samples: new Float32Array(0),
       sampleRate: SAMPLE_RATE,
       channels: 1,
-      duration: 0
+      duration: 0,
     });
     try {
       // Text is already preprocessed by doSynthesize; go straight to phonemize.
@@ -425,28 +485,36 @@ export class KittenEngine {
       // a no-op — the period has already done its job as a chunk boundary
       // upstream.
       if (!/[\p{L}\p{N}]/u.test(chunkStr)) {
-        log.debug(`Skipping no-content chunk: ${JSON.stringify(chunkStr.slice(0, 40))}`);
+        log.debug(
+          `Skipping no-content chunk: ${JSON.stringify(chunkStr.slice(0, 40))}`,
+        );
         return emptyBuffer();
       }
 
       // 1. Phonemize (GPL-free JS phonemizer, IPA mode). For phoneme
       //    input the chunk already IS IPA — skip g2p and tokenize it.
       const phonemes = raw ? chunkStr : await this.phonemizeText(chunkStr);
-      log.debug(`Phonemized: "${phonemes.substring(0, 80)}..." (${phonemes.length} chars)`);
+      log.debug(
+        `Phonemized: "${phonemes.substring(0, 80)}..." (${phonemes.length} chars)`,
+      );
       if (this.stopRequested) {
         return emptyBuffer();
       }
 
       // 2. Tokenize IPA phonemes
       const tokens = this.tokenizer.encode(phonemes);
-      log.debug(`Tokenized: ${tokens.length} tokens, first 10: [${tokens.slice(0, 10).join(',')}]`);
+      log.debug(
+        `Tokenized: ${tokens.length} tokens, first 10: [${tokens.slice(0, 10).join(',')}]`,
+      );
 
       // BERT's expand op needs more than just the framing tokens — encode()
       // always emits [pad, ...content, eos, pad], so length 3 means zero
       // content survived phonemization (e.g. punctuation that mapped to no
       // vocab entries). Skip rather than feed garbage through ONNX.
       if (tokens.length <= 3) {
-        log.debug(`Skipping chunk with no phoneme tokens (got ${tokens.length})`);
+        log.debug(
+          `Skipping chunk with no phoneme tokens (got ${tokens.length})`,
+        );
         return emptyBuffer();
       }
 
@@ -459,18 +527,28 @@ export class KittenEngine {
       // instead of silence. See splitOversized.ts for the split
       // strategy.
       if (tokens.length > MAX_PHONEME_TOKENS) {
-        log.warn(`Oversized chunk (${tokens.length} > ${MAX_PHONEME_TOKENS}, ` + `source chars=${chunkStr.length}); splitting and recursing.`);
+        log.warn(
+          `Oversized chunk (${tokens.length} > ${MAX_PHONEME_TOKENS}, ` +
+            `source chars=${chunkStr.length}); splitting and recursing.`,
+        );
         const pieces = splitOversizedSource(chunkStr);
         if (pieces.length <= 1) {
           // Couldn't split (single huge token / no whitespace). Drop
           // rather than recurse infinitely. Rare in real text.
-          log.warn(`Unsplittable oversized chunk; dropping ${chunkStr.length} chars.`);
+          log.warn(
+            `Unsplittable oversized chunk; dropping ${chunkStr.length} chars.`,
+          );
           return emptyBuffer();
         }
         const subBuffers = [];
         for (const piece of pieces) {
           if (this.stopRequested) return emptyBuffer();
-          const subAudio = await this.synthesizeTextChunk(piece, voiceId, options, raw);
+          const subAudio = await this.synthesizeTextChunk(
+            piece,
+            voiceId,
+            options,
+            raw,
+          );
           if (subAudio.samples.length > 0) subBuffers.push(subAudio);
         }
         if (subBuffers.length === 0) return emptyBuffer();
@@ -478,9 +556,16 @@ export class KittenEngine {
       }
 
       // 3. Run ONNX inference with length-dependent voice style.
-      return await this.synthesizeChunk(tokens, voiceId, chunkStr.length, options);
+      return await this.synthesizeChunk(
+        tokens,
+        voiceId,
+        chunkStr.length,
+        options,
+      );
     } catch (error) {
-      log.error(`synthesizeTextChunk failed: ${error instanceof Error ? error.message : String(error)}`);
+      log.error(
+        `synthesizeTextChunk failed: ${error instanceof Error ? error.message : String(error)}`,
+      );
       throw error;
     }
   }
@@ -511,13 +596,14 @@ export class KittenEngine {
 
     // Get length-dependent voice style embedding
     const voiceStartTime = Date.now();
-    const styleEmbedding = await this.voiceLoader.getStyleEmbedding(internalVoiceId, rawTextLength);
+    const styleEmbedding = await this.voiceLoader.getStyleEmbedding(
+      internalVoiceId,
+      rawTextLength,
+    );
     const voiceTime = Date.now() - voiceStartTime;
 
     // Create ONNX input tensors
-    const {
-      Tensor
-    } = getOnnxRuntime();
+    const {Tensor} = getOnnxRuntime();
     const tokensBigInt = new BigInt64Array(tokens.map(t => BigInt(t)));
 
     // Apply per-voice speed prior (from config.json) multiplied by user speed
@@ -527,9 +613,11 @@ export class KittenEngine {
     const feeds = {
       input_ids: new Tensor('int64', tokensBigInt, [1, tokens.length]),
       style: new Tensor('float32', styleEmbedding, [1, styleEmbedding.length]),
-      speed: new Tensor('float32', new Float32Array([speed]), [1])
+      speed: new Tensor('float32', new Float32Array([speed]), [1]),
     };
-    log.debug(`ONNX feeds: input_ids=[1,${tokens.length}], style=[1,${styleEmbedding.length}], speed=${speed.toFixed(2)}`);
+    log.debug(
+      `ONNX feeds: input_ids=[1,${tokens.length}], style=[1,${styleEmbedding.length}], speed=${speed.toFixed(2)}`,
+    );
 
     // Run inference
     const inferenceStartTime = Date.now();
@@ -541,28 +629,39 @@ export class KittenEngine {
     try {
       results = await this.session.run(feeds);
     } catch (inferError) {
-      log.error(`ONNX inference failed: ${inferError instanceof Error ? inferError.message : String(inferError)}`);
+      log.error(
+        `ONNX inference failed: ${inferError instanceof Error ? inferError.message : String(inferError)}`,
+      );
       throw inferError;
     }
     const inferenceTime = Date.now() - inferenceStartTime;
-    log.debug(`ONNX inference done in ${inferenceTime}ms, output keys: ${Object.keys(results).join(', ')}`);
+    log.debug(
+      `ONNX inference done in ${inferenceTime}ms, output keys: ${Object.keys(results).join(', ')}`,
+    );
 
     // Extract audio output — try known names, then fall back to first output
     const outputKeys = Object.keys(results);
     let audioTensor = results.waveform || results.audio;
     if (!audioTensor && outputKeys.length > 0) {
-      log.debug(`No 'waveform'/'audio' key found, using first output: '${outputKeys[0]}'`);
+      log.debug(
+        `No 'waveform'/'audio' key found, using first output: '${outputKeys[0]}'`,
+      );
       audioTensor = results[outputKeys[0]];
     }
     if (!audioTensor) {
-      throw new Error(`No audio output from model. Available outputs: ${outputKeys.join(', ')}`);
+      throw new Error(
+        `No audio output from model. Available outputs: ${outputKeys.join(', ')}`,
+      );
     }
     const rawAudio = audioTensor.data;
     log.debug(`Raw audio: ${rawAudio.length} samples`);
 
     // Trim trailing samples to remove artifacts
     const trimmedLength = Math.max(0, rawAudio.length - TRIM_SAMPLES);
-    const audioData = trimmedLength < rawAudio.length ? rawAudio.slice(0, trimmedLength) : rawAudio;
+    const audioData =
+      trimmedLength < rawAudio.length
+        ? rawAudio.slice(0, trimmedLength)
+        : rawAudio;
 
     // Apply volume if specified
     if (options?.volume !== undefined && options.volume !== 1.0) {
@@ -576,12 +675,14 @@ export class KittenEngine {
     }
     const totalChunkTime = Date.now() - chunkStartTime;
     const duration = audioData.length / SAMPLE_RATE;
-    log.debug(`Chunk done: inference=${inferenceTime}ms, voice=${voiceTime}ms, total=${totalChunkTime}ms, audio=${duration.toFixed(2)}s`);
+    log.debug(
+      `Chunk done: inference=${inferenceTime}ms, voice=${voiceTime}ms, total=${totalChunkTime}ms, audio=${duration.toFixed(2)}s`,
+    );
     return {
       samples: audioData,
       sampleRate: SAMPLE_RATE,
       channels: 1,
-      duration
+      duration,
     };
   }
   async getAvailableVoices(_language) {
@@ -650,7 +751,7 @@ export class KittenEngine {
       return {
         success: true,
         partialRelease: false,
-        errors: []
+        errors: [],
       };
     }
     log.info('Releasing engine resources...');
@@ -659,10 +760,12 @@ export class KittenEngine {
       return {
         success: false,
         partialRelease: false,
-        errors: [{
-          component: 'engine',
-          error: new Error('Cannot release while loading')
-        }]
+        errors: [
+          {
+            component: 'engine',
+            error: new Error('Cannot release while loading'),
+          },
+        ],
       };
     }
     this.stopRequested = true;
@@ -673,7 +776,7 @@ export class KittenEngine {
       log.warn('Failed to stop audio player:', e);
       errors.push({
         component: 'audioPlayer',
-        error: e
+        error: e,
       });
     }
     await this.waitForSynthesisComplete();
@@ -687,7 +790,7 @@ export class KittenEngine {
         log.warn('Failed to release ONNX session:', e);
         errors.push({
           component: 'session',
-          error: e
+          error: e,
         });
       }
       this.session = null;
@@ -699,7 +802,7 @@ export class KittenEngine {
       log.warn('Failed to clear voice loader:', e);
       errors.push({
         component: 'voiceLoader',
-        error: e
+        error: e,
       });
     }
     try {
@@ -709,38 +812,43 @@ export class KittenEngine {
       log.warn('Failed to clear tokenizer:', e);
       errors.push({
         component: 'tokenizer',
-        error: e
+        error: e,
       });
     }
     this.resetState();
     const success = errors.length === 0;
-    log.info(success ? 'Engine resources released successfully' : `Engine released with ${errors.length} error(s)`);
+    log.info(
+      success
+        ? 'Engine resources released successfully'
+        : `Engine released with ${errors.length} error(s)`,
+    );
     return {
       success,
       partialRelease: errors.length > 0,
-      errors
+      errors,
     };
   }
   getStatus() {
     return {
       isReady: this.isInitialized,
       isLoading: this.isLoading,
-      error: this.initError
+      error: this.initError,
     };
   }
 
   // --- Private initialization methods ---
 
   async loadModel(modelPath) {
-    const {
-      InferenceSession
-    } = getOnnxRuntime();
+    const {InferenceSession} = getOnnxRuntime();
     try {
-      const executionProviders = this.config?.executionProviders ?? getDefaultExecutionProviders();
-      log.debug(`Loading model with providers: ${JSON.stringify(executionProviders)}`);
+      const executionProviders =
+        this.config?.executionProviders ?? getDefaultExecutionProviders();
+      log.debug(
+        `Loading model with providers: ${JSON.stringify(executionProviders)}`,
+      );
       const startTime = Date.now();
       this.session = await InferenceSession.create(modelPath, {
-        executionProviders
+        executionProviders,
       });
       const loadTime = Date.now() - startTime;
       log.info(`Model loaded in ${loadTime}ms`);
@@ -755,35 +863,37 @@ export class KittenEngine {
         log.debug('Could not read model I/O metadata');
       }
     } catch (error) {
-      log.warn(`Failed to load with acceleration, trying CPU fallback: ${error instanceof Error ? error.message : 'Unknown'}`);
+      log.warn(
+        `Failed to load with acceleration, trying CPU fallback: ${error instanceof Error ? error.message : 'Unknown'}`,
+      );
       try {
         this.session = await InferenceSession.create(modelPath, {
-          executionProviders: ['cpu']
+          executionProviders: ['cpu'],
         });
         log.info('Model loaded with CPU fallback');
       } catch (fallbackError) {
-        throw new Error(`Failed to load ONNX model: ${fallbackError instanceof Error ? fallbackError.message : 'Unknown'}`);
+        throw new Error(
+          `Failed to load ONNX model: ${fallbackError instanceof Error ? fallbackError.message : 'Unknown'}`,
+        );
       }
     }
   }
   async loadTokenizer(tokenizerPath) {
     try {
       log.debug('Loading tokenizer from file');
-      const {
-        loadAssetAsJSON
-      } = require('../../utils/AssetLoader');
+      const {loadAssetAsJSON} = require('../../utils/AssetLoader');
       const vocabData = await loadAssetAsJSON(tokenizerPath);
       await this.tokenizer.loadFromData(vocabData);
       log.debug(`Tokenizer loaded: ${Object.keys(vocabData).length} symbols`);
     } catch (error) {
-      throw new Error(`Failed to load tokenizer: ${error instanceof Error ? error.message : 'Unknown'}`);
+      throw new Error(
+        `Failed to load tokenizer: ${error instanceof Error ? error.message : 'Unknown'}`,
+      );
     }
   }
   async loadVoices(voicesPath) {
     try {
-      const {
-        loadAssetAsJSON
-      } = require('../../utils/AssetLoader');
+      const {loadAssetAsJSON} = require('../../utils/AssetLoader');
       if (voicesPath.includes('manifest') && voicesPath.endsWith('.json')) {
         log.debug('Loading voices from manifest (lazy loading)');
         const manifest = await loadAssetAsJSON(voicesPath);
@@ -793,11 +903,17 @@ export class KittenEngine {
         const voicesData = await loadAssetAsJSON(voicesPath);
         await this.voiceLoader.loadFromJSON(voicesData);
       } else {
-        throw new Error('Kitten voices must be in JSON format. Use scripts/convert-kitten-voices.py to convert NPZ files.');
+        throw new Error(
+          'Kitten voices must be in JSON format. Use scripts/convert-kitten-voices.py to convert NPZ files.',
+        );
       }
-      log.info(`Voice loader ready: ${this.voiceLoader.getAvailableVoices().length} voices`);
+      log.info(
+        `Voice loader ready: ${this.voiceLoader.getAvailableVoices().length} voices`,
+      );
     } catch (error) {
-      throw new Error(`Failed to load voices: ${error instanceof Error ? error.message : 'Unknown'}`);
+      throw new Error(
+        `Failed to load voices: ${error instanceof Error ? error.message : 'Unknown'}`,
+      );
     }
   }
 }

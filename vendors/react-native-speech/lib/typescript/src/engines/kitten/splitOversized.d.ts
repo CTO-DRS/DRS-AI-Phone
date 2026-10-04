@@ -8,7 +8,7 @@
  * stilted seam at the split point — far better than the alternative of
  * dropping the chunk and producing 10+ seconds of silence.
  */
-import type { AudioBuffer } from '../../types';
+import type {AudioBuffer} from '../../types';
 /**
  * Split a source-text chunk that's too long for Kitten's BERT (after
  * IPA expansion) into smaller pieces.

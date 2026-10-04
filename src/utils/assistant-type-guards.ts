@@ -11,14 +11,18 @@ import type {DrshubAssistant} from '../types/drshub';
 /**
  * Type guard to check if a assistant is a local assistant
  */
-export function isLocalAssistant(assistant: Assistant | DrshubAssistant): assistant is Assistant {
+export function isLocalAssistant(
+  assistant: Assistant | DrshubAssistant,
+): assistant is Assistant {
   return assistant.type === 'local';
 }
 
 /**
  * Type guard to check if a assistant is a Drshub assistant
  */
-export function isDrshubAssistant(assistant: Assistant | DrshubAssistant): assistant is DrshubAssistant {
+export function isDrshubAssistant(
+  assistant: Assistant | DrshubAssistant,
+): assistant is DrshubAssistant {
   return assistant.type === 'drshub';
 }
 
@@ -38,7 +42,10 @@ export interface AssistantHandlers {
 /**
  * Handle a assistant with type-safe discrimination
  */
-export function handleAssistantByType(assistant: AnyAssistant, handlers: AssistantHandlers): void {
+export function handleAssistantByType(
+  assistant: AnyAssistant,
+  handlers: AssistantHandlers,
+): void {
   if (isLocalAssistant(assistant)) {
     handlers.onLocalAssistant(assistant);
   } else if (isDrshubAssistant(assistant)) {

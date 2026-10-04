@@ -115,10 +115,10 @@
     "useHfTokenDescription": "הפעל שימוש בטוקן עבור בקשות API. השבת אם הטוקן גורם לבעיות אימות.",
     "cacheStorageTitle": "מטמון ואחסון",
     "clearAssistantCaches": "נקה מטמון קיצורי דרך",
-    "clearAssistantCachesDescription": "מנקה נתונים מהמטמון המשמשים להאצת קיצורי דרך. פעולה זו לא תשפיע על ה-Assistants שלך או על היסטוריית הצ'אט.",
+    "clearAssistantCachesDescription": "מנקה נתונים מהמטמון המשמשים להאצת קיצורי דרך. פעולה זו לא תשפיע על ה-עוזרs שלך או על היסטוריית הצ'אט.",
     "clearCachesButton": "נקה מטמון",
     "clearCachesConfirmTitle": "לנקות מטמון קיצורי דרך?",
-    "clearCachesConfirmMessage": "פעולה זו תמחק את כל נתוני הסשנים המאוחסנים במטמון ({{fileCount}} קבצים, {{size}}). קיצורי דרך עשויים להיות איטיים יותר בשימוש הראשון לאחר הניקוי. פעולה זו לא תשפיע על ה-Assistants שלך או על היסטוריית הצ'אט.",
+    "clearCachesConfirmMessage": "פעולה זו תמחק את כל נתוני הסשנים המאוחסנים במטמון ({{fileCount}} קבצים, {{size}}). קיצורי דרך עשויים להיות איטיים יותר בשימוש הראשון לאחר הניקוי. פעולה זו לא תשפיע על ה-עוזרs שלך או על היסטוריית הצ'אט.",
     "clearCachesSuccess": "ניקוי של {{count}} קבצי מטמון בוצע בהצלחה.",
     "clearCachesError": "ניקוי המטמון נכשל. אנא נסה שוב.",
     "noCachesToClear": "אין מטמון לניקוי.",
@@ -167,7 +167,7 @@
     "serverTypeHelp": "מזוהה אוטומטית; שנה אם זה לא נכון.",
     "internetSearch": {
       "title": "חיפוש באינטרנט",
-      "description": "אפשר ל-Assistants לחפש ברשת באמצעות הכלים שלהם. השתמש במפתח API משלך — DRS AI לעולם לא שומר את המפתחות שלך ולא מנתב את השאילתות שלך.",
+      "description": "אפשר ל-עוזרs לחפש ברשת באמצעות הכלים שלהם. השתמש במפתח API משלך — DRS AI לעולם לא שומר את המפתחות שלך ולא מנתב את השאילתות שלך.",
       "providerLabel": "ספק חיפוש",
       "providerGated": "בקרוב",
       "keyLabel": "מפתח API",
@@ -183,7 +183,7 @@
       "resultCountLabel": "תוצאות לכל חיפוש",
       "resultCountDescription": "פחות תוצאות משאירות יותר מקום בהקשר של המודל.",
       "consentTitle": "החיפושים יוצאים מהמכשיר שלך",
-      "consentDescription": "כאשר Assistant מחפש ברשת, השאילתה שלך נשלחת לספק שנבחר דרך האינטרנט. כאשר Assistant קורא דף, ייתכן שכתובת ה-URL ותוכן הדף יישלחו במקום זאת לשירות קריאה כברירת מחדל (r.jina.ai) אם לספק שנבחר אין קורא מובנה. מפתחות ושאילתות לעולם אינם נשלחים ל-DRS AI.",
+      "consentDescription": "כאשר עוזר מחפש ברשת, השאילתה שלך נשלחת לספק שנבחר דרך האינטרנט. כאשר עוזר קורא דף, ייתכן שכתובת ה-URL ותוכן הדף יישלחו במקום זאת לשירות קריאה כברירת מחדל (r.jina.ai) אם לספק שנבחר אין קורא מובנה. מפתחות ושאילתות לעולם אינם נשלחים ל-DRS AI.",
       "consentAccept": "הבנתי",
       "consentRequired": "אשר את הגילוי שלמעלה כדי להגדיר מפתח ולהפעיל חיפוש.",
       "consentGivenTitle": "חיפוש ברשת מופעל",
@@ -676,7 +676,7 @@
         "title": "הצליח",
         "message": "הגדרות אלו יוחלו על כל הסשנים העתידיים"
       },
-      "assistantSettings": "הגדרות Assistant",
+      "assistantSettings": "הגדרות עוזר",
       "settingsSource": "מקור ההגדרות"
     },
     "assistantGenerationSettingsSheet": {
@@ -686,10 +686,10 @@
       "pleaseCorrect": "אנא תקן את הדברים הבאים:",
       "ok": "אישור",
       "error": "שגיאה",
-      "failedToSave": "שמירת הגדרות ה-Assistant נכשלה",
+      "failedToSave": "שמירת הגדרות ה-עוזר נכשלה",
       "resetToGlobal": "איפוס לברירות מחדל גלובליות",
       "resetToSystem": "איפוס לברירות מחדל של המערכת",
-      "clearAssistantSettings": "נקה הגדרות Assistant",
+      "clearAssistantSettings": "נקה הגדרות עוזר",
       "customSettingsFor": "הגדרות מותאמות אישית עבור {{assistantName}}",
       "inheritedSettingsFor": "הגדרות שעברו בירושה עבור {{assistantName}}"
     },
@@ -701,15 +701,15 @@
     },
     "chatAssistantModelPickerSheet": {
       "modelsTab": "מודלים",
-      "assistantsTab": "Assistants",
-      "noAssistant": "אין Assistant",
-      "disableAssistant": "השבת Assistant פעיל",
+      "assistantsTab": "עוזרs",
+      "noAssistant": "אין עוזר",
+      "disableAssistant": "השבת עוזר פעיל",
       "noDescription": "אין תיאור",
       "assistantType": "סייען",
       "roleplayType": "משחק תפקידים",
       "videoType": "וידיאו",
       "confirmationTitle": "אישור",
-      "modelSwitchMessage": "ל-Assistant הזה יש מודל ברירת מחדל שונה ({{modelName}}). האם ברצונך לעבור למודל ברירת המחדל של ה-Assistant?",
+      "modelSwitchMessage": "ל-עוזר הזה יש מודל ברירת מחדל שונה ({{modelName}}). האם ברצונך לעבור למודל ברירת המחדל של ה-עוזר?",
       "keepButton": "השאר",
       "switchButton": "החלף"
     },
@@ -811,12 +811,12 @@
     },
     "assistantSheet": {
       "title": {
-        "edit": "ערוך Assistant",
-        "newAssistant": "Assistant חדש",
-        "newVideoAssistant": "Assistant וידיאו חדש"
+        "edit": "ערוך עוזר",
+        "newAssistant": "עוזר חדש",
+        "newVideoAssistant": "עוזר וידיאו חדש"
       },
       "description": "תאור",
-      "descriptionPlaceholder": "הזן תיאור קצר של ה-Assistant",
+      "descriptionPlaceholder": "הזן תיאור קצר של ה-עוזר",
       "parameters": "פרמטרים",
       "generationSettings": "הגדרות יצירה",
       "configureGenerationSettings": "הגדרות תצורת יצירה",
@@ -843,19 +843,19 @@
       "greeting": {
         "sectionLabel": "ברכה",
         "textLabel": "הודעת ברכה",
-        "textPlaceholder": "מה ה-Assistant הזה יאמר בצ'אט ריק?",
+        "textPlaceholder": "מה ה-עוזר הזה יאמר בצ'אט ריק?",
         "suggestedPromptsLabel": "הנחיות מוצעות",
         "addPromptButton": "הוסף הנחיה",
         "promptPlaceholder": "הנחיה קצרה עבור הצ'יפ",
         "removePromptLabel": "הסר הנחיה"
       }
     },
-    "assistantLegacySheet": {
+    "assistantPersonaSheet": {
       "title": {
-        "create": "צור Assistant סייען",
-        "edit": "ערוך Assistant סייען"
+        "create": "צור עוזר סייען",
+        "edit": "ערוך עוזר סייען"
       },
-      "assistantName": "שם Assistant",
+      "assistantName": "שם עוזר",
       "assistantNamePlaceholder": "שם",
       "defaultModel": "מודל ברירת המחדל",
       "defaultModelPlaceholder": "בחר מודל",
@@ -868,18 +868,18 @@
     "modelNotAvailable": {
       "noModelsDownloaded": "עדיין לא הורדת מודלים. אנא הורד מודל תחילה.",
       "downloadAModel": "הורד מודל",
-      "defaultModelNotDownloaded": "Assistant זה ממליץ על מודל ספציפי שיש להוריד, או שבאפשרותך לבחור במודל אחר.",
+      "defaultModelNotDownloaded": "עוזר זה ממליץ על מודל ספציפי שיש להוריד, או שבאפשרותך לבחור במודל אחר.",
       "modelNotDownloadedShort": "המודל לא הורד",
       "recommendedModel": "דגם מומלץ",
       "cancelDownload": "בטל הורדה",
       "download": "הורדה"
     },
-    "roleplayLegacySheet": {
+    "roleplayPersonaSheet": {
       "title": {
-        "create": "צור Assistant משחק תפקידים",
-        "edit": "ערוך Assistant משחק תפקידים"
+        "create": "צור עוזר משחק תפקידים",
+        "edit": "ערוך עוזר משחק תפקידים"
       },
-      "assistantName": "שם Assistant",
+      "assistantName": "שם עוזר",
       "assistantNamePlaceholder": "שם",
       "defaultModel": "מודל ברירת המחדל",
       "defaultModelPlaceholder": "בחר מודל",
@@ -904,13 +904,13 @@
       },
       "create": "צור"
     },
-    "lookieLegacySheet": {
+    "lookiePersonaSheet": {
       "title": {
-        "create": "יצירת Lookie Assistant - סייען חזותי",
-        "edit": "ערוך Lookie Assistant"
+        "create": "יצירת Lookie עוזר - סייען חזותי",
+        "edit": "ערוך Lookie עוזר"
       },
-      "assistantName": "שם Assistant",
-      "assistantNamePlaceholder": "הזן שם ל-Lookie Assistant שלך",
+      "assistantName": "שם עוזר",
+      "assistantNamePlaceholder": "הזן שם ל-Lookie עוזר שלך",
       "visionModel": "מודל ראייה",
       "visionModelPlaceholder": "בחר מודל ראייה",
       "requiredModelsSection": "נדרש מודל",
@@ -953,7 +953,7 @@
       "menuItems": {
         "chat": "צ'אט",
         "models": "מודלים",
-        "assistants": "Assistants",
+        "assistants": "עוזרs",
         "benchmark": "מבחן ביצועים",
         "settings": "הגדרות",
         "appInfo": "מידע על האפליקציה",
@@ -994,7 +994,12 @@
         "total": "סה\"כ: ",
         "usage": "שימוש: "
       },
-      "byteSizes": ["Bytes", "KB", "MB", "GB"]
+      "byteSizes": [
+        "Bytes",
+        "KB",
+        "MB",
+        "GB"
+      ]
     },
     "chatView": {
       "menuItems": {
@@ -1006,10 +1011,10 @@
       }
     },
     "assistantHeaderRight": {
-      "exportAllAssistants": "ייצוא כל ה-Assistants",
-      "importAssistants": "ייבוא Assistants",
-      "importSuccess": "ייבוא של {{count}} Assistants בוצע בהצלחה.",
-      "importError": "ייבוא ה-Assistants נכשל. אנא בדוק את פורמט הקובץ."
+      "exportAllAssistants": "ייצוא כל ה-עוזרs",
+      "importAssistants": "ייבוא עוזרs",
+      "importSuccess": "ייבוא של {{count}} עוזרs בוצע בהצלחה.",
+      "importError": "ייבוא ה-עוזרs נכשל. אנא בדוק את פורמט הקובץ."
     },
     "bubble": {
       "msPerToken": "{{value}}מ.ש./טוקן",
@@ -1033,9 +1038,9 @@
   },
   "assistantsScreen": {
     "sectionTitles": {
-      "myAssistantsLocal": "ה-Assistants שלי (מקומי)",
+      "myAssistantsLocal": "ה-עוזרs שלי (מקומי)",
       "myLibrary": "הספרייה שלי (hub.drsai.app)",
-      "discoverAssistants": "גלו את ה-Assistants (hub.drsai.app)"
+      "discoverAssistants": "גלו את ה-עוזרs (hub.drsai.app)"
     },
     "systemPrompt": "הנחיית מערכת",
     "videoAnalysis": "ניתוח וידאו",
@@ -1050,26 +1055,26 @@
     "assistant": "סייען",
     "roleplay": "משחק תפקידים",
     "video": "וידאו",
-    "deleteAssistant": "מחק Assistant",
-    "deleteAssistantMessage": "האם אתה בטוח שאתה רוצה למחוק את ה-Assistant הזה?",
+    "deleteAssistant": "מחק עוזר",
+    "deleteAssistantMessage": "האם אתה בטוח שאתה רוצה למחוק את ה-עוזר הזה?",
     "missingModel": "חסר מודל",
-    "missingModelMessage": "מודל ברירת המחדל \"{{modelName}}\" עבור Assistant זה אינו זמין. אנא הורד אותו בלשונית העריכה או בחר מודל אחר.",
+    "missingModelMessage": "מודל ברירת המחדל \"{{modelName}}\" עבור עוזר זה אינו זמין. אנא הורד אותו בלשונית העריכה או בחר מודל אחר.",
     "search": "חיפוש",
     "profile": "פרופיל",
     "signIn": "התחברות",
-    "addAssistant": "הוסף Assistant",
+    "addAssistant": "הוסף עוזר",
     "signInToAccessLibrary": "התחבר כדי לגשת לספרייה שלך מ-hub.drsai.app",
     "signOut": "התנתקות",
     "signOutConfirmation": "האם אתה בטוח שאתה רוצה להתנתק?",
     "signOutError": "ההתנתקות נכשלה. אנא נסה שוב.",
     "account": "חשבון",
     "signInToDrshub": "התחבר ל-Drshub",
-    "signInDescription": "גש לספרייה שלך, צור Assistants פרטיים וסנכרן בין מכשירים",
-    "searchAllAssistants": "חפש את כל ה-Assistants...",
+    "signInDescription": "גש לספרייה שלך, צור עוזרs פרטיים וסנכרן בין מכשירים",
+    "searchAllAssistants": "חפש את כל ה-עוזרs...",
     "deleteAssistantConfirmation": "האם אתה בטוח שברצונך למחוק את \"{{assistantName}}\"?",
     "filters": {
       "all": "הכל",
-      "myAssistants": "ה-Assistants שלי",
+      "myAssistants": "ה-עוזרs שלי",
       "local": "מקומי",
       "video": "וידאו",
       "free": "בחינם",
@@ -1082,8 +1087,8 @@
       "download": "הורדה",
       "getFree": "קבל בחינם"
     },
-    "premiumAssistantDescription": "Assistant פרימיום מקהילת hub.drsai.app",
-    "premiumInfoText": "בקרו באתר hub.drsai.app כדי לגלות עוד Assistants",
+    "premiumAssistantDescription": "עוזר פרימיום מקהילת hub.drsai.app",
+    "premiumInfoText": "בקרו באתר hub.drsai.app כדי לגלות עוד עוזרs",
     "sortOptions": {
       "newest": "החדש ביותר",
       "oldest": "הישן ביותר",
@@ -1103,18 +1108,18 @@
       "systemPrompt": "הנחיית מערכת",
       "downloaded": "הורדו",
       "success": "הצליח",
-      "assistantAddedToCollection": "Assistant נוסף לאוסף שלך!",
+      "assistantAddedToCollection": "עוזר נוסף לאוסף שלך!",
       "error": "שגיאה",
-      "failedToLoadDetails": "טעינת פרטי ה-Assistant נכשלה",
-      "failedToDownload": "הורדת Assistant נכשלה",
-      "premiumAssistantMessage": "זהו Assistant פרימיום. \n• אם כבר פתחת את הנעילה שלו באמצעות חשבון Drshub שלך, פשוט היכנס כדי לגשת לפרטים המלאים. \n• עדיין לא פתחת את הנעילה? בקר באפליקציית hub.drsai.app למידע נוסף.",
+      "failedToLoadDetails": "טעינת פרטי ה-עוזר נכשלה",
+      "failedToDownload": "הורדת עוזר נכשלה",
+      "premiumAssistantMessage": "זהו עוזר פרימיום. \n• אם כבר פתחת את הנעילה שלו באמצעות חשבון Drshub שלך, פשוט היכנס כדי לגשת לפרטים המלאים. \n• עדיין לא פתחת את הנעילה? בקר באפליקציית hub.drsai.app למידע נוסף.",
       "notAvailable": "N/A",
       "buyOnDrshub": "קנה ב-Drshub",
       "finalizingPurchase": "משלים את הרכישה שלך…",
       "processingPurchase": "מעבד — ייפתח בקרוב.",
       "checkoutSessionExpired": "הסשן שלך פג. התחבר שוב כדי להמשיך.",
       "signInAgain": "התחבר שוב",
-      "assistantNotAvailable": "ה-Assistant הזה אינו זמין לרכישה כעת.",
+      "assistantNotAvailable": "ה-עוזר הזה אינו זמין לרכישה כעת.",
       "checkoutFailed": "משהו השתבש. אנא נסה שוב."
     }
   },
@@ -1165,13 +1170,13 @@
       "step1": "• ערוך את ההנחיה (אופציונלי) כדי להנחות את הניתוח",
       "step2": "• לחץ על כפתור המצלמה כדי להתחיל ניתוח וידאו חי",
       "step3": "• כוונן את תדירות הצילום בזמן שהמצלמה פעילה",
-      "step4": "• עבור ל-Assistant אחר עבור צ'אט טקסט רגיל"
+      "step4": "• עבור ל-עוזר אחר עבור צ'אט טקסט רגיל"
     }
   },
   "screenTitles": {
     "chat": "צ'אט",
     "models": "מודלים",
-    "assistants": "Assistants (ניסיוני)",
+    "assistants": "עוזרs (ניסיוני)",
     "benchmark": "מבחן ביצועים",
     "settings": "הגדרות",
     "appInfo": "מידע על האפליקציה",
@@ -1229,7 +1234,7 @@
     "increaseContextReloading": "טוען מחדש את המודל עם הקשר גדול יותר…",
     "increaseContextSuccess": "ההקשר הוגדל ל-{{target}} טוקנים.",
     "increaseContextFailure": "לא ניתן להגדיל את אורך ההקשר. ההגדרה הקודמת שלך שוחזרה.",
-    "assistantLoadHint": "ה-Assistant הזה בדרך כלל זקוק ליותר מקום ממה שאורך ההקשר הנוכחי מאפשר.",
+    "assistantLoadHint": "ה-עוזר הזה בדרך כלל זקוק ליותר מקום ממה שאורך ההקשר הנוכחי מאפשר.",
     "webSearch": {
       "searched": "חיפוש: {{query}}",
       "noResults": "אין תוצאות",

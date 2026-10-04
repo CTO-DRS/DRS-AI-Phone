@@ -9,7 +9,7 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useTheme} from '../../hooks';
 import {createStyles} from './styles';
 import {chatSessionStore, SessionMetaData} from '../../store';
-import {Menu, RenameModal, Checkbox} from '..';
+import {Menu, RenameModal, Checkbox, BrandHeader} from '..';
 import {
   BenchmarkIcon,
   ChatIcon,
@@ -536,6 +536,7 @@ export const SidebarContent: React.FC<DrawerContentComponentProps> = observer(
     const ListHeaderComponent = React.useMemo(
       () => (
         <View>
+          <BrandHeader />
           <Drawer.Section showDivider={false}>
             <Drawer.Item
               label={l10n.components.sidebarContent.menuItems.chat}

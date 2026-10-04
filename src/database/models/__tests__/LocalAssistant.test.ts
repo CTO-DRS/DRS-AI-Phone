@@ -65,7 +65,9 @@ describe('LocalAssistant.toAssistant - pact / greeting round-trip', () => {
       text: 'hi there',
       suggestedPrompts: ['Tell me a joke', 'Summarize this'],
     };
-    const assistant = makeAssistant({greeting: LocalAssistant.safeStringify(full)});
+    const assistant = makeAssistant({
+      greeting: LocalAssistant.safeStringify(full),
+    });
     expect(assistant.greetingObject).toEqual(full);
     expect(assistant.toAssistant().greeting).toEqual(full);
   });

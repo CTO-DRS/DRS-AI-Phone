@@ -28,11 +28,11 @@ const assistantWith = (talentNames: string[]): Assistant =>
 describe('useAssistantLoadHint', () => {
   beforeEach(() => {
     chatSessionStore.assistantLoadHintSeen = new Set();
-    (chatSessionStore.markAssistantLoadHintSeen as jest.Mock).mockImplementation(
-      (sig: string) => {
-        chatSessionStore.assistantLoadHintSeen.add(sig);
-      },
-    );
+    (
+      chatSessionStore.markAssistantLoadHintSeen as jest.Mock
+    ).mockImplementation((sig: string) => {
+      chatSessionStore.assistantLoadHintSeen.add(sig);
+    });
     setNCtx(2048);
   });
 
@@ -43,7 +43,10 @@ describe('useAssistantLoadHint', () => {
 
   it('fires once when a heavy-talent assistant loads below its recommended context', () => {
     const {result} = renderHook(() =>
-      useAssistantLoadHint({activeAssistant: assistantWith(['render_html']), isFocused: true}),
+      useAssistantLoadHint({
+        activeAssistant: assistantWith(['render_html']),
+        isFocused: true,
+      }),
     );
     expect(result.current.hintVisible).toBe(true);
     expect(chatSessionStore.markAssistantLoadHintSeen).toHaveBeenCalledTimes(1);
@@ -68,7 +71,10 @@ describe('useAssistantLoadHint', () => {
   it('does not fire when loaded n_ctx meets or exceeds the recommendation', () => {
     setNCtx(4096);
     const {result} = renderHook(() =>
-      useAssistantLoadHint({activeAssistant: assistantWith(['render_html']), isFocused: true}),
+      useAssistantLoadHint({
+        activeAssistant: assistantWith(['render_html']),
+        isFocused: true,
+      }),
     );
     expect(result.current.hintVisible).toBe(false);
     expect(chatSessionStore.markAssistantLoadHintSeen).not.toHaveBeenCalled();
@@ -87,7 +93,10 @@ describe('useAssistantLoadHint', () => {
 
   it('does not fire while the chat surface is not focused', () => {
     const {result} = renderHook(() =>
-      useAssistantLoadHint({activeAssistant: assistantWith(['render_html']), isFocused: false}),
+      useAssistantLoadHint({
+        activeAssistant: assistantWith(['render_html']),
+        isFocused: false,
+      }),
     );
     expect(result.current.hintVisible).toBe(false);
     expect(chatSessionStore.markAssistantLoadHintSeen).not.toHaveBeenCalled();
@@ -104,7 +113,10 @@ describe('useAssistantLoadHint', () => {
   it('does not fire when no model is loaded (n_ctx undefined)', () => {
     setNCtx(undefined);
     const {result} = renderHook(() =>
-      useAssistantLoadHint({activeAssistant: assistantWith(['render_html']), isFocused: true}),
+      useAssistantLoadHint({
+        activeAssistant: assistantWith(['render_html']),
+        isFocused: true,
+      }),
     );
     expect(result.current.hintVisible).toBe(false);
     expect(chatSessionStore.markAssistantLoadHintSeen).not.toHaveBeenCalled();
@@ -112,7 +124,10 @@ describe('useAssistantLoadHint', () => {
 
   it('dismiss() clears the hint', () => {
     const {result} = renderHook(() =>
-      useAssistantLoadHint({activeAssistant: assistantWith(['render_html']), isFocused: true}),
+      useAssistantLoadHint({
+        activeAssistant: assistantWith(['render_html']),
+        isFocused: true,
+      }),
     );
     expect(result.current.hintVisible).toBe(true);
     act(() => result.current.dismiss());
