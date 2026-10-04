@@ -1502,7 +1502,8 @@
     "skip": "Skip",
     "skipForNow": "Skip for now",
     "splash": {
-      "brand": "DRS AI"
+      "brand": "DRS AI",
+      "tagline": "Your private AI, on your device"
     },
     "screen1": {
       "title": "Meet your assistants.",

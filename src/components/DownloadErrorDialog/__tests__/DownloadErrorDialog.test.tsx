@@ -6,6 +6,12 @@ import {Linking} from 'react-native';
 import {hfStore} from '../../../store';
 import {createModel} from '../../../../jest/fixtures/models';
 import {l10n} from '../../../locales';
+// NOTE: the real uiStore singleton (not the jest store barrel mock) —
+// createErrorState() resolves messages through it. Pin English so the
+// assertions match en.json regardless of the app's Arabic-first default.
+import {uiStore} from '../../../store/UIStore';
+
+uiStore.setLanguage('en');
 import {createErrorState, ErrorState} from '../../../utils/errors';
 
 // Mock Linking - need to spy on the actual Linking object

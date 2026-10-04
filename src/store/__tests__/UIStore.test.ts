@@ -59,8 +59,12 @@ describe('UIStore', () => {
   });
 
   describe('language', () => {
-    it('should default to en', () => {
-      expect(uiStore.language).toBe('en');
+    it('should default to ar (Arabic is the app default)', () => {
+      // beforeEach pins an explicit language, so verify the factory
+      // default on a fresh instance instead of the singleton.
+      const fresh = new UIStore();
+      expect(fresh.language).toBe('ar');
+      expect(fresh._languageManuallySet).toBe(false);
     });
 
     it('should set language correctly', () => {
@@ -68,11 +72,11 @@ describe('UIStore', () => {
       expect(uiStore.language).toBe('ja');
     });
 
-    it('should fall back to en for unknown language', () => {
+    it('should fall back to ar for unknown language', () => {
       // Simulate a persisted language value that is no longer supported
       // @ts-ignore - Testing invalid input
       uiStore._language = 'xx';
-      expect(uiStore.language).toBe('en');
+      expect(uiStore.language).toBe('ar');
     });
 
     it('should return correct l10n translations for selected language', () => {
@@ -85,10 +89,10 @@ describe('UIStore', () => {
       expect(uiStore.l10n).toBe(l10n.en);
     });
 
-    it('should return en translations when language is unknown (fallback)', () => {
+    it('should return ar translations when language is unknown (fallback)', () => {
       // @ts-ignore - Testing invalid input
       uiStore._language = 'xx';
-      expect(uiStore.l10n).toBe(l10n.en);
+      expect(uiStore.l10n).toBe(l10n.ar);
     });
 
     it('supportedLanguages getter returns from locales registry', () => {

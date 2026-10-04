@@ -1,7 +1,8 @@
 import React, {useContext} from 'react';
+import {Text, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 
-import {SplashMark} from '../../../assets/onboarding/illustrations';
+import {DrsAiMark} from '../../../assets/onboarding/illustrations';
 import {BrandGradient} from '../../../components';
 import {useTheme} from '../../../hooks';
 import {L10nContext} from '../../../utils';
@@ -11,9 +12,11 @@ import {createStyles} from './styles';
 const SPLASH_MIN_DWELL_MS = 600;
 
 /**
- * Brand splash — post-hydration, pre-Onboarding-1. Renders the
- * 112×112 mark from Figma `884:28352` then transitions after
- * `SPLASH_MIN_DWELL_MS`.
+ * Brand splash — post-hydration, pre-Onboarding-1. Renders the DRS AI
+ * robot-head mark with the DRS AI wordmark on the brand gradient, then
+ * transitions after `SPLASH_MIN_DWELL_MS`. Mirrors the native launch
+ * screen (Android `bg_splash` / iOS LaunchScreen) so the hand-off from
+ * native → JS is visually seamless.
  */
 export const SplashScreen: React.FC = () => {
   const navigation = useNavigation<any>();
@@ -34,12 +37,16 @@ export const SplashScreen: React.FC = () => {
       style={styles.root}
       start={{x: 0, y: 0}}
       end={{x: 1, y: 1}}>
-      <SplashMark
-        width={112}
-        height={112}
+      <DrsAiMark
+        width={132}
+        height={132}
         accessibilityLabel={l10n.onboarding.splash.brand}
         accessibilityRole="image"
       />
+      <View style={styles.wordmarkBlock}>
+        <Text style={styles.wordmark}>DRS AI</Text>
+        <Text style={styles.tagline}>{l10n.onboarding.splash.tagline}</Text>
+      </View>
     </BrandGradient>
   );
 };

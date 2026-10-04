@@ -6,6 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   l10n,
   supportedLanguages as localesSupportedLanguages,
+  initLocale,
   type AvailableLanguage,
 } from '../locales';
 import {ErrorState} from '../utils/errors';
@@ -38,8 +39,11 @@ export class UIStore {
   colorScheme: 'light' | 'dark' =
     Appearance.getColorScheme() === 'dark' ? 'dark' : 'light';
 
-  // Current selected language (default to English)
-  _language: AvailableLanguage = 'en';
+  // Current selected language. Arabic is the product's default audience
+  // language; App.tsx adopts the device locale on first launch when the
+  // app ships it, so English (and other supported) devices keep their
+  // language while everything else starts in Arabic.
+  _language: AvailableLanguage = 'ar';
 
   // Whether the user explicitly picked a language at least once. When
   // false, the app may auto-adopt the device locale (e.g. Arabic).
@@ -160,6 +164,9 @@ export class UIStore {
       this._language = language;
       this._languageManuallySet = true;
     });
+    // Keep dayjs (date rendering) in sync with the UI language for both
+    // manual picks and the first-launch device-language adoption.
+    initLocale(language);
   }
 
   /**
@@ -177,9 +184,9 @@ export class UIStore {
     return UIStore.RTL_LANGUAGES.includes(this.language);
   }
   get language() {
-    // If the language is not in l10n, return 'en'
+    // If the language is not in l10n, return 'ar' (the app default)
     // This can happen when the app removes a language from l10n
-    return this._language in l10n ? this._language : 'en';
+    return this._language in l10n ? this._language : 'ar';
   }
 
   get l10n() {
