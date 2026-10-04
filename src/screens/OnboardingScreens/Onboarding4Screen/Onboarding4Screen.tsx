@@ -7,7 +7,7 @@ import {OnboardingBottomBar} from '../components/OnboardingBottomBar';
 import {OnboardingContent} from '../components/OnboardingContent';
 import {ItalicAccentTitle} from '../components/ItalicAccentTitle';
 import {HighlightText} from '../components/HighlightText';
-import {PhoneWithShield} from '../illustrations/PhoneWithShield';
+import {RobotMascot} from '../illustrations/AnimatedRobot';
 import {useOnboardingHandlers} from '../useOnboardingHandlers';
 import {styles} from './styles';
 
@@ -19,7 +19,7 @@ export const Onboarding4Screen: React.FC = observer(() => {
       step={4}
       illustration={
         <View style={styles.illustrationWrap}>
-          <PhoneWithShield width={85} />
+          <RobotMascot size={150} mood="shield" badge="shield" />
         </View>
       }
       content={

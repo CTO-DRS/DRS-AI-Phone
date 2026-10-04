@@ -1,5 +1,12 @@
 import * as React from 'react';
-import {Appearance, Dimensions, StyleSheet, View} from 'react-native';
+import {
+  Appearance,
+  Dimensions,
+  I18nManager,
+  NativeModules,
+  StyleSheet,
+  View,
+} from 'react-native';
 
 import {observer} from 'mobx-react';
 import {isHydrated} from 'mobx-persist-store';
@@ -88,6 +95,26 @@ const App = observer(() => {
   // Initialize locale with the current language
   React.useEffect(() => {
     initLocale(uiStore.language);
+  }, []);
+
+  // RTL is allowed app-wide; the direction itself is controlled via
+  // I18nManager.forceRTL (see LanguageSelector) and applied on restart.
+  React.useEffect(() => {
+    I18nManager.allowRTL(true);
+  }, []);
+
+  // First launch: adopt the device locale if the app ships it (e.g.
+  // Arabic devices get the Arabic UI out of the box). Skipped once the
+  // user has explicitly picked a language.
+  React.useEffect(() => {
+    if (!isHydrated(uiStore) || uiStore._languageManuallySet) {
+      return;
+    }
+    const deviceLocale: string | undefined =
+      NativeModules.I18nManager?.localeIdentifier;
+    if (deviceLocale?.startsWith('ar') && uiStore.language !== 'ar') {
+      uiStore.setLanguage('ar');
+    }
   }, []);
 
   // Initialize TTS store (memory gate + AppState/session listeners).
