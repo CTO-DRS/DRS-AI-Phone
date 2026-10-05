@@ -53,7 +53,6 @@ import {MarkdownProvider} from './src/components/MarkdownView';
 import {AutomationBridge, BenchmarkRunnerScreen} from './src/__automation__';
 import {
   ChatScreen,
-  ModelsScreen,
   SettingsScreen,
   BenchmarkScreen,
   AboutScreen,
@@ -61,6 +60,7 @@ import {
   // Dev tools screen. Only available in debug mode.
   DevToolsScreen,
 } from './src/screens';
+import {ModelsHubScreen} from './src/screens/ModelsHub';
 import AssistantsScreen from './src/screens/AssistantsScreen';
 import {OnboardingStack} from './src/screens/OnboardingScreens';
 
@@ -220,7 +220,7 @@ const App = observer(() => {
                           />
                           <Drawer.Screen
                             name={ROUTES.MODELS}
-                            component={gestureHandlerRootHOC(ModelsScreen)}
+                            component={gestureHandlerRootHOC(ModelsHubScreen)}
                             options={{
                               headerRight: () => <ModelsHeaderRight />,
                               headerStyle: styles.headerWithoutDivider,

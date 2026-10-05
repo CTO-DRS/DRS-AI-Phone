@@ -251,6 +251,7 @@ export class DownloadManager {
     model: Model,
     destinationPath: string,
     authToken?: string | null,
+    options?: {networkType?: 'WIFI' | 'ANY'},
   ): Promise<void> {
     console.log(`${TAG}: Starting download for model:`, {
       modelId: model.id,
@@ -301,6 +302,7 @@ export class DownloadManager {
         model,
         destinationPath,
         effectiveAuthToken,
+        options?.networkType ?? 'ANY',
       );
     }
   }
@@ -468,6 +470,7 @@ export class DownloadManager {
     model: Model,
     destinationPath: string,
     authToken?: string | null,
+    networkType: 'WIFI' | 'ANY' = 'ANY',
   ): Promise<void> {
     try {
       console.log(`${TAG}: Starting Android download for model:`, {
@@ -490,7 +493,7 @@ export class DownloadManager {
       // Start the download first to get the download ID
       const config: DownloadConfig = {
         destination: destinationPath,
-        networkType: 'ANY',
+        networkType,
         priority: 1,
         progressInterval: 1000,
         ...(authToken ? {authToken} : {}),
@@ -528,6 +531,76 @@ export class DownloadManager {
       );
       throw error;
     }
+  }
+
+  /**
+   * Pauses an in-flight Android download (WorkManager PAUSED status). The job
+   * stays registered so the partial file can be resumed later; the native
+   * worker keeps the already-written bytes and resumes with a Range header.
+   * iOS has no RNFS pause primitive — callers should hide the action there.
+   */
+  async pauseDownload(modelId: string): Promise<boolean> {
+    if (Platform.OS !== 'android' || !NativeDownloadModule) {
+      return false;
+    }
+    const job = this.downloadJobs.get(modelId);
+    if (!job?.downloadId) {
+      console.warn(`${TAG}: Cannot pause — no Android job for ${modelId}`);
+      return false;
+    }
+    try {
+      const paused = await NativeDownloadModule.pauseDownload(job.downloadId);
+      if (paused) {
+        runInAction(() => {
+          job.state.isPaused = true;
+        });
+        console.log(`${TAG}: Paused download for ${modelId}`);
+      }
+      return paused;
+    } catch (err) {
+      console.error(`${TAG}: Failed to pause download ${modelId}:`, err);
+      return false;
+    }
+  }
+
+  /**
+   * Resumes a previously paused Android download. The native worker resumes
+   * from the persisted byte offset (Range header) and progress events keep
+   * flowing through the same observer.
+   */
+  async resumeDownload(modelId: string): Promise<boolean> {
+    if (Platform.OS !== 'android' || !NativeDownloadModule) {
+      return false;
+    }
+    const job = this.downloadJobs.get(modelId);
+    if (!job?.downloadId) {
+      console.warn(`${TAG}: Cannot resume — no Android job for ${modelId}`);
+      return false;
+    }
+    try {
+      const resumed = await NativeDownloadModule.resumeDownload(job.downloadId);
+      if (resumed) {
+        runInAction(() => {
+          job.state.isPaused = false;
+        });
+        console.log(`${TAG}: Resumed download for ${modelId}`);
+      }
+      return resumed;
+    } catch (err) {
+      console.error(`${TAG}: Failed to resume download ${modelId}:`, err);
+      return false;
+    }
+  }
+
+  isPaused(modelId: string): boolean {
+    return this.downloadJobs.get(modelId)?.state.isPaused ?? false;
+  }
+
+  /** Reactive list of paused jobs for the download manager sheet. */
+  get pausedJobs(): DownloadJob[] {
+    return Array.from(this.downloadJobs.values()).filter(
+      j => j.state.isPaused && j.state.isDownloading,
+    );
   }
 
   async cancelDownload(modelId: string): Promise<void> {

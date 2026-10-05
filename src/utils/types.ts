@@ -592,6 +592,12 @@ export interface Model {
   hfModel?: HuggingFaceModel;
   hash?: string;
 
+  // Hub bookkeeping (all optional; never required for inference)
+  /** Wall-clock ms when the download completed verification. */
+  downloadedAt?: number;
+  /** Wall-clock ms when the model was last loaded into the context. */
+  lastUsedAt?: number;
+
   // Provenance marker: set on models materialized from the device-rule preset
   // list. Lets reconcile prune stale, non-downloaded rule stubs without touching
   // user-added HF/LOCAL or downloaded models.

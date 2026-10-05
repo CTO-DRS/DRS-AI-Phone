@@ -2235,6 +2235,7 @@ describe('ModelStore', () => {
         expect.objectContaining({id: 'vision-model'}),
         expect.anything(),
         expect.anything(),
+        expect.objectContaining({networkType: 'ANY'}),
       );
       expect(modelStore.downloadError).toBeNull();
     });
@@ -2374,6 +2375,7 @@ describe('ModelStore', () => {
           '/path/to/documents/models/hf/test/hf-model/model-01.gguf',
         ),
         'mockPass', // authToken from keychain mock
+        expect.objectContaining({networkType: 'ANY'}),
       );
     });
 
@@ -4564,6 +4566,7 @@ describe('ModelStore', () => {
         visionModel,
         expect.any(String),
         expect.any(String),
+        expect.objectContaining({networkType: 'ANY'}),
       );
     });
 
@@ -4603,6 +4606,7 @@ describe('ModelStore', () => {
         projectionModel,
         expect.any(String),
         expect.any(String),
+        expect.objectContaining({networkType: 'ANY'}),
       );
     });
 
@@ -4641,6 +4645,7 @@ describe('ModelStore', () => {
         regularModel,
         expect.any(String),
         expect.any(String),
+        expect.objectContaining({networkType: 'ANY'}),
       );
     });
 
@@ -4835,6 +4840,7 @@ describe('ModelStore', () => {
         visionModel,
         expect.any(String),
         expect.any(String),
+        expect.objectContaining({networkType: 'ANY'}),
       );
     });
   });

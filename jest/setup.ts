@@ -117,10 +117,12 @@ jest.mock('react-native-safe-area-context', () => {
 
 jest.mock('../src/store', () => {
   const {UIStore} = require('../__mocks__/stores/uiStore');
+  const {mockModelHubStore} = require('../__mocks__/stores/modelHubStore');
   return {
     modelStore: mockModelStore,
     UIStore,
     uiStore: mockUiStore,
+    modelHubStore: mockModelHubStore,
     chatSessionStore: mockChatSessionStore,
     hfStore: mockHFStore,
     benchmarkStore: mockBenchmarkStore,
