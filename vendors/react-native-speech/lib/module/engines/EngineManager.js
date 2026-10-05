@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * TTS Engine Manager
@@ -6,7 +6,7 @@
  * Manages multiple TTS engines and provides a unified interface
  */
 
-import {createComponentLogger} from '../utils/logger.js';
+import { createComponentLogger } from "../utils/logger.js";
 const log = createComponentLogger('EngineManager', 'Manager');
 
 // Stored engines are of unknown config; callers provide the config type per-call.
@@ -118,7 +118,7 @@ class TTSEngineManager {
       return {
         isReady: false,
         isLoading: false,
-        error: `Engine '${name}' not registered`,
+        error: `Engine '${name}' not registered`
       };
     }
     const engine = this.getEngine(name);
@@ -127,7 +127,7 @@ class TTSEngineManager {
       isReady,
       isLoading: false,
       // We don't track loading state at manager level
-      error: undefined,
+      error: undefined
     };
   }
 
@@ -135,11 +135,9 @@ class TTSEngineManager {
    * Destroy all engines
    */
   async destroyAll() {
-    const promises = Array.from(this.engines.values()).map(engine =>
-      engine.destroy().catch(err => {
-        log.warn(`Failed to destroy engine ${engine.name}:`, err);
-      }),
-    );
+    const promises = Array.from(this.engines.values()).map(engine => engine.destroy().catch(err => {
+      log.warn(`Failed to destroy engine ${engine.name}:`, err);
+    }));
     await Promise.all(promises);
     this.engines.clear();
     this.initialized.clear();

@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * Supertonic TTS Engine
@@ -17,22 +17,22 @@
  * - Sentence-level chunking with progress events
  */
 
-import {isPhonemeInput} from '../../types/index.js';
-import {SupertonicInference} from './SupertonicInference.js';
-import {StyleLoader} from './StyleLoader.js';
-import {UnicodeProcessor} from './UnicodeProcessor.js';
-import {neuralAudioPlayer} from '../NeuralAudioPlayer.js';
-import {loadAssetAsJSON} from '../../utils/AssetLoader.js';
-import {TextChunker} from '../../utils/TextChunker.js';
-import {SUPERTONIC_CONSTANTS} from './constants.js';
-import {EngineStreamSession} from '../EngineStreamSession.js';
-import {createComponentLogger} from '../../utils/logger.js';
-import {
-  stripMarkdown,
-  createMarkdownStreamBuffer,
-} from '../../utils/stripMarkdown.js';
+import { isPhonemeInput } from "../../types/index.js";
+import { SupertonicInference } from "./SupertonicInference.js";
+import { StyleLoader } from "./StyleLoader.js";
+import { UnicodeProcessor } from "./UnicodeProcessor.js";
+import { neuralAudioPlayer } from "../NeuralAudioPlayer.js";
+import { loadAssetAsJSON } from "../../utils/AssetLoader.js";
+import { TextChunker } from "../../utils/TextChunker.js";
+import { SUPERTONIC_CONSTANTS } from "./constants.js";
+import { EngineStreamSession } from "../EngineStreamSession.js";
+import { createComponentLogger } from "../../utils/logger.js";
+import { stripMarkdown, createMarkdownStreamBuffer } from "../../utils/stripMarkdown.js";
 const log = createComponentLogger('Supertonic', 'Engine');
-const {DEFAULT_MAX_CHUNK_SIZE, DEFAULT_INFERENCE_STEPS} = SUPERTONIC_CONSTANTS;
+const {
+  DEFAULT_MAX_CHUNK_SIZE,
+  DEFAULT_INFERENCE_STEPS
+} = SUPERTONIC_CONSTANTS;
 export class SupertonicEngine {
   name = 'supertonic';
   config = null;
@@ -102,7 +102,7 @@ export class SupertonicEngine {
         vectorEstimatorPath: config.vectorEstimatorPath,
         vocoderPath: config.vocoderPath,
         voicesPath: config.voicesPath,
-        unicodeIndexerPath: config.unicodeIndexerPath,
+        unicodeIndexerPath: config.unicodeIndexerPath
       });
 
       // Initialize unicode processor
@@ -118,10 +118,7 @@ export class SupertonicEngine {
       await this.loadVoices(config.voicesPath);
       this.isInitialized = true;
       log.info(`engine_init_ms=${Date.now() - initStart}`);
-      log.info(
-        'Supertonic: code MIT; model weights OpenRAIL (use-based restrictions). ' +
-          'Review https://huggingface.co/Supertone/supertonic model card.',
-      );
+      log.info('Supertonic: code MIT; model weights OpenRAIL (use-based restrictions). ' + 'Review https://huggingface.co/Supertone/supertonic model card.');
     } catch (error) {
       // Clean up any partial initialization to allow retry
       await this.destroy();
@@ -137,12 +134,7 @@ export class SupertonicEngine {
    * Check if engine is ready
    */
   async isReady() {
-    return (
-      this.isInitialized &&
-      this.inference.isReady() &&
-      this.unicodeProcessor.isReady() &&
-      this.styleLoader.isReady()
-    );
+    return this.isInitialized && this.inference.isReady() && this.unicodeProcessor.isReady() && this.styleLoader.isReady();
   }
 
   /**
@@ -154,10 +146,7 @@ export class SupertonicEngine {
       throw new Error('Supertonic engine not initialized');
     }
     if (isPhonemeInput(input)) {
-      throw new Error(
-        'Supertonic engine has no phoneme path; phoneme input requires ' +
-          'the Kokoro or Kitten engine.',
-      );
+      throw new Error('Supertonic engine has no phoneme path; phoneme input requires ' + 'the Kokoro or Kitten engine.');
     }
     const text = input;
     if (!text || text.trim().length === 0) {
@@ -188,8 +177,7 @@ export class SupertonicEngine {
     this.stopRequested = false;
     this.isSynthesizing = true;
     const voiceId = options?.voiceId || this.defaultVoiceId;
-    const inferenceSteps =
-      options?.inferenceSteps || this.defaultInferenceSteps;
+    const inferenceSteps = options?.inferenceSteps || this.defaultInferenceSteps;
     const speed = options?.speed ?? 1.0;
     const language = options?.language ?? 'en';
     const maxChunkSize = this.config?.maxChunkSize ?? DEFAULT_MAX_CHUNK_SIZE;
@@ -206,43 +194,32 @@ export class SupertonicEngine {
     const onAudioChunk = options?.onAudioChunk;
     const volume = options?.volume;
     const needsVolume = volume !== undefined && volume !== 1.0;
-    const postProcess =
-      needsVolume || onAudioChunk
-        ? buf => {
-            if (needsVolume) {
-              const v = Math.max(0, Math.min(1, volume));
-              for (let i = 0; i < buf.samples.length; i++) {
-                const s = buf.samples[i];
-                if (s !== undefined) {
-                  buf.samples[i] = Math.max(-1, Math.min(1, s * v));
-                }
-              }
-            }
-            onAudioChunk?.(buf);
+    const postProcess = needsVolume || onAudioChunk ? buf => {
+      if (needsVolume) {
+        const v = Math.max(0, Math.min(1, volume));
+        for (let i = 0; i < buf.samples.length; i++) {
+          const s = buf.samples[i];
+          if (s !== undefined) {
+            buf.samples[i] = Math.max(-1, Math.min(1, s * v));
           }
-        : undefined;
+        }
+      }
+      onAudioChunk?.(buf);
+    } : undefined;
     const session = new EngineStreamSession({
       synthesizeChunk: async text => {
         const voiceStyle = await voiceStylePromise;
-        return this.synthesizeChunk(
-          text,
-          voiceStyle,
-          inferenceSteps,
-          speed,
-          language,
-        );
+        return this.synthesizeChunk(text, voiceStyle, inferenceSteps, speed, language);
       },
       playAudio: (buffer, playOpts) => neuralAudioPlayer.play(buffer, playOpts),
       stopPlayback: () => neuralAudioPlayer.stop(),
       maxChunkSize,
       playbackOptions: {
         ducking: options?.ducking,
-        silentMode: options?.silentMode,
+        silentMode: options?.silentMode
       },
       postProcess,
-      onChunkProgress: this.chunkProgressCallback
-        ? event => this.emitChunkProgress(event)
-        : undefined,
+      onChunkProgress: this.chunkProgressCallback ? event => this.emitChunkProgress(event) : undefined
     });
     this.activeStreamSession = session;
     const wrapFinalize = async () => {
@@ -285,7 +262,7 @@ export class SupertonicEngine {
         }
         return wrapFinalize();
       },
-      cancel: wrapCancel,
+      cancel: wrapCancel
     };
   }
 
@@ -321,13 +298,10 @@ export class SupertonicEngine {
 
     // Get synthesis options
     const voiceId = options?.voiceId || this.defaultVoiceId;
-    const inferenceSteps =
-      options?.inferenceSteps || this.defaultInferenceSteps;
+    const inferenceSteps = options?.inferenceSteps || this.defaultInferenceSteps;
     const speed = options?.speed ?? 1.0;
     const language = options?.language ?? 'en';
-    log.debug(
-      `Synthesis start: text="${text.substring(0, 50)}...", voice=${voiceId}, lang=${language}, steps=${inferenceSteps}, speed=${speed}`,
-    );
+    log.debug(`Synthesis start: text="${text.substring(0, 50)}...", voice=${voiceId}, lang=${language}, steps=${inferenceSteps}, speed=${speed}`);
 
     // Load voice style
     const voiceStyle = await this.styleLoader.getVoiceStyle(voiceId);
@@ -335,8 +309,7 @@ export class SupertonicEngine {
     // Strip markdown so structural markers (`---`, `###`, table rows)
     // become sentence breaks the chunker recognizes. Default on; set
     // `stripMarkdown: false` to opt out.
-    const cleanText =
-      options?.stripMarkdown === false ? text : stripMarkdown(text);
+    const cleanText = options?.stripMarkdown === false ? text : stripMarkdown(text);
 
     // Chunk text by sentences
     const maxChunkSize = this.config?.maxChunkSize ?? DEFAULT_MAX_CHUNK_SIZE;
@@ -351,7 +324,7 @@ export class SupertonicEngine {
         return undefined;
       }
       const chunk = chunks[chunkIndex];
-      const progress = Math.round((chunkIndex / chunks.length) * 100);
+      const progress = Math.round(chunkIndex / chunks.length * 100);
       log.debug(`Processing chunk ${chunkIndex + 1}/${chunks.length}`);
 
       // Emit chunk progress event
@@ -362,9 +335,9 @@ export class SupertonicEngine {
         chunkText: chunk.text,
         textRange: {
           start: chunk.startIndex,
-          end: chunk.endIndex,
+          end: chunk.endIndex
         },
-        progress,
+        progress
       });
 
       // Get current chunk's audio, racing against stop signal
@@ -374,16 +347,7 @@ export class SupertonicEngine {
           audioBuffer = await this.raceWithStop(nextAudioPromise, stopSignal);
           nextAudioPromise = null;
         } else {
-          audioBuffer = await this.raceWithStop(
-            this.synthesizeChunk(
-              chunk.text,
-              voiceStyle,
-              inferenceSteps,
-              speed,
-              language,
-            ),
-            stopSignal,
-          );
+          audioBuffer = await this.raceWithStop(this.synthesizeChunk(chunk.text, voiceStyle, inferenceSteps, speed, language), stopSignal);
         }
 
         // Stop signal won the race
@@ -406,13 +370,7 @@ export class SupertonicEngine {
       const nextChunkIndex = chunkIndex + 1;
       if (!this.stopRequested && nextChunkIndex < chunks.length) {
         const nextChunk = chunks[nextChunkIndex];
-        nextAudioPromise = this.synthesizeChunk(
-          nextChunk.text,
-          voiceStyle,
-          inferenceSteps,
-          speed,
-          language,
-        );
+        nextAudioPromise = this.synthesizeChunk(nextChunk.text, voiceStyle, inferenceSteps, speed, language);
       }
 
       // Apply volume if specified (with bounds checking to prevent clipping)
@@ -440,13 +398,10 @@ export class SupertonicEngine {
       }
 
       // Play current chunk, racing against stop signal
-      await this.raceWithStop(
-        neuralAudioPlayer.play(audioBuffer, {
-          ducking: options?.ducking,
-          silentMode: options?.silentMode,
-        }),
-        stopSignal,
-      );
+      await this.raceWithStop(neuralAudioPlayer.play(audioBuffer, {
+        ducking: options?.ducking,
+        silentMode: options?.silentMode
+      }), stopSignal);
     }
     log.debug('Synthesis complete');
     return undefined;
@@ -466,17 +421,12 @@ export class SupertonicEngine {
         samples: new Float32Array(0),
         sampleRate: SUPERTONIC_CONSTANTS.SAMPLE_RATE,
         channels: 1,
-        duration: 0,
+        duration: 0
       };
     }
 
     // Run inference pipeline
-    return this.inference.synthesize(
-      normalized,
-      voiceStyle,
-      inferenceSteps,
-      speed,
-    );
+    return this.inference.synthesize(normalized, voiceStyle, inferenceSteps, speed);
   }
 
   /**
@@ -587,7 +537,7 @@ export class SupertonicEngine {
       return {
         success: true,
         partialRelease: false,
-        errors: [],
+        errors: []
       };
     }
     log.info('Releasing engine resources...');
@@ -598,12 +548,10 @@ export class SupertonicEngine {
       return {
         success: false,
         partialRelease: false,
-        errors: [
-          {
-            component: 'engine',
-            error: new Error('Cannot release while loading'),
-          },
-        ],
+        errors: [{
+          component: 'engine',
+          error: new Error('Cannot release while loading')
+        }]
       };
     }
 
@@ -618,7 +566,7 @@ export class SupertonicEngine {
       log.warn('Failed to stop audio player:', e);
       errors.push({
         component: 'audioPlayer',
-        error: e,
+        error: e
       });
     }
 
@@ -632,7 +580,7 @@ export class SupertonicEngine {
         for (const err of inferenceErrors) {
           errors.push({
             component: 'inference',
-            error: err,
+            error: err
           });
         }
       }
@@ -641,7 +589,7 @@ export class SupertonicEngine {
       log.warn('Failed to release inference:', e);
       errors.push({
         component: 'inference',
-        error: e,
+        error: e
       });
     }
 
@@ -653,7 +601,7 @@ export class SupertonicEngine {
       log.warn('Failed to clear style loader:', e);
       errors.push({
         component: 'styleLoader',
-        error: e,
+        error: e
       });
     }
 
@@ -665,22 +613,18 @@ export class SupertonicEngine {
       log.warn('Failed to clear unicode processor:', e);
       errors.push({
         component: 'unicodeProcessor',
-        error: e,
+        error: e
       });
     }
 
     // 7. Reset state to allow re-initialization
     this.resetState();
     const success = errors.length === 0;
-    log.info(
-      success
-        ? 'Engine resources released successfully'
-        : `Engine released with ${errors.length} error(s)`,
-    );
+    log.info(success ? 'Engine resources released successfully' : `Engine released with ${errors.length} error(s)`);
     return {
       success,
       partialRelease: errors.length > 0,
-      errors,
+      errors
     };
   }
 
@@ -691,7 +635,7 @@ export class SupertonicEngine {
     return {
       isReady: this.isInitialized,
       isLoading: this.isLoading,
-      error: this.initError,
+      error: this.initError
     };
   }
 
@@ -714,21 +658,15 @@ export class SupertonicEngine {
           await this.styleLoader.loadFromManifest(data, voicesPath);
         } else if ('style_dp' in data && 'style_ttl' in data) {
           // Single voice style
-          const voiceId =
-            voicesPath.split('/').pop()?.replace('.json', '') || 'default';
+          const voiceId = voicesPath.split('/').pop()?.replace('.json', '') || 'default';
           this.styleLoader.loadVoiceFromData(voiceId, data);
         }
       } else {
-        throw new Error(
-          'Supertonic requires a voices manifest JSON file. ' +
-            'Directory scanning is not supported.',
-        );
+        throw new Error('Supertonic requires a voices manifest JSON file. ' + 'Directory scanning is not supported.');
       }
       log.info('Voices loaded:', this.styleLoader.getVoiceIds().length);
     } catch (error) {
-      throw new Error(
-        `Failed to load voices: ${error instanceof Error ? error.message : 'Unknown error'}`,
-      );
+      throw new Error(`Failed to load voices: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 }

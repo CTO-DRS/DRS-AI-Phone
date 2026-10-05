@@ -1,6 +1,6 @@
-'use strict';
+"use strict";
 
-import TurboSpeech from './NativeSpeech.js';
+import TurboSpeech from "./NativeSpeech.js";
 // Wrapper for neural audio player methods from RNSpeech
 export const NativeNeuralAudioPlayer = {
   playAudio: TurboSpeech.playAudio,
@@ -16,7 +16,7 @@ export const NativeNeuralAudioPlayer = {
   onPause: TurboSpeech.onPause,
   onResume: TurboSpeech.onResume,
   onStopped: TurboSpeech.onStopped,
-  onAudioInterruption: TurboSpeech.onAudioInterruption,
+  onAudioInterruption: TurboSpeech.onAudioInterruption
 };
 export default NativeNeuralAudioPlayer;
 //# sourceMappingURL=NativeAudioPlayer.js.map

@@ -17,6 +17,7 @@ import {HeaderLeft} from '../HeaderLeft';
 import {
   BRAND_GRADIENT_COLORS,
   BRAND_GRADIENT_SOFT,
+  BRAND_WASH_FADE,
 } from '../../theme/tokens/brand';
 
 export const ChatHeader: React.FC = observer(() => {
@@ -47,7 +48,11 @@ export const ChatHeader: React.FC = observer(() => {
         pointerEvents="none"
         start={{x: 0, y: 0}}
         end={{x: 0, y: 1}}
-        colors={[BRAND_GRADIENT_SOFT[0], BRAND_GRADIENT_SOFT[1], '#FFFFFF00']}
+        colors={[
+          BRAND_GRADIENT_SOFT[0],
+          BRAND_GRADIENT_SOFT[1],
+          BRAND_WASH_FADE,
+        ]}
         style={styles.brandWash}
       />
 

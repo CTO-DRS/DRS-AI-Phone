@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {View, Alert} from 'react-native';
 
 import {observer} from 'mobx-react-lite';
@@ -13,6 +13,7 @@ import {Sheet} from '../../Sheet';
 import {createStyles} from './styles';
 
 import {authService, DrshubErrorHandler} from '../../../services';
+import {L10nContext} from '../../../utils';
 
 interface AuthSheetProps {
   isVisible: boolean;
@@ -26,6 +27,7 @@ export const AuthSheet: React.FC<AuthSheetProps> = observer(
     const theme = useTheme();
     const insets = useSafeAreaInsets();
     const styles = createStyles(theme);
+    const l10n = useContext(L10nContext);
 
     const [isSignUp, setIsSignUp] = useState(false);
     const [email, setEmail] = useState('');
@@ -44,12 +46,15 @@ export const AuthSheet: React.FC<AuthSheetProps> = observer(
 
     const handleEmailAuth = async () => {
       if (!email.trim() || !password.trim()) {
-        Alert.alert('Error', 'Please fill in all required fields.');
+        Alert.alert(
+          l10n.common.error,
+          l10n.components.authSheet.fillRequiredFields,
+        );
         return;
       }
 
       if (isSignUp && !fullName.trim()) {
-        Alert.alert('Error', 'Please enter your full name.');
+        Alert.alert(l10n.common.error, l10n.components.authSheet.enterFullName);
         return;
       }
 
@@ -65,22 +70,27 @@ export const AuthSheet: React.FC<AuthSheetProps> = observer(
           );
           if (ok) {
             Alert.alert(
-              'Account Created',
-              'Please check your email to verify your account.',
-              [{text: 'OK', onPress: onClose}],
+              l10n.components.authSheet.accountCreatedTitle,
+              l10n.components.authSheet.accountCreatedMessage,
+              [{text: l10n.common.ok, onPress: onClose}],
             );
           }
         } else {
           const ok = await authService.signInWithEmail(email.trim(), password);
           if (ok) {
-            Alert.alert('Welcome Back!', 'You have successfully signed in.', [
-              {text: 'OK', onPress: onClose},
-            ]);
+            Alert.alert(
+              l10n.components.authSheet.welcomeBackTitle,
+              l10n.components.authSheet.welcomeBackMessage,
+              [{text: l10n.common.ok, onPress: onClose}],
+            );
           }
         }
       } catch (error) {
         const errorInfo = DrshubErrorHandler.handle(error);
-        Alert.alert('Authentication Error', errorInfo.userMessage);
+        Alert.alert(
+          l10n.components.authSheet.authErrorTitle ?? l10n.common.error,
+          errorInfo.userMessage,
+        );
       } finally {
         setIsLoading(false);
       }
@@ -95,7 +105,10 @@ export const AuthSheet: React.FC<AuthSheetProps> = observer(
         // Sheet will close automatically via useEffect when auth state changes
       } catch (error) {
         const errorInfo = DrshubErrorHandler.handle(error);
-        Alert.alert('Google Sign-In Error', errorInfo.userMessage);
+        Alert.alert(
+          l10n.components.authSheet.googleErrorTitle,
+          errorInfo.userMessage,
+        );
       } finally {
         setIsLoading(false);
       }
@@ -103,7 +116,10 @@ export const AuthSheet: React.FC<AuthSheetProps> = observer(
 
     const handleForgotPassword = async () => {
       if (!email.trim()) {
-        Alert.alert('Error', 'Please enter your email address first.');
+        Alert.alert(
+          l10n.common.error,
+          l10n.components.authSheet.enterEmailFirst,
+        );
         return;
       }
 
@@ -112,14 +128,14 @@ export const AuthSheet: React.FC<AuthSheetProps> = observer(
         const ok = await authService.resetPassword(email.trim());
         if (ok) {
           Alert.alert(
-            'Password Reset',
-            'Check your email for password reset instructions.',
-            [{text: 'OK'}],
+            l10n.components.authSheet.passwordResetTitle,
+            l10n.components.authSheet.passwordResetMessage,
+            [{text: l10n.common.ok}],
           );
         }
       } catch (error) {
         const errorInfo = DrshubErrorHandler.handle(error);
-        Alert.alert('Error', errorInfo.userMessage);
+        Alert.alert(l10n.common.error, errorInfo.userMessage);
       } finally {
         setIsLoading(false);
       }
@@ -140,7 +156,11 @@ export const AuthSheet: React.FC<AuthSheetProps> = observer(
 
     return (
       <Sheet
-        title={isSignUp ? 'Create Account' : 'Sign In'}
+        title={
+          isSignUp
+            ? l10n.components.authSheet.signUpTitle
+            : l10n.components.authSheet.signInTitle
+        }
         isVisible={isVisible}
         onClose={handleClose}
         snapPoints={['85%']}>
@@ -153,7 +173,9 @@ export const AuthSheet: React.FC<AuthSheetProps> = observer(
           {authState.isLoading && (
             <View style={styles.authLoadingContainer}>
               <ActivityIndicator size="large" color={theme.colors.primary} />
-              <Text style={styles.authSubtitle}>Signing you in...</Text>
+              <Text style={styles.authSubtitle}>
+                {l10n.components.authSheet.signingIn}
+              </Text>
             </View>
           )}
 
@@ -169,7 +191,7 @@ export const AuthSheet: React.FC<AuthSheetProps> = observer(
             {isSignUp && (
               <TextInput
                 testID="full-name-input"
-                label="Full Name"
+                label={l10n.components.authSheet.fullNameLabel}
                 value={fullName}
                 onChangeText={setFullName}
                 style={styles.authInput}
@@ -180,7 +202,7 @@ export const AuthSheet: React.FC<AuthSheetProps> = observer(
 
             <TextInput
               testID="email-input"
-              label="Email"
+              label={l10n.components.authSheet.emailLabel}
               value={email}
               onChangeText={setEmail}
               keyboardType="email-address"
@@ -192,7 +214,7 @@ export const AuthSheet: React.FC<AuthSheetProps> = observer(
 
             <TextInput
               testID="password-input"
-              label="Password"
+              label={l10n.components.authSheet.passwordLabel}
               value={password}
               onChangeText={setPassword}
               secureTextEntry
@@ -209,7 +231,9 @@ export const AuthSheet: React.FC<AuthSheetProps> = observer(
               disabled={authState.isLoading}
               style={styles.authButton}
               contentStyle={styles.authButtonContent}>
-              {isSignUp ? 'Create Account' : 'Sign In'}
+              {isSignUp
+                ? l10n.components.authSheet.signUpButton
+                : l10n.components.authSheet.signInButton}
             </Button>
 
             {!isSignUp && (
@@ -217,7 +241,7 @@ export const AuthSheet: React.FC<AuthSheetProps> = observer(
                 mode="text"
                 onPress={handleForgotPassword}
                 disabled={isLoading || authState.isLoading}>
-                Forgot Password?
+                {l10n.components.authSheet.forgotPassword}
               </Button>
             )}
           </View>
@@ -225,7 +249,9 @@ export const AuthSheet: React.FC<AuthSheetProps> = observer(
           {/* Divider */}
           <View style={styles.authDivider}>
             <View style={styles.authDividerLine} />
-            <Text style={styles.authDividerText}>or</Text>
+            <Text style={styles.authDividerText}>
+              {l10n.components.authSheet.or}
+            </Text>
             <View style={styles.authDividerLine} />
           </View>
 
@@ -238,15 +264,15 @@ export const AuthSheet: React.FC<AuthSheetProps> = observer(
             style={styles.authSocialButton}
             contentStyle={styles.authButtonContent}
             icon={GoogleButtonIcon}>
-            Continue with Google
+            {l10n.components.authSheet.continueWithGoogle}
           </Button>
 
           {/* Toggle Sign Up/Sign In */}
           <View style={styles.authToggle}>
             <Text style={styles.authToggleText}>
               {isSignUp
-                ? 'Already have an account? '
-                : "Don't have an account? "}
+                ? l10n.components.authSheet.haveAccount
+                : l10n.components.authSheet.noAccount}
             </Text>
             <Button
               mode="text"
@@ -255,7 +281,9 @@ export const AuthSheet: React.FC<AuthSheetProps> = observer(
               compact
               labelStyle={styles.authToggleLink}
               contentStyle={styles.authToggleButtonContent}>
-              {isSignUp ? 'Sign In' : 'Sign Up'}
+              {isSignUp
+                ? l10n.components.authSheet.signInLink
+                : l10n.components.authSheet.signUpLink}
             </Button>
           </View>
         </Sheet.ScrollView>

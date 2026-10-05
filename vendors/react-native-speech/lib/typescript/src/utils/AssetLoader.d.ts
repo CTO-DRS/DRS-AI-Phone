@@ -30,9 +30,7 @@ export declare function loadAssetAsText(path: string): Promise<string>;
  * @returns File contents as ArrayBuffer
  * @throws Error if path scheme is unsupported or file not found
  */
-export declare function loadAssetAsArrayBuffer(
-  path: string,
-): Promise<ArrayBuffer>;
+export declare function loadAssetAsArrayBuffer(path: string): Promise<ArrayBuffer>;
 /**
  * Convert base64 string to ArrayBuffer
  */
@@ -41,4 +39,3 @@ export declare function base64ToArrayBuffer(base64: string): ArrayBuffer;
  * Convert ArrayBuffer to base64 string
  */
 export declare function arrayBufferToBase64(buffer: ArrayBuffer): string;
-//# sourceMappingURL=AssetLoader.d.ts.map

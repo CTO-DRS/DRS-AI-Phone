@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * React Native Speech - Multi-Engine TTS Library
@@ -38,22 +38,22 @@
  */
 
 // Export Speech API as default
-export {default} from './Speech.js';
+export { default } from "./Speech.js";
 
 // Export types from native API
 
 // Export TTSEngine enum (as value, not type)
-export {TTSEngine} from './types/index.js';
+export { TTSEngine } from "./types/index.js";
 
 // Runtime guard for SpeechInput — exported so consumers (especially
 // untyped JS callers) can branch on input kind without deep imports.
-export {isPhonemeInput} from './types/index.js';
+export { isPhonemeInput } from "./types/index.js";
 
 // Export engine types
 
 // Export Kokoro types
 
-export {CoreMlFlag, DEFAULT_COREML_FLAGS} from './types/index.js';
+export { CoreMlFlag, DEFAULT_COREML_FLAGS } from "./types/index.js";
 
 // Export Supertonic types
 
@@ -62,7 +62,7 @@ export {CoreMlFlag, DEFAULT_COREML_FLAGS} from './types/index.js';
 // Export component types
 
 // Export components
-export {default as HighlightedText} from './components/HighlightedText/index.js';
+export { default as HighlightedText } from "./components/HighlightedText/index.js";
 
 // Export engines for advanced usage.
 // These are part of the public API but their shape is not covered by
@@ -70,13 +70,13 @@ export {default as HighlightedText} from './components/HighlightedText/index.js'
 // header comment above.
 
 /** @internal Advanced: low-level engine registry. */
-export {engineManager} from './engines/EngineManager.js';
+export { engineManager } from "./engines/EngineManager.js";
 /** @internal Advanced: OS native engine class. */
-export {OSEngine} from './engines/OSEngine.js';
+export { OSEngine } from "./engines/OSEngine.js";
 /** @internal Advanced: Kokoro neural engine class. */
-export {KokoroEngine} from './engines/kokoro/index.js';
+export { KokoroEngine } from "./engines/kokoro/index.js";
 /** @internal Advanced: Supertonic neural engine class. */
-export {SupertonicEngine} from './engines/supertonic/index.js';
+export { SupertonicEngine } from "./engines/supertonic/index.js";
 /** @internal Advanced: Kitten neural engine class. */
-export {KittenEngine} from './engines/kitten/index.js';
+export { KittenEngine } from "./engines/kitten/index.js";
 //# sourceMappingURL=index.js.map

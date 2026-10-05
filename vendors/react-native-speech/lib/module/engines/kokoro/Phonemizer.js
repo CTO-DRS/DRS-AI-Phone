@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * Phonemizer - Converts text to phonemes (G2P - Grapheme to Phoneme)
@@ -8,7 +8,7 @@
  * and quality will be significantly degraded.
  */
 
-import {createComponentLogger} from '../../utils/logger.js';
+import { createComponentLogger } from "../../utils/logger.js";
 const log = createComponentLogger('Kokoro', 'Phonemizer');
 
 /**
@@ -22,10 +22,7 @@ function escapeRegExp(str) {
  * Punctuation characters that are preserved during phonemization
  */
 const PUNCTUATION = ';:,.!?¡¿—…"«»""(){}[]';
-export const PUNCTUATION_PATTERN = new RegExp(
-  `(\\s*[${escapeRegExp(PUNCTUATION)}]+\\s*)+`,
-  'g',
-);
+export const PUNCTUATION_PATTERN = new RegExp(`(\\s*[${escapeRegExp(PUNCTUATION)}]+\\s*)+`, 'g');
 
 /**
  * Split text on punctuation pattern, preserving the delimiters
@@ -40,13 +37,13 @@ export function splitOnPunctuation(text) {
     if (prev < index) {
       result.push({
         isPunctuation: false,
-        text: text.slice(prev, index),
+        text: text.slice(prev, index)
       });
     }
     if (fullMatch.length > 0) {
       result.push({
         isPunctuation: true,
-        text: fullMatch,
+        text: fullMatch
       });
     }
     prev = index + fullMatch.length;
@@ -54,7 +51,7 @@ export function splitOnPunctuation(text) {
   if (prev < text.length) {
     result.push({
       isPunctuation: false,
-      text: text.slice(prev),
+      text: text.slice(prev)
     });
   }
   return result;
@@ -65,9 +62,7 @@ export function splitOnPunctuation(text) {
  * Punctuation chunks are kept as-is, phoneme chunks are joined
  */
 export function rejoinChunks(chunks) {
-  return chunks
-    .map(chunk => (chunk.isPunctuation ? chunk.text : chunk.phoneme || ''))
-    .join('');
+  return chunks.map(chunk => chunk.isPunctuation ? chunk.text : chunk.phoneme || '').join('');
 }
 
 /**
@@ -77,30 +72,28 @@ export function rejoinChunks(chunks) {
  */
 export function postProcessPhonemes(phonemes, language) {
   let processed = phonemes
-    // Fix kokoro pronunciation (Japanese word)
-    .replace(/kəkˈoːɹoʊ/g, 'kˈoʊkəɹoʊ')
-    .replace(/kəkˈɔːɹəʊ/g, 'kˈəʊkəɹəʊ')
-    // Normalize phoneme symbols for Kokoro.
-    // Strip ʲ (palatalization): reference kokoro.js converts ʲ→j, but the
-    // dict+hans00 phonemizer emits ʲ in positions (e.g. "libraryʲ") where
-    // the reference model was never trained on it. Safer to drop than to
-    // convert to 'j' and risk mispronunciation.
-    .replace(/ʲ/g, '')
-    .replace(/r/g, 'ɹ') // Normalize r-sounds
-    .replace(/x/g, 'k') // Normalize velar fricative
-    .replace(/ɬ/g, 'l') // Normalize lateral fricative
-    // Add space before "hundred" when preceded by vowel/r
-    .replace(/(?<=[a-zɹː])(?=hˈʌndɹɪd)/g, ' ')
-    // Fix trailing z before punctuation
-    .replace(/ z(?=[;:,.!?¡¿—…"«»"" ]|$)/g, 'z');
+  // Fix kokoro pronunciation (Japanese word)
+  .replace(/kəkˈoːɹoʊ/g, 'kˈoʊkəɹoʊ').replace(/kəkˈɔːɹəʊ/g, 'kˈəʊkəɹəʊ')
+  // Normalize phoneme symbols for Kokoro.
+  // Strip ʲ (palatalization): reference kokoro.js converts ʲ→j, but the
+  // dict+hans00 phonemizer emits ʲ in positions (e.g. "libraryʲ") where
+  // the reference model was never trained on it. Safer to drop than to
+  // convert to 'j' and risk mispronunciation.
+  .replace(/ʲ/g, '').replace(/r/g, 'ɹ') // Normalize r-sounds
+  .replace(/x/g, 'k') // Normalize velar fricative
+  .replace(/ɬ/g, 'l') // Normalize lateral fricative
+  // Add space before "hundred" when preceded by vowel/r
+  .replace(/(?<=[a-zɹː])(?=hˈʌndɹɪd)/g, ' ')
+  // Fix trailing z before punctuation
+  .replace(/ z(?=[;:,.!?¡¿—…"«»"" ]|$)/g, 'z');
 
   // Additional post-processing for American English
   if (language === 'en-us' || language === 'a') {
     processed = processed
-      // ninety -> nindi
-      .replace(/(?<=nˈaɪn)ti(?!ː)/g, 'di')
-      // fˈɔːɹ -> fˈoːɹ (four)
-      .replace(/fˈɔːɹ/g, 'fˈoːɹ');
+    // ninety -> nindi
+    .replace(/(?<=nˈaɪn)ti(?!ː)/g, 'di')
+    // fˈɔːɹ -> fˈoːɹ (four)
+    .replace(/fˈɔːɹ/g, 'fˈoːɹ');
   }
   return processed.trim();
 }
@@ -115,9 +108,7 @@ export function postProcessPhonemes(phonemes, language) {
  */
 export class NoOpPhonemizer {
   async phonemize(text, _language) {
-    log.warn(
-      'Using NO-OP phonemizer - text passed through without phonemization',
-    );
+    log.warn('Using NO-OP phonemizer - text passed through without phonemization');
     return text;
   }
 }
@@ -135,46 +126,38 @@ export class NoOpPhonemizer {
  */
 export function createPhonemizer(type, opts) {
   switch (type) {
-    case 'js': {
-      if (!opts?.dict) {
-        throw new Error(
-          "createPhonemizer('js') requires a dictionary. " +
-            'Provide `dict` via loadNativeDict(dictPath) (or loadDict() for tests) ' +
-            'or set `dictPath` on the engine config.',
-        );
+    case 'js':
+      {
+        if (!opts?.dict) {
+          throw new Error("createPhonemizer('js') requires a dictionary. " + 'Provide `dict` via loadNativeDict(dictPath) (or loadDict() for tests) ' + 'or set `dictPath` on the engine config.');
+        }
+        const {
+          HansPhonemizer
+        } = require('../../phonemization/HansPhonemizer');
+        log.info(`Phonemizer: HansPhonemizer (js, Kokoro post-process, dict=${opts.dict.size?.() ?? '?'} entries)`);
+        return new HansPhonemizer({
+          dict: opts.dict,
+          postProcess: postProcessPhonemes
+        });
       }
-      const {HansPhonemizer} = require('../../phonemization/HansPhonemizer');
-      log.info(
-        `Phonemizer: HansPhonemizer (js, Kokoro post-process, dict=${opts.dict.size?.() ?? '?'} entries)`,
-      );
-      return new HansPhonemizer({
-        dict: opts.dict,
-        postProcess: postProcessPhonemes,
-      });
-    }
-    case 'js-ipa': {
-      if (!opts?.dict) {
-        throw new Error(
-          "createPhonemizer('js-ipa') requires a dictionary. " +
-            'Provide `dict` via loadNativeDict(dictPath) (or loadDict() for tests) ' +
-            'or set `dictPath` on the engine config.',
-        );
+    case 'js-ipa':
+      {
+        if (!opts?.dict) {
+          throw new Error("createPhonemizer('js-ipa') requires a dictionary. " + 'Provide `dict` via loadNativeDict(dictPath) (or loadDict() for tests) ' + 'or set `dictPath` on the engine config.');
+        }
+        const {
+          HansPhonemizer
+        } = require('../../phonemization/HansPhonemizer');
+        log.info(`Phonemizer: HansPhonemizer (js-ipa, raw IPA, dict=${opts.dict.size?.() ?? '?'} entries)`);
+        return new HansPhonemizer({
+          dict: opts.dict
+        });
       }
-      const {HansPhonemizer} = require('../../phonemization/HansPhonemizer');
-      log.info(
-        `Phonemizer: HansPhonemizer (js-ipa, raw IPA, dict=${opts.dict.size?.() ?? '?'} entries)`,
-      );
-      return new HansPhonemizer({
-        dict: opts.dict,
-      });
-    }
     case 'none':
       log.info('Phonemizer: NoOpPhonemizer (pass-through)');
       return new NoOpPhonemizer();
     default:
-      log.warn(
-        `Unknown phonemizer type "${type}", defaulting to NoOpPhonemizer`,
-      );
+      log.warn(`Unknown phonemizer type "${type}", defaulting to NoOpPhonemizer`);
       return new NoOpPhonemizer();
   }
 }

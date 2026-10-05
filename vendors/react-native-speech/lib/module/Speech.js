@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * React Native Speech - Multi-Engine TTS Library
@@ -21,15 +21,15 @@
  * await Speech.speak('Hello world', 'af_bella', { speed: 1.0 });
  */
 
-import TurboSpeech from './NativeSpeech.js';
-import {engineManager} from './engines/EngineManager.js';
-import {OSEngine} from './engines/OSEngine.js';
-import {KokoroEngine} from './engines/kokoro/index.js';
-import {SupertonicEngine} from './engines/supertonic/index.js';
-import {KittenEngine} from './engines/kitten/index.js';
-import {neuralAudioPlayer} from './engines/NeuralAudioPlayer.js';
-import {SpeechStreamImpl} from './engines/SpeechStream.js';
-import {createComponentLogger} from './utils/logger.js';
+import TurboSpeech from "./NativeSpeech.js";
+import { engineManager } from "./engines/EngineManager.js";
+import { OSEngine } from "./engines/OSEngine.js";
+import { KokoroEngine } from "./engines/kokoro/index.js";
+import { SupertonicEngine } from "./engines/supertonic/index.js";
+import { KittenEngine } from "./engines/kitten/index.js";
+import { neuralAudioPlayer } from "./engines/NeuralAudioPlayer.js";
+import { SpeechStreamImpl } from "./engines/SpeechStream.js";
+import { createComponentLogger } from "./utils/logger.js";
 const log = createComponentLogger('Speech', 'Api');
 
 // Initialize OS engine
@@ -59,8 +59,7 @@ export default class Speech {
   /**
    * The maximum number of characters allowed in a single call to the speak methods.
    */
-  static maxInputLength =
-    TurboSpeech.getConstants().maxInputLength ?? Number.MAX_VALUE;
+  static maxInputLength = TurboSpeech.getConstants().maxInputLength ?? Number.MAX_VALUE;
 
   // Track current engine
   static currentEngine = 'os-native';
@@ -83,7 +82,10 @@ export default class Speech {
    * });
    */
   static async initialize(config) {
-    const {engine, ...engineConfig} = config;
+    const {
+      engine,
+      ...engineConfig
+    } = config;
     log.info(`Initializing engine: ${engine}`);
     // Store current engine
     Speech.currentEngine = engine;
@@ -165,14 +167,12 @@ export default class Speech {
   static async speak(input, voiceId, options) {
     const engine = Speech.currentEngine;
     if (!engineManager.isEngineInitialized(engine)) {
-      throw new Error(
-        `Engine '${engine}' not initialized. Call Speech.initialize() first.`,
-      );
+      throw new Error(`Engine '${engine}' not initialized. Call Speech.initialize() first.`);
     }
     const engineInstance = engineManager.getEngine(engine);
     await engineInstance.synthesize(input, {
       voiceId,
-      ...options,
+      ...options
     });
   }
 
@@ -216,36 +216,31 @@ export default class Speech {
     // lifetime. OS engine doesn't — fall back to the adaptive batcher.
     const engine = Speech.currentEngine;
     let engineStreamFactory;
-    const streamVoiceOpt = voiceId
-      ? {
-          voiceId,
-        }
-      : {};
+    const streamVoiceOpt = voiceId ? {
+      voiceId
+    } : {};
     if (engine === 'kokoro' && kokoroEngine) {
-      engineStreamFactory = opts =>
-        kokoroEngine.synthesizeStream({
-          ...streamVoiceOpt,
-          ...opts,
-        });
+      engineStreamFactory = opts => kokoroEngine.synthesizeStream({
+        ...streamVoiceOpt,
+        ...opts
+      });
     } else if (engine === 'supertonic' && supertonicEngine) {
-      engineStreamFactory = opts =>
-        supertonicEngine.synthesizeStream({
-          ...streamVoiceOpt,
-          ...opts,
-        });
+      engineStreamFactory = opts => supertonicEngine.synthesizeStream({
+        ...streamVoiceOpt,
+        ...opts
+      });
     } else if (engine === 'kitten' && kittenEngine) {
-      engineStreamFactory = opts =>
-        kittenEngine.synthesizeStream({
-          ...streamVoiceOpt,
-          ...opts,
-        });
+      engineStreamFactory = opts => kittenEngine.synthesizeStream({
+        ...streamVoiceOpt,
+        ...opts
+      });
     }
     return new SpeechStreamImpl({
       synthesize: text => Speech.speak(text, voiceId, synthesisOptions),
       stop: () => Speech.stop(),
       subscribeProgress: cb => Speech.onChunkProgress(cb),
       engineStreamFactory,
-      options,
+      options
     });
   }
 
@@ -257,9 +252,7 @@ export default class Speech {
   static async getVoices(language) {
     const engine = Speech.currentEngine;
     if (!engineManager.isEngineInitialized(engine)) {
-      throw new Error(
-        `Engine '${engine}' not initialized. Call Speech.initialize() first.`,
-      );
+      throw new Error(`Engine '${engine}' not initialized. Call Speech.initialize() first.`);
     }
     const engineInstance = engineManager.getEngine(engine);
     return engineInstance.getAvailableVoices(language);
@@ -272,9 +265,7 @@ export default class Speech {
    */
   static async getVoicesWithMetadata(language) {
     const engine = Speech.currentEngine;
-    log.debug(
-      `getVoicesWithMetadata currentEngine: ${engine}, kokoroEngine: ${!!kokoroEngine}, supertonicEngine: ${!!supertonicEngine}, kittenEngine: ${!!kittenEngine}`,
-    );
+    log.debug(`getVoicesWithMetadata currentEngine: ${engine}, kokoroEngine: ${!!kokoroEngine}, supertonicEngine: ${!!supertonicEngine}, kittenEngine: ${!!kittenEngine}`);
     if (engine === 'kokoro') {
       if (!kokoroEngine) {
         throw new Error('Kokoro engine not initialized');
@@ -291,9 +282,7 @@ export default class Speech {
       }
       return kittenEngine.getVoicesWithMetadata();
     } else {
-      throw new Error(
-        'getVoicesWithMetadata() is only available for neural engines (Kokoro, Supertonic, Kitten)',
-      );
+      throw new Error('getVoicesWithMetadata() is only available for neural engines (Kokoro, Supertonic, Kitten)');
     }
   }
 
@@ -480,7 +469,7 @@ export default class Speech {
     return {
       success: true,
       partialRelease: false,
-      errors: [],
+      errors: []
     };
   }
 
@@ -491,11 +480,7 @@ export default class Speech {
    */
   static async pause() {
     const engine = Speech.currentEngine;
-    if (
-      (engine === 'kokoro' && kokoroEngine) ||
-      (engine === 'supertonic' && supertonicEngine) ||
-      (engine === 'kitten' && kittenEngine)
-    ) {
+    if (engine === 'kokoro' && kokoroEngine || engine === 'supertonic' && supertonicEngine || engine === 'kitten' && kittenEngine) {
       return neuralAudioPlayer.pause();
     }
     return TurboSpeech.pause();
@@ -508,11 +493,7 @@ export default class Speech {
    */
   static async resume() {
     const engine = Speech.currentEngine;
-    if (
-      (engine === 'kokoro' && kokoroEngine) ||
-      (engine === 'supertonic' && supertonicEngine) ||
-      (engine === 'kitten' && kittenEngine)
-    ) {
+    if (engine === 'kokoro' && kokoroEngine || engine === 'supertonic' && supertonicEngine || engine === 'kitten' && kittenEngine) {
       return neuralAudioPlayer.resume();
     }
     return TurboSpeech.resume();

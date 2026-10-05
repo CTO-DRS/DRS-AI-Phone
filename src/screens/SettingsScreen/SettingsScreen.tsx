@@ -1501,8 +1501,8 @@ export const SettingsScreen: React.FC = observer(() => {
                         await exportLegacyChatSessions();
                       } catch {
                         Alert.alert(
-                          'Export Error',
-                          'Failed to export legacy chat sessions. The file may not exist.',
+                          l10n.common.error,
+                          l10n.settings.exportLegacyError,
                         );
                       }
                     }}

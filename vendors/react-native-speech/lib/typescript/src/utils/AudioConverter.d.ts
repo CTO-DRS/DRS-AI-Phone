@@ -7,9 +7,7 @@
  * @param float32Samples - Audio samples in Float32 format (range -1.0 to 1.0)
  * @returns Int16Array PCM samples (range -32768 to 32767)
  */
-export declare function float32ToInt16(
-  float32Samples: Float32Array,
-): Int16Array;
+export declare function float32ToInt16(float32Samples: Float32Array): Int16Array;
 /**
  * Convert Int16Array to base64-encoded string for native bridge transfer
  * @param int16Samples - Audio samples in Int16 format
@@ -22,9 +20,7 @@ export declare function int16ToBase64(int16Samples: Int16Array): string;
  * @param float32Samples - Audio samples in Float32 format (range -1.0 to 1.0)
  * @returns Base64-encoded Int16 PCM string
  */
-export declare function float32ToBase64Int16(
-  float32Samples: Float32Array,
-): string;
+export declare function float32ToBase64Int16(float32Samples: Float32Array): string;
 /**
  * Estimate the size of base64-encoded audio data
  * Useful for logging and debugging
@@ -38,8 +34,4 @@ export declare function estimateBase64Size(sampleCount: number): number;
  * @param sampleRate - Sample rate in Hz
  * @returns Duration in seconds
  */
-export declare function calculateDuration(
-  sampleCount: number,
-  sampleRate: number,
-): number;
-//# sourceMappingURL=AudioConverter.d.ts.map
+export declare function calculateDuration(sampleCount: number, sampleRate: number): number;
