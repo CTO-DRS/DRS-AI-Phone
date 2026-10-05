@@ -19,6 +19,7 @@ const EXPECTED_SECTIONS = [
   'storage',
   'generation',
   'models',
+  'modelsHub',
   'completionParams',
   'about',
   'feedback',

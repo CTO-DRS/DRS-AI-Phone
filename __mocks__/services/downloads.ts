@@ -10,6 +10,11 @@ export const downloadManager = {
   }),
   startDownload: jest.fn().mockResolvedValue(undefined),
   cancelDownload: jest.fn(),
+  pauseDownload: jest.fn().mockResolvedValue(true),
+  resumeDownload: jest.fn().mockResolvedValue(true),
+  isPaused: jest.fn().mockReturnValue(false),
   setCallbacks: jest.fn(),
   syncWithActiveDownloads: jest.fn(),
+  activeJobs: [],
+  pausedJobs: [],
 };
