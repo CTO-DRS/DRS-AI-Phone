@@ -1,5 +1,10 @@
 name: Android APK Build
 
+# Needed for the Release-creation step: the default GITHUB_TOKEN is
+# read-only unless contents:write is granted explicitly.
+permissions:
+  contents: write
+
 on:
   workflow_dispatch:
     inputs:
