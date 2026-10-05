@@ -20,7 +20,7 @@ import {
   OpenAICompletionEngine,
 } from '../api/completionEngines';
 
-import {uiStore, hfStore} from '.';
+import {uiStore, hfStore, modelHubStore} from '.';
 import {serverStore} from './ServerStore';
 import {chatSessionStore} from './ChatSessionStore';
 import {
@@ -195,6 +195,9 @@ class ModelStore {
 
   lastUsedModelId: string | undefined = undefined;
 
+  /** Model ids currently in the post-download verification gate. */
+  verifyingModelIds: string[] = [];
+
   // Auto-release tracking (persistent)
   wasAutoReleased: boolean = false;
   lastAutoReleasedModelId: string | undefined = undefined;
@@ -291,7 +294,18 @@ class ModelStore {
         if (model) {
           runInAction(() => {
             model.progress = 100;
+          });
+
+          // Verification gate: the model only counts as installed after its
+          // file passes the integrity checks (size + checksum when available).
+          const verified = await this.verifyDownloadedModel(model);
+          if (!verified) {
+            return; // error state already surfaced by the gate
+          }
+
+          runInAction(() => {
             model.isDownloaded = true;
+            model.downloadedAt = Date.now();
           });
 
           // Fetch and persist GGUF metadata after download completes
@@ -1601,7 +1615,9 @@ class ModelStore {
     try {
       const destinationPath = await this.getModelFullPath(model);
       const authToken = hfStore.shouldUseToken ? hfStore.hfToken : null;
-      await downloadManager.startDownload(model, destinationPath, authToken);
+      await downloadManager.startDownload(model, destinationPath, authToken, {
+        networkType: modelHubStore.wifiOnlyDownloads ? 'WIFI' : 'ANY',
+      });
 
       // For vision models, automatically download the projection model
       await this._downloadProjectionModelIfNeeded(model);
@@ -1644,6 +1660,90 @@ class ModelStore {
   get isDownloading() {
     return (modelId: string) => downloadManager.isDownloading(modelId);
   }
+
+  /** Android pause (WorkManager PAUSED); no-op/false on iOS. */
+  pauseDownload = async (modelId: string): Promise<boolean> =>
+    downloadManager.pauseDownload(modelId);
+
+  /** Resume a paused Android download from its persisted byte offset. */
+  resumeDownload = async (modelId: string): Promise<boolean> =>
+    downloadManager.resumeDownload(modelId);
+
+  /**
+   * Post-download verification gate.
+   *
+   * 1. File must exist at the expected path.
+   * 2. Size must match the HF LFS record within 0.1% (cheap, always run).
+   * 3. SHA-256 must match the LFS oid when the record exposes one and the
+   *    file is ≤ MAX_HASH_VERIFY_BYTES (hashing multi-GB files on-device is
+   *    slow and the native hasher is known to be unreliable on huge files —
+   *    above the threshold the size check is the honest verification).
+   *
+   * On failure the partial/corrupt file is deleted and a download error state
+   * with `reason: 'verification'` is surfaced so the user can re-download.
+   */
+  verifyDownloadedModel = async (model: Model): Promise<boolean> => {
+    const MAX_HASH_VERIFY_BYTES = 4 * 1024 * 1024 * 1024;
+    runInAction(() => {
+      this.verifyingModelIds = [...this.verifyingModelIds, model.id];
+    });
+    try {
+      const filePath = await this.getModelFullPath(model);
+      if (!(await RNFS.exists(filePath))) {
+        throw new Error('Downloaded model file is missing');
+      }
+      const stat = await RNFS.stat(filePath);
+      const expectedSize = model.hfModelFile?.lfs?.size;
+      if (expectedSize && expectedSize > 0) {
+        const diffRatio = Math.abs(stat.size - expectedSize) / expectedSize;
+        if (diffRatio > 0.001) {
+          throw new Error(
+            `Model file size mismatch (${stat.size} vs ${expectedSize} bytes)`,
+          );
+        }
+      }
+      const expectedHash = model.hfModelFile?.lfs?.oid;
+      if (expectedHash && stat.size <= MAX_HASH_VERIFY_BYTES) {
+        const actualHash = await getSHA256Hash(filePath);
+        if (
+          actualHash &&
+          actualHash.toLowerCase() !== expectedHash.toLowerCase()
+        ) {
+          throw new Error('Model file checksum mismatch');
+        }
+      }
+      return true;
+    } catch (err) {
+      console.error('Model verification failed:', err);
+      // Remove the unusable file so the user can cleanly re-download.
+      try {
+        const filePath = await this.getModelFullPath(model);
+        if (await RNFS.exists(filePath)) {
+          await RNFS.unlink(filePath);
+        }
+      } catch (cleanupErr) {
+        console.error('Failed to clean up unverified model file:', cleanupErr);
+      }
+      const errorState = createErrorState(
+        err instanceof Error ? err : new Error(String(err)),
+        'download',
+        'huggingface',
+        {modelId: model.id, reason: 'verification'},
+      );
+      runInAction(() => {
+        model.progress = 0;
+        model.isDownloaded = false;
+        this.downloadError = errorState;
+      });
+      return false;
+    } finally {
+      runInAction(() => {
+        this.verifyingModelIds = this.verifyingModelIds.filter(
+          id => id !== model.id,
+        );
+      });
+    }
+  };
 
   getDownloadProgress = (modelId: string) => {
     return downloadManager.getDownloadProgress(modelId);
@@ -2417,6 +2517,13 @@ class ModelStore {
       runInAction(() => {
         this.lastUsedModelId = model.id;
       });
+      try {
+        runInAction(() => {
+          model.lastUsedAt = Date.now();
+        });
+      } catch {
+        // Non-critical bookkeeping — never fail a model load over it.
+      }
     }
   }
 

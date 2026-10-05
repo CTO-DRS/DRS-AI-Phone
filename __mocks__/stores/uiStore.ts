@@ -20,6 +20,11 @@ export const mockUiStore = {
         [UIStore.GROUP_KEYS.READY_TO_USE]: true,
       },
     },
+    modelsHub: {
+      query: '',
+      category: 'all',
+      sort: 'recommended',
+    },
   },
   language: 'en',
   supportedLanguages: [...supportedLanguages],

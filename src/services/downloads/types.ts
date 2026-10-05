@@ -12,6 +12,8 @@ export interface DownloadProgress {
 
 export interface DownloadState {
   isDownloading: boolean;
+  /** Android only — WorkManager paused the transfer; resumable via resumeDownload. */
+  isPaused?: boolean;
   progress: DownloadProgress | null;
   error: Error | null;
 }
@@ -20,11 +22,7 @@ export interface DownloadJob {
   model: Model;
   jobId?: number; // For iOS downloads - RNFS uses number for jobId
   downloadId?: string; // For Android downloads - UUID returned by WorkManager
-  state: {
-    isDownloading: boolean;
-    progress: DownloadProgress | null;
-    error: Error | null;
-  };
+  state: DownloadState;
   destination: string;
   lastBytesWritten: number;
   lastUpdateTime: number;

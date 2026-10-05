@@ -30,6 +30,14 @@ export class UIStore {
         [UIStore.GROUP_KEYS.READY_TO_USE]: true,
       },
     },
+    modelsHub: {
+      /** Non-empty query switches the hub into search mode. */
+      query: '' as string,
+      /** Active category ('all' = browse mode). */
+      category: 'all' as string,
+      /** Result ordering for search + category browse. */
+      sort: 'recommended' as string,
+    },
   };
 
   // This is a flag to auto-navigate to the chat page after loading a model

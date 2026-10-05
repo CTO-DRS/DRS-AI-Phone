@@ -16,6 +16,11 @@ describe('UIStore', () => {
 
   it('should initialize with default values', () => {
     expect(uiStore.pageStates).toEqual({
+      modelsHub: {
+        query: '',
+        category: 'all',
+        sort: 'recommended',
+      },
       modelsScreen: {
         filters: [],
         expandedGroups: {
