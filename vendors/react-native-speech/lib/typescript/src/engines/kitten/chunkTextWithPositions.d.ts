@@ -6,12 +6,8 @@
  * within the unmodified input string. Oversize sentences fall back to
  * whitespace splitting, still in original-text space.
  */
-export declare function chunkTextWithPositions(
-  text: string,
-  maxLen: number,
-): Array<{
-  text: string;
-  startIndex: number;
-  endIndex: number;
+export declare function chunkTextWithPositions(text: string, maxLen: number): Array<{
+    text: string;
+    startIndex: number;
+    endIndex: number;
 }>;
-//# sourceMappingURL=chunkTextWithPositions.d.ts.map

@@ -3,13 +3,14 @@ import {AccessibilityRole, StyleProp, ViewStyle} from 'react-native';
 
 import LinearGradient from 'react-native-linear-gradient';
 
+import {BRAND_GRADIENT_RAMP} from '../../theme/tokens/brand';
+
 /**
- * DRS AI brand gradient — the single source of truth for the violet →
- * indigo → blue ramp that also drives the native splash (`bg_splash.xml`)
- * and the app icon. Components should never hardcode these stops; import
- * `BRAND_GRADIENT_COLORS` or wrap content in `BrandGradient` instead.
+ * DRS AI brand gradient surface — renders the official violet → indigo →
+ * blue ramp (`BRAND_GRADIENT_RAMP` from the theme tokens, the same stops
+ * that drive the native splash and the app icon). Components should never
+ * hardcode gradient stops; wrap content in `BrandGradient` instead.
  */
-export const BRAND_GRADIENT_COLORS = ['#7C3AED', '#4F46E5', '#2563EB'] as const;
 
 interface BrandGradientProps {
   /** Optional children rendered on top of the gradient. */
@@ -57,7 +58,7 @@ export const BrandGradient = ({
       : (style ?? baseStyle);
   return (
     <LinearGradient
-      colors={BRAND_GRADIENT_COLORS as unknown as string[]}
+      colors={BRAND_GRADIENT_RAMP as unknown as string[]}
       start={start}
       end={end}
       style={composed}

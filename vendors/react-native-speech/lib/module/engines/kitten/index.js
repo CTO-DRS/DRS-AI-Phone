@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
-export {KittenEngine} from './KittenEngine.js';
+export { KittenEngine } from "./KittenEngine.js";
 //# sourceMappingURL=index.js.map

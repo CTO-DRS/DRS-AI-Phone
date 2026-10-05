@@ -55,6 +55,12 @@ const ALL_LANGUAGES: AvailableLanguage[] = [
   'uk',
   'zh',
   'zh_Hant',
+  'de',
+  'fr',
+  'it',
+  'sv',
+  'et',
+  'be',
 ];
 
 const NON_EN_LANGUAGES = ALL_LANGUAGES.filter(l => l !== 'en');
@@ -135,15 +141,12 @@ describe('l10n object', () => {
       expect(lang in l10n).toBe(true);
     }
     expect('xx' in l10n).toBe(false);
-    expect('fr' in l10n).toBe(false);
   });
 
   it('returns undefined for unsupported language key', () => {
     // Access a property that does not exist on the l10n object
 
     expect((l10n as any).xx).toBeUndefined();
-
-    expect((l10n as any).fr).toBeUndefined();
   });
 
   it('Object.keys does NOT trigger lazy-loading getters', () => {

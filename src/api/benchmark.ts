@@ -31,7 +31,6 @@ export async function submitBenchmark(
       );
     }
 
-
     // App Check: attempt verification when available, but never block the
     // user — self-built/FOSS installs lack Play Integrity/App Attest, so
     // the request is submitted without the token and the server applies
@@ -41,10 +40,7 @@ export async function submitBenchmark(
       await initializeAppCheck();
       appCheckToken = await getAppCheckToken();
     } catch (error) {
-      console.warn(
-        'App Check unavailable; submitting without a token:',
-        error,
-      );
+      console.warn('App Check unavailable; submitting without a token:', error);
     }
 
     // Prepare data and submit to server
@@ -56,9 +52,7 @@ export async function submitBenchmark(
     try {
       const response = await axios.post(urls.benchmarkSubmit(), data, {
         headers: {
-          ...(appCheckToken
-            ? {'X-Firebase-AppCheck': appCheckToken}
-            : {}),
+          ...(appCheckToken ? {'X-Firebase-AppCheck': appCheckToken} : {}),
           'Content-Type': 'application/json',
         },
         timeout: 10000,

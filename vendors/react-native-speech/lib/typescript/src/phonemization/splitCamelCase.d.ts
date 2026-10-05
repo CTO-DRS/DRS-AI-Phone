@@ -18,4 +18,3 @@
  * Mirrors the spirit of espeak-ng's translate.c case-transition handling.
  */
 export declare function splitCamelCase(text: string): string;
-//# sourceMappingURL=splitCamelCase.d.ts.map

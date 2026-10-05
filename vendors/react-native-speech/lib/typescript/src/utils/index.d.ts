@@ -7,4 +7,3 @@ export * from './logger';
 export * from './AssetLoader';
 export * from './TextChunker';
 export * from './utf8';
-//# sourceMappingURL=index.d.ts.map

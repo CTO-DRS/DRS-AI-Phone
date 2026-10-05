@@ -8,9 +8,9 @@
  * production React Native uses loadNativeDict for the ~100MB → <1MB
  * heap win.
  */
-import type {DictSource} from './DictSource';
-import {JsDictSource} from './JsDictSource';
-import {type NativeDictSource} from './NativeDictSource';
+import type { DictSource } from './DictSource';
+import { JsDictSource } from './JsDictSource';
+import { type NativeDictSource } from './NativeDictSource';
 /**
  * Load a TSV dict (`word<TAB>ipa` per line) into memory and return a
  * JsDictSource. Cached by path.
@@ -24,5 +24,4 @@ export declare function loadDict(path: string): Promise<JsDictSource>;
  */
 export declare function loadNativeDict(path: string): Promise<NativeDictSource>;
 export declare function clearDictCache(): void;
-export type {DictSource};
-//# sourceMappingURL=dict.d.ts.map
+export type { DictSource };

@@ -120,7 +120,7 @@ export const FABGroup: React.FC<FABGroupProps> = ({
       }}
       fabStyle={styles.fab}
       backdropColor={theme.colors.surface}
-      accessibilityLabel={open ? 'Close menu' : 'Open menu'}
+      accessibilityLabel={open ? l10n.common.closeMenu : l10n.common.openMenu}
     />
   );
 };

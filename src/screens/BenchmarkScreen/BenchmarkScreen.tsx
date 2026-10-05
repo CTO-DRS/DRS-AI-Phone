@@ -15,6 +15,7 @@ import {Menu, Dialog, Checkbox} from '../../components';
 import {useTheme} from '../../hooks';
 import {L10nContext} from '../../utils';
 import {t} from '../../locales';
+import type {Translations} from '../../locales/types';
 
 import {createStyles} from './styles';
 import {DeviceInfoCard} from './DeviceInfoCard';
@@ -43,25 +44,38 @@ const getBinarySteps = (min: number, max: number): number[] => {
 const BENCHMARK_PARAMS_METADATA = {
   pp: {
     validation: {min: 64, max: 4096},
-    descriptionKey:
-      'Number of prompt processing tokens (max: physical batch size)',
+    descriptionKey: 'pp',
     steps: getBinarySteps(64, 4096),
   },
   tg: {
     validation: {min: 32, max: 2048},
-    descriptionKey: 'Number of text generation tokens',
+    descriptionKey: 'tg',
     steps: getBinarySteps(32, 2048),
   },
   pl: {
     validation: {min: 1, max: 4},
-    descriptionKey: 'Pipeline parallel size',
+    descriptionKey: 'pl',
     steps: [1, 2, 3, 4],
   },
   nr: {
     validation: {min: 1, max: 10},
-    descriptionKey: 'Number of repetitions',
+    descriptionKey: 'nr',
     steps: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
   },
+};
+
+/** Localized label for a benchmark preset id ('Default' | 'Fast' | 'Custom'). */
+const getPresetLabel = (translations: Translations, label: string): string => {
+  switch (label) {
+    case 'Default':
+      return translations.benchmark.presetDefault;
+    case 'Fast':
+      return translations.benchmark.presetFast;
+    case 'Custom':
+      return translations.benchmark.presetCustom;
+    default:
+      return label;
+  }
 };
 
 export const BenchmarkScreen: React.FC = observer(() => {
@@ -376,7 +390,7 @@ export const BenchmarkScreen: React.FC = observer(() => {
         />
         <View style={styles.sliderDescriptionContainer}>
           <Text style={styles.description}>
-            {metadata.descriptionKey}
+            {l10n.benchmark.params[metadata.descriptionKey]}
             {name === 'pp' && modelStore.activeContextSettings && (
               <Text style={styles.maxValueHint}>
                 {' '}
@@ -416,7 +430,7 @@ export const BenchmarkScreen: React.FC = observer(() => {
               mode={selectedConfig === config ? 'contained' : 'outlined'}
               onPress={() => handlePresetSelect(config)}
               style={styles.presetButton}>
-              {config.label}
+              {getPresetLabel(l10n, config.label)}
             </Button>
           ))}
         </View>

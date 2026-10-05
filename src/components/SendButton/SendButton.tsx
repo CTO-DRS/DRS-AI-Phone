@@ -8,6 +8,7 @@ import {
 
 import {BrandGradient} from '../BrandGradient';
 import {useTheme} from '../../hooks';
+import {BRAND_PURPLE} from '../../theme/tokens/brand';
 
 import {L10nContext} from '../../utils';
 import {SendIcon} from '../../assets/icons';
@@ -62,7 +63,7 @@ const styles = StyleSheet.create({
   },
   gradient: {
     // Soft elevation so the gradient chip reads as a raised action.
-    shadowColor: '#7C3AED',
+    shadowColor: BRAND_PURPLE,
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.35,
     shadowRadius: 4,

@@ -1,23 +1,23 @@
-'use strict';
+"use strict";
 
 /**
  * TTS Engine types and interfaces
  */
 
-export let TTSEngine = /*#__PURE__*/ (function (TTSEngine) {
+export let TTSEngine = /*#__PURE__*/function (TTSEngine) {
   /**
    * Use the native OS TTS engine
    * - iOS: AVSpeechSynthesizer
    * - Android: Android TextToSpeech API
    */
-  TTSEngine.OS_NATIVE = 'os-native';
+  TTSEngine["OS_NATIVE"] = "os-native";
   /**
    * Use Kokoro neural TTS engine (offline, ONNX-based)
    * - High-quality neural voice synthesis
    * - Runs entirely on-device
    * - Requires model files
    */
-  TTSEngine.KOKORO = 'kokoro';
+  TTSEngine["KOKORO"] = "kokoro";
   /**
    * Use Supertonic neural TTS engine (offline, ONNX-based)
    * - Ultra-fast neural voice synthesis (167× faster than real-time)
@@ -25,7 +25,7 @@ export let TTSEngine = /*#__PURE__*/ (function (TTSEngine) {
    * - Runs entirely on-device
    * - Requires model files
    */
-  TTSEngine.SUPERTONIC = 'supertonic';
+  TTSEngine["SUPERTONIC"] = "supertonic";
   /**
    * Use Kitten neural TTS engine (offline, ONNX-based)
    * - 15M parameter StyleTTS 2-based TTS
@@ -34,9 +34,9 @@ export let TTSEngine = /*#__PURE__*/ (function (TTSEngine) {
    * - GPL-free dictionary-based phonemization + character-level IPA tokenization
    * - Requires 1 ONNX model file + voice embeddings JSON
    */
-  TTSEngine.KITTEN = 'kitten';
+  TTSEngine["KITTEN"] = "kitten";
   return TTSEngine;
-})({});
+}({});
 
 /**
  * Phoneme input: the caller supplies IPA directly, so the engine skips
@@ -68,12 +68,7 @@ export let TTSEngine = /*#__PURE__*/ (function (TTSEngine) {
  * callers) is not treated as phoneme input.
  */
 export function isPhonemeInput(input) {
-  return (
-    typeof input === 'object' &&
-    input !== null &&
-    Object.prototype.hasOwnProperty.call(input, 'phonemes') &&
-    typeof input.phonemes === 'string'
-  );
+  return typeof input === 'object' && input !== null && Object.prototype.hasOwnProperty.call(input, 'phonemes') && typeof input.phonemes === 'string';
 }
 
 /**

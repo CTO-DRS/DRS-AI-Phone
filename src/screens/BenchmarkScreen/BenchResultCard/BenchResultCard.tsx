@@ -9,6 +9,13 @@ import {t} from '../../../locales';
 
 import {createStyles} from './styles';
 
+import {
+  AlertIcon,
+  CloudIcon,
+  LockIcon,
+  WifiOffIcon,
+} from '../../../assets/icons';
+
 import {BenchmarkResult} from '../../../utils/types';
 import {formatBytes, formatNumber} from '../../../utils';
 import {NetworkError, AppCheckError, ServerError} from '../../../utils/errors';
@@ -79,15 +86,16 @@ export const BenchResultCard = ({result, onDelete, onShare}: Props) => {
   };
 
   const getErrorIcon = () => {
+    const stroke = theme.colors.error;
     switch (errorType) {
       case 'network':
-        return '📶'; // wifi icon
+        return <WifiOffIcon stroke={stroke} width={16} height={16} />;
       case 'appCheck':
-        return '🔒'; // lock icon
+        return <LockIcon stroke={stroke} width={16} height={16} />;
       case 'server':
-        return '🖥️'; // server icon
+        return <CloudIcon stroke={stroke} width={16} height={16} />;
       default:
-        return '❌'; // generic error icon
+        return <AlertIcon stroke={stroke} width={16} height={16} />;
     }
   };
 
@@ -352,9 +360,10 @@ export const BenchResultCard = ({result, onDelete, onShare}: Props) => {
 
         {submitError && (
           <View style={[styles.errorContainer, getErrorStyle()]}>
-            <Text style={styles.errorText}>
-              {getErrorIcon()} {submitError}
-            </Text>
+            <View style={styles.errorRow}>
+              {getErrorIcon()}
+              <Text style={styles.errorText}>{submitError}</Text>
+            </View>
             {errorType && (
               <Button
                 mode="text"

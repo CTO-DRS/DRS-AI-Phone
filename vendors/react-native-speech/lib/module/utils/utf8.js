@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * UTF-8 decoding helper for Hermes.
@@ -44,7 +44,7 @@ export function decodeUtf8(bytes) {
         valid = false;
         break;
       }
-      cp = (cp << 6) | (bk & 0x3f);
+      cp = cp << 6 | bk & 0x3f;
     }
     if (!valid) {
       out += String.fromCharCode(REPLACEMENT);
@@ -56,7 +56,7 @@ export function decodeUtf8(bytes) {
     } else {
       // Supplementary plane: encode as UTF-16 surrogate pair
       cp -= 0x10000;
-      out += String.fromCharCode(0xd800 | (cp >> 10), 0xdc00 | (cp & 0x3ff));
+      out += String.fromCharCode(0xd800 | cp >> 10, 0xdc00 | cp & 0x3ff);
     }
   }
   return out;

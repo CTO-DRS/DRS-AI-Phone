@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * EngineStreamSession — pipelined synth + play loop over a
@@ -19,8 +19,8 @@
  * adaptive batcher there.
  */
 
-import {StreamingChunker} from './StreamingChunker.js';
-import {createComponentLogger} from '../utils/logger.js';
+import { StreamingChunker } from "./StreamingChunker.js";
+import { createComponentLogger } from "../utils/logger.js";
 const log = createComponentLogger('EngineStream', 'Engine');
 export class EngineStreamSession {
   cancelled = false;
@@ -76,8 +76,12 @@ export class EngineStreamSession {
     return Promise.race([promise, stopSignal]);
   }
   async runLoop() {
-    const {synthesizeChunk, playAudio, playbackOptions, postProcess} =
-      this.config;
+    const {
+      synthesizeChunk,
+      playAudio,
+      playbackOptions,
+      postProcess
+    } = this.config;
     const stopSignal = this.createStopSignal();
     log.info(`stream session started, t+0ms`);
     try {
@@ -85,10 +89,7 @@ export class EngineStreamSession {
       // Engines may legitimately return an empty buffer for no-content
       // chunks (e.g. an isolated horizontal rule converted to `.`); we
       // skip those rather than ending the whole session.
-      const bootstrap = await this.fetchNextWithAudio(
-        synthesizeChunk,
-        stopSignal,
-      );
+      const bootstrap = await this.fetchNextWithAudio(synthesizeChunk, stopSignal);
       if (!bootstrap || this.cancelled) {
         return;
       }
@@ -103,15 +104,8 @@ export class EngineStreamSession {
         }
         const chunkStartTs = Date.now();
         this.chunkCount++;
-        const gapFromPrev =
-          this.lastChunkEndTs !== null
-            ? chunkStartTs - this.lastChunkEndTs
-            : null;
-        log.info(
-          `chunk#${this.chunkCount} START: ${currentChunk.text.length} chars` +
-            (gapFromPrev !== null ? `, gap_since_prev=${gapFromPrev}ms` : '') +
-            `, offset=${currentChunk.startIndex}, t+${this.rel()}ms`,
-        );
+        const gapFromPrev = this.lastChunkEndTs !== null ? chunkStartTs - this.lastChunkEndTs : null;
+        log.info(`chunk#${this.chunkCount} START: ${currentChunk.text.length} chars` + (gapFromPrev !== null ? `, gap_since_prev=${gapFromPrev}ms` : '') + `, offset=${currentChunk.startIndex}, t+${this.rel()}ms`);
         if (postProcess) {
           postProcess(currentAudio);
         }
@@ -120,23 +114,15 @@ export class EngineStreamSession {
         // Start fetching + synthesizing next chunk in background. Skips
         // any no-audio chunks until it finds one with audio (or chunker
         // drains).
-        const prefetchPromise = this.fetchNextWithAudio(
-          synthesizeChunk,
-          stopSignal,
-        );
+        const prefetchPromise = this.fetchNextWithAudio(synthesizeChunk, stopSignal);
 
         // Play current chunk (concurrent with prefetch).
-        await this.raceWithStop(
-          playAudio(currentAudio, playbackOptions),
-          stopSignal,
-        );
+        await this.raceWithStop(playAudio(currentAudio, playbackOptions), stopSignal);
         if (this.cancelled) {
           return;
         }
         this.lastChunkEndTs = Date.now();
-        log.info(
-          `chunk#${this.chunkCount} DONE: play=${this.lastChunkEndTs - chunkStartTs}ms, t+${this.rel()}ms`,
-        );
+        log.info(`chunk#${this.chunkCount} DONE: play=${this.lastChunkEndTs - chunkStartTs}ms, t+${this.rel()}ms`);
 
         // Get prefetched result.
         const next = await prefetchPromise;
@@ -157,9 +143,7 @@ export class EngineStreamSession {
       }
       log.error(`stream session error: ${error.message}`);
     } finally {
-      log.info(
-        `stream session ended: chunks=${this.chunkCount}, elapsed=${this.rel()}ms`,
-      );
+      log.info(`stream session ended: chunks=${this.chunkCount}, elapsed=${this.rel()}ms`);
     }
   }
 
@@ -180,22 +164,17 @@ export class EngineStreamSession {
       if (!chunk || this.cancelled) {
         return null;
       }
-      const audio = await this.raceWithStop(
-        synthesizeChunk(chunk.text),
-        stopSignal,
-      );
+      const audio = await this.raceWithStop(synthesizeChunk(chunk.text), stopSignal);
       if (!audio || this.cancelled) {
         return null;
       }
       if (audio.samples.length === 0) {
-        log.debug(
-          `skipping no-audio chunk (${chunk.text.length} chars), pulling next`,
-        );
+        log.debug(`skipping no-audio chunk (${chunk.text.length} chars), pulling next`);
         continue;
       }
       return {
         chunk,
-        audio,
+        audio
       };
     }
   }
@@ -210,9 +189,9 @@ export class EngineStreamSession {
       chunkText: chunk.text,
       textRange: {
         start: chunk.startIndex,
-        end: chunk.endIndex,
+        end: chunk.endIndex
       },
-      progress: 0,
+      progress: 0
     });
   }
 }

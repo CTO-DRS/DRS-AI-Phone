@@ -1,5 +1,5 @@
 import React, {useContext} from 'react';
-import {View, TouchableOpacity, Image, Alert} from 'react-native';
+import {StyleSheet, View, TouchableOpacity, Image, Alert} from 'react-native';
 
 import {observer} from 'mobx-react-lite';
 import {useNavigation} from '@react-navigation/native';
@@ -14,6 +14,8 @@ import {
   ShareIcon,
 } from '../../../../assets/icons';
 
+import LinearGradient from 'react-native-linear-gradient';
+
 import {useTheme} from '../../../../hooks';
 
 import {createStyles} from './styles';
@@ -26,9 +28,11 @@ import type {DrshubAssistant} from '../../../../types/drshub';
 
 import {L10nContext} from '../../../../utils';
 import {t} from '../../../../locales';
+import type {Translations} from '../../../../locales/types';
 import {exportAssistant} from '../../../../utils/exportUtils';
 import {ROUTES} from '../../../../utils/navigationConstants';
 import {getContrastColor} from '../../../../utils/colorUtils';
+import {BRAND_GRADIENT_COLORS} from '../../../../theme/tokens/brand';
 import {getFullThumbnailUri} from '../../../../utils/imageUtils';
 import {getAssistantDisplayLabel} from '../../../../utils/drshub-display';
 import {hasVideoCapability} from '../../../../utils/assistant-capabilities';
@@ -85,7 +89,10 @@ const cleanSystemPrompt = (systemPrompt: string): string => {
   return cleaned;
 };
 
-const getDisplayContent = (assistant: DrshubAssistant | Assistant): string => {
+const getDisplayContent = (
+  assistant: DrshubAssistant | Assistant,
+  l10n: Translations,
+): string => {
   // Priority 1: Drshub description
   if (assistant.description) {
     return assistant.description;
@@ -112,7 +119,7 @@ const getDisplayContent = (assistant: DrshubAssistant | Assistant): string => {
   if (isLocalAssistant(assistant)) {
     // Check capabilities
     if (hasVideoCapability(assistant)) {
-      return 'Video AI Assistant';
+      return l10n.components.squareAssistantCard.videoAssistant;
     }
 
     // Check if it has any advanced capabilities
@@ -120,10 +127,10 @@ const getDisplayContent = (assistant: DrshubAssistant | Assistant): string => {
       assistant.capabilities &&
       Object.keys(assistant.capabilities).length > 0
     ) {
-      return 'Advanced AI Assistant';
+      return l10n.components.squareAssistantCard.advancedAssistant;
     }
 
-    return 'AI Assistant';
+    return l10n.components.squareAssistantCard.assistant;
   }
 
   return '';
@@ -147,12 +154,13 @@ const AssistantThumbnail: React.FC<{
     ? getFullThumbnailUri(assistant.thumbnail_url)
     : undefined;
 
-  // Get assistant colors for gradient background (local assistants only)
+  // Local assistants can define a signature two-color gradient; everything
+  // else falls back to the DRS AI brand ramp so avatars always read as ours.
   const assistantColors = isLocalAssistant(assistant) ? assistant.color : null;
-  const gradientColors =
+  const gradientColors: [string, string] =
     Array.isArray(assistantColors) && assistantColors.length >= 2
-      ? assistantColors
-      : ['#333333', '#e5e5e6']; // Default colors
+      ? [assistantColors[0], assistantColors[1]]
+      : BRAND_GRADIENT_COLORS;
 
   // Get chat navigation icon (combines type + chat functionality)
   const getChatNavigationIcon = () => {
@@ -167,23 +175,25 @@ const AssistantThumbnail: React.FC<{
     return <ChatIcon stroke={theme.colors.primary} width={18} height={18} />;
   };
 
-  // TODO: Create gradient style, or remove gradients
-  const gradientStyle = assistantColors
-    ? {
-        backgroundColor: gradientColors[0],
-        // Note: For true gradients, we'd need react-native-linear-gradient
-        // For now, using solid color with the first color
-      }
-    : {};
+  // True two-stop gradient (was a solid first-color stand-in until the
+  // TODO was resolved now that react-native-linear-gradient ships).
+  const gradientElement = (
+    <LinearGradient
+      pointerEvents="none"
+      start={{x: 0, y: 0}}
+      end={{x: 1, y: 1}}
+      colors={gradientColors}
+      style={StyleSheet.absoluteFill}
+    />
+  );
 
-  const thumbnailStyle = [styles.thumbnail, gradientStyle];
+  const thumbnailStyle = [styles.thumbnail];
 
-  const textColor = assistantColors
-    ? getContrastColor(gradientColors[0])
-    : theme.colors.onPrimaryContainer;
+  const textColor = getContrastColor(gradientColors[0]);
 
   return (
     <View style={thumbnailStyle}>
+      {gradientElement}
       {thumbnailUrl ? (
         <Image
           source={{uri: thumbnailUrl}}
@@ -246,12 +256,14 @@ export const SquareAssistantCard: React.FC<SquareAssistantCardProps> = observer(
           if (!localAssistant) {
             // Need to download first
             Alert.alert(
-              'Download Assistant',
-              `Download "${assistant.title}" to start chatting?`,
+              l10n.components.squareAssistantCard.downloadAssistantTitle,
+              t(l10n.components.squareAssistantCard.downloadAssistantMessage, {
+                assistantName: assistant.title,
+              }),
               [
-                {text: 'Cancel', style: 'cancel'},
+                {text: l10n.common.cancel, style: 'cancel'},
                 {
-                  text: 'Download',
+                  text: l10n.components.squareAssistantCard.download,
                   onPress: async () => {
                     try {
                       const downloadedAssistant =
@@ -260,8 +272,9 @@ export const SquareAssistantCard: React.FC<SquareAssistantCardProps> = observer(
                     } catch (error) {
                       console.error('Error downloading assistant:', error);
                       Alert.alert(
-                        'Download Error',
-                        'Failed to download assistant. Please try again.',
+                        l10n.components.squareAssistantCard.downloadErrorTitle,
+                        l10n.components.squareAssistantCard
+                          .downloadErrorMessage,
                       );
                     }
                   },
@@ -277,7 +290,10 @@ export const SquareAssistantCard: React.FC<SquareAssistantCardProps> = observer(
         await activateAssistantAndNavigate(localAssistant);
       } catch (error) {
         console.error('Error starting chat:', error);
-        Alert.alert('Error', 'Failed to start chat. Please try again.');
+        Alert.alert(
+          l10n.common.error,
+          l10n.components.squareAssistantCard.startChatErrorMessage,
+        );
       }
     };
 
@@ -305,12 +321,17 @@ export const SquareAssistantCard: React.FC<SquareAssistantCardProps> = observer(
           );
           if (assistantDefaultModel) {
             Alert.alert(
-              'Switch Model?',
-              `Switch to "${assistantDefaultModel.name}" for this assistant?`,
+              l10n.components.squareAssistantCard.switchModelTitle,
+              t(l10n.components.squareAssistantCard.switchModelMessage, {
+                modelName: assistantDefaultModel.name,
+              }),
               [
-                {text: 'Keep Current', style: 'cancel'},
                 {
-                  text: 'Switch',
+                  text: l10n.components.squareAssistantCard.keepCurrent,
+                  style: 'cancel',
+                },
+                {
+                  text: l10n.components.squareAssistantCard.switch,
                   onPress: () => {
                     modelStore.selectModel(assistantDefaultModel);
                   },
@@ -350,9 +371,9 @@ export const SquareAssistantCard: React.FC<SquareAssistantCardProps> = observer(
       } catch (error) {
         console.error('Error sharing assistant:', error);
         Alert.alert(
-          'Share Error',
-          'Failed to share assistant. Please try again.',
-          [{text: 'OK'}],
+          l10n.components.squareAssistantCard.shareErrorTitle,
+          l10n.components.squareAssistantCard.shareErrorMessage,
+          [{text: l10n.common.ok}],
         );
       }
     };
@@ -470,13 +491,15 @@ export const SquareAssistantCard: React.FC<SquareAssistantCardProps> = observer(
                   {/* Creator */}
                   {assistantCreator && (
                     <Text style={styles.creator} numberOfLines={1}>
-                      by {assistantCreator.display_name}
+                      {t(l10n.components.squareAssistantCard.byCreator, {
+                        creator: assistantCreator.display_name ?? '',
+                      })}
                     </Text>
                   )}
 
                   {/* Description */}
                   {(() => {
-                    const displayContent = getDisplayContent(assistant);
+                    const displayContent = getDisplayContent(assistant, l10n);
                     return displayContent ? (
                       <Text
                         style={styles.description}

@@ -1,5 +1,7 @@
 import {StyleSheet} from 'react-native';
 
+import {BRAND_PURPLE} from '../../theme/tokens/brand';
+
 export const styles = StyleSheet.create({
   menuIcon: {
     // Minimum 44pt touch target for iOS accessibility guidelines
@@ -11,6 +13,6 @@ export const styles = StyleSheet.create({
   },
   halo: {
     borderRadius: 14,
-    backgroundColor: '#7C3AED',
+    backgroundColor: BRAND_PURPLE,
   },
 });

@@ -7,6 +7,7 @@
 
 import type {DrshubAssistant} from '../types/drshub';
 import {l10n} from '../locales';
+import type {Translations} from '../locales/types';
 import {uiStore} from '../store';
 
 /**
@@ -67,16 +68,22 @@ export function isAssistantPremium(assistant: DrshubAssistant): boolean {
 }
 
 /**
- * Filter labels for the UI
+ * Filter labels for the UI.
+ *
+ * Takes the active translations so labels stay reactive when the user
+ * switches language at runtime (a module-level snapshot would freeze the
+ * startup language until the app restarts).
  */
-export const ASSISTANT_FILTER_LABELS = {
-  all: l10n[uiStore.language].assistantsScreen.filters.all,
-  'my-assistants': l10n[uiStore.language].assistantsScreen.filters.myAssistants,
-  local: l10n[uiStore.language].assistantsScreen.filters.local,
-  video: l10n[uiStore.language].assistantsScreen.filters.video,
-  free: l10n[uiStore.language].assistantsScreen.filters.free,
-  premium: l10n[uiStore.language].assistantsScreen.filters.premium,
-} as const;
+export function getAssistantFilterLabels(translations: Translations) {
+  return {
+    all: translations.assistantsScreen.filters.all,
+    'my-assistants': translations.assistantsScreen.filters.myAssistants,
+    local: translations.assistantsScreen.filters.local,
+    video: translations.assistantsScreen.filters.video,
+    free: translations.assistantsScreen.filters.free,
+    premium: translations.assistantsScreen.filters.premium,
+  } as const;
+}
 
 /**
  * Get action text for assistant cards

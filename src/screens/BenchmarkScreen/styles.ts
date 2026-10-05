@@ -17,7 +17,7 @@ export const createStyles = (theme: Theme) =>
     description: {
       flex: 1,
       color: theme.colors.onSurfaceVariant,
-      paddingRight: 8,
+      paddingEnd: 8,
       fontSize: 12,
     },
     warning: {
@@ -69,18 +69,18 @@ export const createStyles = (theme: Theme) =>
       marginBottom: 0,
     },
     settingValue: {
-      textAlign: 'right',
+      textAlign: 'auto',
       color: theme.colors.onSurface,
       marginTop: 0,
       minWidth: 40,
-      marginLeft: 8,
+      marginStart: 8,
     },
     slider: {
       //height: 40,
       ...Platform.select({
         android: {
-          marginLeft: -12,
-          marginRight: -10,
+          marginStart: -12,
+          marginEnd: -10,
         },
       }),
     },
@@ -104,7 +104,7 @@ export const createStyles = (theme: Theme) =>
     },
     warningList: {
       marginTop: 8,
-      paddingLeft: 8,
+      paddingStart: 8,
     },
     warningText: {
       color: theme.colors.error,
@@ -129,7 +129,7 @@ export const createStyles = (theme: Theme) =>
     },
     dialogList: {
       marginVertical: 10,
-      paddingLeft: 8,
+      paddingStart: 8,
     },
     dialogSection: {
       marginTop: 16,
@@ -164,7 +164,7 @@ export const createStyles = (theme: Theme) =>
     checkboxLabel: {
       color: theme.colors.onSurfaceVariant,
       fontSize: 12,
-      marginLeft: 12,
+      marginStart: 12,
       flex: 1,
     },
     maxValueHint: {

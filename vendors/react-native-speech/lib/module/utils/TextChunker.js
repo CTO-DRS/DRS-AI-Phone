@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * Text Chunker Utility for Neural TTS Engines
@@ -52,7 +52,7 @@ export class TextChunker {
         sentences.push({
           text: sentenceText,
           start: lastIndex,
-          end: sentenceEnd,
+          end: sentenceEnd
         });
       }
       lastIndex = sentenceEnd;
@@ -65,20 +65,18 @@ export class TextChunker {
         sentences.push({
           text: remaining,
           start: lastIndex,
-          end: text.length,
+          end: text.length
         });
       }
     }
 
     // If no sentences found, return the entire text as one chunk
     if (sentences.length === 0) {
-      return [
-        {
-          text: text.trim(),
-          startIndex: 0,
-          endIndex: text.length,
-        },
-      ];
+      return [{
+        text: text.trim(),
+        startIndex: 0,
+        endIndex: text.length
+      }];
     }
 
     // Group sentences into chunks respecting maxChunkSize
@@ -87,15 +85,12 @@ export class TextChunker {
     let chunkEnd = 0;
     for (const sentence of sentences) {
       const trimmedText = sentence.text.trimEnd();
-      if (
-        currentChunk.length + trimmedText.length > maxChunkSize &&
-        currentChunk.length > 0
-      ) {
+      if (currentChunk.length + trimmedText.length > maxChunkSize && currentChunk.length > 0) {
         // Save current chunk and start a new one
         chunks.push({
           text: currentChunk.trim(),
           startIndex: chunkStart,
-          endIndex: chunkEnd,
+          endIndex: chunkEnd
         });
         currentChunk = trimmedText;
         chunkStart = sentence.start;
@@ -115,7 +110,7 @@ export class TextChunker {
       chunks.push({
         text: currentChunk.trim(),
         startIndex: chunkStart,
-        endIndex: chunkEnd,
+        endIndex: chunkEnd
       });
     }
     return chunks;
@@ -151,7 +146,7 @@ export class TextChunker {
         sentences.push({
           text: sentenceText,
           start: lastIndex,
-          end: endIndex,
+          end: endIndex
         });
       }
       lastIndex = endIndex;
@@ -164,20 +159,18 @@ export class TextChunker {
         sentences.push({
           text: remaining,
           start: lastIndex,
-          end: text.length,
+          end: text.length
         });
       }
     }
 
     // If no sentences found, return the entire text as one chunk
     if (sentences.length === 0) {
-      return [
-        {
-          text: text.trim(),
-          startIndex: 0,
-          endIndex: text.length,
-        },
-      ];
+      return [{
+        text: text.trim(),
+        startIndex: 0,
+        endIndex: text.length
+      }];
     }
 
     // Group sentences into chunks
@@ -188,14 +181,11 @@ export class TextChunker {
     for (const sentence of sentences) {
       const trimmedSentence = sentence.text.trim();
       if (!trimmedSentence) continue;
-      if (
-        currentChunk &&
-        currentChunk.length + trimmedSentence.length + 1 > maxChunkSize
-      ) {
+      if (currentChunk && currentChunk.length + trimmedSentence.length + 1 > maxChunkSize) {
         chunks.push({
           text: currentChunk.trim(),
           startIndex: chunkStart,
-          endIndex: chunkEnd,
+          endIndex: chunkEnd
         });
         currentChunk = trimmedSentence;
         chunkStart = sentence.start;
@@ -214,18 +204,14 @@ export class TextChunker {
       chunks.push({
         text: currentChunk.trim(),
         startIndex: chunkStart,
-        endIndex: chunkEnd,
+        endIndex: chunkEnd
       });
     }
-    return chunks.length > 0
-      ? chunks
-      : [
-          {
-            text: text.trim(),
-            startIndex: 0,
-            endIndex: text.length,
-          },
-        ];
+    return chunks.length > 0 ? chunks : [{
+      text: text.trim(),
+      startIndex: 0,
+      endIndex: text.length
+    }];
   }
 
   /**
@@ -253,14 +239,14 @@ export class TextChunker {
           chunks.push({
             text: chunk.text,
             startIndex: currentOffset + chunk.startIndex,
-            endIndex: currentOffset + chunk.endIndex,
+            endIndex: currentOffset + chunk.endIndex
           });
         }
       } else {
         chunks.push({
           text: paragraph.trim(),
           startIndex: currentOffset,
-          endIndex: currentOffset + paragraph.length,
+          endIndex: currentOffset + paragraph.length
         });
       }
       currentOffset += paragraph.length + 2;

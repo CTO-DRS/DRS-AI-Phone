@@ -24,7 +24,7 @@ export const VideoAssistantScreen = observer(
 
     const [isCameraActive, setIsCameraActive] = useState(false);
     const [responseText, setResponseText] = useState('');
-    const [promptText, setPromptText] = useState('What do you see?');
+    const [promptText, setPromptText] = useState(l10n.video.defaultPrompt);
     const [captureInterval, setCaptureInterval] = useState(1000); // Default to 1 second
     const [lastAnalysisTime, setLastAnalysisTime] = useState(0);
     const [isStoppingCamera, setIsStoppingCamera] = useState(false);
@@ -127,22 +127,18 @@ export const VideoAssistantScreen = observer(
       // Check if multimodal is enabled
       try {
         if (!modelStore.activeModelCaps.visionActive) {
-          safeAlert(
-            'Multimodal Not Enabled',
-            'This model does not support image analysis. Please load a multimodal model.',
-            [
-              {
-                text: l10n.common.ok,
-              },
-            ],
-          );
+          safeAlert(l10n.video.multimodalTitle, l10n.video.multimodalMessage, [
+            {
+              text: l10n.common.ok,
+            },
+          ]);
           return;
         }
 
         setIsCameraActive(true);
       } catch (error) {
         console.error('Error checking multimodal capability:', error);
-        safeAlert('Error', 'Failed to check if model supports images.', [
+        safeAlert(l10n.common.error, l10n.video.checkSupportError, [
           {
             text: l10n.common.ok,
           },

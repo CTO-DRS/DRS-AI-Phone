@@ -31,7 +31,7 @@ export const createStyles = (theme: Theme) =>
     },
     textContainer: {
       flex: 1,
-      marginRight: 16,
+      marginEnd: 16,
     },
     labelWithIconContainer: {
       flexDirection: 'row',
@@ -39,7 +39,7 @@ export const createStyles = (theme: Theme) =>
       marginBottom: 4,
     },
     settingIcon: {
-      marginRight: 8,
+      marginEnd: 8,
     },
     textLabel: {
       color: theme.colors.onSurface,
@@ -122,7 +122,7 @@ export const createStyles = (theme: Theme) =>
       marginTop: 4,
     },
     linkIcon: {
-      marginLeft: 4,
+      marginStart: 4,
     },
     segmentedButtons: {
       marginVertical: 8,
