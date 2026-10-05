@@ -163,12 +163,6 @@
         {
           "esm": true
         }
-      ],
-      [
-        "typescript",
-        {
-          "project": "tsconfig.build.json"
-        }
       ]
     ]
   },

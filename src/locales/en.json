@@ -32,7 +32,10 @@
     "close": "Close",
     "clear": "Clear All",
     "gallery": "Gallery",
-    "noResults": "No results"
+    "noResults": "No results",
+    "openDrawer": "Open drawer",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu"
   },
   "settings": {
     "modelInitializationSettings": "Model Initialization Settings",
@@ -209,7 +212,8 @@
     "removeRemoteModel": "Remove {{modelName}} ({{serverName}})?",
     "retryConnection": "Retry",
     "enterUrlManually": "Enter URL manually",
-    "manageServers": "Manage Servers"
+    "manageServers": "Manage Servers",
+    "exportLegacyError": "Failed to export legacy chat sessions. The file may not exist."
   },
   "memory": {
     "shortWarning": "Memory Warning",
@@ -473,7 +477,9 @@
       "vision": "Vision",
       "mtp": "Speculative (MTP)",
       "mtpDraft": "Speculative draft"
-    }
+    },
+    "emptyTitle": "No models yet",
+    "emptyHint": "Tap + to download from Hugging Face, add a local model, or connect a remote server."
   },
   "completionParams": {
     "include_thinking_in_context": "Include AI thinking/reasoning parts in the context sent to the model. Disabling this can save context space. It might impact performance.",
@@ -518,7 +524,9 @@
     "tourDescription": "Replay the welcome screens to see what DRS AI offers.",
     "showIntroButton": "Show intro again",
     "privacyPolicy": "Privacy Policy",
-    "termsOfService": "Terms of Service"
+    "termsOfService": "Terms of Service",
+    "versionFormat": "Version {{version}} ({{build}})",
+    "successTitle": "Success"
   },
   "feedback": {
     "title": "Send Feedback",
@@ -775,7 +783,12 @@
       "exportCurrentSessionMarkdown": "Export as Markdown",
       "exportAllSessions": "Export all sessions",
       "exportChatSession": "Export chat session",
-      "importSessions": "Import sessions"
+      "importSessions": "Import sessions",
+      "exportErrorTitle": "Export Error",
+      "exportCurrentSessionError": "Failed to export the current session.",
+      "exportAllError": "Failed to export all sessions.",
+      "importSuccessTitle": "Import Success",
+      "importErrorTitle": "Import Error"
     },
     "hfTokenSheet": {
       "title": "Hugging Face Token",
@@ -1008,7 +1021,9 @@
         "fourWeeksAgo": "4 weeks ago",
         "lastMonth": "Last month",
         "older": "Older"
-      }
+      },
+      "emptySessionsTitle": "No chats yet",
+      "emptySessionsHint": "Start a new conversation from the chat screen"
     },
     "usageStats": {
       "tooltip": {
@@ -1037,10 +1052,60 @@
       "exportAllAssistants": "Export all assistants",
       "importAssistants": "Import assistants",
       "importSuccess": "Successfully imported {{count}} assistant(s).",
-      "importError": "Failed to import assistants. Please check the file format."
+      "importError": "Failed to import assistants. Please check the file format.",
+      "exportErrorTitle": "Export Error",
+      "exportAllError": "Failed to export all assistants.",
+      "importSuccessTitle": "Import Success",
+      "importErrorTitle": "Import Error"
     },
     "brandHeader": {
       "tagline": "Your private on-device AI"
+    },
+    "authSheet": {
+      "signInTitle": "Sign In",
+      "signUpTitle": "Create Account",
+      "fullNameLabel": "Full Name",
+      "emailLabel": "Email",
+      "passwordLabel": "Password",
+      "signInButton": "Sign In",
+      "signUpButton": "Create Account",
+      "forgotPassword": "Forgot Password?",
+      "or": "or",
+      "continueWithGoogle": "Continue with Google",
+      "haveAccount": "Already have an account? ",
+      "noAccount": "Don't have an account? ",
+      "signUpLink": "Sign Up",
+      "signInLink": "Sign In",
+      "signingIn": "Signing you in...",
+      "fillRequiredFields": "Please fill in all required fields.",
+      "enterFullName": "Please enter your full name.",
+      "enterEmailFirst": "Please enter your email address first.",
+      "accountCreatedTitle": "Account Created",
+      "accountCreatedMessage": "Please check your email to verify your account.",
+      "welcomeBackTitle": "Welcome Back!",
+      "welcomeBackMessage": "You have successfully signed in.",
+      "googleErrorTitle": "Google Sign-In Error",
+      "passwordResetTitle": "Password Reset",
+      "passwordResetMessage": "Check your email for password reset instructions.",
+      "authErrorTitle": "Authentication Error"
+    },
+    "squareAssistantCard": {
+      "videoAssistant": "Video AI Assistant",
+      "advancedAssistant": "Advanced AI Assistant",
+      "assistant": "AI Assistant",
+      "byCreator": "by {{creator}}",
+      "downloadAssistantTitle": "Download Assistant",
+      "downloadAssistantMessage": "Download \"{{assistantName}}\" to start chatting?",
+      "download": "Download",
+      "downloadErrorTitle": "Download Error",
+      "downloadErrorMessage": "Failed to download assistant. Please try again.",
+      "startChatErrorMessage": "Failed to start chat. Please try again.",
+      "switchModelTitle": "Switch Model?",
+      "switchModelMessage": "Switch to \"{{modelName}}\" for this assistant?",
+      "keepCurrent": "Keep Current",
+      "switch": "Switch",
+      "shareErrorTitle": "Share Error",
+      "shareErrorMessage": "Failed to share assistant. Please try again."
     }
   },
   "assistantsScreen": {
@@ -1128,7 +1193,9 @@
       "signInAgain": "Sign in again",
       "assistantNotAvailable": "This assistant is not available for purchase right now.",
       "checkoutFailed": "Something went wrong. Please try again."
-    }
+    },
+    "emptyLocal": "No Assistants yet.\nCreate your first Assistant using the + button!",
+    "emptyFiltered": "No Assistants found.\nTry adjusting your filters or search."
   },
   "validation": {
     "nameRequired": "Name is required",
@@ -1178,7 +1245,11 @@
       "step2": "• Tap the camera button to start live video analysis",
       "step3": "• Adjust snapshot frequency while camera is active",
       "step4": "• Switch to another assistant for normal text chat"
-    }
+    },
+    "defaultPrompt": "What do you see?",
+    "multimodalTitle": "Multimodal Not Enabled",
+    "multimodalMessage": "This model does not support image analysis. Please load a multimodal model.",
+    "checkSupportError": "Failed to check if model supports images."
   },
   "screenTitles": {
     "chat": "Chat",
@@ -1392,6 +1463,15 @@
         "no": "✗"
       },
       "versionFormat": "{{version}} ({{buildNumber}})"
+    },
+    "presetDefault": "Default",
+    "presetFast": "Fast",
+    "presetCustom": "Custom",
+    "params": {
+      "pp": "Number of prompt processing tokens (max: physical batch size)",
+      "tg": "Number of text generation tokens",
+      "pl": "Pipeline parallel size",
+      "nr": "Number of repetitions"
     }
   },
   "errors": {

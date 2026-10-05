@@ -1,5 +1,6 @@
 import {StyleSheet} from 'react-native';
 import {Theme} from '../../../../utils/types';
+import {withOpacity} from '../../../../utils/colorUtils';
 
 export const createStyles = (theme: Theme) =>
   StyleSheet.create({
@@ -266,9 +267,9 @@ export const createStyles = (theme: Theme) =>
       paddingHorizontal: 6,
       paddingVertical: 3,
       borderRadius: 6,
-      backgroundColor: theme.colors.errorContainer + '20', // 20% opacity
+      backgroundColor: withOpacity(theme.colors.errorContainer, 0.12),
       borderWidth: 0.5,
-      borderColor: theme.colors.error + '40', // 40% opacity
+      borderColor: withOpacity(theme.colors.error, 0.25),
       marginBottom: 4,
       // Add subtle glow effect in dark mode
       ...(theme.dark

@@ -1,6 +1,6 @@
-'use strict';
+"use strict";
 
-import {ensurePunctuation} from '../../phonemization/KittenPreprocessor.js';
+import { ensurePunctuation } from "../../phonemization/KittenPreprocessor.js";
 
 /**
  * Split text into per-sentence chunks, preserving original-text positions
@@ -43,7 +43,7 @@ function pushSentence(src, start, end, maxLen, out) {
     out.push({
       text: ensurePunctuation(raw),
       startIndex: s,
-      endIndex: end,
+      endIndex: end
     });
     return;
   }
@@ -61,7 +61,7 @@ function pushSentence(src, start, end, maxLen, out) {
           out.push({
             text: ensurePunctuation(buffer),
             startIndex: bufferStart,
-            endIndex: wordStart - 1,
+            endIndex: wordStart - 1
           });
           buffer = word;
           bufferStart = wordStart;
@@ -77,7 +77,7 @@ function pushSentence(src, start, end, maxLen, out) {
     out.push({
       text: ensurePunctuation(buffer),
       startIndex: bufferStart,
-      endIndex: end,
+      endIndex: end
     });
   }
 }

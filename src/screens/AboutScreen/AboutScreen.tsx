@@ -15,6 +15,7 @@ import {Sheet, TextInput} from '../../components';
 import {useTheme} from '../../hooks';
 import {createStyles} from './styles';
 import {L10nContext} from '../../utils';
+import {t} from '../../locales';
 import {uiStore} from '../../store';
 
 const GithubButtonIcon = ({color}: {color: string}) => (
@@ -53,7 +54,10 @@ export const AboutScreen: React.FC = () => {
   }, []);
 
   const copyVersionToClipboard = () => {
-    const versionString = `Version ${appInfo.version} (${appInfo.build})`;
+    const versionString = t(l10n.about.versionFormat, {
+      version: appInfo.version,
+      build: appInfo.build,
+    });
     Clipboard.setString(versionString);
     Alert.alert(
       l10n.about.versionCopiedTitle,
@@ -75,7 +79,7 @@ export const AboutScreen: React.FC = () => {
         generalFeedback,
         usageFrequency,
       });
-      Alert.alert('Success', l10n.feedback.success);
+      Alert.alert(l10n.about.successTitle, l10n.feedback.success);
       setShowFeedback(false);
       // Clear form
       setUseCase('');
@@ -85,7 +89,7 @@ export const AboutScreen: React.FC = () => {
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : l10n.feedback.error.general;
-      Alert.alert('Error', errorMessage);
+      Alert.alert(l10n.common.error, errorMessage);
     } finally {
       setIsSubmitting(false);
     }

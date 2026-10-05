@@ -1,11 +1,12 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {View, ScrollView} from 'react-native';
 import {Chip} from 'react-native-paper';
 import {observer} from 'mobx-react-lite';
 
 import {useTheme} from '../../../../hooks';
 import {createStyles} from './styles';
-import {ASSISTANT_FILTER_LABELS} from '../../../../utils/drshub-display';
+import {getAssistantFilterLabels} from '../../../../utils/drshub-display';
+import {L10nContext} from '../../../../utils';
 
 export type FilterType =
   | 'all'
@@ -30,37 +31,39 @@ interface FilterOption {
 export const FilterChips: React.FC<FilterChipsProps> = observer(
   ({activeFilter, onFilterChange, isAuthenticated}) => {
     const theme = useTheme();
+    const l10n = useContext(L10nContext);
     const styles = createStyles(theme);
+    const FILTER_LABELS = getAssistantFilterLabels(l10n);
 
     const filterOptions: FilterOption[] = [
       {
         key: 'all',
-        label: ASSISTANT_FILTER_LABELS.all,
+        label: FILTER_LABELS.all,
         showWhenUnauthenticated: true,
       },
       {
         key: 'my-assistants',
-        label: ASSISTANT_FILTER_LABELS['my-assistants'],
+        label: FILTER_LABELS['my-assistants'],
         showWhenUnauthenticated: false,
       },
       {
         key: 'local',
-        label: ASSISTANT_FILTER_LABELS.local,
+        label: FILTER_LABELS.local,
         showWhenUnauthenticated: true,
       },
       {
         key: 'video',
-        label: ASSISTANT_FILTER_LABELS.video,
+        label: FILTER_LABELS.video,
         showWhenUnauthenticated: true,
       },
       {
         key: 'free',
-        label: ASSISTANT_FILTER_LABELS.free,
+        label: FILTER_LABELS.free,
         showWhenUnauthenticated: true,
       },
       {
         key: 'premium',
-        label: ASSISTANT_FILTER_LABELS.premium,
+        label: FILTER_LABELS.premium,
         showWhenUnauthenticated: true,
       },
     ];

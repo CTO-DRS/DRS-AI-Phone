@@ -23,6 +23,11 @@ import Svg, {
   Stop,
 } from 'react-native-svg';
 
+import {
+  BRAND_BLUE,
+  BRAND_PURPLE as BRAND_VIOLET,
+} from '../../../theme/tokens/brand';
+
 /**
  * DRS Bot — the interactive onboarding mascot.
  *
@@ -52,8 +57,6 @@ const VISOR = '#171233';
 const VISOR_INNER = '#241D4E';
 const EYE = '#54C8FF';
 const EYE_GLOW = '#54C8FF';
-const BRAND_VIOLET = '#7C3AED';
-const BRAND_BLUE = '#2563EB';
 const BADGE_BG = '#FFFFFF';
 
 export type RobotMood =

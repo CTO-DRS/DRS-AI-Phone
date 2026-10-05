@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * Kitten TTS Engine Constants
@@ -54,7 +54,7 @@ export const KITTEN_CONSTANTS = {
   /** Language code for the dict+hans00 phonemizer */
   PHONEMIZER_LANGUAGE: 'en-us',
   // Supported languages
-  AVAILABLE_LANGS: ['en-us'],
+  AVAILABLE_LANGS: ['en-us']
 };
 
 /**
@@ -71,10 +71,7 @@ export const KITTEN_CONSTANTS = {
 const KITTEN_PAD = '$';
 const KITTEN_PUNCTUATION = ';:,.!?\u00A1\u00BF\u2014\u2026"«»"" ';
 const KITTEN_LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-const KITTEN_LETTERS_IPA =
-  'ɑɐɒæɓʙβɔɕçɗɖðʤəɘɚɛɜɝɞɟʄɡɠɢʛɦɧħɥʜɨɪʝɭɬɫɮʟɱɯɰŋɳɲɴøɵɸθœɶʘɹɺɾɻʀʁɽʂʃʈʧ' +
-  'ʉʊʋⱱʌɣɤʍχʎʏʑʐʒʔʡʕʢǀǁǂǃˈˌːˑʼʴʰʱʲʷˠˤ˞↓↑→↗↘' +
-  "'\u0329'ᵻ";
+const KITTEN_LETTERS_IPA = 'ɑɐɒæɓʙβɔɕçɗɖðʤəɘɚɛɜɝɞɟʄɡɠɢʛɦɧħɥʜɨɪʝɭɬɫɮʟɱɯɰŋɳɲɴøɵɸθœɶʘɹɺɾɻʀʁɽʂʃʈʧ' + 'ʉʊʋⱱʌɣɤʍχʎʏʑʐʒʔʡʕʢǀǁǂǃˈˌːˑʼʴʰʱʲʷˠˤ˞↓↑→↗↘' + "'\u0329'ᵻ";
 
 /**
  * Build the default symbol-to-ID mapping matching the reference TextCleaner.
@@ -82,12 +79,7 @@ const KITTEN_LETTERS_IPA =
  * the vocab dict with last-occurrence-wins, matching Python's behavior.
  */
 export function buildDefaultVocab() {
-  const symbols = [
-    KITTEN_PAD,
-    ...Array.from(KITTEN_PUNCTUATION),
-    ...Array.from(KITTEN_LETTERS),
-    ...Array.from(KITTEN_LETTERS_IPA),
-  ];
+  const symbols = [KITTEN_PAD, ...Array.from(KITTEN_PUNCTUATION), ...Array.from(KITTEN_LETTERS), ...Array.from(KITTEN_LETTERS_IPA)];
   const vocab = {};
   for (let i = 0; i < symbols.length; i++) {
     vocab[symbols[i]] = i;
@@ -107,7 +99,7 @@ export const KITTEN_VOICE_ALIASES = {
   Rosie: 'expr-voice-4-f',
   Hugo: 'expr-voice-4-m',
   Kiki: 'expr-voice-5-f',
-  Leo: 'expr-voice-5-m',
+  Leo: 'expr-voice-5-m'
 };
 
 /**
@@ -123,61 +115,52 @@ export const KITTEN_SPEED_PRIORS = {
   'expr-voice-4-f': 1.0,
   'expr-voice-4-m': 1.0,
   'expr-voice-5-f': 1.0,
-  'expr-voice-5-m': 1.0,
+  'expr-voice-5-m': 1.0
 };
 
 /**
  * Built-in voice metadata for the 8 Kitten TTS voices.
  * IDs use the internal NPZ key names that match the voice embedding files.
  */
-export const KITTEN_BUILTIN_VOICES = [
-  {
-    id: 'expr-voice-2-f',
-    name: 'Bella',
-    gender: 'female',
-    language: 'en',
-  },
-  {
-    id: 'expr-voice-2-m',
-    name: 'Jasper',
-    gender: 'male',
-    language: 'en',
-  },
-  {
-    id: 'expr-voice-3-f',
-    name: 'Luna',
-    gender: 'female',
-    language: 'en',
-  },
-  {
-    id: 'expr-voice-3-m',
-    name: 'Bruno',
-    gender: 'male',
-    language: 'en',
-  },
-  {
-    id: 'expr-voice-4-f',
-    name: 'Rosie',
-    gender: 'female',
-    language: 'en',
-  },
-  {
-    id: 'expr-voice-4-m',
-    name: 'Hugo',
-    gender: 'male',
-    language: 'en',
-  },
-  {
-    id: 'expr-voice-5-f',
-    name: 'Kiki',
-    gender: 'female',
-    language: 'en',
-  },
-  {
-    id: 'expr-voice-5-m',
-    name: 'Leo',
-    gender: 'male',
-    language: 'en',
-  },
-];
+export const KITTEN_BUILTIN_VOICES = [{
+  id: 'expr-voice-2-f',
+  name: 'Bella',
+  gender: 'female',
+  language: 'en'
+}, {
+  id: 'expr-voice-2-m',
+  name: 'Jasper',
+  gender: 'male',
+  language: 'en'
+}, {
+  id: 'expr-voice-3-f',
+  name: 'Luna',
+  gender: 'female',
+  language: 'en'
+}, {
+  id: 'expr-voice-3-m',
+  name: 'Bruno',
+  gender: 'male',
+  language: 'en'
+}, {
+  id: 'expr-voice-4-f',
+  name: 'Rosie',
+  gender: 'female',
+  language: 'en'
+}, {
+  id: 'expr-voice-4-m',
+  name: 'Hugo',
+  gender: 'male',
+  language: 'en'
+}, {
+  id: 'expr-voice-5-f',
+  name: 'Kiki',
+  gender: 'female',
+  language: 'en'
+}, {
+  id: 'expr-voice-5-m',
+  name: 'Leo',
+  gender: 'male',
+  language: 'en'
+}];
 //# sourceMappingURL=constants.js.map

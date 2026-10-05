@@ -43,6 +43,7 @@ import {
   AssistantHeaderRight,
   HeaderLeft,
   AppWithMigration,
+  BrandHeaderBackground,
   TTSSetupSheet,
   DownloadOverlay,
   HubRunSheetHost,
@@ -192,8 +193,9 @@ const App = observer(() => {
                                 screenWidth > 400 ? 320 : screenWidth * 0.8,
                             },
                             headerStyle: {
-                              backgroundColor: theme.colors.background,
+                              backgroundColor: 'transparent',
                             },
+                            headerBackground: () => <BrandHeaderBackground />,
                             headerTintColor: theme.colors.onBackground,
                             headerTitleStyle: styles.headerTitle,
                           }}
@@ -310,7 +312,9 @@ const createStyles = (theme: Theme) =>
       elevation: 0,
       shadowOpacity: 0,
       borderBottomWidth: 0,
-      backgroundColor: theme.colors.background,
+      // Transparent so the shared BrandHeaderBackground (wash + hairline)
+      // shows through on every drawer screen.
+      backgroundColor: 'transparent',
     },
     headerWithDivider: {
       backgroundColor: theme.colors.background,

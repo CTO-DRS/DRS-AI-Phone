@@ -4,12 +4,13 @@ import {
   BottomSheetTextInput,
   BottomSheetView,
 } from '@gorhom/bottom-sheet';
-import React, {forwardRef, useEffect, useMemo, useRef} from 'react';
+import React, {forwardRef, useContext, useEffect, useMemo, useRef} from 'react';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {BottomSheetModalMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 import {Text} from 'react-native-paper';
 import {CloseIcon} from '../../assets/icons';
 import {useTheme} from '../../hooks';
+import {L10nContext} from '../../utils';
 import {styles} from './styles';
 import BottomSheetKeyboardAwareScrollView from './BottomSheetAwareScrollview';
 import {Dimensions, TouchableOpacity, View} from 'react-native';
@@ -60,6 +61,7 @@ export const Sheet = forwardRef(
     }, [ref, innerRef]);
 
     const theme = useTheme();
+    const l10n = useContext(L10nContext);
 
     useEffect(() => {
       if (isVisible) {
@@ -111,7 +113,7 @@ export const Sheet = forwardRef(
               onPress={onDismiss}
               hitSlop={10}
               testID="sheet-close-button"
-              accessibilityLabel="Close"
+              accessibilityLabel={l10n.common.close}
               accessibilityRole="button">
               <CloseIcon stroke={theme.colors.primary} />
             </TouchableOpacity>

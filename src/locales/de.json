@@ -646,7 +646,7 @@
     },
     "downloadErrorDialog": {
       "downloadFailedTitle": "Download gescheitert",
-      "downloadFailedMessage": "Download des Modells gescheitert: {{messing}}",
+      "downloadFailedMessage": "Download des Modells gescheitert: {{message}}",
       "unauthorizedTitle": "Authentifizierung gescheitert",
       "unauthorizedMessage": "Ihr Hugging Face-Token scheint ungültig oder abgelaufen zu sein. Bitte aktualisieren Sie Ihren Token in den Einstellungen.",
       "forbiddenTitle": "Zugang verweigert",
@@ -860,7 +860,7 @@
       "exportCount": "Exportiere ({{count}})",
       "deleteCount": "Löschen ({{count}})",
       "bulkDeleteTitle": "Chatsitzungen löschen",
-      "bulkDeleteMessage": "Lösche {{count} Chat-Sitzung(en)? Diese Aktion kann nicht rückgängig gemacht werden.",
+      "bulkDeleteMessage": "Lösche {{count}} Chat-Sitzung(en)? Diese Aktion kann nicht rückgängig gemacht werden.",
       "bulkDeleteError": "Chat-Sitzungen löschen gescheitert. Bitte versuchen Sie es noch mal.",
       "exportError": "Export der Chatsitzungen gescheitert. Bitte versuchen Sie es nochmal.",
       "bulkExportError": "Export der Chatsitzungen gescheitert. Bitte versuchen Sie es nochmal.",

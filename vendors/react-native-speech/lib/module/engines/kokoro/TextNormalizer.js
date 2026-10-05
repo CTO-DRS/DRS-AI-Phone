@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * Text Normalizer for TTS
@@ -12,7 +12,7 @@
  * Based on: https://github.com/hexgrad/kokoro/blob/main/kokoro.js/src/phonemize.js
  */
 
-import {splitCamelCase} from '../../phonemization/splitCamelCase.js';
+import { splitCamelCase } from "../../phonemization/splitCamelCase.js";
 export class TextNormalizer {
   /**
    * Split numbers into phonetic equivalents
@@ -67,14 +67,7 @@ export class TextNormalizer {
       return match;
     }
     const d = parseInt(c.padEnd(2, '0'), 10);
-    const coins =
-      match[0] === '$'
-        ? d === 1
-          ? 'cent'
-          : 'cents'
-        : d === 1
-          ? 'penny'
-          : 'pence';
+    const coins = match[0] === '$' ? d === 1 ? 'cent' : 'cents' : d === 1 ? 'penny' : 'pence';
     return `${b} ${bill}${b === '1' ? '' : 's'} and ${d} ${coins}`;
   }
 
@@ -98,40 +91,8 @@ export class TextNormalizer {
   intToWords(n) {
     if (n < 0 || n > 999999 || !Number.isInteger(n)) return String(n);
     if (n === 0) return 'zero';
-    const ones = [
-      '',
-      'one',
-      'two',
-      'three',
-      'four',
-      'five',
-      'six',
-      'seven',
-      'eight',
-      'nine',
-      'ten',
-      'eleven',
-      'twelve',
-      'thirteen',
-      'fourteen',
-      'fifteen',
-      'sixteen',
-      'seventeen',
-      'eighteen',
-      'nineteen',
-    ];
-    const tens = [
-      '',
-      '',
-      'twenty',
-      'thirty',
-      'forty',
-      'fifty',
-      'sixty',
-      'seventy',
-      'eighty',
-      'ninety',
-    ];
+    const ones = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
+    const tens = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
     let result = '';
     if (n >= 1000) {
       result += this.intToWords(Math.floor(n / 1000)) + ' thousand';
@@ -161,56 +122,34 @@ export class TextNormalizer {
 
     // 1. Handle quotes and brackets
     // Use Unicode escapes for reliability
-    result = result
-      .replace(/[\u2018\u2019]/g, "'") // Curly single quotes to straight
-      .replace(/\u00ab/g, '"') // « to "
-      .replace(/\u00bb/g, '"') // » to "
-      .replace(/[\u201c\u201d]/g, '"') // Curly double quotes to straight
-      .replace(/\(/g, '\u00ab') // ( to «
-      .replace(/\)/g, '\u00bb'); // ) to »
+    result = result.replace(/[\u2018\u2019]/g, "'") // Curly single quotes to straight
+    .replace(/\u00ab/g, '"') // « to "
+    .replace(/\u00bb/g, '"') // » to "
+    .replace(/[\u201c\u201d]/g, '"') // Curly double quotes to straight
+    .replace(/\(/g, '\u00ab') // ( to «
+    .replace(/\)/g, '\u00bb'); // ) to »
 
     // 2. Replace uncommon punctuation marks (CJK etc.)
-    result = result
-      .replace(/、/g, ', ')
-      .replace(/。/g, '. ')
-      .replace(/！/g, '! ')
-      .replace(/，/g, ', ')
-      .replace(/：/g, ': ')
-      .replace(/；/g, '; ')
-      .replace(/？/g, '? ');
+    result = result.replace(/、/g, ', ').replace(/。/g, '. ').replace(/！/g, '! ').replace(/，/g, ', ').replace(/：/g, ': ').replace(/；/g, '; ').replace(/？/g, '? ');
 
     // 3. Whitespace normalization
-    result = result
-      .replace(/[^\S \n]/g, ' ')
-      .replace(/ {2,}/g, ' ')
-      .replace(/(?<=\n) +(?=\n)/g, '');
+    result = result.replace(/[^\S \n]/g, ' ').replace(/ {2,}/g, ' ').replace(/(?<=\n) +(?=\n)/g, '');
 
     // 4. Abbreviations
-    result = result
-      .replace(/\bD[Rr]\.(?= [A-Z])/g, 'Doctor')
-      .replace(/\b(?:Mr\.|MR\.(?= [A-Z]))/g, 'Mister')
-      .replace(/\b(?:Ms\.|MS\.(?= [A-Z]))/g, 'Miss')
-      .replace(/\b(?:Mrs\.|MRS\.(?= [A-Z]))/g, 'Mrs')
-      .replace(/\betc\.(?! [A-Z])/gi, 'etc');
+    result = result.replace(/\bD[Rr]\.(?= [A-Z])/g, 'Doctor').replace(/\b(?:Mr\.|MR\.(?= [A-Z]))/g, 'Mister').replace(/\b(?:Ms\.|MS\.(?= [A-Z]))/g, 'Miss').replace(/\b(?:Mrs\.|MRS\.(?= [A-Z]))/g, 'Mrs').replace(/\betc\.(?! [A-Z])/gi, 'etc');
 
     // 5. Normalize casual words
     result = result.replace(/\b(y)eah?\b/gi, "$1e'a");
 
     // 6. Handle numbers and currencies
     // Years, times, and decade numbers
-    result = result.replace(
-      /\d*\.\d+|\b\d{4}s?\b|(?<!:)\b(?:[1-9]|1[0-2]):[0-5]\d\b(?!:)/g,
-      m => this.splitNum(m),
-    );
+    result = result.replace(/\d*\.\d+|\b\d{4}s?\b|(?<!:)\b(?:[1-9]|1[0-2]):[0-5]\d\b(?!:)/g, m => this.splitNum(m));
 
     // Remove commas from numbers
     result = result.replace(/(?<=\d),(?=\d)/g, '');
 
     // Currency handling
-    result = result.replace(
-      /[$£]\d+(?:\.\d+)?(?: hundred| thousand| (?:[bm]|tr)illion)*\b|[$£]\d+\.\d\d?\b/gi,
-      m => this.flipMoney(m),
-    );
+    result = result.replace(/[$£]\d+(?:\.\d+)?(?: hundred| thousand| (?:[bm]|tr)illion)*\b|[$£]\d+\.\d\d?\b/gi, m => this.flipMoney(m));
 
     // Decimal numbers (after currency to avoid conflicts)
     result = result.replace(/\d*\.\d+/g, m => this.pointNum(m));
@@ -232,9 +171,7 @@ export class TextNormalizer {
     result = result.replace(/(?<=X')S\b/g, 's');
 
     // 8. Handle acronyms with periods (U.S.A. -> U-S-A-)
-    result = result.replace(/(?:[A-Za-z]\.){2,} [a-z]/g, m =>
-      m.replace(/\./g, '-'),
-    );
+    result = result.replace(/(?:[A-Za-z]\.){2,} [a-z]/g, m => m.replace(/\./g, '-'));
     result = result.replace(/(?<=[A-Z])\.(?=[A-Z])/gi, '-');
 
     // 9. Convert any remaining bare integers to words
@@ -257,9 +194,7 @@ export class TextNormalizer {
    * Preserves sentence boundaries for natural speech flow
    */
   chunkBySentences(text, maxChunkSize = 1000) {
-    return this.chunkBySentencesWithMetadata(text, maxChunkSize).map(
-      chunk => chunk.text,
-    );
+    return this.chunkBySentencesWithMetadata(text, maxChunkSize).map(chunk => chunk.text);
   }
 
   /**
@@ -289,7 +224,7 @@ export class TextNormalizer {
         sentenceMatches.push({
           text: sentenceText,
           start: lastIndex,
-          end: endIndex,
+          end: endIndex
         });
       }
       lastIndex = endIndex;
@@ -302,21 +237,19 @@ export class TextNormalizer {
         sentenceMatches.push({
           text: remaining,
           start: lastIndex,
-          end: text.length,
+          end: text.length
         });
       }
     }
 
     // If no sentences found, return the entire text as one chunk
     if (sentenceMatches.length === 0) {
-      return [
-        {
-          text: text.trim(),
-          originalText: text,
-          startIndex: 0,
-          endIndex: text.length,
-        },
-      ];
+      return [{
+        text: text.trim(),
+        originalText: text,
+        startIndex: 0,
+        endIndex: text.length
+      }];
     }
 
     // Group sentences into chunks that don't exceed maxChunkSize
@@ -329,15 +262,12 @@ export class TextNormalizer {
       if (!trimmedSentence) continue;
 
       // If adding this sentence would exceed maxChunkSize, start a new chunk
-      if (
-        currentChunkText &&
-        currentChunkText.length + trimmedSentence.length + 1 > maxChunkSize
-      ) {
+      if (currentChunkText && currentChunkText.length + trimmedSentence.length + 1 > maxChunkSize) {
         chunks.push({
           text: currentChunkText.trim(),
           originalText: text.slice(currentChunkStart, currentChunkEnd),
           startIndex: currentChunkStart,
-          endIndex: currentChunkEnd,
+          endIndex: currentChunkEnd
         });
         currentChunkText = trimmedSentence;
         currentChunkStart = sentence.start;
@@ -358,19 +288,15 @@ export class TextNormalizer {
         text: currentChunkText.trim(),
         originalText: text.slice(currentChunkStart, currentChunkEnd),
         startIndex: currentChunkStart,
-        endIndex: currentChunkEnd,
+        endIndex: currentChunkEnd
       });
     }
-    return chunks.length > 0
-      ? chunks
-      : [
-          {
-            text: text.trim(),
-            originalText: text,
-            startIndex: 0,
-            endIndex: text.length,
-          },
-        ];
+    return chunks.length > 0 ? chunks : [{
+      text: text.trim(),
+      originalText: text,
+      startIndex: 0,
+      endIndex: text.length
+    }];
   }
 }
 

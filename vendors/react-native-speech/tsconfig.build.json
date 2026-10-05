@@ -1,0 +1,14 @@
+{
+  "extends": "@react-native/typescript-config/tsconfig.json",
+  "compilerOptions": {
+    "outDir": "lib/typescript",
+    "rootDir": ".",
+    "noEmit": false,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "allowImportingTsExtensions": false,
+    "allowArbitraryExtensions": false
+  },
+  "include": ["src"],
+  "exclude": ["**/__tests__", "**/__mocks__", "lib"]
+}

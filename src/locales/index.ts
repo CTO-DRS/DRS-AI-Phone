@@ -30,6 +30,12 @@ const languageRegistry = {
   uk: {displayName: 'Українська (UK)'},
   zh: {displayName: '中文 (ZH)'},
   zh_Hant: {displayName: '繁體中文 (ZH_HANT)'},
+  de: {displayName: 'Deutsch (DE)'},
+  fr: {displayName: 'Français (FR)'},
+  it: {displayName: 'Italiano (IT)'},
+  sv: {displayName: 'Svenska (SV)'},
+  et: {displayName: 'Eesti (ET)'},
+  be: {displayName: 'Беларуская (BE)'},
 } as const;
 
 export type AvailableLanguage = keyof typeof languageRegistry;
@@ -54,6 +60,12 @@ export const languageDisplayNames: Record<AvailableLanguage, string> = {
   uk: languageRegistry.uk.displayName,
   zh: languageRegistry.zh.displayName,
   zh_Hant: languageRegistry.zh_Hant.displayName,
+  de: languageRegistry.de.displayName,
+  fr: languageRegistry.fr.displayName,
+  it: languageRegistry.it.displayName,
+  sv: languageRegistry.sv.displayName,
+  et: languageRegistry.et.displayName,
+  be: languageRegistry.be.displayName,
 };
 
 // ─── Lazy Loading ────────────────────────────────────────────────────
@@ -94,6 +106,18 @@ function requireLanguageData(lang: AvailableLanguage): object | null {
       return require('./zh.json');
     case 'zh_Hant':
       return require('./zh_Hant.json');
+    case 'de':
+      return require('./de.json');
+    case 'fr':
+      return require('./fr.json');
+    case 'it':
+      return require('./it.json');
+    case 'sv':
+      return require('./sv.json');
+    case 'et':
+      return require('./et.json');
+    case 'be':
+      return require('./be.json');
     default:
       return null;
   }
@@ -168,6 +192,24 @@ export const l10n = {
   get zh_Hant(): Translations {
     return getTranslations('zh_Hant');
   },
+  get de(): Translations {
+    return getTranslations('de');
+  },
+  get fr(): Translations {
+    return getTranslations('fr');
+  },
+  get it(): Translations {
+    return getTranslations('it');
+  },
+  get sv(): Translations {
+    return getTranslations('sv');
+  },
+  get et(): Translations {
+    return getTranslations('et');
+  },
+  get be(): Translations {
+    return getTranslations('be');
+  },
 };
 
 // ─── Interpolation helper ────────────────────────────────────────────
@@ -189,8 +231,10 @@ export function t(
 }
 
 // ─── Dayjs locale ───────────────────────────────────────────────────
-export const initLocale = (locale?: AvailableLanguage) => {
-  const locales: Record<AvailableLanguage, unknown> = {
+// Requiring a locale bundle registers it with dayjs as a side effect;
+// index the map to activate the requested (or default) bundle.
+const ensureDayjsLocale = (lang: AvailableLanguage): unknown =>
+  ({
     en: require('dayjs/locale/en'),
     ar: require('dayjs/locale/ar'),
     es: require('dayjs/locale/es'),
@@ -207,8 +251,18 @@ export const initLocale = (locale?: AvailableLanguage) => {
     uk: require('dayjs/locale/uk'),
     zh: require('dayjs/locale/zh'),
     zh_Hant: require('dayjs/locale/zh-tw'),
-  };
+    de: require('dayjs/locale/de'),
+    fr: require('dayjs/locale/fr'),
+    it: require('dayjs/locale/it'),
+    sv: require('dayjs/locale/sv'),
+    et: require('dayjs/locale/et'),
+    be: require('dayjs/locale/be'),
+  })[lang];
 
-  locale ? locales[locale] : locales.en;
+export const initLocale = (locale?: AvailableLanguage) => {
+  ensureDayjsLocale(locale ?? 'en');
+
+  // Apply the requested locale; without an argument dayjs keeps the
+  // current global locale (getter overload), so no branch is needed.
   dayjs.locale(locale);
 };

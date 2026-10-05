@@ -21,6 +21,7 @@ import {
   StarIcon,
   TrashIcon,
   AppInfoIcon,
+  MessageCircleLgIcon,
 } from '../../assets/icons';
 import {L10nContext} from '../../utils';
 import {t} from '../../locales';
@@ -532,6 +533,23 @@ export const SidebarContent: React.FC<DrawerContentComponentProps> = observer(
       ],
     );
 
+    // Empty state shown when the user has no chat sessions yet.
+    const renderEmptySessions = () => (
+      <View style={styles.emptySessions} testID="sidebar-empty-sessions">
+        <MessageCircleLgIcon
+          stroke={theme.colors.onSurfaceVariant}
+          width={40}
+          height={40}
+        />
+        <Text style={styles.emptySessionsTitle}>
+          {l10n.components.sidebarContent.emptySessionsTitle}
+        </Text>
+        <Text style={styles.emptySessionsHint}>
+          {l10n.components.sidebarContent.emptySessionsHint}
+        </Text>
+      </View>
+    );
+
     // List header with main menu items
     const ListHeaderComponent = React.useMemo(
       () => (
@@ -647,6 +665,7 @@ export const SidebarContent: React.FC<DrawerContentComponentProps> = observer(
                 keyExtractor={keyExtractor}
                 renderItem={renderItem}
                 renderSectionHeader={renderSectionHeader}
+                ListEmptyComponent={renderEmptySessions}
                 stickySectionHeadersEnabled={false}
                 contentContainerStyle={styles.scrollViewContent}
               />
@@ -658,6 +677,7 @@ export const SidebarContent: React.FC<DrawerContentComponentProps> = observer(
               renderItem={renderItem}
               renderSectionHeader={renderSectionHeader}
               ListHeaderComponent={ListHeaderComponent}
+              ListEmptyComponent={renderEmptySessions}
               stickySectionHeadersEnabled={false}
               contentContainerStyle={styles.scrollViewContent}
             />

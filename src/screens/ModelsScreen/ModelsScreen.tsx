@@ -1,15 +1,15 @@
 import React, {useState, useContext, useEffect} from 'react';
 import {FlatList, RefreshControl, Platform, Alert, View} from 'react-native';
-
 import {reaction, computed} from 'mobx';
 import {v4 as uuidv4} from 'uuid';
 import 'react-native-get-random-values';
 import {observer} from 'mobx-react-lite';
 import * as RNFS from '@dr.pogodin/react-native-fs';
 import {pick, types} from '@react-native-documents/picker';
-import {Portal, Snackbar} from 'react-native-paper';
+import {Portal, Snackbar, Text} from 'react-native-paper';
 
 import {useTheme} from '../../hooks';
+import {ModelIcon} from '../../assets/icons';
 
 import {FABGroup} from './FABGroup';
 import {ModelCard} from './ModelCard';
@@ -403,6 +403,17 @@ export const ModelsScreen: React.FC = observer(() => {
         keyExtractor={item => item.type}
         extraData={activeModelId}
         renderItem={renderGroupHeader}
+        ListEmptyComponent={
+          <View style={styles.emptyState} testID="models-empty-state">
+            <ModelIcon
+              stroke={theme.colors.onSurfaceVariant}
+              width={48}
+              height={48}
+            />
+            <Text style={styles.emptyStateTitle}>{l10n.models.emptyTitle}</Text>
+            <Text style={styles.emptyStateHint}>{l10n.models.emptyHint}</Text>
+          </View>
+        }
         refreshControl={
           <RefreshControl
             refreshing={refreshing}

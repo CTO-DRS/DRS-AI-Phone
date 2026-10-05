@@ -13,6 +13,27 @@ export const createStyles = (theme: Theme) =>
     },
     listContainer: {
       paddingBottom: 150,
+      flexGrow: 1,
+    },
+    emptyState: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingVertical: 64,
+      paddingHorizontal: 32,
+      gap: 8,
+    },
+    emptyStateTitle: {
+      fontSize: 18,
+      fontWeight: '600',
+      color: theme.colors.onSurface,
+      textAlign: 'center',
+    },
+    emptyStateHint: {
+      fontSize: 14,
+      color: theme.colors.onSurfaceVariant,
+      textAlign: 'center',
+      lineHeight: 22,
     },
     header: {
       paddingVertical: 12,

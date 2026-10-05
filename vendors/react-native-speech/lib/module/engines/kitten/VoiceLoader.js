@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * Voice Loader for Kitten TTS
@@ -15,8 +15,8 @@
  */
 
 import * as RNFS from '@dr.pogodin/react-native-fs';
-import {KITTEN_BUILTIN_VOICES} from './constants.js';
-import {createComponentLogger} from '../../utils/logger.js';
+import { KITTEN_BUILTIN_VOICES } from "./constants.js";
+import { createComponentLogger } from "../../utils/logger.js";
 const log = createComponentLogger('Kitten', 'VoiceLoader');
 
 /**
@@ -58,7 +58,7 @@ export class VoiceLoader {
       }
       this.voices.set(voiceId, {
         data: flatData,
-        shape,
+        shape
       });
 
       // Add voice metadata from builtins or create from ID
@@ -70,7 +70,7 @@ export class VoiceLoader {
           id: voiceId,
           name: voiceId,
           gender: 'female',
-          language: 'en',
+          language: 'en'
         });
       }
     }
@@ -102,14 +102,12 @@ export class VoiceLoader {
           id: voiceId,
           name: voiceId,
           gender: 'female',
-          language: 'en',
+          language: 'en'
         });
       }
     }
     this.isInitialized = true;
-    log.info(
-      `Manifest loaded: ${manifest.voices.length} voices available (lazy loading)`,
-    );
+    log.info(`Manifest loaded: ${manifest.voices.length} voices available (lazy loading)`);
   }
 
   /**
@@ -199,7 +197,9 @@ export class VoiceLoader {
   async doLazyLoadVoice(voiceId) {
     try {
       const localPath = `${this.manifestVoicesDir}/${voiceId}.json`;
-      const {loadAssetAsJSON} = require('../../utils/AssetLoader');
+      const {
+        loadAssetAsJSON
+      } = require('../../utils/AssetLoader');
       let voiceJSON;
       try {
         log.debug(`Loading voice from cache: ${voiceId}`);
@@ -224,9 +224,7 @@ export class VoiceLoader {
           await RNFS.writeFile(localPath, jsonText, 'utf8');
           log.debug(`Cached voice to disk: ${localPath}`);
         } catch (cacheErr) {
-          log.warn(
-            `Failed to cache voice ${voiceId}: ${cacheErr instanceof Error ? cacheErr.message : String(cacheErr)}`,
-          );
+          log.warn(`Failed to cache voice ${voiceId}: ${cacheErr instanceof Error ? cacheErr.message : String(cacheErr)}`);
         }
       }
       const shape = [voiceJSON.shape[0], voiceJSON.shape[1]];
@@ -240,15 +238,13 @@ export class VoiceLoader {
       }
       const voiceData = {
         data: flatData,
-        shape,
+        shape
       };
       this.voices.set(voiceId, voiceData);
       log.debug(`Voice loaded: ${voiceId}, shape: [${shape[0]}, ${shape[1]}]`);
       return voiceData;
     } catch (error) {
-      log.error(
-        `Failed to lazy load voice ${voiceId}: ${error instanceof Error ? error.message : String(error)}`,
-      );
+      log.error(`Failed to lazy load voice ${voiceId}: ${error instanceof Error ? error.message : String(error)}`);
       return undefined;
     }
   }

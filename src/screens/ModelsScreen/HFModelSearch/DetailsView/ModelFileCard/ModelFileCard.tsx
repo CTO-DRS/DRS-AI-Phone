@@ -175,7 +175,7 @@ export const ModelFileCard: FC<ModelFileCardProps> = observer(
                   const removed = modelStore.removeModelFromList(model);
                   if (!removed) {
                     Alert.alert(
-                      'Error',
+                      l10n.common.error,
                       l10n.models.modelFile.alerts.removeError,
                     );
                   }

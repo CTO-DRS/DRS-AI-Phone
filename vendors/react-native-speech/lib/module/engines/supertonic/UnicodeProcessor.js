@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * Unicode Processor for Supertonic TTS
@@ -8,11 +8,15 @@
  * Characters not in the vocabulary are mapped to -1 and should use fallback.
  */
 
-import {loadAssetAsJSON} from '../../utils/AssetLoader.js';
-import {createComponentLogger} from '../../utils/logger.js';
-import {SUPERTONIC_CONSTANTS} from './constants.js';
+import { loadAssetAsJSON } from "../../utils/AssetLoader.js";
+import { createComponentLogger } from "../../utils/logger.js";
+import { SUPERTONIC_CONSTANTS } from "./constants.js";
 const log = createComponentLogger('Supertonic', 'UnicodeProcessor');
-const {PAD_TOKEN_ID, UNK_TOKEN_ID, AVAILABLE_LANGS} = SUPERTONIC_CONSTANTS;
+const {
+  PAD_TOKEN_ID,
+  UNK_TOKEN_ID,
+  AVAILABLE_LANGS
+} = SUPERTONIC_CONSTANTS;
 
 /**
  * Check if a language code is supported
@@ -36,10 +40,7 @@ function normalizeText(text, lang = 'en', addLanguageTags = true) {
   normalized = normalized.normalize('NFKD');
 
   // Remove emojis (simplified pattern for React Native compatibility)
-  normalized = normalized.replace(
-    /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu,
-    '',
-  );
+  normalized = normalized.replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '');
 
   // Replace various dashes and symbols
   const replacements = {
@@ -63,7 +64,7 @@ function normalizeText(text, lang = 'en', addLanguageTags = true) {
     '/': ' ',
     '#': ' ',
     '→': ' ',
-    '←': ' ',
+    '←': ' '
   };
   for (const [k, v] of Object.entries(replacements)) {
     normalized = normalized.split(k).join(v);
@@ -182,11 +183,7 @@ export function calculateTotalDuration(durations) {
  * @param padValue - Value to use for padding (default: PAD_TOKEN_ID)
  * @returns Padded BigInt64Array
  */
-export function padBigIntArray(
-  arr,
-  targetLength,
-  padValue = BigInt(PAD_TOKEN_ID),
-) {
+export function padBigIntArray(arr, targetLength, padValue = BigInt(PAD_TOKEN_ID)) {
   if (arr.length >= targetLength) {
     return arr;
   }
@@ -237,14 +234,8 @@ export class UnicodeProcessor {
     // v2 models have < at index 60 with vocab_idx 27, v1 has -1
     const lessThanIdx = this.indexer[60]; // '<' character
     const greaterThanIdx = this.indexer[62]; // '>' character
-    this.supportsLanguageTags =
-      lessThanIdx !== undefined &&
-      lessThanIdx >= 0 &&
-      greaterThanIdx !== undefined &&
-      greaterThanIdx >= 0;
-    log.info(
-      `Loaded indexer with ${this.indexer.length} entries, language tags: ${this.supportsLanguageTags ? 'supported' : 'not supported'}`,
-    );
+    this.supportsLanguageTags = lessThanIdx !== undefined && lessThanIdx >= 0 && greaterThanIdx !== undefined && greaterThanIdx >= 0;
+    log.info(`Loaded indexer with ${this.indexer.length} entries, language tags: ${this.supportsLanguageTags ? 'supported' : 'not supported'}`);
   }
 
   /**
@@ -302,7 +293,7 @@ export class UnicodeProcessor {
     return {
       textIds,
       textMask,
-      sequenceLength: textIds.length,
+      sequenceLength: textIds.length
     };
   }
 

@@ -3,12 +3,15 @@ import {Animated, Easing, View} from 'react-native';
 import {observer} from 'mobx-react';
 import {Text} from 'react-native-paper';
 
-import {styles} from './styles';
+import {createStyles} from './styles';
 import {chatSessionStore, modelStore} from '../../store';
 import {L10nContext} from '../../utils';
+import {useTheme} from '../../hooks';
 
 /** Live "model ready" pulse dot. */
 const ModelStatusDot: React.FC<{active: boolean}> = ({active}) => {
+  const theme = useTheme();
+  const styles = createStyles(theme);
   const pulse = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -57,6 +60,8 @@ const ModelStatusDot: React.FC<{active: boolean}> = ({active}) => {
 
 export const ChatHeaderTitle: React.FC = observer(() => {
   const l10n = useContext(L10nContext);
+  const theme = useTheme();
+  const styles = createStyles(theme);
   const activeSessionId = chatSessionStore.activeSessionId;
   const activeSession = chatSessionStore.sessions.find(
     session => session.id === activeSessionId,

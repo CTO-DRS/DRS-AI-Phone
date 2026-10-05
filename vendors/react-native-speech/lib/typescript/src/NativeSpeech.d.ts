@@ -1,184 +1,183 @@
-import {type TurboModule} from 'react-native';
-import type {EventEmitter} from 'react-native/Libraries/Types/CodegenTypesNamespace';
+import { type TurboModule } from 'react-native';
+import type { EventEmitter } from 'react-native/Libraries/Types/CodegenTypesNamespace';
 export type VoiceQuality = 'Default' | 'Enhanced';
 export interface EventProps {
-  /**
-   * The utterance ID
-   */
-  id: number;
+    /**
+     * The utterance ID
+     */
+    id: number;
 }
 export interface ProgressEventProps extends EventProps {
-  /**
-   * The text being spoken length
-   */
-  length: number;
-  /**
-   * The current position in the spoken text
-   */
-  location: number;
+    /**
+     * The text being spoken length
+     */
+    length: number;
+    /**
+     * The current position in the spoken text
+     */
+    location: number;
 }
 export interface VoiceProps {
-  /** The name of the voice */
-  name: string;
-  /** The quality level of the voice */
-  quality: VoiceQuality;
-  /** The language code of the voice (e.g., 'en-US', 'fr-FR') */
-  language: string;
-  /** The unique identifier for the voice */
-  identifier: string;
+    /** The name of the voice */
+    name: string;
+    /** The quality level of the voice */
+    quality: VoiceQuality;
+    /** The language code of the voice (e.g., 'en-US', 'fr-FR') */
+    language: string;
+    /** The unique identifier for the voice */
+    identifier: string;
 }
 export interface VoiceOptions {
-  /**
-   * If `true`, audio from other apps will be temporarily lowered (ducked) while speech is active.
-   * This is for critical announcements (e.g., navigation) and takes priority over `silentMode` on iOS.
-   * @default false
-   */
-  ducking?: boolean;
-  /**
-   * Determines how speech audio interacts with the device's silent (ringer) switch.
-   * This option is ignored if `ducking` is `true`.
-   * @platform iOS
-   *
-   * - `obey`: (Default) Speech plays through the device's silent switch using the Playback audio category. Use `respect` to honor the ringer switch.
-   * - `respect`: Speech will be silenced by the ringer switch. Use for non-critical audio.
-   * - `ignore`: Speech will play even if the ringer is off. Use for critical audio when ducking is not desired.
-   */
-  silentMode?: 'obey' | 'respect' | 'ignore';
-  /** The language code to use (e.g., 'en', 'fr', 'en-US', 'fr-FR') */
-  language?: string;
-  /** Volume level from 0.0 to 1.0 */
-  volume?: number;
-  /** Specific voice identifier to use */
-  voice?: string;
-  /**
-   * Pitch multiplier from 0.5 to 2.0
-   * - `Android`: (0.1 - 2.0)
-   * - `iOS`: (0.5 - 2.0)
-   */
-  pitch?: number;
-  /**
-   * Speech rate
-   * - `Android`: (0.1 - 2.0)
-   * - `iOS`: (`AVSpeechUtteranceMinimumSpeechRate` - `AVSpeechUtteranceMaximumSpeechRate`)
-   */
-  rate?: number;
+    /**
+     * If `true`, audio from other apps will be temporarily lowered (ducked) while speech is active.
+     * This is for critical announcements (e.g., navigation) and takes priority over `silentMode` on iOS.
+     * @default false
+     */
+    ducking?: boolean;
+    /**
+     * Determines how speech audio interacts with the device's silent (ringer) switch.
+     * This option is ignored if `ducking` is `true`.
+     * @platform iOS
+     *
+     * - `obey`: (Default) Speech plays through the device's silent switch using the Playback audio category. Use `respect` to honor the ringer switch.
+     * - `respect`: Speech will be silenced by the ringer switch. Use for non-critical audio.
+     * - `ignore`: Speech will play even if the ringer is off. Use for critical audio when ducking is not desired.
+     */
+    silentMode?: 'obey' | 'respect' | 'ignore';
+    /** The language code to use (e.g., 'en', 'fr', 'en-US', 'fr-FR') */
+    language?: string;
+    /** Volume level from 0.0 to 1.0 */
+    volume?: number;
+    /** Specific voice identifier to use */
+    voice?: string;
+    /**
+     * Pitch multiplier from 0.5 to 2.0
+     * - `Android`: (0.1 - 2.0)
+     * - `iOS`: (0.5 - 2.0)
+     */
+    pitch?: number;
+    /**
+     * Speech rate
+     * - `Android`: (0.1 - 2.0)
+     * - `iOS`: (`AVSpeechUtteranceMinimumSpeechRate` - `AVSpeechUtteranceMaximumSpeechRate`)
+     */
+    rate?: number;
 }
 export interface EngineProps {
-  /**
-   * The unique system identifier for the engine.
-   * This is typically the package name (e.g., "com.google.android.tts")
-   */
-  name: string;
-  /**
-   * The human-readable display name for the engine (e.g., "Google Text-to-Speech Engine").
-   */
-  label: string;
-  /**
-   * A boolean flag indicating if this is the default engine
-   */
-  isDefault: boolean;
+    /**
+     * The unique system identifier for the engine.
+     * This is typically the package name (e.g., "com.google.android.tts")
+     */
+    name: string;
+    /**
+     * The human-readable display name for the engine (e.g., "Google Text-to-Speech Engine").
+     */
+    label: string;
+    /**
+     * A boolean flag indicating if this is the default engine
+     */
+    isDefault: boolean;
 }
 interface ConstantsProps {
-  /**
-   * The maximum number of characters allowed in a single call to `speak()` or `speakWithOptions()`.
-   * @platform Android
-   */
-  maxInputLength?: number;
+    /**
+     * The maximum number of characters allowed in a single call to `speak()` or `speakWithOptions()`.
+     * @platform Android
+     */
+    maxInputLength?: number;
 }
 export interface AudioInterruptionProps {
-  /**
-   * The interruption phase.
-   * - `began`: audio was paused due to an external interruption (incoming call, other media, audio focus loss).
-   * - `ended`: the interruption has ended.
-   */
-  type: 'began' | 'ended';
-  /**
-   * On `ended`, indicates whether the system suggests the app should resume playback.
-   * Always `true` on Android when focus is regained after a transient loss.
-   * On iOS, mirrors `AVAudioSessionInterruptionOptionShouldResume`.
-   */
-  shouldResume?: boolean;
+    /**
+     * The interruption phase.
+     * - `began`: audio was paused due to an external interruption (incoming call, other media, audio focus loss).
+     * - `ended`: the interruption has ended.
+     */
+    type: 'began' | 'ended';
+    /**
+     * On `ended`, indicates whether the system suggests the app should resume playback.
+     * Always `true` on Android when focus is regained after a transient loss.
+     * On iOS, mirrors `AVAudioSessionInterruptionOptionShouldResume`.
+     */
+    shouldResume?: boolean;
 }
 export interface AudioPlayerConfig {
-  /**
-   * Sample rate in Hz (e.g., 24000)
-   */
-  sampleRate: number;
-  /**
-   * Number of channels (1 = mono, 2 = stereo)
-   */
-  channels: number;
-  /**
-   * If `true`, audio from other apps will be temporarily lowered (ducked) while speech is active.
-   * @default false
-   */
-  ducking?: boolean;
-  /**
-   * Determines how speech audio interacts with the device's silent (ringer) switch.
-   * @platform iOS
-   *
-   * - `obey`: (Default) Speech plays through the device's silent switch using the Playback audio category. Use `respect` to honor the ringer switch.
-   * - `respect`: Speech will be silenced by the ringer switch. Use for non-critical audio.
-   * - `ignore`: Speech will play even if the ringer is off. Use for critical audio when ducking is not desired.
-   */
-  silentMode?: 'obey' | 'respect' | 'ignore';
+    /**
+     * Sample rate in Hz (e.g., 24000)
+     */
+    sampleRate: number;
+    /**
+     * Number of channels (1 = mono, 2 = stereo)
+     */
+    channels: number;
+    /**
+     * If `true`, audio from other apps will be temporarily lowered (ducked) while speech is active.
+     * @default false
+     */
+    ducking?: boolean;
+    /**
+     * Determines how speech audio interacts with the device's silent (ringer) switch.
+     * @platform iOS
+     *
+     * - `obey`: (Default) Speech plays through the device's silent switch using the Playback audio category. Use `respect` to honor the ringer switch.
+     * - `respect`: Speech will be silenced by the ringer switch. Use for non-critical audio.
+     * - `ignore`: Speech will play even if the ringer is off. Use for critical audio when ducking is not desired.
+     */
+    silentMode?: 'obey' | 'respect' | 'ignore';
 }
 export interface Spec extends TurboModule {
-  getConstants: () => ConstantsProps;
-  reset: () => void;
-  stop: () => Promise<void>;
-  pause: () => Promise<boolean>;
-  resume: () => Promise<boolean>;
-  isSpeaking: () => Promise<boolean>;
-  speak: (text: string) => Promise<void>;
-  getEngines: () => Promise<EngineProps[]>;
-  initialize: (options: VoiceOptions) => void;
-  openVoiceDataInstaller: () => Promise<void>;
-  setEngine: (engineName: string) => Promise<void>;
-  getAvailableVoices: (language?: string) => Promise<VoiceProps[]>;
-  speakWithOptions: (text: string, options: VoiceOptions) => Promise<void>;
-  /**
-   * Play PCM audio data (for neural TTS engines)
-   * @param audioData - Base64-encoded Int16 PCM audio data
-   * @param config - Audio configuration
-   */
-  playAudio: (audioData: string, config: AudioPlayerConfig) => Promise<void>;
-  /**
-   * Stop neural audio playback
-   */
-  stopAudio: () => Promise<void>;
-  /**
-   * Pause neural audio playback
-   */
-  pauseAudio: () => Promise<boolean>;
-  /**
-   * Resume neural audio playback
-   */
-  resumeAudio: () => Promise<boolean>;
-  /**
-   * Check if neural audio is playing
-   */
-  isAudioPlaying: () => Promise<boolean>;
-  /**
-   * Open a phonemizer dict file (mmap'd native dict, EPD1 format).
-   * Replaces any previously open dict. Returns true on success.
-   */
-  dictOpen: (path: string) => Promise<boolean>;
-  /**
-   * Look up a word in the currently-open dict.
-   * Returns null on miss or if no dict open.
-   * Synchronous: hot path, called many times per phonemize() call.
-   */
-  dictLookup: (word: string) => string | null;
-  readonly onError: EventEmitter<EventProps>;
-  readonly onStart: EventEmitter<EventProps>;
-  readonly onFinish: EventEmitter<EventProps>;
-  readonly onPause: EventEmitter<EventProps>;
-  readonly onResume: EventEmitter<EventProps>;
-  readonly onStopped: EventEmitter<EventProps>;
-  readonly onProgress: EventEmitter<ProgressEventProps>;
-  readonly onAudioInterruption: EventEmitter<AudioInterruptionProps>;
+    getConstants: () => ConstantsProps;
+    reset: () => void;
+    stop: () => Promise<void>;
+    pause: () => Promise<boolean>;
+    resume: () => Promise<boolean>;
+    isSpeaking: () => Promise<boolean>;
+    speak: (text: string) => Promise<void>;
+    getEngines: () => Promise<EngineProps[]>;
+    initialize: (options: VoiceOptions) => void;
+    openVoiceDataInstaller: () => Promise<void>;
+    setEngine: (engineName: string) => Promise<void>;
+    getAvailableVoices: (language?: string) => Promise<VoiceProps[]>;
+    speakWithOptions: (text: string, options: VoiceOptions) => Promise<void>;
+    /**
+     * Play PCM audio data (for neural TTS engines)
+     * @param audioData - Base64-encoded Int16 PCM audio data
+     * @param config - Audio configuration
+     */
+    playAudio: (audioData: string, config: AudioPlayerConfig) => Promise<void>;
+    /**
+     * Stop neural audio playback
+     */
+    stopAudio: () => Promise<void>;
+    /**
+     * Pause neural audio playback
+     */
+    pauseAudio: () => Promise<boolean>;
+    /**
+     * Resume neural audio playback
+     */
+    resumeAudio: () => Promise<boolean>;
+    /**
+     * Check if neural audio is playing
+     */
+    isAudioPlaying: () => Promise<boolean>;
+    /**
+     * Open a phonemizer dict file (mmap'd native dict, EPD1 format).
+     * Replaces any previously open dict. Returns true on success.
+     */
+    dictOpen: (path: string) => Promise<boolean>;
+    /**
+     * Look up a word in the currently-open dict.
+     * Returns null on miss or if no dict open.
+     * Synchronous: hot path, called many times per phonemize() call.
+     */
+    dictLookup: (word: string) => string | null;
+    readonly onError: EventEmitter<EventProps>;
+    readonly onStart: EventEmitter<EventProps>;
+    readonly onFinish: EventEmitter<EventProps>;
+    readonly onPause: EventEmitter<EventProps>;
+    readonly onResume: EventEmitter<EventProps>;
+    readonly onStopped: EventEmitter<EventProps>;
+    readonly onProgress: EventEmitter<ProgressEventProps>;
+    readonly onAudioInterruption: EventEmitter<AudioInterruptionProps>;
 }
 declare const _default: Spec;
 export default _default;
-//# sourceMappingURL=NativeSpeech.d.ts.map

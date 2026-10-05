@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * Kitten TextPreprocessor — 1-to-1 port of kittentts.preprocess (v0.8.1).
@@ -9,46 +9,14 @@
  * `TextPreprocessor(remove_punctuation=False)`.
  */
 
-import {splitCamelCase} from './splitCamelCase.js';
+import { splitCamelCase } from "./splitCamelCase.js";
 
 // ─────────────────────────────────────────────
 // Number → words
 // ─────────────────────────────────────────────
 
-const ONES = [
-  '',
-  'one',
-  'two',
-  'three',
-  'four',
-  'five',
-  'six',
-  'seven',
-  'eight',
-  'nine',
-  'ten',
-  'eleven',
-  'twelve',
-  'thirteen',
-  'fourteen',
-  'fifteen',
-  'sixteen',
-  'seventeen',
-  'eighteen',
-  'nineteen',
-];
-const TENS = [
-  '',
-  '',
-  'twenty',
-  'thirty',
-  'forty',
-  'fifty',
-  'sixty',
-  'seventy',
-  'eighty',
-  'ninety',
-];
+const ONES = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
+const TENS = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
 const SCALE = ['', 'thousand', 'million', 'billion', 'trillion'];
 const ORDINAL_EXCEPTIONS = {
   one: 'first',
@@ -60,7 +28,7 @@ const ORDINAL_EXCEPTIONS = {
   seven: 'seventh',
   eight: 'eighth',
   nine: 'ninth',
-  twelve: 'twelfth',
+  twelve: 'twelfth'
 };
 const CURRENCY_SYMBOLS = {
   $: 'dollar',
@@ -69,7 +37,7 @@ const CURRENCY_SYMBOLS = {
   '¥': 'yen',
   '₹': 'rupee',
   '₩': 'won',
-  '₿': 'bitcoin',
+  '₿': 'bitcoin'
 };
 function threeDigitsToWords(n) {
   if (n === 0) return '';
@@ -119,10 +87,7 @@ export function floatToWords(value, decimalSep = 'point') {
     const [intPart, decPart] = text.split('.');
     const intWords = intPart ? numberToWords(parseInt(intPart, 10)) : 'zero';
     const digitMap = ['zero', ...ONES.slice(1)];
-    const decWords = (decPart || '')
-      .split('')
-      .map(d => digitMap[parseInt(d, 10)])
-      .join(' ');
+    const decWords = (decPart || '').split('').map(d => digitMap[parseInt(d, 10)]).join(' ');
     result = `${intWords} ${decimalSep} ${decWords}`;
   } else {
     result = numberToWords(parseInt(text, 10));
@@ -137,7 +102,7 @@ function romanToInt(s) {
     L: 50,
     C: 100,
     D: 500,
-    M: 1000,
+    M: 1000
   };
   let result = 0;
   let prev = 0;
@@ -163,20 +128,17 @@ const RE_SPACES = /\s+/g;
 const RE_NUMBER = /(?<![a-zA-Z])-?[\d,]+(?:\.\d+)?/g;
 const RE_ORDINAL = /\b(\d+)(st|nd|rd|th)\b/gi;
 const RE_PERCENT = /(-?[\d,]+(?:\.\d+)?)\s*%/g;
-const RE_CURRENCY =
-  /([$€£¥₹₩₿])\s*([\d,]+(?:\.\d+)?)\s*([KMBT])?(?![a-zA-Z\d])/g;
+const RE_CURRENCY = /([$€£¥₹₩₿])\s*([\d,]+(?:\.\d+)?)\s*([KMBT])?(?![a-zA-Z\d])/g;
 const RE_TIME = /\b(\d{1,2}):(\d{2})(?::(\d{2}))?\s*(am|pm)?\b/gi;
 const RE_RANGE = /(?<!\w)(\d+)-(\d+)(?!\w)/g;
 const RE_MODEL_VER = /\b([a-zA-Z][a-zA-Z0-9]*)-(\d[\d.]*)(?=[^\d.]|$)/g;
-const RE_UNIT =
-  /(\d+(?:\.\d+)?)\s*(km|kg|mg|ml|gb|mb|kb|tb|hz|khz|mhz|ghz|mph|kph|°[cCfF]|[cCfF]°|ms|ns|µs)\b/gi;
+const RE_UNIT = /(\d+(?:\.\d+)?)\s*(km|kg|mg|ml|gb|mb|kb|tb|hz|khz|mhz|ghz|mph|kph|°[cCfF]|[cCfF]°|ms|ns|µs)\b/gi;
 const RE_SCALE = /(?<![a-zA-Z])(\d+(?:\.\d+)?)\s*([KMBT])(?![a-zA-Z\d])/g;
 const RE_SCI = /(?<![a-zA-Z\d])(-?\d+(?:\.\d+)?)[eE]([+-]?\d+)(?![a-zA-Z\d])/g;
 const RE_FRACTION = /\b(\d+)\s*\/\s*(\d+)\b/g;
 const RE_DECADE = /\b(\d{1,3})0s\b/g;
 const RE_LEAD_DEC = /(?<!\d)\.([\d])/g;
-const RE_ROMAN =
-  /\b(M{0,4})(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})\b/g;
+const RE_ROMAN = /\b(M{0,4})(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})\b/g;
 
 // ─────────────────────────────────────────────
 // Expansion helpers
@@ -223,9 +185,7 @@ export function expandOrdinals(text) {
 export function expandPercentages(text) {
   return text.replace(RE_PERCENT, (_, raw) => {
     const clean = raw.replace(/,/g, '');
-    return clean.includes('.')
-      ? `${floatToWords(clean)} percent`
-      : `${numberToWords(parseInt(clean, 10))} percent`;
+    return clean.includes('.') ? `${floatToWords(clean)} percent` : `${numberToWords(parseInt(clean, 10))} percent`;
   });
 }
 export function expandCurrency(text) {
@@ -233,16 +193,14 @@ export function expandCurrency(text) {
     K: 'thousand',
     M: 'million',
     B: 'billion',
-    T: 'trillion',
+    T: 'trillion'
   };
   return text.replace(RE_CURRENCY, (_, symbol, rawIn, scaleSuffix) => {
     const raw = rawIn.replace(/,/g, '');
     const unit = CURRENCY_SYMBOLS[symbol] || '';
     if (scaleSuffix) {
       const scaleWord = scaleMap[scaleSuffix];
-      const num = raw.includes('.')
-        ? floatToWords(raw)
-        : numberToWords(parseInt(raw, 10));
+      const num = raw.includes('.') ? floatToWords(raw) : numberToWords(parseInt(raw, 10));
       return `${num} ${scaleWord} ${unit}${unit ? 's' : ''}`.trim();
     }
     if (raw.includes('.')) {
@@ -278,11 +236,7 @@ export function expandTime(text) {
   });
 }
 export function expandRanges(text) {
-  return text.replace(
-    RE_RANGE,
-    (_, lo, hi) =>
-      `${numberToWords(parseInt(lo, 10))} to ${numberToWords(parseInt(hi, 10))}`,
-  );
+  return text.replace(RE_RANGE, (_, lo, hi) => `${numberToWords(parseInt(lo, 10))} to ${numberToWords(parseInt(hi, 10))}`);
 }
 export function expandModelNames(text) {
   return text.replace(RE_MODEL_VER, (_, name, ver) => `${name} ${ver}`);
@@ -309,20 +263,17 @@ export function expandUnits(text) {
     '°c': 'degrees Celsius',
     'c°': 'degrees Celsius',
     '°f': 'degrees Fahrenheit',
-    'f°': 'degrees Fahrenheit',
+    'f°': 'degrees Fahrenheit'
   };
   return text.replace(RE_UNIT, (_, raw, unitIn) => {
     const unit = unitIn.toLowerCase();
     const expanded = unitMap[unit] || unitIn;
-    const num = raw.includes('.')
-      ? floatToWords(raw)
-      : numberToWords(parseInt(raw, 10));
+    const num = raw.includes('.') ? floatToWords(raw) : numberToWords(parseInt(raw, 10));
     return `${num} ${expanded}`;
   });
 }
 export function expandRomanNumerals(text) {
-  const TITLE_WORDS =
-    /\b(war|chapter|part|volume|act|scene|book|section|article|king|queen|pope|louis|henry|edward|george|william|james|phase|round|level|stage|class|type|version|episode|season)\b/i;
+  const TITLE_WORDS = /\b(war|chapter|part|volume|act|scene|book|section|article|king|queen|pope|louis|henry|edward|george|william|james|phase|round|level|stage|class|type|version|episode|season)\b/i;
   return text.replace(RE_ROMAN, (roman, ...args) => {
     if (!roman.trim()) return roman;
     if (roman.length === 1 && 'IVX'.includes(roman)) {
@@ -346,9 +297,7 @@ export function normalizeLeadingDecimals(text) {
 export function expandScientificNotation(text) {
   return text.replace(RE_SCI, (_, coeffRaw, expRaw) => {
     const exp = parseInt(expRaw, 10);
-    const coeffWords = coeffRaw.includes('.')
-      ? floatToWords(coeffRaw)
-      : numberToWords(parseInt(coeffRaw, 10));
+    const coeffWords = coeffRaw.includes('.') ? floatToWords(coeffRaw) : numberToWords(parseInt(coeffRaw, 10));
     const expWords = numberToWords(Math.abs(exp));
     const sign = exp < 0 ? 'negative ' : '';
     return `${coeffWords} times ten to the ${sign}${expWords}`;
@@ -359,13 +308,11 @@ export function expandScaleSuffixes(text) {
     K: 'thousand',
     M: 'million',
     B: 'billion',
-    T: 'trillion',
+    T: 'trillion'
   };
   return text.replace(RE_SCALE, (_, raw, suffix) => {
     const scaleWord = map[suffix] || suffix;
-    const num = raw.includes('.')
-      ? floatToWords(raw)
-      : numberToWords(parseInt(raw, 10));
+    const num = raw.includes('.') ? floatToWords(raw) : numberToWords(parseInt(raw, 10));
     return `${num} ${scaleWord}`;
   });
 }
@@ -376,9 +323,7 @@ export function expandFractions(text) {
     if (den === 0) return match;
     const numWords = numberToWords(num);
     let denomWord;
-    if (den === 2) denomWord = num === 1 ? 'half' : 'halves';
-    else if (den === 4) denomWord = num === 1 ? 'quarter' : 'quarters';
-    else {
+    if (den === 2) denomWord = num === 1 ? 'half' : 'halves';else if (den === 4) denomWord = num === 1 ? 'quarter' : 'quarters';else {
       denomWord = ordinalSuffix(den);
       if (num !== 1) denomWord += 's';
     }
@@ -396,7 +341,7 @@ export function expandDecades(text) {
     6: 'sixties',
     7: 'seventies',
     8: 'eighties',
-    9: 'nineties',
+    9: 'nineties'
   };
   return text.replace(RE_DECADE, (_, baseStr) => {
     const base = parseInt(baseStr, 10);
@@ -408,60 +353,19 @@ export function expandDecades(text) {
   });
 }
 export function expandIpAddresses(text) {
-  const d = [
-    'zero',
-    'one',
-    'two',
-    'three',
-    'four',
-    'five',
-    'six',
-    'seven',
-    'eight',
-    'nine',
-  ];
-  const octet = s =>
-    s
-      .split('')
-      .map(c => d[parseInt(c, 10)])
-      .join(' ');
-  return text.replace(
-    /\b(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})\b/g,
-    (_, a, b, c, dd) => [a, b, c, dd].map(octet).join(' dot '),
-  );
+  const d = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
+  const octet = s => s.split('').map(c => d[parseInt(c, 10)]).join(' ');
+  return text.replace(/\b(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})\b/g, (_, a, b, c, dd) => [a, b, c, dd].map(octet).join(' dot '));
 }
 export function expandPhoneNumbers(text) {
-  const d = [
-    'zero',
-    'one',
-    'two',
-    'three',
-    'four',
-    'five',
-    'six',
-    'seven',
-    'eight',
-    'nine',
-  ];
-  const digits = s =>
-    s
-      .split('')
-      .map(c => d[parseInt(c, 10)])
-      .join(' ');
+  const d = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
+  const digits = s => s.split('').map(c => d[parseInt(c, 10)]).join(' ');
   // 11-digit: 1-800-555-0199
-  text = text.replace(
-    /(?<!\d-)(?<!\d)\b(\d{1,2})-(\d{3})-(\d{3})-(\d{4})\b(?!-\d)/g,
-    (_, a, b, c, e) => [a, b, c, e].map(digits).join(' '),
-  );
+  text = text.replace(/(?<!\d-)(?<!\d)\b(\d{1,2})-(\d{3})-(\d{3})-(\d{4})\b(?!-\d)/g, (_, a, b, c, e) => [a, b, c, e].map(digits).join(' '));
   // 10-digit
-  text = text.replace(
-    /(?<!\d-)(?<!\d)\b(\d{3})-(\d{3})-(\d{4})\b(?!-\d)/g,
-    (_, a, b, c) => [a, b, c].map(digits).join(' '),
-  );
+  text = text.replace(/(?<!\d-)(?<!\d)\b(\d{3})-(\d{3})-(\d{4})\b(?!-\d)/g, (_, a, b, c) => [a, b, c].map(digits).join(' '));
   // 7-digit
-  text = text.replace(/(?<!\d-)\b(\d{3})-(\d{4})\b(?!-\d)/g, (_, a, b) =>
-    [a, b].map(digits).join(' '),
-  );
+  text = text.replace(/(?<!\d-)\b(\d{3})-(\d{4})\b(?!-\d)/g, (_, a, b) => [a, b].map(digits).join(' '));
   return text;
 }
 export function replaceNumbers(text, replaceFloats = true) {
@@ -509,22 +413,9 @@ export function removeAccents(text) {
 }
 export function expandContractions(text) {
   // Order matters: specific before generic
-  const specific = [
-    [/\bcan't\b/gi, 'cannot'],
-    [/\bwon't\b/gi, 'will not'],
-    [/\bshan't\b/gi, 'shall not'],
-    [/\bain't\b/gi, 'is not'],
-    [/\blet's\b/gi, 'let us'],
-  ];
+  const specific = [[/\bcan't\b/gi, 'cannot'], [/\bwon't\b/gi, 'will not'], [/\bshan't\b/gi, 'shall not'], [/\bain't\b/gi, 'is not'], [/\blet's\b/gi, 'let us']];
   for (const [p, r] of specific) text = text.replace(p, r);
-  const generic = [
-    [/\b(\w+)n't\b/gi, '$1 not'],
-    [/\b(\w+)'re\b/gi, '$1 are'],
-    [/\b(\w+)'ve\b/gi, '$1 have'],
-    [/\b(\w+)'ll\b/gi, '$1 will'],
-    [/\b(\w+)'d\b/gi, '$1 would'],
-    [/\b(\w+)'m\b/gi, '$1 am'],
-  ];
+  const generic = [[/\b(\w+)n't\b/gi, '$1 not'], [/\b(\w+)'re\b/gi, '$1 are'], [/\b(\w+)'ve\b/gi, '$1 have'], [/\b(\w+)'ll\b/gi, '$1 will'], [/\b(\w+)'d\b/gi, '$1 would'], [/\b(\w+)'m\b/gi, '$1 am']];
   for (const [p, r] of generic) text = text.replace(p, r);
   text = text.replace(/\bit's\b/gi, 'it is');
   return text;
@@ -563,13 +454,13 @@ const DEFAULT_CONFIG = {
   normalizeUnicode: true,
   removeAccents: false,
   removeExtraWhitespace: true,
-  splitCamelCase: true,
+  splitCamelCase: true
 };
 export class TextPreprocessor {
   constructor(overrides = {}) {
     this.cfg = {
       ...DEFAULT_CONFIG,
-      ...overrides,
+      ...overrides
     };
   }
   process(text) {

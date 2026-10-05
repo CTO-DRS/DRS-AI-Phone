@@ -108,10 +108,16 @@ export const createStyles = (theme: Theme) =>
       borderColor: theme.colors.primary,
       borderRadius: 16,
     },
+    errorRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 6,
+    },
     errorText: {
       color: theme.colors.error,
       marginTop: 8,
       fontSize: 12,
+      flex: 1,
     },
     submittedText: {
       color: theme.colors.primary,

@@ -913,9 +913,7 @@ describe('AssistantStore', () => {
         await assistantStore.downloadDrshubAssistant(premiumAssistant);
 
         // No paywall gate: ownership is never consulted, download proceeds.
-        expect(
-          drshubService.checkAssistantOwnership,
-        ).not.toHaveBeenCalled();
+        expect(drshubService.checkAssistantOwnership).not.toHaveBeenCalled();
       });
 
       it('should allow download even when an ownership lookup would fail', async () => {
@@ -938,9 +936,7 @@ describe('AssistantStore', () => {
           assistantStore.downloadDrshubAssistant(premiumAssistant),
         ).resolves.toBeTruthy();
 
-        expect(
-          drshubService.checkAssistantOwnership,
-        ).not.toHaveBeenCalled();
+        expect(drshubService.checkAssistantOwnership).not.toHaveBeenCalled();
       });
     });
 

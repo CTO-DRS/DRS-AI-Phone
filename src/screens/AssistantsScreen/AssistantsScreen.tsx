@@ -354,8 +354,8 @@ export const AssistantsScreen: React.FC = observer(() => {
       <PlusIcon stroke={theme.colors.onSurfaceVariant} width={48} height={48} />
       <Text style={styles.emptyStateText}>
         {activeFilter === 'local' || activeFilter === 'my-assistants'
-          ? 'No Assistants yet.\nCreate your first Assistant using the + button!'
-          : 'No Assistants found.\nTry adjusting your filters or search.'}
+          ? l10n.assistantsScreen.emptyLocal
+          : l10n.assistantsScreen.emptyFiltered}
       </Text>
     </View>
   );

@@ -109,7 +109,10 @@ export const HeaderRight: React.FC = observer(() => {
         await exportChatSession(session.id);
       } catch (error) {
         console.error('Error exporting current session:', error);
-        Alert.alert('Export Error', 'Failed to export the current session.');
+        Alert.alert(
+          l10n.components.headerRight.exportErrorTitle,
+          l10n.components.headerRight.exportCurrentSessionError,
+        );
       }
     }
     closeMenu();
@@ -121,7 +124,10 @@ export const HeaderRight: React.FC = observer(() => {
         await exportChatSessionAsMarkdown(session.id);
       } catch (error) {
         console.error('Error exporting current session as markdown:', error);
-        Alert.alert('Export Error', 'Failed to export the current session.');
+        Alert.alert(
+          l10n.components.headerRight.exportErrorTitle,
+          l10n.components.headerRight.exportCurrentSessionError,
+        );
       }
     }
     closeMenu();
@@ -132,7 +138,10 @@ export const HeaderRight: React.FC = observer(() => {
       await exportAllChatSessions();
     } catch (error) {
       console.error('Error exporting all sessions:', error);
-      Alert.alert('Export Error', 'Failed to export all sessions.');
+      Alert.alert(
+        l10n.components.headerRight.exportErrorTitle,
+        l10n.components.headerRight.exportAllError,
+      );
     }
     closeMenu();
   };
@@ -142,7 +151,7 @@ export const HeaderRight: React.FC = observer(() => {
       const count = await importChatSessions();
       if (count > 0) {
         Alert.alert(
-          'Import Success',
+          l10n.components.headerRight.importSuccessTitle,
           t(l10n.settings.importSuccess, {count: count.toString()}),
         );
         // Refresh the chat sessions
@@ -150,7 +159,10 @@ export const HeaderRight: React.FC = observer(() => {
       }
     } catch (error) {
       console.error('Error importing sessions:', error);
-      Alert.alert('Import Error', l10n.settings.importError);
+      Alert.alert(
+        l10n.components.headerRight.importErrorTitle,
+        l10n.settings.importError,
+      );
     }
     closeMenu();
   };

@@ -32,7 +32,10 @@
     "close": "إغلاق",
     "clear": "مسح الكل",
     "gallery": "المعرض",
-    "noResults": "لا نتائج"
+    "noResults": "لا نتائج",
+    "openDrawer": "فتح القائمة",
+    "openMenu": "فتح القائمة",
+    "closeMenu": "إغلاق القائمة"
   },
   "memory": {
     "shortWarning": "تحذير الذاكرة",
@@ -235,7 +238,8 @@
     "removeRemoteModel": "إزالة {{modelName}} ({{serverName}})؟",
     "retryConnection": "إعادة المحاولة",
     "enterUrlManually": "أدخل الرابط يدويًا",
-    "manageServers": "إدارة الخوادم"
+    "manageServers": "إدارة الخوادم",
+    "exportLegacyError": "فشل تصدير جلسات المحادثة القديمة. قد يكون الملف غير موجود."
   },
   "models": {
     "fileManagement": {
@@ -473,7 +477,9 @@
       "vision": "الرؤية",
       "mtp": "تخميني (MTP)",
       "mtpDraft": "مسودة تخمينية"
-    }
+    },
+    "emptyTitle": "لا توجد نماذج بعد",
+    "emptyHint": "اضغط + لتنزيل نموذج من Hugging Face أو إضافة نموذج محلي أو الاتصال بخادم بعيد."
   },
   "completionParams": {
     "include_thinking_in_context": "تضمين أجزاء تفكير/استدلال الذكاء الاصطناعي في السياق المرسل إلى النموذج. تعطيل هذا قد يوفر مساحة السياق. وقد يؤثر على الأداء.",
@@ -518,7 +524,9 @@
     "tourDescription": "أعد تشغيل شاشات الترحيب لترى ما يقدمه DRS AI.",
     "showIntroButton": "اعرض المقدمة مجددًا",
     "privacyPolicy": "سياسة الخصوصية",
-    "termsOfService": "شروط الخدمة"
+    "termsOfService": "شروط الخدمة",
+    "versionFormat": "الإصدار {{version}} ({{build}})",
+    "successTitle": "نجاح"
   },
   "feedback": {
     "title": "إرسال ملاحظات",
@@ -775,7 +783,12 @@
       "exportCurrentSessionMarkdown": "تصدير بصيغة Markdown",
       "exportAllSessions": "تصدير جميع الجلسات",
       "exportChatSession": "تصدير جلسة المحادثة",
-      "importSessions": "استيراد الجلسات"
+      "importSessions": "استيراد الجلسات",
+      "exportErrorTitle": "خطأ في التصدير",
+      "exportCurrentSessionError": "فشل تصدير الجلسة الحالية.",
+      "exportAllError": "فشل تصدير جميع الجلسات.",
+      "importSuccessTitle": "تم الاستيراد بنجاح",
+      "importErrorTitle": "خطأ في الاستيراد"
     },
     "hfTokenSheet": {
       "title": "توكن Hugging Face",
@@ -1008,7 +1021,9 @@
         "fourWeeksAgo": "قبل 4 أسابيع",
         "lastMonth": "الشهر الماضي",
         "older": "أقدم"
-      }
+      },
+      "emptySessionsTitle": "لا توجد محادثات بعد",
+      "emptySessionsHint": "ابدأ محادثة جديدة من شاشة الدردشة"
     },
     "usageStats": {
       "tooltip": {
@@ -1037,10 +1052,60 @@
       "exportAllAssistants": "تصدير جميع المساعدين",
       "importAssistants": "استيراد المساعدين",
       "importSuccess": "تم استيراد {{count}} من المساعدين بنجاح.",
-      "importError": "تعذّر استيراد المساعدين. يرجى التحقق من تنسيق الملف."
+      "importError": "تعذّر استيراد المساعدين. يرجى التحقق من تنسيق الملف.",
+      "exportErrorTitle": "خطأ في التصدير",
+      "exportAllError": "فشل تصدير جميع المساعدين.",
+      "importSuccessTitle": "تم الاستيراد بنجاح",
+      "importErrorTitle": "خطأ في الاستيراد"
     },
     "brandHeader": {
       "tagline": "ذكاؤك الخاص على جهازك"
+    },
+    "authSheet": {
+      "signInTitle": "تسجيل الدخول",
+      "signUpTitle": "إنشاء حساب",
+      "fullNameLabel": "الاسم الكامل",
+      "emailLabel": "البريد الإلكتروني",
+      "passwordLabel": "كلمة المرور",
+      "signInButton": "تسجيل الدخول",
+      "signUpButton": "إنشاء حساب",
+      "forgotPassword": "نسيت كلمة المرور؟",
+      "or": "أو",
+      "continueWithGoogle": "المتابعة عبر Google",
+      "haveAccount": "لديك حساب بالفعل؟ ",
+      "noAccount": "ليس لديك حساب؟ ",
+      "signUpLink": "إنشاء حساب",
+      "signInLink": "تسجيل الدخول",
+      "signingIn": "جارٍ تسجيل الدخول...",
+      "fillRequiredFields": "يرجى تعبئة جميع الحقول المطلوبة.",
+      "enterFullName": "يرجى إدخال اسمك الكامل.",
+      "enterEmailFirst": "يرجى إدخال بريدك الإلكتروني أولاً.",
+      "accountCreatedTitle": "تم إنشاء الحساب",
+      "accountCreatedMessage": "يرجى التحقق من بريدك الإلكتروني لتأكيد الحساب.",
+      "welcomeBackTitle": "أهلاً بعودتك!",
+      "welcomeBackMessage": "تم تسجيل دخولك بنجاح.",
+      "googleErrorTitle": "خطأ في تسجيل الدخول عبر Google",
+      "passwordResetTitle": "إعادة تعيين كلمة المرور",
+      "passwordResetMessage": "تحقق من بريدك الإلكتروني للحصول على تعليمات إعادة التعيين.",
+      "authErrorTitle": "خطأ في المصادقة"
+    },
+    "squareAssistantCard": {
+      "videoAssistant": "مساعد ذكاء اصطناعي للفيديو",
+      "advancedAssistant": "مساعد ذكاء اصطناعي متقدم",
+      "assistant": "مساعد ذكاء اصطناعي",
+      "byCreator": "بواسطة {{creator}}",
+      "downloadAssistantTitle": "تنزيل المساعد",
+      "downloadAssistantMessage": "تنزيل \"{{assistantName}}\" لبدء المحادثة؟",
+      "download": "تنزيل",
+      "downloadErrorTitle": "خطأ في التنزيل",
+      "downloadErrorMessage": "فشل تنزيل المساعد. يرجى المحاولة مرة أخرى.",
+      "startChatErrorMessage": "فشل بدء المحادثة. يرجى المحاولة مرة أخرى.",
+      "switchModelTitle": "تغيير النموذج؟",
+      "switchModelMessage": "التبديل إلى \"{{modelName}}\" لهذا المساعد؟",
+      "keepCurrent": "إبقاء الحالي",
+      "switch": "تبديل",
+      "shareErrorTitle": "خطأ في المشاركة",
+      "shareErrorMessage": "فشل مشاركة المساعد. يرجى المحاولة مرة أخرى."
     }
   },
   "assistantsScreen": {
@@ -1128,7 +1193,9 @@
       "signInAgain": "تسجيل الدخول مجددًا",
       "assistantNotAvailable": "هذا المساعد غير متاح للشراء الآن.",
       "checkoutFailed": "حدث خطأ ما. حاول مجددًا."
-    }
+    },
+    "emptyLocal": "لا يوجد مساعدون بعد.\nأنشئ أول مساعد لك باستخدام زر +!",
+    "emptyFiltered": "لم يتم العثور على مساعدين.\nجرّب تعديل عوامل التصفية أو البحث."
   },
   "validation": {
     "nameRequired": "الاسم مطلوب",
@@ -1178,7 +1245,11 @@
       "step2": "• اضغط زر الكاميرا لبدء تحليل الفيديو المباشر",
       "step3": "• اضبط تكرار اللقطات أثناء عمل الكاميرا",
       "step4": "• بدّل إلى مساعد آخر للمحادثة النصية العادية"
-    }
+    },
+    "defaultPrompt": "ما الذي تراه؟",
+    "multimodalTitle": "الوضع متعدد الوسائط غير مُفعّل",
+    "multimodalMessage": "هذا النموذج لا يدعم تحليل الصور. يرجى تحميل نموذج متعدد الوسائط.",
+    "checkSupportError": "فشل التحقق من دعم النموذج للصور."
   },
   "screenTitles": {
     "chat": "محادثة",
@@ -1392,6 +1463,15 @@
         "no": "✗"
       },
       "versionFormat": "{{version}} ({{buildNumber}})"
+    },
+    "presetDefault": "افتراضي",
+    "presetFast": "سريع",
+    "presetCustom": "مخصص",
+    "params": {
+      "pp": "عدد رموز معالجة التوجيه (الحد الأقصى: حجم الدفعة الفعلية)",
+      "tg": "عدد رموز توليد النص",
+      "pl": "حجم التوازي الخطي",
+      "nr": "عدد التكرارات"
     }
   },
   "errors": {

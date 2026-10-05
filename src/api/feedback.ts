@@ -1,4 +1,3 @@
-
 import axios from 'axios';
 import DeviceInfo from 'react-native-device-info';
 
@@ -74,7 +73,6 @@ export async function submitContentReport(
       );
     }
 
-
     // App Check: attempt verification when available, but never block the
     // user — self-built/FOSS installs lack Play Integrity/App Attest, so
     // the request is submitted without the token and the server applies
@@ -84,10 +82,7 @@ export async function submitContentReport(
       await initializeAppCheck();
       appCheckToken = await getAppCheckToken();
     } catch (error) {
-      console.warn(
-        'App Check unavailable; submitting without a token:',
-        error,
-      );
+      console.warn('App Check unavailable; submitting without a token:', error);
     }
 
     try {
@@ -101,9 +96,7 @@ export async function submitContentReport(
         },
         {
           headers: {
-            ...(appCheckToken
-              ? {'X-Firebase-AppCheck': appCheckToken}
-              : {}),
+            ...(appCheckToken ? {'X-Firebase-AppCheck': appCheckToken} : {}),
             'Content-Type': 'application/json',
           },
           timeout: 10000,
@@ -156,7 +149,6 @@ export async function submitFeedback(
       );
     }
 
-
     // App Check: attempt verification when available, but never block the
     // user — self-built/FOSS installs lack Play Integrity/App Attest, so
     // the request is submitted without the token and the server applies
@@ -166,10 +158,7 @@ export async function submitFeedback(
       await initializeAppCheck();
       appCheckToken = await getAppCheckToken();
     } catch (error) {
-      console.warn(
-        'App Check unavailable; submitting without a token:',
-        error,
-      );
+      console.warn('App Check unavailable; submitting without a token:', error);
     }
 
     try {
@@ -183,9 +172,7 @@ export async function submitFeedback(
         },
         {
           headers: {
-            ...(appCheckToken
-              ? {'X-Firebase-AppCheck': appCheckToken}
-              : {}),
+            ...(appCheckToken ? {'X-Firebase-AppCheck': appCheckToken} : {}),
             'Content-Type': 'application/json',
           },
           timeout: 10000,
@@ -251,7 +238,6 @@ export async function submitModelLoadErrorReport(
       );
     }
 
-
     // App Check: attempt verification when available, but never block the
     // user — self-built/FOSS installs lack Play Integrity/App Attest, so
     // the request is submitted without the token and the server applies
@@ -261,10 +247,7 @@ export async function submitModelLoadErrorReport(
       await initializeAppCheck();
       appCheckToken = await getAppCheckToken();
     } catch (error) {
-      console.warn(
-        'App Check unavailable; submitting without a token:',
-        error,
-      );
+      console.warn('App Check unavailable; submitting without a token:', error);
     }
 
     try {
@@ -278,9 +261,7 @@ export async function submitModelLoadErrorReport(
         },
         {
           headers: {
-            ...(appCheckToken
-              ? {'X-Firebase-AppCheck': appCheckToken}
-              : {}),
+            ...(appCheckToken ? {'X-Firebase-AppCheck': appCheckToken} : {}),
             'Content-Type': 'application/json',
           },
           timeout: 10000,

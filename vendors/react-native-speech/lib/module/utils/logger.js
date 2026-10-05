@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * Logger Utility for Neural TTS Engines
@@ -58,7 +58,7 @@ export function createLogger(prefix) {
      */
     error: (component, message, ...args) => {
       console.error(`${LOG_PREFIX}[${component}] ${message}`, ...args);
-    },
+    }
   };
 }
 
@@ -80,7 +80,7 @@ export function createComponentLogger(prefix, component) {
     debug: (message, ...args) => logger.debug(component, message, ...args),
     info: (message, ...args) => logger.info(component, message, ...args),
     warn: (message, ...args) => logger.warn(component, message, ...args),
-    error: (message, ...args) => logger.error(component, message, ...args),
+    error: (message, ...args) => logger.error(component, message, ...args)
   };
 }
 

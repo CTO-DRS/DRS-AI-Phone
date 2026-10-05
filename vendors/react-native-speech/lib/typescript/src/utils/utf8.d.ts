@@ -7,4 +7,3 @@
  * than throwing, matching the WHATWG decoder's "replacement" error mode.
  */
 export declare function decodeUtf8(bytes: Uint8Array): string;
-//# sourceMappingURL=utf8.d.ts.map

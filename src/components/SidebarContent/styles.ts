@@ -35,7 +35,7 @@ export const createStyles = (theme: MD3Theme) =>
       marginTop: 10,
     },
     dateLabel: {
-      paddingLeft: 16,
+      paddingStart: 16,
       paddingVertical: 10,
     },
     scrollViewContent: {
@@ -78,8 +78,8 @@ export const createStyles = (theme: MD3Theme) =>
       position: 'relative',
     },
     sessionCheckbox: {
-      marginLeft: 8,
-      marginRight: 4,
+      marginStart: 8,
+      marginEnd: 4,
     },
     menuDivider: {
       marginVertical: 4,
@@ -105,7 +105,27 @@ export const createStyles = (theme: MD3Theme) =>
       backgroundColor: theme.colors.surface,
     },
     selectAllCheckbox: {
-      marginRight: 12,
+      marginEnd: 12,
+    },
+    emptySessions: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingVertical: 48,
+      paddingHorizontal: 24,
+      gap: 8,
+    },
+    emptySessionsTitle: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: theme.colors.onSurfaceVariant,
+      textAlign: 'center',
+    },
+    emptySessionsHint: {
+      fontSize: 13,
+      color: theme.colors.onSurfaceVariant,
+      textAlign: 'center',
+      opacity: 0.8,
+      lineHeight: 20,
     },
     selectAllText: {
       fontSize: 16,

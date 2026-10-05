@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * HansPhonemizer — GPL-free phonemizer using dict + hans00/phonemize.
@@ -12,11 +12,8 @@
  *   6. Per-word destress keyed by English spelling
  */
 
-import {
-  splitOnPunctuation,
-  rejoinChunks,
-} from '../engines/kokoro/Phonemizer.js';
-import {createComponentLogger} from '../utils/logger.js';
+import { splitOnPunctuation, rejoinChunks } from "../engines/kokoro/Phonemizer.js";
+import { createComponentLogger } from "../utils/logger.js";
 const log = createComponentLogger('TTS', 'HansPhonemizer');
 const isDev = typeof __DEV__ !== 'undefined' ? __DEV__ : true;
 
@@ -53,50 +50,25 @@ let hans00Loaded = false;
 function getHans00() {
   if (hans00Loaded) return hans00Lib;
   hans00Loaded = true;
-  const isHermesDebug =
-    isDev &&
-    typeof globalThis !== 'undefined' &&
-    globalThis.HermesInternal != null;
+  const isHermesDebug = isDev && typeof globalThis !== 'undefined' && globalThis.HermesInternal != null;
   if (isHermesDebug) {
-    log.warn(
-      'Skipping phonemize load on Hermes debug: Metro reports the known ' +
-        'en-g2p bytecode-encoding failure to ExceptionsManager before our ' +
-        'try/catch can absorb it. OOV short tokens will spell out via dict; ' +
-        'longer OOV words will pass through. Use a release build for full ' +
-        'G2P coverage.',
-    );
+    log.warn('Skipping phonemize load on Hermes debug: Metro reports the known ' + 'en-g2p bytecode-encoding failure to ExceptionsManager before our ' + 'try/catch can absorb it. OOV short tokens will spell out via dict; ' + 'longer OOV words will pass through. Use a release build for full ' + 'G2P coverage.');
     return null;
   }
   try {
     const required = require('phonemize');
     if (!required || typeof required.toIPA !== 'function') {
-      log.warn(
-        'phonemize package returned no toIPA — likely a Hermes bytecode ' +
-          'encoding failure in debug mode (the en-g2p dictionary is too ' +
-          'large for on-the-fly compilation). OOV short tokens will spell ' +
-          'out via dict; longer OOV words will pass through. Use a release ' +
-          'build for full G2P coverage.',
-      );
+      log.warn('phonemize package returned no toIPA — likely a Hermes bytecode ' + 'encoding failure in debug mode (the en-g2p dictionary is too ' + 'large for on-the-fly compilation). OOV short tokens will spell ' + 'out via dict; longer OOV words will pass through. Use a release ' + 'build for full G2P coverage.');
       return null;
     }
     hans00Lib = required;
     return hans00Lib;
   } catch (e) {
-    const isBytecodeError =
-      e instanceof SyntaxError &&
-      String(e.message).includes('encoding bytecode');
+    const isBytecodeError = e instanceof SyntaxError && String(e.message).includes('encoding bytecode');
     if (isBytecodeError) {
-      log.warn(
-        'phonemize failed to load: Hermes bytecode encoding error in debug ' +
-          'mode. OOV short tokens will spell out via dict; longer OOV words ' +
-          'will pass through. Use a release build for full G2P coverage.',
-      );
+      log.warn('phonemize failed to load: Hermes bytecode encoding error in debug ' + 'mode. OOV short tokens will spell out via dict; longer OOV words ' + 'will pass through. Use a release build for full G2P coverage.');
     } else {
-      log.warn(
-        'phonemize package is not installed or failed to load. OOV short ' +
-          'tokens will spell out via dict; longer OOV words will pass ' +
-          'through. Install with `npm install phonemize` for full G2P.',
-      );
+      log.warn('phonemize package is not installed or failed to load. OOV short ' + 'tokens will spell out via dict; longer OOV words will pass ' + 'through. Install with `npm install phonemize` for full G2P.');
     }
     return null;
   }
@@ -108,74 +80,10 @@ const IPA_VOWELS = new Set('aeiouæɑɒɔəɛɜɝɞɪʊʌɚɨøɵœɶɤɯʏɐ'.s
 const REDUCED_FORMS = {
   a: 'ɐ',
   to: 'tə',
-  has: 'hɐz',
+  has: 'hɐz'
 };
-const FULLY_UNSTRESSED = new Set([
-  'he',
-  'she',
-  'it',
-  'i',
-  'we',
-  'they',
-  'you',
-  'her',
-  'the',
-  'an',
-  'a',
-  'to',
-  'of',
-  'for',
-  'in',
-  'at',
-  'by',
-  'is',
-  'was',
-  'are',
-  'were',
-  'am',
-  'be',
-  'had',
-  'have',
-  'can',
-  'could',
-  'will',
-  'would',
-  'has',
-  'and',
-  'or',
-  'if',
-  'that',
-  'this',
-  'from',
-  'with',
-  'went',
-  'got',
-  "i've",
-  "i'm",
-  "he's",
-  "she's",
-  "we've",
-  "they're",
-]);
-const SECONDARY_STRESSED = new Set([
-  'but',
-  'not',
-  'how',
-  'who',
-  'what',
-  'on',
-  'been',
-  'him',
-  'me',
-  'being',
-  'having',
-  'shall',
-  'should',
-  'might',
-  'over',
-  'into',
-  'about',
-]);
+const FULLY_UNSTRESSED = new Set(['he', 'she', 'it', 'i', 'we', 'they', 'you', 'her', 'the', 'an', 'a', 'to', 'of', 'for', 'in', 'at', 'by', 'is', 'was', 'are', 'were', 'am', 'be', 'had', 'have', 'can', 'could', 'will', 'would', 'has', 'and', 'or', 'if', 'that', 'this', 'from', 'with', 'went', 'got', "i've", "i'm", "he's", "she's", "we've", "they're"]);
+const SECONDARY_STRESSED = new Set(['but', 'not', 'how', 'who', 'what', 'on', 'been', 'him', 'me', 'being', 'having', 'shall', 'should', 'might', 'over', 'into', 'about']);
 
 /**
  * Dict overrides — transient bugfix hatch, NOT a pronunciation store.
@@ -257,7 +165,7 @@ function spellOutLetters(clean, dict, hans00) {
     }
     if (hans00) {
       const fromHans = hans00.toIPA(letter.toUpperCase(), {
-        stripStress: false,
+        stripStress: false
       });
       if (fromHans && !looksLikeAscii(fromHans)) {
         out.push(fromHans);
@@ -269,22 +177,19 @@ function spellOutLetters(clean, dict, hans00) {
   return out.join(' ');
 }
 function relocateStress(ipa) {
-  return ipa
-    .split(' ')
-    .map(word => {
-      if (word.length > 1 && (word[0] === 'ˈ' || word[0] === 'ˌ')) {
-        const mark = word[0];
-        const rest = word.slice(1);
-        for (let i = 0; i < rest.length; i++) {
-          if (IPA_VOWELS.has(rest[i])) {
-            if (i === 0) return word;
-            return rest.slice(0, i) + mark + rest.slice(i);
-          }
+  return ipa.split(' ').map(word => {
+    if (word.length > 1 && (word[0] === 'ˈ' || word[0] === 'ˌ')) {
+      const mark = word[0];
+      const rest = word.slice(1);
+      for (let i = 0; i < rest.length; i++) {
+        if (IPA_VOWELS.has(rest[i])) {
+          if (i === 0) return word;
+          return rest.slice(0, i) + mark + rest.slice(i);
         }
       }
-      return word;
-    })
-    .join(' ');
+    }
+    return word;
+  }).join(' ');
 }
 
 /**
@@ -347,7 +252,7 @@ function phonemizeWord(word, dict, primaryHit, hans00) {
   // 5. hans00 G2P fallback (full neural-style coverage when available)
   if (!ipa && hans00) {
     let g2p = hans00.toIPA(word, {
-      stripStress: false,
+      stripStress: false
     });
     g2p = g2p.replace(/- /g, '').replace(/ɫ/g, 'l');
     const fallbackSpellOut = looksLikeAscii(g2p) && isUnpronounceable(clean);
@@ -355,9 +260,7 @@ function phonemizeWord(word, dict, primaryHit, hans00) {
       const spelled = spellOutLetters(clean, dict, hans00);
       if (spelled !== null) {
         g2p = spelled;
-        log.debug(
-          `acronym fallback (${forceSpellOut ? 'all-caps' : 'hans00 non-IPA'}): ${JSON.stringify(word)} -> ${JSON.stringify(g2p)}`,
-        );
+        log.debug(`acronym fallback (${forceSpellOut ? 'all-caps' : 'hans00 non-IPA'}): ${JSON.stringify(word)} -> ${JSON.stringify(g2p)}`);
       }
     }
     ipa = relocateStress(g2p);
@@ -374,9 +277,7 @@ function phonemizeWord(word, dict, primaryHit, hans00) {
     const spelled = spellOutLetters(clean, dict, null);
     if (spelled !== null) {
       ipa = spelled;
-      log.debug(
-        `acronym fallback (no hans00): ${JSON.stringify(word)} -> ${JSON.stringify(ipa)}`,
-      );
+      log.debug(`acronym fallback (no hans00): ${JSON.stringify(word)} -> ${JSON.stringify(ipa)}`);
     }
   }
   if (!ipa) return word;
@@ -412,30 +313,13 @@ export class HansPhonemizer {
             // phonemizeWord. Across the typical ~100 µs/word path this
             // halves dict.lookup() calls (which matter for native dict).
             const primaryHit = clean ? dict.lookup(clean) : null;
-            const needsHans =
-              !REDUCED_FORMS[clean] &&
-              !DICT_OVERRIDES[clean] &&
-              !primaryHit &&
-              !(
-                w.includes('-') &&
-                w.split('-').every(p => {
-                  const c = p.toLowerCase().replace(/[^a-z']/g, '');
-                  return !c || REDUCED_FORMS[c] || dict.lookup(c) !== null;
-                })
-              ) &&
-              !(
-                clean.endsWith("'s") && dict.lookup(clean.slice(0, -2)) !== null
-              );
+            const needsHans = !REDUCED_FORMS[clean] && !DICT_OVERRIDES[clean] && !primaryHit && !(w.includes('-') && w.split('-').every(p => {
+              const c = p.toLowerCase().replace(/[^a-z']/g, '');
+              return !c || REDUCED_FORMS[c] || dict.lookup(c) !== null;
+            })) && !(clean.endsWith("'s") && dict.lookup(clean.slice(0, -2)) !== null);
             // getHans00() is module-cached (idempotent after first call)
             // and returns null if unavailable — no per-call wrapper needed.
-            ipaWords.push(
-              phonemizeWord(
-                w,
-                dict,
-                primaryHit,
-                needsHans ? getHans00() : null,
-              ),
-            );
+            ipaWords.push(phonemizeWord(w, dict, primaryHit, needsHans ? getHans00() : null));
           }
           chunk.phoneme = ipaWords.join(' ');
         }
@@ -446,9 +330,7 @@ export class HansPhonemizer {
       }
       return result.trim();
     } catch (error) {
-      log.error(
-        `JS phonemization failed: ${error instanceof Error ? error.message : String(error)}`,
-      );
+      log.error(`JS phonemization failed: ${error instanceof Error ? error.message : String(error)}`);
       if (error instanceof Error) {
         throw new Error(`JS phonemization failed: ${error.message}`);
       }

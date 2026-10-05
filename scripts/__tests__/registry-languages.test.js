@@ -31,6 +31,12 @@ describe('extractRegistryLanguages', () => {
       'uk',
       'zh',
       'zh_Hant',
+      'de',
+      'fr',
+      'it',
+      'sv',
+      'et',
+      'be',
     ]);
   });
 

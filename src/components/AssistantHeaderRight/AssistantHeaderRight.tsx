@@ -36,7 +36,10 @@ export const AssistantHeaderRight = observer(() => {
       await exportAllAssistants();
     } catch (error) {
       console.error('Error exporting all assistants:', error);
-      Alert.alert('Export Error', 'Failed to export all assistants.');
+      Alert.alert(
+        l10n.components.assistantHeaderRight.exportErrorTitle,
+        l10n.components.assistantHeaderRight.exportAllError,
+      );
     }
     closeMenu();
   };
@@ -46,7 +49,7 @@ export const AssistantHeaderRight = observer(() => {
       const count = await importAssistants();
       if (count > 0) {
         Alert.alert(
-          'Import Success',
+          l10n.components.assistantHeaderRight.importSuccessTitle,
           t(l10n.components.assistantHeaderRight.importSuccess, {
             count: count.toString(),
           }),
@@ -55,7 +58,7 @@ export const AssistantHeaderRight = observer(() => {
     } catch (error) {
       console.error('Error importing assistants:', error);
       Alert.alert(
-        'Import Error',
+        l10n.components.assistantHeaderRight.importErrorTitle,
         l10n.components.assistantHeaderRight.importError,
       );
     }

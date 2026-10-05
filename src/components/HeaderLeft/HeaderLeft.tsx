@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {Animated, Easing, StyleSheet, TouchableOpacity} from 'react-native';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
 import {useNavigation} from '@react-navigation/native';
@@ -6,6 +6,7 @@ import {useNavigation} from '@react-navigation/native';
 import {styles} from './styles';
 import {MenuIcon} from '../../assets/icons';
 import {useTheme} from '../../hooks';
+import {L10nContext} from '../../utils';
 
 /**
  * Drawer trigger with a soft brand-accent halo that blooms behind the
@@ -13,6 +14,7 @@ import {useTheme} from '../../hooks';
  */
 export const HeaderLeft: React.FC = () => {
   const theme = useTheme();
+  const l10n = useContext(L10nContext);
   const navigation = useNavigation<DrawerNavigationProp<any>>();
 
   const press = React.useRef(new Animated.Value(0)).current;
@@ -42,7 +44,7 @@ export const HeaderLeft: React.FC = () => {
     <TouchableOpacity
       style={styles.menuIcon}
       testID="menu-button"
-      accessibilityLabel="Open drawer"
+      accessibilityLabel={l10n.common.openDrawer}
       accessibilityRole="button"
       onPress={() => navigation.openDrawer()}
       onPressIn={() => animateTo(1)}

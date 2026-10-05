@@ -95,6 +95,30 @@ const LANGUAGE_ASSERTIONS: Record<
     screenTitle: '設定',
     firstCardTitle: '模型初始化設定',
   },
+  de: {
+    screenTitle: 'Settings',
+    firstCardTitle: 'Einstellungen Modellinitialisierung',
+  },
+  fr: {
+    screenTitle: 'Paramètres',
+    firstCardTitle: "Paramètres d'initialisation du modèle",
+  },
+  it: {
+    screenTitle: 'Settings',
+    firstCardTitle: 'Impostazioni di Inizializzazione del Modello',
+  },
+  sv: {
+    screenTitle: 'Settings',
+    firstCardTitle: 'Model Initialization Settings',
+  },
+  et: {
+    screenTitle: 'Settings',
+    firstCardTitle: 'Model Initialization Settings',
+  },
+  be: {
+    screenTitle: 'Налады',
+    firstCardTitle: 'Налады ініцыялізацыі мадэлі',
+  },
 };
 
 // Order: start with non-English, end with English to restore default state
@@ -114,6 +138,12 @@ const LANGUAGE_ORDER = [
   'uk',
   'zh',
   'zh_Hant',
+  'de',
+  'fr',
+  'it',
+  'sv',
+  'et',
+  'be',
   'en',
 ];
 
