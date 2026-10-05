@@ -150,14 +150,18 @@ describe('submitBenchmark', () => {
     expect(mockedAxios.post).not.toHaveBeenCalled();
   });
 
-  it('should throw AppCheckError when AppCheck token is not available', async () => {
+  it('submits without the AppCheck header when no token is available', async () => {
     mockedFb.getAppCheckToken.mockResolvedValue('');
+    mockedAxios.post.mockResolvedValue({data: {message: 'ok', id: 1}});
 
     await expect(
       submitBenchmark(mockDeviceInfo, mockBenchmarkResult),
-    ).rejects.toThrowError(networkUtils.AppCheckError);
+    ).resolves.toEqual({message: 'ok', id: 1});
 
-    expect(mockedAxios.post).not.toHaveBeenCalled();
+    expect(mockedAxios.post).toHaveBeenCalledTimes(1);
+    const headers = mockedAxios.post.mock.calls[0]?.[2]?.headers;
+    expect(headers).toBeTruthy();
+    expect(headers).not.toHaveProperty('X-Firebase-AppCheck');
   });
 
   it('should throw NetworkError on axios network error', async () => {
@@ -235,13 +239,17 @@ describe('submitBenchmark', () => {
     ).rejects.toThrowError(networkUtils.ServerError);
   });
 
-  it('should handle AppCheck initialization errors', async () => {
+  it('submits without a token when AppCheck initialization throws', async () => {
     mockedNetworkUtils.initializeAppCheck.mockImplementation(() => {
       throw new Error('AppCheck init error');
     });
+    mockedAxios.post.mockResolvedValue({data: {message: 'ok', id: 1}});
 
+    // Soft-fail policy: App Check is best-effort and never blocks the user.
     await expect(
       submitBenchmark(mockDeviceInfo, mockBenchmarkResult),
-    ).rejects.toThrowError(networkUtils.AppCheckError);
+    ).resolves.toEqual({message: 'ok', id: 1});
+
+    expect(mockedAxios.post).toHaveBeenCalledTimes(1);
   });
 });

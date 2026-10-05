@@ -20,6 +20,7 @@ import {
   timeAgo,
   isVisionRepo,
   getLLMFiles,
+  getMmprojFiles,
   probeRemoteMTPCapability,
 } from '../../../../utils';
 
@@ -35,6 +36,12 @@ export const DetailsView = ({hfModel}: DetailsViewProps) => {
   const isVision = isVisionRepo(hfModel.siblings || []);
 
   const llmFiles = getLLMFiles(hfModel.siblings || []);
+
+  // Vision repositories ship mmproj*.gguf projector files alongside the LLM
+  // weights; downloading one here enables multimodal (image-input) use with
+  // any of the listed LLM files. Previously these were filtered out of the
+  // UI entirely, leaving vision repos unusable without a manual import.
+  const mmprojFiles = getMmprojFiles(hfModel.siblings || []);
 
   const [isMTP, setIsMTP] = useState(false);
   useEffect(() => {
@@ -143,13 +150,28 @@ export const DetailsView = ({hfModel}: DetailsViewProps) => {
         data={llmFiles}
         keyExtractor={(item: ModelFile) => item.rfilename}
         renderItem={renderItem}
+        ListFooterComponent={
+          mmprojFiles.length > 0 ? (
+            <View>
+              <Text variant="titleMedium" style={styles.sectionTitle}>
+                {l10n.models?.multimodal?.projectionModels ||
+                  'Projection Models'}
+              </Text>
+              {mmprojFiles.map(file => (
+                <ModelFileCard
+                  key={file.rfilename}
+                  modelFile={file}
+                  hfModel={hfModel}
+                />
+              ))}
+            </View>
+          ) : null
+        }
         renderScrollComponent={props => (
           <Sheet.ScrollView bottomOffset={100} {...props} />
         )}
         contentContainerStyle={styles.list}
       />
-      {/* TODO: Currently projection models are hidden from UI,
-      we should add them to the model card like in a dropdown form.*/}
     </View>
   );
 };

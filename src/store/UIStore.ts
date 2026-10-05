@@ -99,9 +99,30 @@ export class UIStore {
     });
   }
 
+  // Global toast surface (in-memory only, never persisted). `key` is a
+  // monotonic sequence so identical consecutive messages still re-trigger
+  // the Snackbar; ToastHost observes this and renders it app-wide.
+  toast: {message: string; kind: 'error' | 'success'; key: number} | null =
+    null;
+  private toastSeq = 0;
+
   showError(message: string) {
-    // TODO: Implement error display logic (e.g., toast, alert, etc.)
     console.error(message);
+    runInAction(() => {
+      this.toast = {message, kind: 'error', key: ++this.toastSeq};
+    });
+  }
+
+  showSuccess(message: string) {
+    runInAction(() => {
+      this.toast = {message, kind: 'success', key: ++this.toastSeq};
+    });
+  }
+
+  clearToast() {
+    runInAction(() => {
+      this.toast = null;
+    });
   }
 
   setChatWarning(warning: ErrorState | null) {

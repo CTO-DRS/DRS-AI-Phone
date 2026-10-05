@@ -23,6 +23,9 @@ export const ModelNotLoadedMessage: React.FC = () => {
   const [lastUsedModel, setLastUsedModel] = useState<Model | undefined>(
     undefined,
   );
+  // Local dismiss state: once the user swipes/taps the snackbar away, it
+  // stays hidden for this mount instead of re-appearing on every render.
+  const [visible, setVisible] = useState(true);
 
   useEffect(() => {
     const model = modelStore.lastUsedModel;
@@ -49,13 +52,13 @@ export const ModelNotLoadedMessage: React.FC = () => {
   };
 
   const onDismiss = () => {
-    // TODO: Handle dismiss logic
+    setVisible(false);
   };
 
   return (
     <View style={styles.container}>
       <Snackbar
-        visible={true}
+        visible={visible}
         onDismiss={onDismiss}
         action={{
           label: lastUsedModel ? l10n.chat.load : l10n.chat.goToModels,
