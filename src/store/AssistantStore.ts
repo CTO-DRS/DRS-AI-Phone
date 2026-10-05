@@ -282,16 +282,9 @@ class AssistantStore {
     drshubAssistant: DrshubAssistant,
   ): Promise<Assistant> => {
     try {
-      // For free assistants, allow direct download without ownership check
-      // For premium assistants, check ownership first
-      if (drshubAssistant.price_cents > 0) {
-        const ownership = await drshubService.checkAssistantOwnership(
-          drshubAssistant.id,
-        );
-        if (!ownership.owned) {
-          throw new Error('You must own this Assistant to download it');
-        }
-      }
+      // No ownership/paywall gate: every user is free to download any
+      // Drshub assistant, free or premium, without an account or purchase.
+      // The app runs fully offline and on-device; nothing is locked.
 
       // Convert Drshub assistant to local format
       const assistant =

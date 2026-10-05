@@ -1,5 +1,4 @@
 import axios from 'axios';
-import {Platform} from 'react-native';
 import {urls} from '../config';
 import {
   getAppCheckToken,
@@ -32,23 +31,20 @@ export async function submitBenchmark(
       );
     }
 
-    const storeName =
-      Platform.OS === 'android' ? 'Google Play Store' : 'Apple App Store';
-    let errMessage = `App verification failed. Benchmark sharing is only available for official builds from ${storeName}.`;
 
-    // Get App Check token
+    // App Check: attempt verification when available, but never block the
+    // user — self-built/FOSS installs lack Play Integrity/App Attest, so
+    // the request is submitted without the token and the server applies
+    // its own policy.
     let appCheckToken: string | null = null;
     try {
       await initializeAppCheck();
       appCheckToken = await getAppCheckToken();
     } catch (error) {
-      console.error('App Check error:', error);
-
-      throw new AppCheckError(errMessage);
-    }
-
-    if (!appCheckToken) {
-      throw new AppCheckError(errMessage);
+      console.warn(
+        'App Check unavailable; submitting without a token:',
+        error,
+      );
     }
 
     // Prepare data and submit to server
@@ -60,7 +56,9 @@ export async function submitBenchmark(
     try {
       const response = await axios.post(urls.benchmarkSubmit(), data, {
         headers: {
-          'X-Firebase-AppCheck': appCheckToken,
+          ...(appCheckToken
+            ? {'X-Firebase-AppCheck': appCheckToken}
+            : {}),
           'Content-Type': 'application/json',
         },
         timeout: 10000,

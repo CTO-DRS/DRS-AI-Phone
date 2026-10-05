@@ -897,17 +897,13 @@ describe('AssistantStore', () => {
         );
       });
 
-      it('should handle premium assistant ownership check before downloading', async () => {
+      it('should download a premium assistant directly without an ownership check', async () => {
         const premiumAssistant: DrshubAssistant = {
           ...mockDrshubAssistant,
           id: 'premium-assistant-id',
           price_cents: 500, // Premium assistant
         };
 
-        // Mock ownership check to return owned
-        (drshubService.checkAssistantOwnership as jest.Mock).mockResolvedValue({
-          owned: true,
-        });
         (assistantRepository.createAssistant as jest.Mock).mockResolvedValue({
           ...premiumAssistant,
           type: 'local',
@@ -916,32 +912,35 @@ describe('AssistantStore', () => {
 
         await assistantStore.downloadDrshubAssistant(premiumAssistant);
 
-        // Verify ownership was checked
-        expect(drshubService.checkAssistantOwnership).toHaveBeenCalledWith(
-          'premium-assistant-id',
-        );
+        // No paywall gate: ownership is never consulted, download proceeds.
+        expect(
+          drshubService.checkAssistantOwnership,
+        ).not.toHaveBeenCalled();
       });
 
-      it('should reject download for unowned premium assistant', async () => {
+      it('should allow download even when an ownership lookup would fail', async () => {
         const premiumAssistant: DrshubAssistant = {
           ...mockDrshubAssistant,
           id: 'premium-assistant-id',
           price_cents: 500, // Premium assistant
         };
 
-        // Mock ownership check to return not owned
-        (drshubService.checkAssistantOwnership as jest.Mock).mockResolvedValue({
-          owned: false,
+        (drshubService.checkAssistantOwnership as jest.Mock).mockRejectedValue(
+          new Error('network down'),
+        );
+        (assistantRepository.createAssistant as jest.Mock).mockResolvedValue({
+          ...premiumAssistant,
+          type: 'local',
+          id: 'local-id',
         });
 
         await expect(
           assistantStore.downloadDrshubAssistant(premiumAssistant),
-        ).rejects.toThrow('You must own this Assistant to download it');
+        ).resolves.toBeTruthy();
 
-        // Verify ownership was checked
-        expect(drshubService.checkAssistantOwnership).toHaveBeenCalledWith(
-          'premium-assistant-id',
-        );
+        expect(
+          drshubService.checkAssistantOwnership,
+        ).not.toHaveBeenCalled();
       });
     });
 

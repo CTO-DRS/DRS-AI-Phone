@@ -14,7 +14,10 @@ import type {
 } from './AgentRunner.types';
 import type {TalentResult} from '../talents/types';
 
-export const DEFAULT_MAX_TURNS = 5;
+// Tool-loop budget before the agent is nudged to answer. Raised from 5 to
+// 10 so multi-talent runs complete without truncation; callers may still
+// pass an explicit `maxTurns` override.
+export const DEFAULT_MAX_TURNS = 10;
 
 const BUDGET_EXHAUSTED_NUDGE =
   '(Tool budget exhausted. Answer now using only the information gathered above; if it is insufficient, say what is missing.)';

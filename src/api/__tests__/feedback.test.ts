@@ -117,14 +117,18 @@ describe('submitFeedback', () => {
     expect(mockedAxios.post).not.toHaveBeenCalled();
   });
 
-  it('should throw AppCheckError when AppCheck token is not available', async () => {
+  it('submits without the AppCheck header when no token is available', async () => {
     mockedUtils.getAppCheckToken.mockResolvedValue('');
+    mockedAxios.post.mockResolvedValue({data: {message: 'ok'}});
 
-    await expect(submitFeedback(mockFeedbackData)).rejects.toThrowError(
-      utils.AppCheckError,
-    );
+    await expect(submitFeedback(mockFeedbackData)).resolves.toEqual({
+      message: 'ok',
+    });
 
-    expect(mockedAxios.post).not.toHaveBeenCalled();
+    expect(mockedAxios.post).toHaveBeenCalledTimes(1);
+    const headers = mockedAxios.post.mock.calls[0]?.[2]?.headers;
+    expect(headers).toBeTruthy();
+    expect(headers).not.toHaveProperty('X-Firebase-AppCheck');
   });
 
   it('should throw NetworkError on axios network error', async () => {
@@ -202,33 +206,40 @@ describe('submitFeedback', () => {
     );
   });
 
-  it('should handle AppCheck initialization errors', async () => {
+  it('submits without a token when AppCheck initialization throws', async () => {
     mockedUtils.initializeAppCheck.mockImplementation(() => {
       throw new Error('AppCheck init error');
     });
+    mockedAxios.post.mockResolvedValue({data: {message: 'ok'}});
 
-    await expect(submitFeedback(mockFeedbackData)).rejects.toThrowError(
-      utils.AppCheckError,
-    );
+    // Soft-fail policy: App Check is best-effort and never blocks the user.
+    await expect(submitFeedback(mockFeedbackData)).resolves.toEqual({
+      message: 'ok',
+    });
   });
 
-  it('should propagate unknown errors', async () => {
+  it('propagates unknown errors', async () => {
     const unknownError = new Error('Unknown error');
     mockedAxios.post.mockRejectedValue(unknownError);
     mockedAxios.isAxiosError.mockReturnValue(false);
 
     await expect(submitFeedback(mockFeedbackData)).rejects.toThrow(
-      'App verification failed. Feedback submission is only available for official builds from Apple App Store.',
+      'Unknown error',
     );
   });
 
-  it('should handle different platform messages', async () => {
+  it('submits from any platform without a token', async () => {
     Platform.OS = 'android';
     mockedUtils.getAppCheckToken.mockResolvedValue('');
+    mockedAxios.post.mockResolvedValue({data: {message: 'ok'}});
 
-    await expect(submitFeedback(mockFeedbackData)).rejects.toThrowError(
-      utils.AppCheckError,
-    );
+    await expect(submitFeedback(mockFeedbackData)).resolves.toEqual({
+      message: 'ok',
+    });
+
+    const headers = mockedAxios.post.mock.calls[0]?.[2]?.headers;
+    expect(headers).toBeTruthy();
+    expect(headers).not.toHaveProperty('X-Firebase-AppCheck');
   });
 });
 
@@ -307,14 +318,18 @@ describe('submitContentReport', () => {
     expect(mockedAxios.post).not.toHaveBeenCalled();
   });
 
-  it('should throw AppCheckError when AppCheck token is not available', async () => {
+  it('submits without the AppCheck header when no token is available', async () => {
     mockedUtils.getAppCheckToken.mockResolvedValue('');
+    mockedAxios.post.mockResolvedValue({data: {message: 'ok'}});
 
-    await expect(submitContentReport(mockReportData)).rejects.toThrowError(
-      utils.AppCheckError,
-    );
+    await expect(submitContentReport(mockReportData)).resolves.toEqual({
+      message: 'ok',
+    });
 
-    expect(mockedAxios.post).not.toHaveBeenCalled();
+    expect(mockedAxios.post).toHaveBeenCalledTimes(1);
+    const headers = mockedAxios.post.mock.calls[0]?.[2]?.headers;
+    expect(headers).toBeTruthy();
+    expect(headers).not.toHaveProperty('X-Firebase-AppCheck');
   });
 
   it('should handle axios network error', async () => {
@@ -355,18 +370,29 @@ describe('submitContentReport', () => {
     await expect(submitContentReport(mockReportData)).rejects.toThrow();
   });
 
-  it('should handle AppCheck initialization errors', async () => {
+  it('submits without a token when AppCheck initialization throws', async () => {
     mockedUtils.initializeAppCheck.mockImplementation(() => {
       throw new Error('AppCheck init error');
     });
+    mockedAxios.post.mockResolvedValue({data: {message: 'ok'}});
 
-    await expect(submitContentReport(mockReportData)).rejects.toThrow();
+    // Soft-fail policy: App Check is best-effort and never blocks the user.
+    await expect(submitContentReport(mockReportData)).resolves.toEqual({
+      message: 'ok',
+    });
   });
 
-  it('should handle different platform messages for Android', async () => {
+  it('submits from any platform without a token', async () => {
     Platform.OS = 'android';
     mockedUtils.getAppCheckToken.mockResolvedValue('');
+    mockedAxios.post.mockResolvedValue({data: {message: 'ok'}});
 
-    await expect(submitContentReport(mockReportData)).rejects.toThrow();
+    await expect(submitContentReport(mockReportData)).resolves.toEqual({
+      message: 'ok',
+    });
+
+    const headers = mockedAxios.post.mock.calls[0]?.[2]?.headers;
+    expect(headers).toBeTruthy();
+    expect(headers).not.toHaveProperty('X-Firebase-AppCheck');
   });
 });

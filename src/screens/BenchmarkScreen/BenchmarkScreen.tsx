@@ -126,11 +126,12 @@ export const BenchmarkScreen: React.FC = observer(() => {
     }
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const stopBenchmark = async () => {
     if (modelStore.context) {
       try {
-        // TODO: This is not working for bench.
+        // Best-effort abort: llama.cpp contexts support stopCompletion; if
+        // the native side cannot interrupt a bench run mid-pp/tg it resolves
+        // without side effects and the run finishes as before.
         await modelStore.context.stopCompletion();
       } catch (error) {
         console.error('Error stopping benchmark:', error);
@@ -580,6 +581,17 @@ export const BenchmarkScreen: React.FC = observer(() => {
                         ? l10n.benchmark.buttons.runningTest
                         : l10n.benchmark.buttons.startTest}
                     </Button>
+
+                    {isRunning && (
+                      <Button
+                        testID="stop-test-button"
+                        mode="outlined"
+                        onPress={stopBenchmark}
+                        icon="stop-circle-outline"
+                        style={styles.button}>
+                        {l10n.common.stop}
+                      </Button>
+                    )}
 
                     {isRunning && (
                       <View style={styles.loadingContainer}>

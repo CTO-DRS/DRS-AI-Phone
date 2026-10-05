@@ -34,9 +34,10 @@ describe('SearchProviderStore', () => {
       expect(store.hasConsentedToSearch).toBe(false);
     });
 
-    it('lists Parallel as gated (not selectable)', () => {
-      const parallel = SEARCH_PROVIDERS.find(p => p.id === 'parallel');
-      expect(parallel?.selectable).toBe(false);
+    it('lists every provider as selectable — no gated features', () => {
+      for (const provider of SEARCH_PROVIDERS) {
+        expect(provider.selectable).toBe(true);
+      }
     });
 
     it('reads each provider key under its own keychain service on load', async () => {
@@ -114,14 +115,14 @@ describe('SearchProviderStore', () => {
   });
 
   describe('preferences', () => {
-    it('sets the active provider only for selectable providers', async () => {
+    it('sets the active provider to any selectable provider', async () => {
       const store = await newStore();
       // Switch away from the brave default so the write is observable.
       store.setActiveProvider('tavily');
       expect(store.activeProviderId).toBe('tavily');
 
       store.setActiveProvider('parallel');
-      expect(store.activeProviderId).toBe('tavily');
+      expect(store.activeProviderId).toBe('parallel');
     });
 
     it('clamps result count into range', async () => {
@@ -129,7 +130,7 @@ describe('SearchProviderStore', () => {
       store.setResultCount(0);
       expect(store.resultCount).toBe(1);
       store.setResultCount(99);
-      expect(store.resultCount).toBe(8);
+      expect(store.resultCount).toBe(15);
       store.setResultCount(4);
       expect(store.resultCount).toBe(4);
     });
@@ -142,9 +143,9 @@ describe('SearchProviderStore', () => {
   });
 
   describe('post-hydration normalization (persisted prefs bypass setters)', () => {
-    it('resets a persisted gated/unknown provider to the default', async () => {
+    it('resets a persisted unknown provider to the default', async () => {
       const store = await newStore();
-      store.activeProviderId = 'parallel'; // gated; only reachable via stale storage
+      store.activeProviderId = 'no-such-provider' as any; // only reachable via stale storage
       store.normalizeHydratedPrefs();
       expect(store.activeProviderId).toBe('brave');
     });
@@ -153,7 +154,7 @@ describe('SearchProviderStore', () => {
       const store = await newStore();
       store.resultCount = 99;
       store.normalizeHydratedPrefs();
-      expect(store.resultCount).toBe(8);
+      expect(store.resultCount).toBe(15);
 
       store.resultCount = 0;
       store.normalizeHydratedPrefs();
