@@ -13,22 +13,22 @@ const keychainService = (id: SearchProviderId): string =>
 export interface SearchProviderMeta {
   id: SearchProviderId;
   label: string;
-  /** Gated providers appear in the picker but cannot be the active provider. */
+  /** All providers are user-selectable — no gated features in this app. */
   selectable: boolean;
 }
 
-/** Parallel ships gated (not selectable) until its free-tier/PAYG terms are confirmed. */
+/** Every provider is unlocked; users choose freely and bring their own key. */
 export const SEARCH_PROVIDERS: SearchProviderMeta[] = [
   {id: 'tavily', label: 'Tavily', selectable: true},
   {id: 'brave', label: 'Brave', selectable: true},
   {id: 'exa', label: 'Exa', selectable: true},
-  {id: 'parallel', label: 'Parallel', selectable: false},
+  {id: 'parallel', label: 'Parallel', selectable: true},
 ];
 
 const DEFAULT_PROVIDER: SearchProviderId = 'brave';
 const DEFAULT_RESULT_COUNT = 5;
 const MIN_RESULT_COUNT = 1;
-const MAX_RESULT_COUNT = 8;
+const MAX_RESULT_COUNT = 15;
 
 class SearchProviderStore {
   activeProviderId: SearchProviderId = DEFAULT_PROVIDER;

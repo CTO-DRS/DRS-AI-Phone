@@ -46,6 +46,7 @@ import {
   TTSSetupSheet,
   DownloadOverlay,
   HubRunSheetHost,
+  ToastHost,
 } from './src/components';
 import {MarkdownProvider} from './src/components/MarkdownView';
 import {AutomationBridge, BenchmarkRunnerScreen} from './src/__automation__';
@@ -288,6 +289,7 @@ const App = observer(() => {
                     <TTSSetupSheet />
                     <DownloadOverlay />
                     <HubRunSheetHost />
+                    <ToastHost />
                   </BottomSheetModalProvider>
                 </NavigationContainer>
               </MarkdownProvider>

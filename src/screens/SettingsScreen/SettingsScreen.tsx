@@ -1316,7 +1316,7 @@ export const SettingsScreen: React.FC = observer(() => {
                       searchProviderStore.setResultCount(Math.round(value))
                     }
                     min={1}
-                    max={8}
+                    max={15}
                     step={1}
                   />
                   <Text variant="labelSmall" style={styles.textDescription}>

@@ -171,7 +171,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: v${{ env.VERSION }}
-          name: "DRS AI v${{ env.VERSION }} — شريطا المحادثة بلمسة العلامة"
+          name: "DRS AI v${{ env.VERSION }} — إزالة القيود واستكمال المميزات"
           files: DRS-AI-v*.apk
           draft: false
           prerelease: false

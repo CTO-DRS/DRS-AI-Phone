@@ -29,7 +29,7 @@ import {SystemPromptSection} from './SystemPromptSection';
 import {DynamicParameterForm} from '../DynamicParameters';
 import {AssistantGenerationSettingsSheet} from '../AssistantGenerationSettingsSheet';
 
-import {assistantStore} from '../../store';
+import {assistantStore, uiStore} from '../../store';
 
 import type {Assistant, TalentRef} from '../../types/assistant';
 
@@ -315,9 +315,15 @@ export const AssistantSheet: React.FC<AssistantSheetProps> = observer(
         handleClose();
       } catch (error) {
         console.error('Error saving assistant:', error);
-        // TODO: Show error message to user
-        // For now, we'll just log the error and not close the sheet
-        // so the user can try again
+        // Surface the failure so the user knows the save did not go through;
+        // the sheet stays open so they can retry without losing input.
+        uiStore.showError(
+          error instanceof Error
+            ? error.message
+            : String(
+                (error as {message?: string} | undefined)?.message ?? error,
+              ),
+        );
       } finally {
         setIsSaving(false);
       }
