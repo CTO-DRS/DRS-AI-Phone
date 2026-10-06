@@ -32,24 +32,39 @@ export const CompletionSettings: React.FC<Props> = ({
   const styles = createStyles(theme);
   const l10n = React.useContext(L10nContext);
 
-  const renderSlider = ({name, step = 0.01}: {name: string; step?: number}) => (
-    <View style={styles.settingItem}>
-      <InputSlider
-        testID={`${name}-slider`}
-        label={name.toUpperCase().replace('_', ' ')}
-        labelVariant="labelSmall"
-        description={l10n.completionParams[name]}
-        value={settings[name]}
-        onValueChange={value => onChange(name, value)}
-        min={COMPLETION_PARAMS_METADATA[name]?.validation.min}
-        max={COMPLETION_PARAMS_METADATA[name]?.validation.max}
-        step={step}
-        precision={Number.isInteger(step) ? 0 : 2}
-        debounceMs={300} // Enable debouncing for sliders
-        disabled={disabled}
-      />
-    </View>
-  );
+  const renderSlider = ({
+    name,
+    step = 0.01,
+  }: {
+    name: keyof CompletionParams;
+    step?: number;
+  }) => {
+    const metadata = COMPLETION_PARAMS_METADATA[name];
+    const numericRule =
+      metadata && metadata.validation.type === 'numeric'
+        ? metadata.validation
+        : undefined;
+    return (
+      <View style={styles.settingItem}>
+        <InputSlider
+          testID={`${name}-slider`}
+          label={name.toUpperCase().replace('_', ' ')}
+          labelVariant="labelSmall"
+          description={
+            l10n.completionParams[name as keyof typeof l10n.completionParams]
+          }
+          value={settings[name] as number}
+          onValueChange={value => onChange(name, value)}
+          min={numericRule?.min}
+          max={numericRule?.max}
+          step={step}
+          precision={Number.isInteger(step) ? 0 : 2}
+          debounceMs={300} // Enable debouncing for sliders
+          disabled={disabled}
+        />
+      </View>
+    );
+  };
 
   const renderIntegerInput = ({name}: {name: keyof CompletionParams}) => {
     const metadata = COMPLETION_PARAMS_METADATA[name];
@@ -66,7 +81,7 @@ export const CompletionSettings: React.FC<Props> = ({
           {String(name).toUpperCase().replace('_', ' ')}
         </Text>
         <Text style={styles.description}>
-          {l10n.completionParams[String(name)]}
+          {l10n.completionParams[name as keyof typeof l10n.completionParams]}
         </Text>
         <TextInput
           value={value}
@@ -94,13 +109,15 @@ export const CompletionSettings: React.FC<Props> = ({
             {displayName}
           </Text>
           <Switch
-            value={settings[name]}
+            value={settings[name as keyof CompletionParams] as boolean}
             onValueChange={disabled ? () => {} : value => onChange(name, value)}
             disabled={disabled}
             testID={`${name}-switch`}
           />
         </View>
-        <Text style={styles.description}>{l10n.completionParams[name]}</Text>
+        <Text style={styles.description}>
+          {l10n.completionParams[name as keyof typeof l10n.completionParams]}
+        </Text>
       </View>
     );
   };

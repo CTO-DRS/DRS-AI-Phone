@@ -14,19 +14,19 @@ jest.mock('../../utils', () => {
     checkConnectivity: jest.fn(),
     initializeAppCheck: jest.fn(),
     NetworkError: class NetworkError extends Error {
-      constructor(message) {
+      constructor(message: string) {
         super(message);
         this.name = 'NetworkError';
       }
     },
     AppCheckError: class AppCheckError extends Error {
-      constructor(message) {
+      constructor(message: string) {
         super(message);
         this.name = 'AppCheckError';
       }
     },
     ServerError: class ServerError extends Error {
-      constructor(message) {
+      constructor(message: string) {
         super(message);
         this.name = 'ServerError';
       }

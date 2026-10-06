@@ -1,6 +1,36 @@
 import {mockHFModel1, mockHFModel2} from '../../jest/fixtures/models';
+import type {HuggingFaceModel} from '../../src/utils/types';
 
-export const mockHFStore = {
+type MockHFStore = {
+  models: HuggingFaceModel[];
+  isLoading: boolean;
+  error: string;
+  nextPageLink: string | null;
+  searchQuery: string;
+  queryFilter: string;
+  queryFull: boolean;
+  queryConfig: boolean;
+  hfToken: string;
+  useHfToken: boolean;
+  searchFilters: {author: string; sortBy: 'relevance'};
+  isTokenPresent: boolean;
+  shouldUseToken: boolean;
+  setUseHfToken: jest.Mock;
+  setToken: jest.Mock;
+  clearToken: jest.Mock;
+  setSearchQuery: jest.Mock;
+  setSearchFilters: jest.Mock;
+  fetchAndSetGGUFSpecs: jest.Mock;
+  fetchModelFileDetails: jest.Mock;
+  getModelById: jest.Mock;
+  fetchModelData: jest.Mock;
+  fetchModels: jest.Mock;
+  fetchMoreModels: jest.Mock;
+};
+
+// Explicit annotation breaks the self-reference cycle (getModelById reads
+// mockHFStore.models), which would otherwise make TS infer `any`.
+export const mockHFStore: MockHFStore = {
   models: [mockHFModel1, mockHFModel2],
   isLoading: false,
   error: '',

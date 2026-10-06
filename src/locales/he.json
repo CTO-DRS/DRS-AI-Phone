@@ -6,6 +6,7 @@
     "rename": "שנה שם",
     "reset": "איפוס",
     "save": "שמור",
+    "stop": "עצור",
     "update": "עדכן",
     "error": "שגיאה",
     "export": "ייצוא",
@@ -31,8 +32,10 @@
     "close": "סגור",
     "clear": "נקה הכל",
     "gallery": "גלריה",
-    "stop": "עצור",
-    "noResults": "אין תוצאות"
+    "noResults": "אין תוצאות",
+    "openDrawer": "פתיחת התפריט הנשלף",
+    "openMenu": "פתיחת התפריט",
+    "closeMenu": "סגירת התפריט"
   },
   "settings": {
     "modelInitializationSettings": "הגדרות איתחול מודל",
@@ -87,6 +90,25 @@
     "useMmapFalse": "מושבת",
     "useMmapTrueDescription": "השתמש תמיד במיפוי זיכרון לטעינה מהירה יותר",
     "useMmapFalseDescription": "מומלץ להשבית אפשרות זו כאשר 'אריזה מחדש של משקלים' (Weight Repacking) פעילה, כדי למנוע כפילות בצריכת הזיכרון",
+    "weightRepacking": "אפשר אריזה מחדש של משקלים",
+    "weightRepackingDescription": "עיבוד הנחיות מהיר יותר עם צריכת זיכרון מינימלית כאשר מיפוי זיכרון (Memory Mapping) מושבת. קצב יצירת הטוקנים אינו מושפע.",
+    "speculativeDecoding": "פענוח ספקולטיבי",
+    "speculativeDecodingDescription": "השתמש במודל טיוטה קטן (או במודל MTP מוטמע) כדי לנחש טוקנים ולהאיץ את היצירה. ניסיוני.",
+    "speculativeNotMTPCapable": "המודל הפעיל לא תומך בפענוח ספקולטיבי ולא משויך אליו מודל טיוטה תואם, אז ההגדרה נשארת כבויה עבורו וללא השפעה. היא חלה אוטומטית על מודלים שתומכים בכך.",
+    "speculativeDraftModel": "מודל טיוטה",
+    "speculativeDraftModelDescription": "מכין טיוטת טוקנים עבור המודל הפעיל.",
+    "speculativeDraftModelNone": "ללא (MTP מוטמע)",
+    "speculativeDraftModelIgnoredOverridden": "למודל הפעיל יש כבר מודל טיוטה משלו, אז הבחירה הזו לא נלקחת בחשבון.",
+    "speculativeDraftModelIgnoredIncompatible": "מודל הטיוטה הזה לא תואם למודל הפעיל, אז הוא לא נלקח בחשבון.",
+    "speculativeDraftModelIgnoredNotCapable": "למודל הזה אין שכבות טיוטה, אז אי אפשר להשתמש בו כמודל טיוטה.",
+    "speculativeDraftKeyCacheType": "סוג מטמון מפתח לטיוטה",
+    "speculativeDraftValueCacheType": "סוג מטמון ערך לטיוטה",
+    "speculativeDraftNGpuLayers": "שכבות GPU לטיוטה",
+    "speculativeDraftNGpuLayersDescription": "כמות השכבות של מודל הטיוטה שיועברו ל-GPU.",
+    "speculativeDraftCacheTypeInactiveDescription": "ייכנס לתוקף ברגע שפענוח ספקולטיבי יפעל.",
+    "ttsAvailability": "טקסט לדיבור",
+    "ttsAvailabilityDescription": "קרא את תשובות העוזר בקול רם.",
+    "ttsAvailabilityLowMemoryWarning": "זיכרון המכשיר שלך נמוך - ייתכן שזה לא יעבוד בצורה אמינה.",
     "modelLoadingSettings": "הגדרות טעינת מודל",
     "autoOffloadLoad": "טעינה/פריקה אוטומטית",
     "autoOffloadLoadDescription": "פריקת מודל כאשר האפליקציה נמצאת ברקע.",
@@ -94,6 +116,12 @@
     "autoNavigateToChatDescription": "נווט לצ'אט כאשר הטעינה מסתיימת.",
     "appSettings": "הגדרות אפליקציה",
     "language": "שפה",
+    "languageSheetTitle": "שפה",
+    "languageSearchPlaceholder": "חפש שפות",
+    "languageRestartTitle": "נדרשת הפעלה מחדש",
+    "languageRestartMessage": "כיוון הפריסה השתנה עבור שפה זו. הפעל מחדש את האפליקציה כדי להחיל זאת במלואה.",
+    "languageRestartNow": "הפעלה מחדש כעת",
+    "languageRestartLater": "מאוחר יותר",
     "darkMode": "מצב כהה",
     "displayMemoryUsage": "שימוש בתצוגת זיכרון",
     "displayMemoryUsageDescription": "הצגת ניצול זיכרון במסך הצ'אט.",
@@ -106,6 +134,31 @@
     "importButton": "ייבוא",
     "importSuccess": "יובאו בהצלחה {{count}} סשני צ'אט.",
     "importError": "ייבוא סשני צ'אט נכשל. אנא בדוק את פורמט הקובץ.",
+    "internetSearch": {
+      "title": "חיפוש באינטרנט",
+      "description": "אפשר ל-עוזרs לחפש ברשת באמצעות הכלים שלהם. השתמש במפתח API משלך — DRS AI לעולם לא שומר את המפתחות שלך ולא מנתב את השאילתות שלך.",
+      "providerLabel": "ספק חיפוש",
+      "providerGated": "בקרוב",
+      "keyLabel": "מפתח API",
+      "keyIsSet": "מפתח הוגדר עבור {{provider}}.",
+      "keyNotSet": "לא הוגדר מפתח עבור {{provider}}.",
+      "setKeyButton": "הגדר מפתח",
+      "updateKeyButton": "עדכן מפתח",
+      "clearKeyButton": "נקה מפתח",
+      "keyInputPlaceholder": "הדבק את מפתח ה-API של {{provider}}",
+      "keyUpdateError": "עדכון המפתח נכשל. אנא נסה שוב.",
+      "showKeyAccessibilityLabel": "הצג מפתח API",
+      "hideKeyAccessibilityLabel": "הסתר מפתח API",
+      "resultCountLabel": "תוצאות לכל חיפוש",
+      "resultCountDescription": "פחות תוצאות משאירות יותר מקום בהקשר של המודל.",
+      "consentTitle": "החיפושים יוצאים מהמכשיר שלך",
+      "consentDescription": "כאשר עוזר מחפש ברשת, השאילתה שלך נשלחת לספק שנבחר דרך האינטרנט. כאשר עוזר קורא דף, ייתכן שכתובת ה-URL ותוכן הדף יישלחו במקום זאת לשירות קריאה כברירת מחדל (r.jina.ai) אם לספק שנבחר אין קורא מובנה. מפתחות ושאילתות לעולם אינם נשלחים ל-DRS AI.",
+      "consentAccept": "הבנתי",
+      "consentRequired": "אשר את הגילוי שלמעלה כדי להגדיר מפתח ולהפעיל חיפוש.",
+      "consentGivenTitle": "חיפוש ברשת מופעל",
+      "consentGivenDescription": "שאילתות וקריאות של דפים עשויות לצאת מהמכשיר שלך כמתואר למעלה.",
+      "consentRevoke": "בטל הסכמה"
+    },
     "apiSettingsTitle": "הגדרות API",
     "huggingFaceTokenLabel": "טוקן Hugging Face",
     "tokenIsSetDescription": "טוקן הוגדר. נדרש לגישה למודלים מגודרים.",
@@ -122,11 +175,14 @@
     "clearCachesSuccess": "ניקוי של {{count}} קבצי מטמון בוצע בהצלחה.",
     "clearCachesError": "ניקוי המטמון נכשל. אנא נסה שוב.",
     "noCachesToClear": "אין מטמון לניקוי.",
-    "weightRepacking": "אפשר אריזה מחדש של משקלים",
-    "weightRepackingDescription": "עיבוד הנחיות מהיר יותר עם צריכת זיכרון מינימלית כאשר מיפוי זיכרון (Memory Mapping) מושבת. קצב יצירת הטוקנים אינו מושפע.",
     "serverName": "שם השרת",
     "serverUrl": "כתובת השרת",
     "serverUrlPlaceholder": "לדוגמא, http://192.168.1.100:1234",
+    "requestTimeout": "זמן קצוב לבקשה (בשניות)",
+    "requestTimeoutPlaceholder": "אופציונלי - אפשר להשאיר ריק לברירת המחדל",
+    "requestTimeoutHelp": "כמה זמן לחכות לתגובה משרת איטי. אפשר להשאיר ריק לערך ברירת המחדל.",
+    "serverType": "סוג שרת",
+    "serverTypeHelp": "מזוהה אוטומטית; שנה אם זה לא נכון.",
     "apiKey": "מפתח API",
     "apiKeyPlaceholder": "אופציונלי - נדרש עבור OpenAI/Groq",
     "apiKeyDescription": "נשמר בצורה מאובטחת על המכשיר.",
@@ -157,55 +213,7 @@
     "retryConnection": "נסה שוב",
     "enterUrlManually": "הזן כתובת (URL) ידנית",
     "manageServers": "ניהול שרתים",
-    "ttsAvailability": "טקסט לדיבור",
-    "ttsAvailabilityDescription": "קרא את תשובות העוזר בקול רם.",
-    "ttsAvailabilityLowMemoryWarning": "זיכרון המכשיר שלך נמוך - ייתכן שזה לא יעבוד בצורה אמינה.",
-    "requestTimeout": "זמן קצוב לבקשה (בשניות)",
-    "requestTimeoutHelp": "כמה זמן לחכות לתגובה משרת איטי. אפשר להשאיר ריק לערך ברירת המחדל.",
-    "requestTimeoutPlaceholder": "אופציונלי - אפשר להשאיר ריק לברירת המחדל",
-    "serverType": "סוג שרת",
-    "serverTypeHelp": "מזוהה אוטומטית; שנה אם זה לא נכון.",
-    "internetSearch": {
-      "title": "חיפוש באינטרנט",
-      "description": "אפשר ל-עוזרs לחפש ברשת באמצעות הכלים שלהם. השתמש במפתח API משלך — DRS AI לעולם לא שומר את המפתחות שלך ולא מנתב את השאילתות שלך.",
-      "providerLabel": "ספק חיפוש",
-      "providerGated": "בקרוב",
-      "keyLabel": "מפתח API",
-      "keyIsSet": "מפתח הוגדר עבור {{provider}}.",
-      "keyNotSet": "לא הוגדר מפתח עבור {{provider}}.",
-      "setKeyButton": "הגדר מפתח",
-      "updateKeyButton": "עדכן מפתח",
-      "clearKeyButton": "נקה מפתח",
-      "keyInputPlaceholder": "הדבק את מפתח ה-API של {{provider}}",
-      "keyUpdateError": "עדכון המפתח נכשל. אנא נסה שוב.",
-      "showKeyAccessibilityLabel": "הצג מפתח API",
-      "hideKeyAccessibilityLabel": "הסתר מפתח API",
-      "resultCountLabel": "תוצאות לכל חיפוש",
-      "resultCountDescription": "פחות תוצאות משאירות יותר מקום בהקשר של המודל.",
-      "consentTitle": "החיפושים יוצאים מהמכשיר שלך",
-      "consentDescription": "כאשר עוזר מחפש ברשת, השאילתה שלך נשלחת לספק שנבחר דרך האינטרנט. כאשר עוזר קורא דף, ייתכן שכתובת ה-URL ותוכן הדף יישלחו במקום זאת לשירות קריאה כברירת מחדל (r.jina.ai) אם לספק שנבחר אין קורא מובנה. מפתחות ושאילתות לעולם אינם נשלחים ל-DRS AI.",
-      "consentAccept": "הבנתי",
-      "consentRequired": "אשר את הגילוי שלמעלה כדי להגדיר מפתח ולהפעיל חיפוש.",
-      "consentGivenTitle": "חיפוש ברשת מופעל",
-      "consentGivenDescription": "שאילתות וקריאות של דפים עשויות לצאת מהמכשיר שלך כמתואר למעלה.",
-      "consentRevoke": "בטל הסכמה"
-    },
-    "languageSheetTitle": "שפה",
-    "languageSearchPlaceholder": "חפש שפות",
-    "speculativeDecoding": "פענוח ספקולטיבי",
-    "speculativeDecodingDescription": "השתמש במודל טיוטה קטן (או במודל MTP מוטמע) כדי לנחש טוקנים ולהאיץ את היצירה. ניסיוני.",
-    "speculativeNotMTPCapable": "המודל הפעיל לא תומך בפענוח ספקולטיבי ולא משויך אליו מודל טיוטה תואם, אז ההגדרה נשארת כבויה עבורו וללא השפעה. היא חלה אוטומטית על מודלים שתומכים בכך.",
-    "speculativeDraftModel": "מודל טיוטה",
-    "speculativeDraftModelDescription": "מכין טיוטת טוקנים עבור המודל הפעיל.",
-    "speculativeDraftModelNone": "ללא (MTP מוטמע)",
-    "speculativeDraftModelIgnoredOverridden": "למודל הפעיל יש כבר מודל טיוטה משלו, אז הבחירה הזו לא נלקחת בחשבון.",
-    "speculativeDraftModelIgnoredIncompatible": "מודל הטיוטה הזה לא תואם למודל הפעיל, אז הוא לא נלקח בחשבון.",
-    "speculativeDraftModelIgnoredNotCapable": "למודל הזה אין שכבות טיוטה, אז אי אפשר להשתמש בו כמודל טיוטה.",
-    "speculativeDraftKeyCacheType": "סוג מטמון מפתח לטיוטה",
-    "speculativeDraftValueCacheType": "סוג מטמון ערך לטיוטה",
-    "speculativeDraftNGpuLayers": "שכבות GPU לטיוטה",
-    "speculativeDraftNGpuLayersDescription": "כמות השכבות של מודל הטיוטה שיועברו ל-GPU.",
-    "speculativeDraftCacheTypeInactiveDescription": "ייכנס לתוקף ברגע שפענוח ספקולטיבי יפעל."
+    "exportLegacyError": "ייצוא סשני הצ'אט הישנים נכשל. ייתכן שהקובץ לא קיים."
   },
   "memory": {
     "shortWarning": "אזהרת זיכרון",
@@ -239,8 +247,8 @@
       "fileAlreadyExistsMessage": "קובץ בשם זה כבר קיים. מה תרצה לעשות?",
       "replace": "החלף",
       "keepBoth": "שמור את שניהם",
-      "copyFailed": "העתקת קובץ מודל נכשלה",
-      "copyingModel": "מעתיק קובץ מודל..."
+      "copyingModel": "מעתיק קובץ מודל...",
+      "copyFailed": "העתקת קובץ מודל נכשלה"
     },
     "labels": {
       "localModel": "מקומי",
@@ -368,6 +376,15 @@
         "sortLikes": "הכי אהוב"
       }
     },
+    "hubRun": {
+      "title": "הורד מודל",
+      "resolving": "טוען פרטי מודל…",
+      "cancel": "ביטול",
+      "retry": "נסה שוב",
+      "invalidLinkTitle": "קישור לא תקין",
+      "invalidLinkMessage": "קישור Hugging Face זה חסר או מכיל מודל או קובץ לא תקין.",
+      "resolveError": "טעינת פרטי המודל נכשלה. בדוק את החיבור ונסה שוב."
+    },
     "modelCard": {
       "alerts": {
         "deleteTitle": "מחק מודל",
@@ -385,6 +402,9 @@
       "labels": {
         "skills": "מיומנויות: ",
         "vision": "ראייה",
+        "visionSupported": "נתמך",
+        "visionNotSupported": "לא נתמך",
+        "visionUnknown": "לא ידוע",
         "capabilities": "יכולות.",
         "modelName": "שם מודל",
         "contextLength": "אורך הקשר",
@@ -393,9 +413,6 @@
         "requiresProjectionModel": "דורש מודל שכבת התאמה",
         "downloadProjectionModel": "הורד מודל שכבת התאמה",
         "viewModelCardOnHuggingFace": "הצג כרטיס מודל ב-Hugging Face",
-        "visionSupported": "נתמך",
-        "visionNotSupported": "לא נתמך",
-        "visionUnknown": "לא ידוע",
         "draftOnlyReason": "מודל לטיוטה בלבד. בחר אותו תחת הגדרות → פענוח ספקולטיבי."
       },
       "accessibility": {
@@ -461,14 +478,195 @@
       "mtp": "ספקולטיבי (MTP)",
       "mtpDraft": "טיוטה ספקולטיבית"
     },
-    "hubRun": {
-      "title": "הורד מודל",
-      "resolving": "טוען פרטי מודל…",
-      "cancel": "ביטול",
-      "retry": "נסה שוב",
-      "invalidLinkTitle": "קישור לא תקין",
-      "invalidLinkMessage": "קישור Hugging Face זה חסר או מכיל מודל או קובץ לא תקין.",
-      "resolveError": "טעינת פרטי המודל נכשלה. בדוק את החיבור ונסה שוב."
+    "emptyTitle": "אין עדיין מודלים",
+    "emptyHint": "הקישו + כדי להוריד מ-Hugging Face, להוסיף מודל מקומי או להתחבר לשרת מרוחק."
+  },
+  "modelsHub": {
+    "title": "מודלים",
+    "subtitle": "גלו, הורידו ונהלו כל מודל שהאפליקציה שלכם יכולה להריץ.",
+    "searchPlaceholder": "חיפוש מודלים, מפרסמים, משימות…",
+    "retry": "נסה שוב",
+    "notAvailable": "לא זמין",
+    "noDownloadableFile": "אין קובץ GGUF זמין להורדה במאגר הזה",
+    "downloadStarted": "ההורדה התחילה",
+    "seeAll": "הצג הכל",
+    "exploreAction": "גלה מודלים",
+    "emptyTitle": "אין עדיין מודלים מותקנים",
+    "emptyHint": "עיינו בהאב והורידו מודל שמתאים למכשיר ולעבודה שלכם.",
+    "fitScore": "התאמה {score}/100",
+    "installedFromRepo": "הותקן מהמאגר הזה",
+    "installedBadge": "מותקן",
+    "noFiles": "לא פורסמו קבצי GGUF במאגר הזה.",
+    "visionFilesTitle": "קבצי שכבת התאמה לראייה (mmproj)",
+    "visionFilesHint": "הקבצים הקטנים האלה מוסיפים הבנת תמונות למודל הטקסט המתאים; הם יורדים אוטומטית יחד עם מודלי הראייה.",
+    "downloadFile": "הורד קובץ",
+    "downloadShort": "קבל",
+    "version": "גרסה",
+    "engineUnsupportedShort": "לא ניתן להרצה מקומית",
+    "engineYes": "GGUF — רץ מקומית (llama.cpp)",
+    "engineNo": "לא נתמך על ידי המנוע המקומי",
+    "capabilitiesTitle": "יכולות",
+    "categoryEngineNotice": "הקטגוריה הזו מציגה מאגרים אמיתיים, אבל המנוע המקומי מבוסס GGUF עדיין לא יכול להריץ סוג מודל כזה, ולכן ההורדות מושבתות כאן. שום דבר כאן לא מדומה — כשהתמיכה במנוע תתווסף, המודלים האלה יהפכו לזמינים להורדה.",
+    "categoryInstalledSection": "המודלים שלכם בקטגוריה הזו",
+    "categoryRemoteSection": "גלו ב-HuggingFace",
+    "featuredTitle": "מודלים נבחרים",
+    "recommendedTitle": "מומלצים עבור המכשיר שלכם",
+    "recentTitle": "נוספו לאחרונה",
+    "favoritesTitle": "מועדפים",
+    "installedTitle": "מותקנים",
+    "wifiOnly": "Wi-Fi בלבד",
+    "categoriesTitle": "קטגוריות",
+    "installedCount": "{count} מותקנים",
+    "discover": "גלה",
+    "device": {
+      "ram": "RAM",
+      "storage": "אחסון פנוי",
+      "cpu": "CPU",
+      "gpu": "GPU",
+      "gpuOk": "מואץ",
+      "gpuNo": "CPU בלבד"
+    },
+    "compat": {
+      "excellent": "תאימות מעולה",
+      "good": "תאימות טובה",
+      "limited": "תאימות מוגבלת",
+      "notRecommended": "לא מומלץ",
+      "unknown": "תאימות לא ידועה"
+    },
+    "reasons": {
+      "engineUnsupported": "את סוג המודל הזה לא ניתן להריץ על מנוע ה-GGUF המקומי",
+      "engineSupported": "רץ על מנוע ה-GGUF המקומי",
+      "memoryComfortable": "צריכת הזיכרון תהיה נוחה",
+      "memoryOk": "צריכת הזיכרון סבירה",
+      "memoryTight": "הזיכרון יהיה צפוף — צפו להרצות איטיות יותר",
+      "memoryInsufficient": "הזיכרון (RAM) של המכשיר הזה לא מספיק כדי לטעון אותו",
+      "memoryUnknown": "לא ניתן להעריך את צורך הזיכרון מנתוני המאגר",
+      "storagePlenty": "שפע של אחסון פנוי",
+      "storageTight": "האחסון יהיה צפוף לאחר ההתקנה",
+      "storageInsufficient": "אין מספיק אחסון פנוי",
+      "storageUnknown": "לא ניתן היה לקרוא את האחסון הפנוי",
+      "cpuGood": "ל-CPU יש מספיק ליבות להסקה מהירה",
+      "cpuOk": "ה-CPU יכול להריץ אותו, במהירות בינונית",
+      "cpuLimited": "מעט ליבות CPU — ההסקה תהיה איטית",
+      "cpuUnknown": "לא ניתן היה לקרוא את מספר ליבות ה-CPU",
+      "gpuSupported": "האצת GPU זמינה",
+      "gpuUnsupported": "אין האצת GPU — רץ על ה-CPU",
+      "gpuUnknown": "לא ניתן היה לקבוע את תמיכת ה-GPU"
+    },
+    "overviewTemplate": "מודל {categories} שפורסם על ידי {author} עם כ-{params} פרמטרים, מופץ כקבצי GGUF להסקה מקומית ואופליין במכשיר הזה.",
+    "overviewBlocked": "זהו מאגר אמיתי, אבל את סוג המודל שלו לא ניתן להריץ על המנוע המקומי, ולכן אי אפשר להוריד אותו כאן.",
+    "statsTemplate": "ב-HuggingFace: {downloads} הורדות · {likes} לייקים.",
+    "tech": {
+      "architecture": "ארכיטקטורה",
+      "parameters": "פרמטרים",
+      "contextLength": "אורך הקשר",
+      "formats": "פורמטים",
+      "quantization": "כימותים",
+      "fileCount": "קבצי GGUF",
+      "version": "רוויזיה (sha)",
+      "lastModified": "עודכן לאחרונה",
+      "license": "רישיון",
+      "engine": "מנוע"
+    },
+    "capabilities": {
+      "offline": "אופליין",
+      "context": "הקשר",
+      "arabic": "תמיכה בערבית",
+      "multilingual": "רב-לשוני"
+    },
+    "tabs": {
+      "overview": "סקירה",
+      "technical": "טכני",
+      "files": "קבצים"
+    },
+    "categories": {
+      "text": "טקסט",
+      "vision": "ראייה",
+      "reasoning": "חשיבה",
+      "coding": "קידוד",
+      "multimodal": "רב-מודאלי",
+      "embedding": "אמבדינג",
+      "translation": "תרגום",
+      "audio": "שמע",
+      "image": "תמונה",
+      "video": "וידאו",
+      "general": "כללי"
+    },
+    "dialog": {
+      "aboutTitle": "אודות המודל הזה",
+      "aboutTemplate": "מודל GGUF מסוג {family} מאת {author}. רץ במלואו אופליין במכשיר הזה לאחר ההורדה. הגודל למטה הוא גודל הקובץ המדויק כפי שדווח על ידי HuggingFace.",
+      "familyUnknown": "GGUF",
+      "file": "קובץ",
+      "downloadSize": "גודל ההורדה",
+      "extraVisionFiles": "קבצי ראייה נוספים (mmproj)",
+      "storageAfter": "נפח אחסון בשימוש לאחר ההתקנה",
+      "offline": "עובד אופליין",
+      "offlineYes": "כן — במלואו במכשיר",
+      "context": "אורך הקשר",
+      "wifiOnlyWaiting": "הורדה ב-Wi-Fi בלבד מופעלת. בנתונים סלולריים, ההורדה הזו תמתין בתור עד לחזרת ה-Wi-Fi.",
+      "engineUnsupported": "סוג המודל הזה (יצירת תמונות/וידאו/שמע) לא ניתן להרצה על ידי מנוע ה-GGUF המקומי, ולכן ההורדה מושבתת. שום דבר כאן לא מזויף — הרישום אמיתי, פשוט המנוע לא יכול להריץ אותו.",
+      "confirmDownload": "הורד מודל",
+      "starting": "מתחיל…"
+    },
+    "storage": {
+      "title": "אחסון מודלים",
+      "entryHint": "פירוט שימוש, המודלים הגדולים ביותר, ניקוי",
+      "used": "בשימוש על ידי מודלים",
+      "available": "זמין",
+      "distribution": "לפי קטגוריה",
+      "largest": "המודלים הגדולים ביותר",
+      "orphans": "קבצים חלקיים ושיורים",
+      "orphansFound": "{count} קבצים · ניתן לשחרר {size}",
+      "orphansNone": "אין מה לנקות — האחסון מסודר.",
+      "cleanNow": "ניקוי",
+      "cleanTitle": "למחוק קבצים שנותרו?",
+      "cleanMessage": "{count} קבצים שלא הושלמו או נטושים יוסרו לצמיתות.",
+      "cleanConfirm": "מחק",
+      "checking": "בודק אחסון…",
+      "enough": "מספיק מקום פנוי",
+      "notEnough": "אין מספיק מקום פנוי",
+      "required": "נדרש",
+      "availableLabel": "זמין",
+      "deficit": "חסר {amount}"
+    },
+    "downloads": {
+      "title": "הורדות",
+      "emptyTitle": "אין הורדות",
+      "emptyHint": "מודלים שתורידו יופיעו כאן עם התקדמות חיה, ויישארו ניתנים לניהול גם אופליין.",
+      "active": "מוריד",
+      "paused": "מושהה",
+      "pausedHint": "מושהה — ממשיך מאותה נקודת בייט",
+      "verifying": "מאמת",
+      "verifyingHint": "בדיקת תקינות הקובץ (גודל + סכום ביקורת) לפני ההתקנה",
+      "completed": "הושלם",
+      "remaining": "≈",
+      "pause": "השהה",
+      "resume": "המשך",
+      "cancel": "ביטול"
+    },
+    "updates": {
+      "title": "עדכונים",
+      "check": "בדוק עדכונים",
+      "checking": "בודק…",
+      "recheck": "בדוק שוב",
+      "upToDate": "כל המודלים המותקנים תואמים לרוויזיה המקורית שלהם.",
+      "update": "עדכן"
+    },
+    "sort": {
+      "title": "מיון",
+      "recommended": "התאמה מיטבית",
+      "downloads": "הכי הרבה הורדות",
+      "newest": "החדש ביותר",
+      "name": "שם",
+      "sizeAsc": "הקטן ביותר קודם",
+      "sizeDesc": "הגדול ביותר קודם"
+    },
+    "search": {
+      "installedSection": "המודלים שלכם",
+      "hfSection": "תוצאות HuggingFace",
+      "noResults": "לא נמצאו מודלים",
+      "noResultsHint": "נסו שם, מפרסם או משימה אחרים.",
+      "errorTitle": "החיפוש נכשל"
     }
   },
   "completionParams": {
@@ -510,11 +708,13 @@
     "orBy": "או על ידי",
     "versionCopiedTitle": "הגרסה הועתקה",
     "versionCopiedDescription": "פרטי הגרסה הועתקו ללוח",
-    "privacyPolicy": "מדיניות הפרטיות",
-    "termsOfService": "תנאי השירות",
     "tour": "סיור",
     "tourDescription": "צפה שוב במסכי הפתיחה כדי לגלות מה DRS AI מציע.",
-    "showIntroButton": "הצג שוב את ההקדמה"
+    "showIntroButton": "הצג שוב את ההקדמה",
+    "privacyPolicy": "מדיניות הפרטיות",
+    "termsOfService": "תנאי השירות",
+    "versionFormat": "גרסה {{version}} ({{build}})",
+    "successTitle": "הצלחה"
   },
   "feedback": {
     "title": "שלח משוב",
@@ -558,6 +758,14 @@
     "attachmentButton": {
       "attachmentButtonAccessibilityLabel": "שלח מדיה"
     },
+    "bubble": {
+      "msPerToken": "{{value}}מ.ש./טוקן",
+      "tokensPerSec": "{{value}} טוקנים/שנ'",
+      "ttft": "{{value}}מ.ש. TTFT",
+      "draftAccepted": "טיוטה: {{accepted}}/{{total}} ({{pct}}%)",
+      "interrupted": "הופסק",
+      "truncated": "נקטע — ככל הנראה ההקשר מלא"
+    },
     "exportUtils": {
       "fileSaved": "קובץ נשמר",
       "fileSavedMessage": "הקובץ נשמר בתיקיית ההורדות שלך בשם {{filename}}",
@@ -580,6 +788,17 @@
     },
     "thinkingBubble": {
       "reasoning": "הנמקה"
+    },
+    "pendingIndicator": {
+      "preparingTool": "מכין כלי",
+      "buildingPage": "בונה דף",
+      "calculating": "מחשב",
+      "lookingUpTime": "בודק את השעה",
+      "stopping": "עוצר…"
+    },
+    "toolMetrics": {
+      "tokens": "{{count}} טוקנים",
+      "elapsed": "{{seconds}} ש'"
     },
     "chatEmptyPlaceholder": {
       "noModelsTitle": "אין מודלים זמינים",
@@ -721,17 +940,17 @@
       "forbiddenTitle": "הגישה נדחתה",
       "forbiddenMessage": "אין לך הרשאה לגשת למודל זה. אנא ודא:",
       "forbiddenSteps": [
-        "לטוקן שלך יש הרשאת \"קריאה\"",
-        "ביקשת וקיבלת גישה למודל זה",
-        "בעל המודל אישר את בקשת הגישה שלך"
+        "Your token has \"read\" permission",
+        "You requested and were granted access to this model",
+        "The model owner approved your access request"
       ],
       "getTokenTitle": "קבל טוקן Hugging Face",
       "getTokenMessage": "הורדה של דגם זה דורשת טוקן Hugging Face.",
       "getTokenSteps": [
-        "כנס לאתר huggingface.co והתחבר",
-        "נווט אל הגדרות > טוקני גישה",
-        "צור טוקן חדש עם גישת \"קריאה\"",
-        "העתק את הטוקן והדבק אותו כאן בשדה הטוקן"
+        "Go to huggingface.co and sign in",
+        "Navigate to Settings > Access Tokens",
+        "Create a new token with \"read\" access",
+        "Copy the token and paste it in the token field"
       ],
       "tokenDisabledTitle": "הטוקן מושבת",
       "tokenDisabledMessage": "יש לך טוקן Hugging Face מוגדר, אך הוא מושבת כרגע. הורדת מודל זה דורשת טוקן. הפעל את הטוקן שלך כדי להמשיך.",
@@ -749,10 +968,15 @@
       "makeChatTemporary": "הפוך את הצ'אט לזמני",
       "export": "ייצוא/ייבוא",
       "exportCurrentSession": "ייצוא הסשן הנוכחי",
+      "exportCurrentSessionMarkdown": "ייצוא כ-Markdown",
       "exportAllSessions": "ייצוא כל הסשנים",
       "exportChatSession": "ייצוא סשן צ'אט",
       "importSessions": "ייבוא סשנים",
-      "exportCurrentSessionMarkdown": "ייצוא כ-Markdown"
+      "exportErrorTitle": "שגיאת ייצוא",
+      "exportCurrentSessionError": "ייצוא הסשן הנוכחי נכשל.",
+      "exportAllError": "ייצוא כל הסשנים נכשל.",
+      "importSuccessTitle": "הייבוא הצליח",
+      "importErrorTitle": "שגיאת ייבוא"
     },
     "hfTokenSheet": {
       "title": "טוקן Hugging Face",
@@ -765,10 +989,10 @@
       "resetSuccess": "הסרת טוקן הצליחה",
       "instructions": "איך להשיג טוקן:",
       "instructionsSteps": [
-        "כנס לאתר huggingface.co והתחבר",
-        "נווט אל הגדרות > טוקני גישה",
-        "צור טוקן חדש עם גישת \"קריאה\"",
-        "העתק את הטוקן והדבק אותו כאן למטה"
+        "Go to huggingface.co and sign in",
+        "Navigate to Settings > Access Tokens",
+        "Create a new token with \"read\" access",
+        "Copy the token and paste it below"
       ],
       "getTokenLink": "קבל טוקן מ-huggingface.co ↖",
       "error": {
@@ -972,7 +1196,10 @@
       "bulkDeleteError": "מחיקת סשני הצ'אט נכשלה. אנא נסה שוב.",
       "exportError": "ייצוא סשן הצ'אט נכשל. אנא נסה שוב.",
       "bulkExportError": "ייצוא מפגשי הצ'אט נכשל. אנא נסה שוב.",
+      "pin": "הצמד",
+      "unpin": "בטל הצמדה",
       "dateGroups": {
+        "pinned": "מוצמדים",
         "today": "היום",
         "yesterday": "אתמול",
         "thisWeek": "השבוע",
@@ -981,11 +1208,10 @@
         "threeWeeksAgo": "לפני 3 שבועות",
         "fourWeeksAgo": "לפני 4 שבועות",
         "lastMonth": "בחודש שעבר",
-        "older": "לפני זמן רב",
-        "pinned": "מוצמדים"
+        "older": "לפני זמן רב"
       },
-      "pin": "הצמד",
-      "unpin": "בטל הצמדה"
+      "emptySessionsTitle": "אין עדיין צ'אטים",
+      "emptySessionsHint": "התחילו שיחה חדשה ממסך הצ'אט"
     },
     "usageStats": {
       "tooltip": {
@@ -1014,26 +1240,60 @@
       "exportAllAssistants": "ייצוא כל ה-עוזרs",
       "importAssistants": "ייבוא עוזרs",
       "importSuccess": "ייבוא של {{count}} עוזרs בוצע בהצלחה.",
-      "importError": "ייבוא ה-עוזרs נכשל. אנא בדוק את פורמט הקובץ."
+      "importError": "ייבוא ה-עוזרs נכשל. אנא בדוק את פורמט הקובץ.",
+      "exportErrorTitle": "שגיאת ייצוא",
+      "exportAllError": "ייצוא כל העוזרים נכשל.",
+      "importSuccessTitle": "הייבוא הצליח",
+      "importErrorTitle": "שגיאת ייבוא"
     },
-    "bubble": {
-      "msPerToken": "{{value}}מ.ש./טוקן",
-      "tokensPerSec": "{{value}} טוקנים/שנ'",
-      "ttft": "{{value}}מ.ש. TTFT",
-      "interrupted": "הופסק",
-      "truncated": "נקטע — ככל הנראה ההקשר מלא",
-      "draftAccepted": "טיוטה: {{accepted}}/{{total}} ({{pct}}%)"
+    "brandHeader": {
+      "tagline": "ה-AI הפרטי שלכם, במכשיר"
     },
-    "pendingIndicator": {
-      "preparingTool": "מכין כלי",
-      "buildingPage": "בונה דף",
-      "calculating": "מחשב",
-      "lookingUpTime": "בודק את השעה",
-      "stopping": "עוצר…"
+    "authSheet": {
+      "signInTitle": "התחברות",
+      "signUpTitle": "יצירת חשבון",
+      "fullNameLabel": "שם מלא",
+      "emailLabel": "אימייל",
+      "passwordLabel": "סיסמה",
+      "signInButton": "התחברות",
+      "signUpButton": "יצירת חשבון",
+      "forgotPassword": "שכחת סיסמה?",
+      "or": "או",
+      "continueWithGoogle": "המשך עם Google",
+      "haveAccount": "כבר יש לך חשבון? ",
+      "noAccount": "אין לך חשבון? ",
+      "signUpLink": "הרשמה",
+      "signInLink": "התחברות",
+      "signingIn": "מחבר אותך...",
+      "fillRequiredFields": "אנא מלא את כל שדות החובה.",
+      "enterFullName": "אנא הזן את שמך המלא.",
+      "enterEmailFirst": "אנא הזן תחילה את כתובת האימייל שלך.",
+      "accountCreatedTitle": "החשבון נוצר",
+      "accountCreatedMessage": "אנא בדוק את האימייל שלך לאימות החשבון.",
+      "welcomeBackTitle": "ברוך שובך!",
+      "welcomeBackMessage": "נכנסת בהצלחה.",
+      "googleErrorTitle": "שגיאת התחברות ל-Google",
+      "passwordResetTitle": "איפוס סיסמה",
+      "passwordResetMessage": "בדוק את האימייל שלך לקבלת הוראות לאיפוס הסיסמה.",
+      "authErrorTitle": "שגיאת אימות"
     },
-    "toolMetrics": {
-      "tokens": "{{count}} טוקנים",
-      "elapsed": "{{seconds}} ש'"
+    "squareAssistantCard": {
+      "videoAssistant": "עוזר AI לווידאו",
+      "advancedAssistant": "עוזר AI מתקדם",
+      "assistant": "עוזר AI",
+      "byCreator": "מאת {{creator}}",
+      "downloadAssistantTitle": "הורדת עוזר",
+      "downloadAssistantMessage": "להוריד את \"{{assistantName}}\" כדי להתחיל לצ'אט?",
+      "download": "הורד",
+      "downloadErrorTitle": "שגיאת הורדה",
+      "downloadErrorMessage": "הורדת העוזר נכשלה. אנא נסה שוב.",
+      "startChatErrorMessage": "פתיחת הצ'אט נכשלה. אנא נסה שוב.",
+      "switchModelTitle": "להחליף מודל?",
+      "switchModelMessage": "לעבור ל-\"{{modelName}}\" עבור העוזר הזה?",
+      "keepCurrent": "להשאיר את הנוכחי",
+      "switch": "החלף",
+      "shareErrorTitle": "שגיאת שיתוף",
+      "shareErrorMessage": "שיתוף העוזר נכשל. אנא נסה שוב."
     }
   },
   "assistantsScreen": {
@@ -1121,7 +1381,9 @@
       "signInAgain": "התחבר שוב",
       "assistantNotAvailable": "ה-עוזר הזה אינו זמין לרכישה כעת.",
       "checkoutFailed": "משהו השתבש. אנא נסה שוב."
-    }
+    },
+    "emptyLocal": "אין עדיין עוזרים.\nצרו את העוזר הראשון שלכם באמצעות כפתור +!",
+    "emptyFiltered": "לא נמצאו עוזרים.\nנסו לשנות את המסננים או החיפוש."
   },
   "validation": {
     "nameRequired": "נדרש שם",
@@ -1171,7 +1433,11 @@
       "step2": "• לחץ על כפתור המצלמה כדי להתחיל ניתוח וידאו חי",
       "step3": "• כוונן את תדירות הצילום בזמן שהמצלמה פעילה",
       "step4": "• עבור ל-עוזר אחר עבור צ'אט טקסט רגיל"
-    }
+    },
+    "defaultPrompt": "מה אתה רואה?",
+    "multimodalTitle": "רב-מודאלי לא הופעל",
+    "multimodalMessage": "המודל הזה לא תומך בניתוח תמונות. אנא טען מודל רב-מודאלי.",
+    "checkSupportError": "הבדיקה אם המודל תומך בתמונות נכשלה."
   },
   "screenTitles": {
     "chat": "צ'אט",
@@ -1186,6 +1452,8 @@
     "conversationReset": "שיחה אופסה!",
     "modelNotLoaded": "אין מודל טעון. אנא אתחל מודל.",
     "completionFailed": "השלמה נכשלה: ",
+    "toolCallTruncated": "קריאת הכלי נקטעה — ככל הנראה הקשר המודל התמלא. נסה להשתמש בהקשר גדול יותר או שלח בקשה קטנה יותר.",
+    "speculativeInitFailed": "המכשיר הזה לא הצליח להפעיל פענוח ספקולטיבי עבור המודל הזה — כנראה שאין מספיק זיכרון עבור הקשר מודל הטיוטה. כבה את הפענוח הספקולטיבי תחת הגדרות → הגדרות מתקדמות ונסה שוב.",
     "loadingModel": "טוען מודל...",
     "typeYourMessage": "הזן את הודעתך כאן",
     "load": "טעינה",
@@ -1194,16 +1462,12 @@
     "pleaseLoadModel": "טען מודל כדי לשוחח.",
     "multimodalNotEnabled": "רב-מודאליות אינה מופעלת עבור מודל זה. תמונות יוצגו אך לא יעובדו על ידי ה-AI.",
     "cannotSendWithoutModel": "טען מודל תחילה",
-    "toolCallTruncated": "קריאת הכלי נקטעה — ככל הנראה הקשר המודל התמלא. נסה להשתמש בהקשר גדול יותר או שלח בקשה קטנה יותר.",
     "toolCompatWarning": "מודל זה עשוי שלא לתמוך בקריאה לכלי. התוצאות עלולות להיות לא אמינות.",
     "softCapWarning": "פתח צ'אט חדש לביצועים מיטביים.",
-    "generatingPreview": "מייצר תצוגה מקדימה... ({{tokens}} טוקנים)",
-    "generatingPreviewPending": "מייצר תצוגה מקדימה…",
-    "toolUsedChip": "נעשה שימוש ב-{{name}}",
-    "toolErrorBlock": "{{name}} נכשל",
     "contextWarning": "השיחה הזאת הולכת ומתארכת וייתכן שבקרוב ייגמר לה המקום.",
     "contextRemoteHedged": "ייתכן שתשובה זו נקטעה. נסה לשלוח שוב או לקצר את הבקשה.",
     "contextFull": "נגמר המקום בשיחה. פתח צ'אט חדש או הגדל את אורך ההקשר.",
+    "contextFullRemote": "נגמר המקום בשיחה. פתח צ'אט חדש.",
     "contextFullEscalated": "עדיין אין מקום. פתח צ'אט חדש, או הגדל את אורך ההקשר כדי להמשיך.",
     "contextFullHeavyTalent": "נגמר המקום בשיחה — {{talent}} בדרך כלל זקוק ליותר. פתח צ'אט חדש או הגדל את אורך ההקשר.",
     "contextBannerDismiss": "הסתר",
@@ -1235,6 +1499,10 @@
     "increaseContextSuccess": "ההקשר הוגדל ל-{{target}} טוקנים.",
     "increaseContextFailure": "לא ניתן להגדיל את אורך ההקשר. ההגדרה הקודמת שלך שוחזרה.",
     "assistantLoadHint": "ה-עוזר הזה בדרך כלל זקוק ליותר מקום ממה שאורך ההקשר הנוכחי מאפשר.",
+    "generatingPreview": "מייצר תצוגה מקדימה... ({{tokens}} טוקנים)",
+    "generatingPreviewPending": "מייצר תצוגה מקדימה…",
+    "toolUsedChip": "נעשה שימוש ב-{{name}}",
+    "toolErrorBlock": "{{name}} נכשל",
     "webSearch": {
       "searched": "חיפוש: {{query}}",
       "noResults": "אין תוצאות",
@@ -1244,9 +1512,15 @@
       "searchResultsTitle": "תוצאות חיפוש",
       "showResultsAccessibilityLabel": "הצג תוצאות חיפוש ברשת עבור {{query}}",
       "openLinkError": "לא ניתן היה לפתוח את הקישור הזה."
-    },
-    "contextFullRemote": "נגמר המקום בשיחה. פתח צ'אט חדש.",
-    "speculativeInitFailed": "המכשיר הזה לא הצליח להפעיל פענוח ספקולטיבי עבור המודל הזה — כנראה שאין מספיק זיכרון עבור הקשר מודל הטיוטה. כבה את הפענוח הספקולטיבי תחת הגדרות → הגדרות מתקדמות ונסה שוב."
+    }
+  },
+  "htmlPreview": {
+    "defaultTitle": "תצוגה מקדימה",
+    "showPreview": "הצג תצוגה מקדימה מרונדרת",
+    "showCode": "הצג קוד HTML",
+    "copyHtml": "העתק HTML",
+    "closePreview": "סגור תצוגה מקדימה",
+    "openFullscreen": "פתח במסך מלא: {{title}}"
   },
   "benchmark": {
     "title": "מבחן ביצועים",
@@ -1377,6 +1651,15 @@
         "no": "✗"
       },
       "versionFormat": "{{version}} ({{buildNumber}})"
+    },
+    "presetDefault": "ברירת מחדל",
+    "presetFast": "מהיר",
+    "presetCustom": "מותאם אישית",
+    "params": {
+      "pp": "מספר טוקני עיבוד ההנחיה (מקסימום: גודל אצווה פיזי)",
+      "tg": "מספר טוקני יצירת הטקסט",
+      "pl": "גודל מקבילות צינור",
+      "nr": "מספר החזרות"
     }
   },
   "errors": {
@@ -1402,14 +1685,6 @@
   "simulator": {
     "cameraNotAvailable": "מצלמה אינה זמינה בסימולטור. אנא השתמש במכשיר פיזי."
   },
-  "htmlPreview": {
-    "defaultTitle": "תצוגה מקדימה",
-    "showPreview": "הצג תצוגה מקדימה מרונדרת",
-    "showCode": "הצג קוד HTML",
-    "copyHtml": "העתק HTML",
-    "closePreview": "סגור תצוגה מקדימה",
-    "openFullscreen": "פתח במסך מלא: {{title}}"
-  },
   "voiceAndSpeech": {
     "sectionTitle": "קול ודיבור",
     "voiceRowTitle": "קול",
@@ -1419,39 +1694,6 @@
     "voicesTitle": "קולות",
     "voicesEmptyHint": "הקש על קול כלשהו כדי להתקין אותו ולהשתמש בו. או בחר בקול מערכת — קולות אלו זמינים תמיד.",
     "supertonicStepsLabel": "איכות (צעדי דיפוזיה)",
-    "toggleAutoSpeakLabel": "הפעל/השבת הקראה אוטומטית",
-    "openSettingsLabel": "הגדרות TTS",
-    "playMessageLabel": "הפעל הודעה",
-    "stopMessageLabel": "עצור הודעה",
-    "autoSpeakLabel": "הקראת תגובות אוטומטית",
-    "autoSpeakDescription": "קרא תגובות חדשות בקול עם קבלתן.",
-    "engineChipKitten": "Kitten",
-    "engineChipKokoro": "Kokoro",
-    "engineChipSupertonic": "Supertonic",
-    "engineChipSystem": "מערכת",
-    "stepsCount": "{{steps}} צעדים",
-    "engineKittenTagline": "תפיסת הזיכרון הקטנה ביותר. אמין. הכי טוב במכשירים ישנים.",
-    "engineKokoroTagline": "האיכות הגבוהה ביותר. איטי יותר להפעלה. ייתכן שחלק מהקולות לא יעבדו בכל המכשירים.",
-    "engineSupertonicTagline": "המהיר ביותר להפעלה. צורך יותר זיכרון RAM. עלול להשמיט מילים מדי פעם.",
-    "engineSystemTagline": "קולות מובנים של מערכת ההפעלה. זמינים תמיד, ללא צורך בהתקנה.",
-    "engineSystemTitleIos": "קולות iOS",
-    "engineSystemTitleAndroid": "קולות אנדרואיד",
-    "engineSystemTier": "תמיד זמין",
-    "engineTierLightest": "הקליל ביותר",
-    "engineTierBestQuality": "האיכות הטובה ביותר",
-    "engineTierFastestStart": "המהיר ביותר להפעלה",
-    "engineSpecsLine": "{{voices}} קולות  ·  {{sizeMb}} MB  ·  ~{{ramMb}} MB RAM",
-    "engineSystemSpecsLine": "{{voices}} קולות",
-    "engineRemoveTitle": "להסיר את {{engineTitle}}?",
-    "engineRemoveBody": "מפנה כ-‎{{sizeMb}} MB במכשיר זה.",
-    "engineRemoveCancel": "ביטול",
-    "engineRemoveConfirm": "הסר",
-    "engineInstallCta": "התקן · ‎{{sizeMb}} MB",
-    "engineDownloadingLabel": "מוריד...  {{pct}}%  ·  {{mbDone}} / {{sizeMb}} MB",
-    "engineRetryCta": "נסה שוב",
-    "voicesEmptyState": "לא נמצאו קולות.",
-    "kokoroDeviceNote": "ייתכן שחלק מהקולות לא יעבדו בכל המכשירים.",
-    "insufficientStorage": "אין מספיק מקום — פנה {{requiredMb}} MB כדי להתקין מנוע זה ({{freeMb}} MB זמינים).",
     "supertonicLanguageLabel": "שפה",
     "supertonicLanguageAuto": "אוטומטי",
     "supertonicLanguageSheetTitle": "שפה",
@@ -1488,14 +1730,48 @@
       "tr": "טורקית",
       "uk": "אוקראינית",
       "vi": "וייטנאמית"
-    }
+    },
+    "toggleAutoSpeakLabel": "הפעל/השבת הקראה אוטומטית",
+    "openSettingsLabel": "הגדרות TTS",
+    "playMessageLabel": "הפעל הודעה",
+    "stopMessageLabel": "עצור הודעה",
+    "autoSpeakLabel": "הקראת תגובות אוטומטית",
+    "autoSpeakDescription": "קרא תגובות חדשות בקול עם קבלתן.",
+    "engineChipKitten": "Kitten",
+    "engineChipKokoro": "Kokoro",
+    "engineChipSupertonic": "Supertonic",
+    "engineChipSystem": "מערכת",
+    "stepsCount": "{{steps}} צעדים",
+    "engineKittenTagline": "תפיסת הזיכרון הקטנה ביותר. אמין. הכי טוב במכשירים ישנים.",
+    "engineKokoroTagline": "האיכות הגבוהה ביותר. איטי יותר להפעלה. ייתכן שחלק מהקולות לא יעבדו בכל המכשירים.",
+    "engineSupertonicTagline": "המהיר ביותר להפעלה. צורך יותר זיכרון RAM. עלול להשמיט מילים מדי פעם.",
+    "engineSystemTagline": "קולות מובנים של מערכת ההפעלה. זמינים תמיד, ללא צורך בהתקנה.",
+    "engineSystemTitleIos": "קולות iOS",
+    "engineSystemTitleAndroid": "קולות אנדרואיד",
+    "engineSystemTier": "תמיד זמין",
+    "engineTierLightest": "הקליל ביותר",
+    "engineTierBestQuality": "האיכות הטובה ביותר",
+    "engineTierFastestStart": "המהיר ביותר להפעלה",
+    "engineSpecsLine": "{{voices}} קולות  ·  {{sizeMb}} MB  ·  ~{{ramMb}} MB RAM",
+    "engineSystemSpecsLine": "{{voices}} קולות",
+    "engineRemoveTitle": "להסיר את {{engineTitle}}?",
+    "engineRemoveBody": "מפנה כ-‎{{sizeMb}} MB במכשיר זה.",
+    "engineRemoveCancel": "ביטול",
+    "engineRemoveConfirm": "הסר",
+    "engineInstallCta": "התקן · ‎{{sizeMb}} MB",
+    "engineDownloadingLabel": "מוריד...  {{pct}}%  ·  {{mbDone}} / {{sizeMb}} MB",
+    "engineRetryCta": "נסה שוב",
+    "voicesEmptyState": "לא נמצאו קולות.",
+    "kokoroDeviceNote": "ייתכן שחלק מהקולות לא יעבדו בכל המכשירים.",
+    "insufficientStorage": "אין מספיק מקום — פנה {{requiredMb}} MB כדי להתקין מנוע זה ({{freeMb}} MB זמינים)."
   },
   "onboarding": {
     "back": "חזרה",
     "skip": "דלג",
     "skipForNow": "דלג בינתיים",
     "splash": {
-      "brand": "DRS AI"
+      "brand": "DRS AI",
+      "tagline": "ה-AI הפרטי שלכם, במכשיר שלכם"
     },
     "screen1": {
       "title": "הכירו את ה-assistants שלכם.",

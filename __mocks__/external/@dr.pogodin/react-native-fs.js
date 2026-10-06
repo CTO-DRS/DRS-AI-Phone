@@ -61,6 +61,18 @@ export const copyFile = jest.fn().mockResolvedValue(true);
 // Expose method to reset state for tests
 export const __resetMockState = () => {
   deletedFiles.clear();
+  // Restore the stateful default implementations: tests that override
+  // them with mockResolvedValue(...) otherwise leak the override into
+  // every later test in the file (jest.clearAllMocks only clears call
+  // history, not implementations).
+  exists.mockReset();
+  exists.mockImplementation(path => Promise.resolve(!deletedFiles.has(path)));
+  unlink.mockReset();
+  unlink.mockImplementation(path => {
+    deletedFiles.add(path);
+    console.log('deleting: ', path);
+    return Promise.resolve();
+  });
 };
 
 // Add namespace export for compatibility

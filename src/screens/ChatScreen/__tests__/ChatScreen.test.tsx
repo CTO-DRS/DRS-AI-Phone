@@ -27,7 +27,10 @@ const effortLabels = l10n.en.components.modelSettingsSheet.effortLevels;
 const effortLabel = (token: keyof typeof effortLabels) => effortLabels[token];
 
 describe('ChatScreen', () => {
-  let llamaRN;
+  let llamaRN: {
+    LlamaContext: new (args: Record<string, unknown>) => LlamaContext;
+    initLlama: (...args: unknown[]) => Promise<unknown>;
+  };
 
   beforeEach(() => {
     jest.clearAllMocks();

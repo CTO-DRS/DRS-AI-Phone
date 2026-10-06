@@ -6,8 +6,10 @@ import {render} from '../../../../jest/test-utils';
 
 import {Bubble} from '../Bubble';
 
+import type {MessageType} from '../../../utils/types';
+
 describe('Bubble', () => {
-  let mockMessage;
+  let mockMessage: MessageType.Any;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -21,7 +23,7 @@ describe('Bubble', () => {
     };
   });
 
-  const renderBubble = (message, child = 'Child content') => {
+  const renderBubble = (message: MessageType.Any, child = 'Child content') => {
     return render(
       <Bubble
         child={<Text testID="child">{child}</Text>}

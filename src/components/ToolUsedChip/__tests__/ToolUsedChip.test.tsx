@@ -6,7 +6,7 @@ import {ToolUsedChip} from '../ToolUsedChip';
 
 jest.mock('react-native-vector-icons/MaterialCommunityIcons', () => {
   const {Text: PaperText} = require('react-native-paper');
-  return props => <PaperText>{props.name}</PaperText>;
+  return (props: {name: string}) => <PaperText>{props.name}</PaperText>;
 });
 
 describe('ToolUsedChip', () => {

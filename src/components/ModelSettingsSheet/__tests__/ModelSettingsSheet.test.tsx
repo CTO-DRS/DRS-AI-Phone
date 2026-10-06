@@ -9,7 +9,15 @@ import {defaultCompletionParams} from '../../../utils/completionSettingsVersions
 jest.mock('../../../screens/ModelsScreen/ModelSettings', () => {
   const {View} = require('react-native');
   return {
-    ModelSettings: ({onChange, onStopWordsChange, onModelNameChange}) => (
+    ModelSettings: ({
+      onChange,
+      onStopWordsChange,
+      onModelNameChange,
+    }: {
+      onChange: (name: string, value: unknown) => void;
+      onStopWordsChange: (words: string[]) => void;
+      onModelNameChange: (name: string) => void;
+    }) => (
       <View testID="model-settings">
         <View
           testID="mock-settings-update"
@@ -31,7 +39,17 @@ jest.mock('../../../screens/ModelsScreen/ModelSettings', () => {
 // Mock Sheet component
 jest.mock('../../../components/Sheet', () => {
   const {View, Button} = require('react-native');
-  const MockSheet = ({children, isVisible, onClose, title}) => {
+  const MockSheet = ({
+    children,
+    isVisible,
+    onClose,
+    title,
+  }: {
+    children?: React.ReactNode;
+    isVisible?: boolean;
+    onClose?: () => void;
+    title?: string;
+  }) => {
     if (!isVisible) {
       return null;
     }
@@ -43,10 +61,10 @@ jest.mock('../../../components/Sheet', () => {
       </View>
     );
   };
-  MockSheet.ScrollView = ({children}) => (
+  MockSheet.ScrollView = ({children}: {children?: React.ReactNode}) => (
     <View testID="sheet-scroll-view">{children}</View>
   );
-  MockSheet.Actions = ({children}) => (
+  MockSheet.Actions = ({children}: {children?: React.ReactNode}) => (
     <View testID="sheet-actions">{children}</View>
   );
   return {Sheet: MockSheet};

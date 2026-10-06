@@ -1,4 +1,9 @@
-import {View, TouchableWithoutFeedback, Text} from 'react-native';
+import {
+  View,
+  TouchableWithoutFeedback,
+  Text,
+  GestureResponderEvent,
+} from 'react-native';
 import React, {
   useState,
   useEffect,
@@ -132,8 +137,22 @@ export const UsageStats: React.FC<UsageStatsProps> = ({
   );
 
   const handlePress = useCallback(
-    event => {
-      event.target.measure(
+    (event: GestureResponderEvent) => {
+      // RN types `target` as `number | undefined | HostInstance`; only the
+      // HostInstance variant carries the measure() method we rely on.
+      const target = event.target as {
+        measure: (
+          callback: (
+            x: number,
+            y: number,
+            w: number,
+            h: number,
+            pageX: number,
+            pageY: number,
+          ) => void,
+        ) => void;
+      };
+      target.measure(
         (
           x: number,
           y: number,

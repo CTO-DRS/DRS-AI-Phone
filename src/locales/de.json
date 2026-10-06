@@ -6,6 +6,7 @@
     "rename": "Umbenennen",
     "reset": "Zurücksetzen",
     "save": "Speichern",
+    "stop": "Stopp",
     "update": "Aktualisieren",
     "error": "Fehler",
     "export": "Export",
@@ -30,7 +31,11 @@
     "ok": "OK",
     "close": "Schließen",
     "clear": "Alles löschen",
-    "gallery": "Galerie"
+    "gallery": "Galerie",
+    "noResults": "Keine Ergebnisse",
+    "openDrawer": "Seitenmenü öffnen",
+    "openMenu": "Menü öffnen",
+    "closeMenu": "Menü schließen"
   },
   "settings": {
     "modelInitializationSettings": "Einstellungen Modellinitialisierung",
@@ -85,6 +90,25 @@
     "useMmapFalse": "Deaktiviert",
     "useMmapTrueDescription": "Immer Speicher-Mapping für schnelleres laden nutzen",
     "useMmapFalseDescription": "Das deaktivieren wird empfohlen, wenn Weight-Repacking aktiviert ist, um eine Verdoppelung der Speichernutzung zu vermeiden",
+    "weightRepacking": "Aktiviere Gewichtetes Repacking",
+    "weightRepackingDescription": "Schnellere Prompt Verarbeitung mit minimalem Speicher Overhead, wenn Speicher Mapping deaktiviert ist. Die Token-Generation bleibt unbeeinflusst.",
+    "speculativeDecoding": "Speculative Decoding",
+    "speculativeDecodingDescription": "Nutze ein kleines Draft-Modell (oder ein eingebettetes MTP-Modell), um Tokens vorherzusagen und die Generierung zu beschleunigen. Experimentell.",
+    "speculativeNotMTPCapable": "Das aktive Modell unterstützt kein Speculative Decoding und es ist kein kompatibles Draft gekoppelt — die Funktion bleibt dafür daher aus und hat keine Wirkung. Für geeignete Modelle greift sie automatisch.",
+    "speculativeDraftModel": "Draft-Modell",
+    "speculativeDraftModelDescription": "Erzeugt Tokens im Voraus für das aktive Modell.",
+    "speculativeDraftModelNone": "Keins (eingebettetes MTP)",
+    "speculativeDraftModelIgnoredOverridden": "Das aktive Modell bringt ein eigenes Draft-Modell mit, daher wird diese Auswahl ignoriert.",
+    "speculativeDraftModelIgnoredIncompatible": "Dieses Draft ist nicht mit dem aktiven Modell kompatibel und wird daher ignoriert.",
+    "speculativeDraftModelIgnoredNotCapable": "Dieses Modell besitzt keine Draft-Schichten und kann daher nicht als Draft-Modell dienen.",
+    "speculativeDraftKeyCacheType": "Draft Key Cache Typ",
+    "speculativeDraftValueCacheType": "Draft Value Cache Typ",
+    "speculativeDraftNGpuLayers": "Draft GPU-Schichten",
+    "speculativeDraftNGpuLayersDescription": "Anzahl der Draft-Modell-Schichten, die auf die GPU ausgelagert werden.",
+    "speculativeDraftCacheTypeInactiveDescription": "Wird angewendet, sobald Speculative Decoding läuft.",
+    "ttsAvailability": "Text-zu-Sprache",
+    "ttsAvailabilityDescription": "Antworten des Assistenten laut vorlesen.",
+    "ttsAvailabilityLowMemoryWarning": "Der Speicher deines Geräts ist knapp — das funktioniert möglicherweise nicht zuverlässig.",
     "modelLoadingSettings": "Einstellungen Modell laden",
     "autoOffloadLoad": "Automatisch auslagern/laden",
     "autoOffloadLoadDescription": "Modell auslagern wenn App im Hintergrund.",
@@ -92,6 +116,12 @@
     "autoNavigateToChatDescription": "Zum Chat wenn Laden startet.",
     "appSettings": "Einstellungen App",
     "language": "Sprache",
+    "languageSheetTitle": "Sprache",
+    "languageSearchPlaceholder": "Sprachen suchen",
+    "languageRestartTitle": "Neustart erforderlich",
+    "languageRestartMessage": "Die Layoutrichtung hat sich für diese Sprache geändert. Starte die App neu, um sie vollständig anzuwenden.",
+    "languageRestartNow": "Jetzt neu starten",
+    "languageRestartLater": "Später",
     "darkMode": "Dunkler Modus",
     "displayMemoryUsage": "Speichernutzung anzeigen",
     "displayMemoryUsageDescription": "Speichernutzung im Chat anzeigen.",
@@ -104,6 +134,31 @@
     "importButton": "Import",
     "importSuccess": "{{count}} Chats erfolgreich importiert.",
     "importError": "Import von Chats fehlgeschlagen. Bitte Dateiformat überprüfen.",
+    "internetSearch": {
+      "title": "Internetsuche",
+      "description": "Lass Assistenten das Web mit ihren eigenen Tools durchsuchen. Bringe deinen eigenen API-Schlüssel mit — DRS AI bewahrt deine Schlüssel niemals auf und leitet deine Anfragen nicht weiter.",
+      "providerLabel": "Suchanbieter",
+      "providerGated": "Demnächst",
+      "keyLabel": "API-Schlüssel",
+      "keyIsSet": "Schlüssel ist für {{provider}} gesetzt.",
+      "keyNotSet": "Kein Schlüssel für {{provider}} gesetzt.",
+      "setKeyButton": "Schlüssel festlegen",
+      "updateKeyButton": "Schlüssel aktualisieren",
+      "clearKeyButton": "Schlüssel löschen",
+      "keyInputPlaceholder": "{{provider}}-API-Schlüssel einfügen",
+      "keyUpdateError": "Schlüssel konnte nicht aktualisiert werden. Bitte erneut versuchen.",
+      "showKeyAccessibilityLabel": "API-Schlüssel anzeigen",
+      "hideKeyAccessibilityLabel": "API-Schlüssel verbergen",
+      "resultCountLabel": "Ergebnisse pro Suche",
+      "resultCountDescription": "Weniger Ergebnisse lassen mehr Platz im Kontext des Modells.",
+      "consentTitle": "Suchen verlassen dein Gerät",
+      "consentDescription": "Wenn ein Assistent das Web durchsucht, wird deine Anfrage über das Internet an den gewählten Anbieter gesendet. Wenn ein Assistent eine Seite liest, werden URL und Seiteninhalt stattdessen möglicherweise an einen Standard-Lesedienst (r.jina.ai) gesendet, falls der gewählte Anbieter keinen eigenen Reader hat. Schlüssel und Anfragen werden niemals an DRS AI gesendet.",
+      "consentAccept": "Ich verstehe",
+      "consentRequired": "Bestätige den Hinweis oben, um einen Schlüssel festzulegen und die Suche zu aktivieren.",
+      "consentGivenTitle": "Websuche ist aktiviert",
+      "consentGivenDescription": "Anfragen und Seitenaufrufe können dein Gerät wie oben beschrieben verlassen.",
+      "consentRevoke": "Widerrufen"
+    },
     "apiSettingsTitle": "Einstellungen API",
     "huggingFaceTokenLabel": "Hugging Face Token",
     "tokenIsSetDescription": "Token gesetzt. Nötig um geschützte Modelle zu nutzen.",
@@ -120,11 +175,14 @@
     "clearCachesSuccess": "{{count}} Dateien im Cache erfolgreich gelöscht.",
     "clearCachesError": "Cache löschen fehlgeschlagen. Bitte erneut versuchen.",
     "noCachesToClear": "Keine Caches zum Löschen vorhanden.",
-    "weightRepacking": "Aktiviere Gewichtetes Repacking",
-    "weightRepackingDescription": "Schnellere Prompt Verarbeitung mit minimalem Speicher Overhead, wenn Speicher Mapping deaktiviert ist. Die Token-Generation bleibt unbeeinflusst.",
     "serverName": "Servername",
     "serverUrl": "Server URL",
     "serverUrlPlaceholder": "z.B. http://192.168.1.100:1234",
+    "requestTimeout": "Anfrage-Timeout (Sekunden)",
+    "requestTimeoutPlaceholder": "Optional - leer lassen für Standard",
+    "requestTimeoutHelp": "Maximale Wartezeit auf eine Antwort eines langsamen Servers. Leer lassen für Standard.",
+    "serverType": "Servertyp",
+    "serverTypeHelp": "Automatisch erkannt; ändern, falls falsch.",
     "apiKey": "API Schlüssel",
     "apiKeyPlaceholder": "Optional - erforderlich für OpenAI/Groq",
     "apiKeyDescription": "Sicher auf dem Gerät gespeichert.",
@@ -154,7 +212,8 @@
     "removeRemoteModel": "Entferne {{modelName}} {{serverName}}?",
     "retryConnection": "Wiederholen",
     "enterUrlManually": "URL manuell eingeben",
-    "manageServers": "Server verwalten"
+    "manageServers": "Server verwalten",
+    "exportLegacyError": "Export der alten Chat-Sitzungen fehlgeschlagen. Die Datei ist möglicherweise nicht vorhanden."
   },
   "memory": {
     "shortWarning": "Speicherwarnung",
@@ -317,6 +376,15 @@
         "sortLikes": "Am beliebtesten"
       }
     },
+    "hubRun": {
+      "title": "Modell herunterladen",
+      "resolving": "Modelldetails werden geladen…",
+      "cancel": "Abbrechen",
+      "retry": "Erneut versuchen",
+      "invalidLinkTitle": "Ungültiger Link",
+      "invalidLinkMessage": "In diesem Hugging Face-Link fehlt das Modell oder die Datei, oder sie ist ungültig.",
+      "resolveError": "Modelldetails konnten nicht geladen werden. Prüfe deine Verbindung und versuche es erneut."
+    },
     "modelCard": {
       "alerts": {
         "deleteTitle": "Modell löschen",
@@ -334,6 +402,9 @@
       "labels": {
         "skills": "Fähigkeiten: ",
         "vision": "Bildverarbeitung",
+        "visionSupported": "Unterstützt",
+        "visionNotSupported": "Nicht unterstützt",
+        "visionUnknown": "Unbekannt",
         "capabilities": "Fähigkeiten.",
         "modelName": "Modellname",
         "contextLength": "Kontextlänge",
@@ -341,7 +412,8 @@
         "author": "Autor",
         "requiresProjectionModel": "Benötigt Projection Modell",
         "downloadProjectionModel": "Projection Modell herunterladen",
-        "viewModelCardOnHuggingFace": "Model Card auf Hugging Face anschauen"
+        "viewModelCardOnHuggingFace": "Model Card auf Hugging Face anschauen",
+        "draftOnlyReason": "Nur-Draft-Modell. Wähle es unter Einstellungen → Speculative Decoding aus."
       },
       "accessibility": {
         "expandDetails": "Details erweitern",
@@ -402,7 +474,199 @@
       "multilingual": "Multilingual",
       "rewriting": "Umschreiben",
       "creativity": "Kreatives schreiben",
-      "vision": "Bildverarbeitung"
+      "vision": "Bildverarbeitung",
+      "mtp": "Speculative (MTP)",
+      "mtpDraft": "Speculative Draft"
+    },
+    "emptyTitle": "Noch keine Modelle",
+    "emptyHint": "Tippe auf +, um von Hugging Face herunterzuladen, ein lokales Modell hinzuzufügen oder einen Remote-Server zu verbinden."
+  },
+  "modelsHub": {
+    "title": "Modelle",
+    "subtitle": "Entdecke, lade herunter und verwalte jedes Modell, das deine App ausführen kann.",
+    "searchPlaceholder": "Modelle, Herausgeber, Aufgaben suchen…",
+    "retry": "Erneut versuchen",
+    "notAvailable": "Nicht verfügbar",
+    "noDownloadableFile": "Keine herunterladbare GGUF-Datei in diesem Repository",
+    "downloadStarted": "Download gestartet",
+    "seeAll": "Alle anzeigen",
+    "exploreAction": "Modelle entdecken",
+    "emptyTitle": "Noch keine Modelle installiert",
+    "emptyHint": "Stöbere im Hub und lade ein Modell herunter, das zu deinem Gerät und deiner Arbeit passt.",
+    "fitScore": "{score}/100 passt",
+    "installedFromRepo": "Aus diesem Repository installiert",
+    "installedBadge": "Installiert",
+    "noFiles": "In diesem Repository sind keine GGUF-Dateien veröffentlicht.",
+    "visionFilesTitle": "Vision-Projektionsdateien (mmproj)",
+    "visionFilesHint": "Diese kleinen Dateien verleihen dem passenden Textmodell Bildverständnis; sie werden automatisch mit Vision-Modellen heruntergeladen.",
+    "downloadFile": "Datei herunterladen",
+    "downloadShort": "Holen",
+    "version": "Version",
+    "engineUnsupportedShort": "Lokal nicht ausführbar",
+    "engineYes": "GGUF — läuft lokal (llama.cpp)",
+    "engineNo": "Von der lokalen Engine nicht unterstützt",
+    "capabilitiesTitle": "Fähigkeiten",
+    "categoryEngineNotice": "Diese Kategorie listet echte Repositories, aber die lokale GGUF-Engine kann diese Modellart noch nicht ausführen, daher sind Downloads hier deaktiviert. Nichts ist simuliert — sobald die Engine diese Modelle unterstützt, werden sie herunterladbar.",
+    "categoryInstalledSection": "Deine Modelle in dieser Kategorie",
+    "categoryRemoteSection": "Auf HuggingFace entdecken",
+    "featuredTitle": "Empfohlene Modelle",
+    "recommendedTitle": "Empfohlen für dein Gerät",
+    "recentTitle": "Kürzlich hinzugefügt",
+    "favoritesTitle": "Favoriten",
+    "installedTitle": "Installiert",
+    "wifiOnly": "Nur WLAN",
+    "categoriesTitle": "Kategorien",
+    "installedCount": "{count} installiert",
+    "discover": "Entdecken",
+    "device": {
+      "ram": "RAM",
+      "storage": "Freier Speicher",
+      "cpu": "CPU",
+      "gpu": "GPU",
+      "gpuOk": "Beschleunigt",
+      "gpuNo": "Nur CPU"
+    },
+    "compat": {
+      "excellent": "Hervorragende Kompatibilität",
+      "good": "Gute Kompatibilität",
+      "limited": "Eingeschränkte Kompatibilität",
+      "notRecommended": "Nicht empfohlen",
+      "unknown": "Kompatibilität unbekannt"
+    },
+    "reasons": {
+      "engineUnsupported": "Dieser Modelltyp kann nicht auf der lokalen GGUF-Engine ausgeführt werden",
+      "engineSupported": "Läuft auf der lokalen GGUF-Engine",
+      "memoryComfortable": "Die Speichernutzung bleibt unproblematisch",
+      "memoryOk": "Die Speichernutzung ist akzeptabel",
+      "memoryTight": "Der Speicher wird knapp — rechne mit langsamerer Ausführung",
+      "memoryInsufficient": "Der RAM dieses Geräts reicht nicht aus, um es zu laden",
+      "memoryUnknown": "Der Speicherbedarf lässt sich aus den Repository-Daten nicht schätzen",
+      "storagePlenty": "Reichlich freier Speicher",
+      "storageTight": "Der Speicher wird nach der Installation knapp",
+      "storageInsufficient": "Nicht genug freier Speicher",
+      "storageUnknown": "Freier Speicher konnte nicht ausgelesen werden",
+      "cpuGood": "Die CPU hat genug Kerne für schnelle Inferenz",
+      "cpuOk": "Die CPU kann es ausführen, mäßig schnell",
+      "cpuLimited": "Wenige CPU-Kerne — die Inferenz wird langsam",
+      "cpuUnknown": "Die Anzahl der CPU-Kerne konnte nicht ausgelesen werden",
+      "gpuSupported": "GPU-Beschleunigung ist verfügbar",
+      "gpuUnsupported": "Keine GPU-Beschleunigung — läuft auf der CPU",
+      "gpuUnknown": "Die GPU-Unterstützung konnte nicht ermittelt werden"
+    },
+    "overviewTemplate": "Ein {categories}-Modell von {author} mit rund {params} Parametern, verbreitet als GGUF-Dateien für lokale, Offline-Inferenz auf diesem Gerät.",
+    "overviewBlocked": "Dies ist ein echtes Repository, aber seine Modellart kann von der lokalen Engine nicht ausgeführt werden und ist daher hier nicht herunterladbar.",
+    "statsTemplate": "Auf HuggingFace: {downloads} Downloads · {likes} Likes.",
+    "tech": {
+      "architecture": "Architektur",
+      "parameters": "Parameter",
+      "contextLength": "Kontextlänge",
+      "formats": "Formate",
+      "quantization": "Quantisierungen",
+      "fileCount": "GGUF-Dateien",
+      "version": "Revision (sha)",
+      "lastModified": "Zuletzt aktualisiert",
+      "license": "Lizenz",
+      "engine": "Engine"
+    },
+    "capabilities": {
+      "offline": "Offline",
+      "context": "Kontext",
+      "arabic": "Arabisch-Unterstützung",
+      "multilingual": "Multilingual"
+    },
+    "tabs": {
+      "overview": "Übersicht",
+      "technical": "Technisch",
+      "files": "Dateien"
+    },
+    "categories": {
+      "text": "Text",
+      "vision": "Vision",
+      "reasoning": "Reasoning",
+      "coding": "Programmierung",
+      "multimodal": "Multimodal",
+      "embedding": "Embedding",
+      "translation": "Übersetzung",
+      "audio": "Audio",
+      "image": "Bild",
+      "video": "Video",
+      "general": "Allgemein"
+    },
+    "dialog": {
+      "aboutTitle": "Über dieses Modell",
+      "aboutTemplate": "Ein {family}-GGUF-Modell von {author}. Es läuft nach dem Herunterladen vollständig offline auf diesem Gerät. Die Größe unten ist die exakte Dateigröße laut HuggingFace.",
+      "familyUnknown": "GGUF",
+      "file": "Datei",
+      "downloadSize": "Download-Größe",
+      "extraVisionFiles": "Zusätzliche Vision-Dateien (mmproj)",
+      "storageAfter": "Speicherverbrauch nach der Installation",
+      "offline": "Funktioniert offline",
+      "offlineYes": "Ja — vollständig auf dem Gerät",
+      "context": "Kontextlänge",
+      "wifiOnlyWaiting": "„Nur WLAN“ ist für Downloads aktiviert. Bei mobilen Daten wartet dieser Download in der Warteschlange, bis wieder WLAN verfügbar ist.",
+      "engineUnsupported": "Diese Modellart (Bild-/Video-/Audio-Generierung) kann von der lokalen GGUF-Engine nicht ausgeführt werden, daher ist das Herunterladen deaktiviert. Hier ist nichts gefälscht — der Eintrag ist echt, nur die Engine kann ihn nicht ausführen.",
+      "confirmDownload": "Modell herunterladen",
+      "starting": "Wird gestartet…"
+    },
+    "storage": {
+      "title": "Modell-Speicher",
+      "entryHint": "Nutzungsaufschlüsselung, größte Modelle, Aufräumen",
+      "used": "Von Modellen belegt",
+      "available": "Verfügbar",
+      "distribution": "Nach Kategorie",
+      "largest": "Größte Modelle",
+      "orphans": "Unvollständige & übrig gebliebene Dateien",
+      "orphansFound": "{count} Dateien · {size} können freigegeben werden",
+      "orphansNone": "Nichts zu bereinigen — der Speicher ist aufgeräumt.",
+      "cleanNow": "Aufräumen",
+      "cleanTitle": "Übrig gebliebene Dateien löschen?",
+      "cleanMessage": "{count} unvollständige oder verwaiste Dateien werden dauerhaft entfernt.",
+      "cleanConfirm": "Löschen",
+      "checking": "Speicher wird geprüft…",
+      "enough": "Genug freier Speicherplatz",
+      "notEnough": "Nicht genug freier Speicherplatz",
+      "required": "Benötigt",
+      "availableLabel": "Verfügbar",
+      "deficit": "{amount} zu wenig"
+    },
+    "downloads": {
+      "title": "Downloads",
+      "emptyTitle": "Keine Downloads",
+      "emptyHint": "Heruntergeladene Modelle erscheinen hier mit Live-Fortschritt und bleiben offline verwaltbar.",
+      "active": "Wird heruntergeladen",
+      "paused": "Angehalten",
+      "pausedHint": "Angehalten — setzt von derselben Byte-Position fort",
+      "verifying": "Wird überprüft",
+      "verifyingHint": "Dateiintegrität (Größe + Prüfsumme) wird vor der Installation geprüft",
+      "completed": "Abgeschlossen",
+      "remaining": "≈",
+      "pause": "Pause",
+      "resume": "Fortsetzen",
+      "cancel": "Abbrechen"
+    },
+    "updates": {
+      "title": "Updates",
+      "check": "Nach Updates suchen",
+      "checking": "Wird geprüft…",
+      "recheck": "Erneut prüfen",
+      "upToDate": "Alle installierten Modelle entsprechen ihrer Upstream-Revision.",
+      "update": "Aktualisieren"
+    },
+    "sort": {
+      "title": "Sortieren",
+      "recommended": "Am besten geeignet",
+      "downloads": "Meiste Downloads",
+      "newest": "Neueste",
+      "name": "Name",
+      "sizeAsc": "Kleinste zuerst",
+      "sizeDesc": "Größte zuerst"
+    },
+    "search": {
+      "installedSection": "Deine Modelle",
+      "hfSection": "HuggingFace-Ergebnisse",
+      "noResults": "Keine Modelle gefunden",
+      "noResultsHint": "Versuche einen anderen Namen, Herausgeber oder eine andere Aufgabe.",
+      "errorTitle": "Suche fehlgeschlagen"
     }
   },
   "completionParams": {
@@ -443,7 +707,14 @@
     "githubButton": "Sternvergabe auf Github",
     "orBy": "oder durch",
     "versionCopiedTitle": "Version kopiert",
-    "versionCopiedDescription": "Versionsinformationen wurden in die Zwischenablage kopiert"
+    "versionCopiedDescription": "Versionsinformationen wurden in die Zwischenablage kopiert",
+    "tour": "Tour",
+    "tourDescription": "Spiele die Willkommensseiten erneut ab, um zu sehen, was DRS AI bietet.",
+    "showIntroButton": "Intro erneut anzeigen",
+    "privacyPolicy": "Datenschutzrichtlinie",
+    "termsOfService": "Nutzungsbedingungen",
+    "versionFormat": "Version {{version}} ({{build}})",
+    "successTitle": "Erfolg"
   },
   "feedback": {
     "title": "Feedback senden",
@@ -490,7 +761,10 @@
     "bubble": {
       "msPerToken": "{{value}} ms/Token",
       "tokensPerSec": "{{{value}} Token/sek",
-      "ttft": "{{value}}ms TTFT"
+      "ttft": "{{value}}ms TTFT",
+      "draftAccepted": "Draft: {{accepted}}/{{total}} ({{pct}}%)",
+      "interrupted": "Unterbrochen",
+      "truncated": "Abgeschnitten — Kontext wahrscheinlich voll"
     },
     "exportUtils": {
       "fileSaved": "Datei gespeichert",
@@ -515,6 +789,17 @@
     "thinkingBubble": {
       "reasoning": "Reasoning"
     },
+    "pendingIndicator": {
+      "preparingTool": "Tool wird vorbereitet",
+      "buildingPage": "Seite wird erstellt",
+      "calculating": "Wird berechnet",
+      "lookingUpTime": "Uhrzeit wird ermittelt",
+      "stopping": "Wird gestoppt…"
+    },
+    "toolMetrics": {
+      "tokens": "{{count}} Tokens",
+      "elapsed": "{{seconds}}s"
+    },
     "chatEmptyPlaceholder": {
       "noModelsTitle": "Keine Modelle verfügbar",
       "noModelsDescription": "Um ein Gespräch zu beginnen, laden Sie ein Modell mit DRS AI herunter",
@@ -522,7 +807,9 @@
       "activateModelTitle": "Modell aktivieren, um zu starten",
       "activateModelDescription": "Wählen Sie das Modell aus und laden Sie es herunter. Tippen Sie nach dem Download neben dem Modell auf 'Laden' und beginnen Sie mit dem Chat.",
       "activateModelButton": "Modell auswählen",
-      "loading": "Laden..."
+      "loading": "Laden...",
+      "gettingReadyTitle": "{{name}} macht sich bereit",
+      "gettingReadyDescription": "Wir melden uns, sobald dein Assistent chatten kann. Tippe oben auf das Banner, um zu sehen, wie es läuft."
     },
     "chatInput": {
       "inputPlaceholder": "Nachricht",
@@ -531,7 +818,8 @@
         "disableThinking": "Denkmodus deaktivieren",
         "thinkingEnabled": "Denkmodus aktiviert",
         "thinkingDisabled": "Denkmodus deaktiviert",
-        "thinkText": "Denken"
+        "thinkText": "Denken",
+        "cycleEffort": "Reasoning-Aufwand: {{level}}. Doppeltippen, um die Aufwandsstufe zu wechseln"
       }
     },
     "contentReportSheet": {
@@ -652,17 +940,17 @@
       "forbiddenTitle": "Zugang verweigert",
       "forbiddenMessage": "Sie haben keine Berechtigung, auf dieses Modell zuzugreifen. Bitte beachten Sie:",
       "forbiddenSteps": [
-        "Ihr Token hat \"lesen\" Erlaubnis",
-        "Sie beantragten und erhielten Zugang zu diesem Modell",
-        "Der Modellinhaber genehmigte Ihre Zugangsanfrage"
+        "Your token has \"read\" permission",
+        "You requested and were granted access to this model",
+        "The model owner approved your access request"
       ],
       "getTokenTitle": "Holen Sie sich ein Hugging Face Token",
       "getTokenMessage": "Dieses Modell erfordert ein Hugging Face Token zum downloaden.",
       "getTokenSteps": [
-        "Gehen Sie zu huggingface.co und melden sie sich an",
-        "Gehen Sie zu Einstellungen > Zugriff Tokens",
-        "Erstellen Sie ein neues Token mit \"lesen\" Zugriff",
-        "Kopieren Sie das Token und fügen Sie es in das Tokenfeld ein"
+        "Go to huggingface.co and sign in",
+        "Navigate to Settings > Access Tokens",
+        "Create a new token with \"read\" access",
+        "Copy the token and paste it in the token field"
       ],
       "tokenDisabledTitle": "Token ist deaktiviert",
       "tokenDisabledMessage": "Sie haben ein Hugging Face-Token-Set, aber es ist derzeit deaktiviert. Dieses Modell erfordert ein Token zum downloaden. Aktiviere dein Token, um fortzufahren.",
@@ -680,9 +968,15 @@
       "makeChatTemporary": "Mach Chat vorübergehend",
       "export": "Export/Import",
       "exportCurrentSession": "Exportiere aktuelle Sitzung",
+      "exportCurrentSessionMarkdown": "Als Markdown exportieren",
       "exportAllSessions": "Alle Sitzungen exportieren",
       "exportChatSession": "Chat-Sitzung exportieren",
-      "importSessions": "Importiere Sitzungen"
+      "importSessions": "Importiere Sitzungen",
+      "exportErrorTitle": "Export-Fehler",
+      "exportCurrentSessionError": "Export der aktuellen Sitzung fehlgeschlagen.",
+      "exportAllError": "Export aller Sitzungen fehlgeschlagen.",
+      "importSuccessTitle": "Import erfolgreich",
+      "importErrorTitle": "Import-Fehler"
     },
     "hfTokenSheet": {
       "title": "Hugging Face Token",
@@ -695,10 +989,10 @@
       "resetSuccess": "Token erfolgreich entfernt",
       "instructions": "Wie man ein Token bekommt:",
       "instructionsSteps": [
-        "Gehen Sie zu huggingface.co und melden sie sich an",
-        "Gehen Sie zu Einstellungen > Zugriff Tokens",
-        "Erstellen Sie ein neues Token mit \"lesen\" Zugriff",
-        "Kopieren Sie das Token und fügen Sie es unten ein"
+        "Go to huggingface.co and sign in",
+        "Navigate to Settings > Access Tokens",
+        "Create a new token with \"read\" access",
+        "Copy the token and paste it below"
       ],
       "getTokenLink": "Holen Sie sich ein Token von huggingface.co ↗",
       "error": {
@@ -714,7 +1008,20 @@
     },
     "modelSettingsSheet": {
       "modelSettings": "Modelleinstellungen",
-      "saveChanges": "Änderungen speichern"
+      "saveChanges": "Änderungen speichern",
+      "reasoningSection": "Reasoning",
+      "isReasoningModel": "Reasoning-Modell",
+      "isReasoningModelHelp": "Denkmodus-Steuerung für dieses Modell anzeigen, auch wenn es nicht automatisch erkannt wurde.",
+      "supportsEffort": "Unterstützt gestufte Aufwandsstufen",
+      "effortValues": "Aufwandsstufen, die dieses Modell unterstützt",
+      "effortLevels": {
+        "minimal": "Minimal",
+        "low": "Niedrig",
+        "medium": "Mittel",
+        "high": "Hoch",
+        "xhigh": "Sehr hoch",
+        "max": "Max"
+      }
     },
     "modelsHeaderRight": {
       "menuTitleHf": "Hugging Face Modelle",
@@ -741,6 +1048,30 @@
         "nameRequired": "Name ist erforderlich",
         "generatingPromptRequired": "Generierender Prompt ist erforderlich bei der Nutzung von AI Prompts",
         "promptModelRequired": "Prompt-Generierung Modell ist erforderlich, bei der Nutzung von AI-Prompt"
+      },
+      "talents": "Talente",
+      "talentNames": {
+        "render_html": "HTML-Vorschau",
+        "calculate": "Mathematische Ausdrücke",
+        "datetime": "Datum & Uhrzeit",
+        "web_search": "Websuche",
+        "read_url": "Webseite lesen"
+      },
+      "talentDescriptions": {
+        "render_html": "HTML-Dokumente direkt im Chat darstellen",
+        "calculate": "Mathematische Ausdrücke auswerten",
+        "datetime": "Aktuelles Datum und Uhrzeit abrufen",
+        "web_search": "Das Internet nach aktuellen Informationen durchsuchen (erfordert API-Schlüssel in den Einstellungen)",
+        "read_url": "Den vollständigen Inhalt einer Webseite lesen (erfordert API-Schlüssel in den Einstellungen)"
+      },
+      "greeting": {
+        "sectionLabel": "Begrüßung",
+        "textLabel": "Begrüßungsnachricht",
+        "textPlaceholder": "Was soll dieser Assistent bei leerem Chat sagen?",
+        "suggestedPromptsLabel": "Vorgeschlagene Prompts",
+        "addPromptButton": "Prompt hinzufügen",
+        "promptPlaceholder": "Ein kurzer Prompt für den Chip",
+        "removePromptLabel": "Prompt entfernen"
       }
     },
     "assistantPersonaSheet": {
@@ -807,6 +1138,7 @@
       "visionModel": "Vision Modell",
       "visionModelPlaceholder": "Wählen Sie ein Vision-Modell",
       "requiredModelsSection": "Erforderliche Modelle",
+      "captureInterval": "Erfassungsintervall",
       "captureIntervalHelper": "Zeit zwischen automatischen Erfassungen in Millisekunden",
       "create": "Erstellen"
     },
@@ -864,7 +1196,10 @@
       "bulkDeleteError": "Chat-Sitzungen löschen gescheitert. Bitte versuchen Sie es noch mal.",
       "exportError": "Export der Chatsitzungen gescheitert. Bitte versuchen Sie es nochmal.",
       "bulkExportError": "Export der Chatsitzungen gescheitert. Bitte versuchen Sie es nochmal.",
+      "pin": "Anheften",
+      "unpin": "Nicht mehr anheften",
       "dateGroups": {
+        "pinned": "Angeheftet",
         "today": "Heute",
         "yesterday": "Gestern",
         "thisWeek": "Diese Woche",
@@ -874,7 +1209,9 @@
         "fourWeeksAgo": "Vor 4 Wochen",
         "lastMonth": "Letzter Monat",
         "older": "Älter"
-      }
+      },
+      "emptySessionsTitle": "Noch keine Chats",
+      "emptySessionsHint": "Starte ein neues Gespräch über den Chat-Bildschirm"
     },
     "usageStats": {
       "tooltip": {
@@ -903,7 +1240,60 @@
       "exportAllAssistants": "Exportiere alle Assistents",
       "importAssistants": "Importiere Assistents",
       "importSuccess": "Erfolgreich {{count}} Assistent(s) importiert.",
-      "importError": "Import der Assistents gescheitert. Bitte überprüfen Sie das Dateiformat."
+      "importError": "Import der Assistents gescheitert. Bitte überprüfen Sie das Dateiformat.",
+      "exportErrorTitle": "Export-Fehler",
+      "exportAllError": "Export aller Assistenten fehlgeschlagen.",
+      "importSuccessTitle": "Import erfolgreich",
+      "importErrorTitle": "Import-Fehler"
+    },
+    "brandHeader": {
+      "tagline": "Deine private KI auf dem Gerät"
+    },
+    "authSheet": {
+      "signInTitle": "Anmelden",
+      "signUpTitle": "Konto erstellen",
+      "fullNameLabel": "Vollständiger Name",
+      "emailLabel": "E-Mail",
+      "passwordLabel": "Passwort",
+      "signInButton": "Anmelden",
+      "signUpButton": "Konto erstellen",
+      "forgotPassword": "Passwort vergessen?",
+      "or": "oder",
+      "continueWithGoogle": "Mit Google fortfahren",
+      "haveAccount": "Bereits ein Konto? ",
+      "noAccount": "Noch kein Konto? ",
+      "signUpLink": "Registrieren",
+      "signInLink": "Anmelden",
+      "signingIn": "Anmeldung läuft...",
+      "fillRequiredFields": "Bitte fülle alle erforderlichen Felder aus.",
+      "enterFullName": "Bitte gib deinen vollständigen Namen ein.",
+      "enterEmailFirst": "Bitte gib zuerst deine E-Mail-Adresse ein.",
+      "accountCreatedTitle": "Konto erstellt",
+      "accountCreatedMessage": "Bitte prüfe deine E-Mails, um dein Konto zu bestätigen.",
+      "welcomeBackTitle": "Willkommen zurück!",
+      "welcomeBackMessage": "Du hast dich erfolgreich angemeldet.",
+      "googleErrorTitle": "Google-Anmeldefehler",
+      "passwordResetTitle": "Passwort zurücksetzen",
+      "passwordResetMessage": "Prüfe deine E-Mails für Anweisungen zum Zurücksetzen des Passworts.",
+      "authErrorTitle": "Authentifizierungsfehler"
+    },
+    "squareAssistantCard": {
+      "videoAssistant": "Video-KI-Assistent",
+      "advancedAssistant": "Fortgeschrittener KI-Assistent",
+      "assistant": "KI-Assistent",
+      "byCreator": "von {{creator}}",
+      "downloadAssistantTitle": "Assistent herunterladen",
+      "downloadAssistantMessage": "\"{{assistantName}}\" herunterladen, um zu chatten?",
+      "download": "Herunterladen",
+      "downloadErrorTitle": "Download-Fehler",
+      "downloadErrorMessage": "Assistent konnte nicht heruntergeladen werden. Bitte versuche es erneut.",
+      "startChatErrorMessage": "Chat konnte nicht gestartet werden. Bitte versuche es erneut.",
+      "switchModelTitle": "Modell wechseln?",
+      "switchModelMessage": "Für diesen Assistenten zu \"{{modelName}}\" wechseln?",
+      "keepCurrent": "Aktuelles behalten",
+      "switch": "Wechseln",
+      "shareErrorTitle": "Teilen-Fehler",
+      "shareErrorMessage": "Assistent konnte nicht geteilt werden. Bitte versuche es erneut."
     }
   },
   "assistantsScreen": {
@@ -917,6 +1307,559 @@
     "videoAnalysisDescription": "Dies ist ein Video-basierter KI-Assistent, der Echtzeit-Kommentare des Videostreams der Kamera Ihres Geräts liefert.",
     "captureInterval": "Erfassungsinterval",
     "captureIntervalUnit": "ms",
-    "world": "Welt"
+    "world": "Welt",
+    "toneStyle": "Ton/Stil",
+    "aiRole": "Rolle der KI",
+    "userRole": "Meine Rolle",
+    "prompt": "Prompt",
+    "assistant": "Assistent",
+    "roleplay": "Rollenspiel",
+    "video": "Video",
+    "deleteAssistant": "Assistent löschen",
+    "deleteAssistantMessage": "Möchtest du diesen Assistenten wirklich löschen?",
+    "missingModel": "Fehlendes Modell",
+    "missingModelMessage": "Das Standardmodell \"{{modelName}}\" für diesen Assistenten ist nicht verfügbar. Bitte lade es im Bearbeitungsformular herunter oder wähle ein anderes Modell.",
+    "search": "Suchen",
+    "profile": "Profil",
+    "signIn": "Anmelden",
+    "addAssistant": "Assistent hinzufügen",
+    "signInToAccessLibrary": "Melde dich an, um auf deine Bibliothek von hub.drsai.app zuzugreifen",
+    "signOut": "Abmelden",
+    "signOutConfirmation": "Möchtest du dich wirklich abmelden?",
+    "signOutError": "Abmelden fehlgeschlagen. Bitte versuche es erneut.",
+    "account": "Konto",
+    "signInToDrshub": "Bei Drshub anmelden",
+    "signInDescription": "Greife auf deine Bibliothek zu, erstelle private Assistenten und synchronisiere geräteübergreifend",
+    "searchAllAssistants": "Alle Assistenten durchsuchen...",
+    "deleteAssistantConfirmation": "Möchtest du \"{{assistantName}}\" wirklich löschen?",
+    "filters": {
+      "all": "Alle",
+      "myAssistants": "Meine Assistenten",
+      "local": "Lokal",
+      "video": "Video",
+      "free": "Kostenlos",
+      "premium": "Premium"
+    },
+    "labels": {
+      "free": "Kostenlos",
+      "premium": "Premium",
+      "private": "Privat",
+      "download": "Download",
+      "getFree": "Kostenlos holen"
+    },
+    "premiumAssistantDescription": "Premium-Assistent aus der hub.drsai.app-Community",
+    "premiumInfoText": "Besuche hub.drsai.app, um weitere Assistenten zu entdecken",
+    "sortOptions": {
+      "newest": "Neueste",
+      "oldest": "Älteste",
+      "rating": "Beste Bewertung",
+      "popular": "Beliebteste"
+    },
+    "assistantDetailSheet": {
+      "by": "von",
+      "unknown": "Unbekannt",
+      "rating": "Bewertung",
+      "reviews": "Rezensionen",
+      "created": "Erstellt",
+      "description": "Beschreibung",
+      "noDescriptionAvailable": "Keine Beschreibung verfügbar.",
+      "categories": "Kategorien",
+      "tags": "Tags",
+      "systemPrompt": "System-Prompt",
+      "downloaded": "Heruntergeladen",
+      "success": "Erfolg",
+      "assistantAddedToCollection": "Assistent wurde zu deiner Sammlung hinzugefügt!",
+      "error": "Fehler",
+      "failedToLoadDetails": "Assistentendetails konnten nicht geladen werden",
+      "failedToDownload": "Assistent konnte nicht heruntergeladen werden",
+      "premiumAssistantMessage": "Dies ist ein Premium-Assistent.\n• Wenn du ihn bereits mit deinem Drshub-Konto freigeschaltet hast, melde dich einfach an, um die vollständigen Details zu sehen.\n• Noch nicht freigeschaltet? Besuche die hub.drsai.app-App, um mehr zu erfahren.",
+      "notAvailable": "N/A",
+      "buyOnDrshub": "Auf Drshub kaufen",
+      "finalizingPurchase": "Kauf wird abgeschlossen…",
+      "processingPurchase": "Wird verarbeitet — wird in Kürze freigeschaltet.",
+      "checkoutSessionExpired": "Deine Sitzung ist abgelaufen. Melde dich erneut an, um fortzufahren.",
+      "signInAgain": "Erneut anmelden",
+      "assistantNotAvailable": "Dieser Assistent ist derzeit nicht zum Kauf verfügbar.",
+      "checkoutFailed": "Etwas ist schiefgelaufen. Bitte versuche es erneut."
+    },
+    "emptyLocal": "Noch keine Assistenten.\nErstelle deinen ersten Assistenten mit der +-Taste!",
+    "emptyFiltered": "Keine Assistenten gefunden.\nPasse deine Filter oder deine Suche an."
+  },
+  "validation": {
+    "nameRequired": "Name ist erforderlich",
+    "systemPromptRequired": "System-Prompt ist erforderlich",
+    "worldRequired": "Welt ist erforderlich",
+    "locationRequired": "Ort ist erforderlich",
+    "aiRoleRequired": "Rolle der KI ist erforderlich",
+    "userRoleRequired": "Benutzerrolle ist erforderlich",
+    "situationRequired": "Situation ist erforderlich",
+    "toneStyleRequired": "Ton/Stil ist erforderlich"
+  },
+  "camera": {
+    "permissionTitle": "Kameraberechtigung erforderlich",
+    "permissionMessage": "DRS AI benötigt Kamerazugriff, um Bilder zu analysieren",
+    "requestingPermission": "Kameraberechtigung wird angefragt...",
+    "noDevice": "Kein Kameragerät gefunden",
+    "errorTitle": "Kamerafehler",
+    "errorMessage": "Beim Aufnehmen des Fotos ist ein Fehler aufgetreten",
+    "flip": "Umdrehen",
+    "analyzing": "Bild wird analysiert...",
+    "startCamera": "Kamera starten",
+    "stopCamera": "Kamera stoppen",
+    "promptPlaceholder": "Was möchtest du über dieses Bild wissen?",
+    "takePhoto": "Kamera"
+  },
+  "video": {
+    "permissionTitle": "Kameraberechtigung erforderlich",
+    "permissionMessage": "DRS AI benötigt Kamerazugriff für die Videoanalyse",
+    "requestingPermission": "Kameraberechtigung wird angefragt...",
+    "noDevice": "Kein Kameragerät gefunden",
+    "errorTitle": "Kamerafehler",
+    "errorMessage": "Bei der Kamera ist ein Fehler aufgetreten",
+    "flip": "Umdrehen",
+    "analyzing": "Video wird analysiert...",
+    "startCamera": "Kamera starten",
+    "stopCamera": "Kamera stoppen",
+    "promptPlaceholder": "Was möchtest du über dieses Video wissen?",
+    "captureInterval": "Erfassungsintervall",
+    "captureIntervalUnit": "ms",
+    "liveCommentary": "Live-Kommentar",
+    "emptyPlaceholder": {
+      "title": "Willkommen bei Lookie",
+      "subtitle": "Private Echtzeit-Videoanalyse auf dem Gerät",
+      "experimentalNotice": "Dies ist eine experimentelle Funktion. Die Genauigkeit hängt vom gewählten Modell ab, die Geschwindigkeit von den Spezifikationen deines Geräts, und manche Modelle könnten scheitern.",
+      "howToUse": "So funktioniert es:",
+      "step1": "• Bearbeite den Prompt (optional), um die Analyse zu steuern",
+      "step2": "• Tippe auf die Kamera-Taste, um die Live-Videoanalyse zu starten",
+      "step3": "• Passe die Snapshot-Häufigkeit an, während die Kamera aktiv ist",
+      "step4": "• Wechsle zu einem anderen Assistenten für normalen Text-Chat"
+    },
+    "defaultPrompt": "Was siehst du?",
+    "multimodalTitle": "Multimodal nicht aktiviert",
+    "multimodalMessage": "Dieses Modell unterstützt keine Bildanalyse. Bitte lade ein multimodales Modell.",
+    "checkSupportError": "Konnte nicht prüfen, ob das Modell Bilder unterstützt."
+  },
+  "screenTitles": {
+    "chat": "Chat",
+    "models": "Modelle",
+    "assistants": "Assistenten (experimentell)",
+    "benchmark": "Benchmark",
+    "settings": "Einstellungen",
+    "appInfo": "App-Info",
+    "testCompletion": "Test abschließen"
+  },
+  "chat": {
+    "conversationReset": "Unterhaltung zurückgesetzt!",
+    "modelNotLoaded": "Modell nicht geladen. Bitte initialisiere das Modell.",
+    "completionFailed": "Generierung fehlgeschlagen: ",
+    "toolCallTruncated": "Tool-Aufruf abgeschnitten — dem Modell ist wahrscheinlich der Platz ausgegangen. Versuche einen größeren Kontext oder eine kleinere Anfrage.",
+    "speculativeInitFailed": "Dieses Gerät konnte Speculative Decoding für dieses Modell nicht starten — höchstwahrscheinlich ist nicht genug Speicher für den Draft-Kontext vorhanden. Deaktiviere Speculative Decoding unter Einstellungen → Erweiterte Einstellungen und versuche es erneut.",
+    "loadingModel": "Modell wird geladen ...",
+    "typeYourMessage": "Nachricht hier eingeben",
+    "load": "Laden",
+    "goToModels": "Zu den Modellen",
+    "readyToChat": "Bereit zum Chatten? Lade das zuletzt verwendete Modell.",
+    "pleaseLoadModel": "Lade ein Modell, um zu chatten.",
+    "multimodalNotEnabled": "Multimodal ist für dieses Modell nicht aktiviert. Bilder werden angezeigt, aber nicht von der KI verarbeitet.",
+    "cannotSendWithoutModel": "Lade zuerst ein Modell",
+    "toolCompatWarning": "Dieses Modell unterstützt möglicherweise kein Tool-Calling. Ergebnisse können unzuverlässig sein.",
+    "softCapWarning": "Starte einen neuen Chat für beste Leistung.",
+    "contextWarning": "Diese Unterhaltung wird lang und hat möglicherweise bald keinen Platz mehr.",
+    "contextRemoteHedged": "Diese Antwort wurde möglicherweise abgeschnitten. Versuche, erneut zu senden oder die Anfrage zu kürzen.",
+    "contextFull": "Die Unterhaltung hat keinen Platz mehr. Starte einen neuen Chat oder erhöhe die Kontextgröße.",
+    "contextFullRemote": "Die Unterhaltung hat keinen Platz mehr. Starte einen neuen Chat.",
+    "contextFullEscalated": "Immer noch kein Platz. Starte einen neuen Chat oder erhöhe die Kontextgröße, um weiterzumachen.",
+    "contextFullHeavyTalent": "Die Unterhaltung hat keinen Platz mehr — {{talent}} braucht tendenziell mehr. Starte einen neuen Chat oder erhöhe die Kontextgröße.",
+    "contextBannerDismiss": "Schließen",
+    "contextNewChat": "Neuer Chat",
+    "contextIncrease": "Kontext erhöhen",
+    "contextMoreRoom": "Mehr Platz",
+    "increaseContextTitle": "Gib diesem Chat mehr Platz",
+    "increaseContextBody": "Platz ist das Arbeitsgedächtnis des Modells — wie viel von diesem Chat es sich auf einmal merken kann. Mehr Platz bedeutet längere Chats, bevor Antworten abgeschnitten werden.",
+    "increaseContextTokensUnit": "Tokens",
+    "increaseContextWordsRam": "~{{words}} Wörter · ≈{{ram}} RAM",
+    "increaseContextFitsChip": "Passt",
+    "increaseContextTightChip": "Knapp",
+    "increaseContextWontFitChip": "Passt nicht",
+    "increaseContextFitsStatus": "Komfortabel für dieses Gerät.",
+    "increaseContextFitsUnconstrainedStatus": "Reichlich RAM — nur vom Modell begrenzt.",
+    "increaseContextTightStatus": "Über ~{{tokens}} hinaus kann diesem Gerät der Speicher ausgehen, wodurch es langsamer wird. Es kann es trotzdem versuchen.",
+    "increaseContextWontFitStatus": "~{{tokens}} passen wahrscheinlich nicht in den Speicher dieses Geräts. Wähle eine kleinere Größe.",
+    "increaseContextModelMax": "{{tokens}} · Modell-Maximum",
+    "increaseContextHedge": "Das Neuladen dauert ein paar Sekunden. Nichts in deinem Chat geht verloren.",
+    "increaseContextAdvanced": "Erweitert",
+    "increaseContextAdvancedBody": "Kontextgröße für diesen Chat: {{from}} → {{to}} Tokens (Modell-Maximum {{max}}). Das Gerätelimit ist eine Schätzung und steigt, wenn größere Kontexte erfolgreich geladen werden.",
+    "increaseContextSliderA11yLabel": "Kontextgröße",
+    "increaseContextSliderA11yValue": "{{tokens}} Tokens",
+    "increaseContextConfirmSize": "Auf {{size}} setzen",
+    "increaseContextReloadingShort": "Wird neu geladen…",
+    "increaseContextNoFitBody": "Dieses Gerät kann für dieses Modell keinen größeren Kontext aufnehmen. Starte einen neuen Chat, um weiterzumachen.",
+    "increaseContextCancel": "Jetzt nicht",
+    "increaseContextReloading": "Modell wird mit größerem Kontext neu geladen…",
+    "increaseContextSuccess": "Kontext auf {{target}} Tokens erhöht.",
+    "increaseContextFailure": "Kontextgröße konnte nicht erhöht werden. Deine vorherige Einstellung wurde wiederhergestellt.",
+    "assistantLoadHint": "Dieser Assistent braucht tendenziell mehr Platz, als die aktuelle Kontextgröße erlaubt.",
+    "generatingPreview": "Vorschau wird generiert… ({{tokens}} Tokens)",
+    "generatingPreviewPending": "Vorschau wird generiert…",
+    "toolUsedChip": "{{name}} verwendet",
+    "toolErrorBlock": "{{name}} fehlgeschlagen",
+    "webSearch": {
+      "searched": "Gesucht: {{query}}",
+      "noResults": "Keine Ergebnisse",
+      "noResultsFor": "Keine Ergebnisse für {{query}}",
+      "resultsCount": "{{count}} Ergebnisse",
+      "resultsCountOne": "1 Ergebnis",
+      "searchResultsTitle": "Suchergebnisse",
+      "showResultsAccessibilityLabel": "Websuchergebnisse für {{query}} anzeigen",
+      "openLinkError": "Dieser Link konnte nicht geöffnet werden."
+    }
+  },
+  "htmlPreview": {
+    "defaultTitle": "Vorschau",
+    "showPreview": "Gerenderte Vorschau anzeigen",
+    "showCode": "HTML-Code anzeigen",
+    "copyHtml": "HTML kopieren",
+    "closePreview": "Vorschau schließen",
+    "openFullscreen": "Vollbild öffnen: {{title}}"
+  },
+  "benchmark": {
+    "title": "Benchmark",
+    "modelSelector": {
+      "prompt": "Modell auswählen",
+      "noModels": "Keine Modelle heruntergeladen"
+    },
+    "buttons": {
+      "advancedSettings": "Erweiterte Einstellungen",
+      "startTest": "Test starten",
+      "runningTest": "Test läuft...",
+      "clearAll": "Alles löschen",
+      "done": "Fertig",
+      "cancel": "Abbrechen",
+      "delete": "Löschen",
+      "share": "Teilen",
+      "sharing": "Wird geteilt...",
+      "viewRawData": "Rohdaten anzeigen",
+      "hideRawData": "Rohdaten ausblenden"
+    },
+    "messages": {
+      "pleaseSelectModel": "Bitte wähle zuerst ein Modell aus und initialisiere es",
+      "testWarning": "Hinweis: Der Test kann bei größeren Modellen bis zu 2-5 Minuten dauern und nach dem Start nicht unterbrochen werden.",
+      "keepScreenOpen": "Bitte lasse diesen Bildschirm geöffnet.",
+      "initializingModel": "Modell wird initialisiert...",
+      "modelMaxValue": "(max: {{maxValue}})"
+    },
+    "dialogs": {
+      "advancedSettings": {
+        "title": "Erweiterte Einstellungen",
+        "testProfile": "Testprofil",
+        "customParameters": "Benutzerdefinierte Parameter",
+        "description": "Benchmark-Parameter für bestimmte Testszenarien feinabstimmen."
+      },
+      "deleteResult": {
+        "title": "Ergebnis löschen",
+        "message": "Möchtest du dieses Benchmark-Ergebnis wirklich löschen?"
+      },
+      "clearAllResults": {
+        "title": "Alle Ergebnisse löschen",
+        "message": "Möchtest du alle Benchmark-Ergebnisse wirklich löschen?"
+      },
+      "shareResults": {
+        "title": "Benchmark-Ergebnisse teilen",
+        "sharedDataTitle": "Die geteilten Daten umfassen:",
+        "deviceAndModelInfo": "• Gerätespezifikationen & Modellinfo",
+        "performanceMetrics": "• Leistungsmetriken",
+        "dontShowAgain": "Diese Meldung nicht mehr anzeigen"
+      }
+    },
+    "sections": {
+      "testResults": "Testergebnisse"
+    },
+    "benchmarkResultCard": {
+      "modelMeta": {
+        "params": "Parameter"
+      },
+      "config": {
+        "title": "Benchmark-Konfiguration",
+        "format": "PP: {{pp}} • TG: {{tg}} • PL: {{pl}} • Rep: {{nr}}"
+      },
+      "modelSettings": {
+        "title": "Modelleinstellungen",
+        "context": "Kontext: {{context}}",
+        "batch": "Batch: {{batch}}",
+        "ubatch": "UBatch: {{ubatch}}",
+        "cpuThreads": "CPU-Threads: {{threads}}",
+        "gpuLayers": "GPU-Schichten: {{layers}}",
+        "device": "Gerät: {{device}}",
+        "flashAttentionEnabled": "Flash Attention aktiviert",
+        "flashAttentionDisabled": "Flash Attention deaktiviert",
+        "cacheTypes": "Cache-Typen: {{cacheK}}/{{cacheV}}"
+      },
+      "results": {
+        "promptProcessing": "Prompt-Verarbeitung",
+        "tokenGeneration": "Token-Generierung",
+        "totalTime": "Gesamtzeit",
+        "peakMemory": "Spitzenspeichernutzung",
+        "tokensPerSecond": "t/s"
+      },
+      "actions": {
+        "deleteButton": " ",
+        "submittedText": "✓ Geteilt auf",
+        "leaderboardLink": "AI Phone Leaderboard ↗",
+        "cannotShare": "Teilen nicht möglich",
+        "cannotShareTooltip": "Ergebnisse lokaler Modelle können nicht geteilt werden",
+        "submitButton": "An Leaderboard senden",
+        "viewLeaderboard": "Leaderboard ansehen ↗"
+      },
+      "errors": {
+        "networkRetry": "Verbindung prüfen & erneut versuchen",
+        "appCheckRetry": "Senden erneut versuchen",
+        "serverRetry": "Später erneut versuchen",
+        "genericRetry": "Erneut versuchen",
+        "failedToSubmit": "Benchmark konnte nicht gesendet werden"
+      }
+    },
+    "deviceInfoCard": {
+      "title": "Geräteinformationen",
+      "deviceSummary": "{{brand}} {{model}} • {{systemName}} {{systemVersion}}",
+      "coreSummary": "{{cores}} Kerne • {{memory}}",
+      "sections": {
+        "basicInfo": "Basisinfos",
+        "cpuDetails": "CPU-Details",
+        "gpuDetails": "GPU-Details",
+        "hexagonDetails": "Hexagon DSP",
+        "appInfo": "App-Info"
+      },
+      "fields": {
+        "architecture": "Architektur",
+        "totalMemory": "Gesamtspeicher",
+        "deviceId": "Geräte-ID",
+        "cpuCores": "CPU-Kerne",
+        "cpuModel": "CPU-Modell",
+        "chipset": "Chipset",
+        "instructions": "Befehlssätze",
+        "version": "Version",
+        "gpuType": "GPU-Typ",
+        "gpuRenderer": "Renderer",
+        "gpuVendor": "Hersteller",
+        "metalSupport": "Metal-Unterstützung",
+        "openclSupport": "OpenCL-Unterstützung",
+        "openclRequirement": "Benötigt i8mm & dotprod"
+      },
+      "instructions": {
+        "format": "FP16: {{fp16}}, DotProd: {{dotProd}}, SVE: {{sve}}, I8MM: {{i8mm}}",
+        "yes": "✓",
+        "no": "✗"
+      },
+      "versionFormat": "{{version}} ({{buildNumber}})"
+    },
+    "presetDefault": "Standard",
+    "presetFast": "Schnell",
+    "presetCustom": "Benutzerdefiniert",
+    "params": {
+      "pp": "Anzahl der Prompt-Verarbeitungs-Tokens (max: physische Batchgröße)",
+      "tg": "Anzahl der Textgenerierungs-Tokens",
+      "pl": "Pipeline-Parallelitätsgröße",
+      "nr": "Anzahl der Wiederholungen"
+    }
+  },
+  "errors": {
+    "unexpectedError": "Ein unerwarteter Fehler ist aufgetreten",
+    "hfAuthenticationError": "Hugging Face-Authentifizierungsfehler: Token fehlt oder ist ungültig",
+    "hfAuthenticationErrorSearch": "Hugging Face-Authentifizierungsfehler: Ungültiger Token",
+    "authenticationError": "Authentifizierungsfehler: Token fehlt oder ist ungültig",
+    "hfAuthorizationError": "Hugging Face-Berechtigungsfehler: Keine Berechtigung zum Zugriff auf diese Ressource",
+    "authorizationError": "Berechtigungsfehler: Keine Berechtigung zum Zugriff auf diese Ressource",
+    "hfServerError": "Hugging Face-Serverfehler: Problem mit dem API-Server",
+    "serverError": "Serverfehler: Problem mit dem API-Server",
+    "hfNetworkTimeout": "Netzwerk-Timeout: Anfrage an Hugging Face hat zu lange gedauert",
+    "networkTimeout": "Netzwerk-Timeout: Anfrage hat zu lange gedauert",
+    "hfNetworkError": "Netzwerkfehler: Verbindung zur Hugging Face-API nicht möglich",
+    "networkError": "Netzwerkfehler: Verbindung zur API nicht möglich",
+    "downloadSetupFailedTitle": "Download-Vorbereitung fehlgeschlagen",
+    "downloadSetupFailedMessage": "Modell konnte nicht für den Download vorbereitet werden: {{message}}",
+    "cameraErrorTitle": "Kamerafehler",
+    "cameraErrorMessage": "Foto konnte nicht aufgenommen werden",
+    "galleryErrorTitle": "Galeriefehler",
+    "galleryErrorMessage": "Bilder konnten nicht ausgewählt werden"
+  },
+  "simulator": {
+    "cameraNotAvailable": "Kamera im Simulator nicht verfügbar. Bitte verwende ein physisches Gerät."
+  },
+  "voiceAndSpeech": {
+    "sectionTitle": "Stimme & Sprache",
+    "voiceRowTitle": "Stimme",
+    "notSet": "Nicht festgelegt",
+    "previewButton": "Anhören",
+    "stopPreviewButton": "Anhören stoppen",
+    "voicesTitle": "Stimmen",
+    "voicesEmptyHint": "Tippe auf eine Stimme, um sie zu installieren und zu verwenden. Oder wähle eine Systemstimme — diese sind immer verfügbar.",
+    "supertonicStepsLabel": "Qualität (Diffusionsschritte)",
+    "supertonicLanguageLabel": "Sprache",
+    "supertonicLanguageAuto": "Auto",
+    "supertonicLanguageSheetTitle": "Sprache",
+    "supertonicLanguageSearchPlaceholder": "Sprachen suchen",
+    "supertonicLanguageNames": {
+      "ar": "Arabisch",
+      "bg": "Bulgarisch",
+      "hr": "Kroatisch",
+      "cs": "Tschechisch",
+      "da": "Dänisch",
+      "nl": "Niederländisch",
+      "en": "Englisch",
+      "et": "Estnisch",
+      "fi": "Finnisch",
+      "fr": "Französisch",
+      "de": "Deutsch",
+      "el": "Griechisch",
+      "hi": "Hindi",
+      "hu": "Ungarisch",
+      "id": "Indonesisch",
+      "it": "Italienisch",
+      "ja": "Japanisch",
+      "ko": "Koreanisch",
+      "lv": "Lettisch",
+      "lt": "Litauisch",
+      "pl": "Polnisch",
+      "pt": "Portugiesisch",
+      "ro": "Rumänisch",
+      "ru": "Russisch",
+      "sk": "Slowakisch",
+      "sl": "Slowenisch",
+      "es": "Spanisch",
+      "sv": "Schwedisch",
+      "tr": "Türkisch",
+      "uk": "Ukrainisch",
+      "vi": "Vietnamesisch"
+    },
+    "toggleAutoSpeakLabel": "Automatisches Vorlesen umschalten",
+    "openSettingsLabel": "TTS-Einstellungen",
+    "playMessageLabel": "Nachricht abspielen",
+    "stopMessageLabel": "Nachricht stoppen",
+    "autoSpeakLabel": "Antworten automatisch vorlesen",
+    "autoSpeakDescription": "Neue Antworten beim Eintreffen laut vorlesen.",
+    "engineChipKitten": "Kitten",
+    "engineChipKokoro": "Kokoro",
+    "engineChipSupertonic": "Supertonic",
+    "engineChipSystem": "System",
+    "stepsCount": "{{steps}} Schritte",
+    "engineKittenTagline": "Kleinstmöglicher Fußabdruck. Zuverlässig. Am besten für ältere Geräte.",
+    "engineKokoroTagline": "Höchste Qualität. Langsamerer Start. Manche Stimmen funktionieren möglicherweise nicht auf allen Geräten.",
+    "engineSupertonicTagline": "Schnellster Start. Benötigt mehr RAM. Lässt gelegentlich Wörter aus.",
+    "engineSystemTagline": "Integrierte Betriebssystem-Stimmen. Immer verfügbar, ohne Installation.",
+    "engineSystemTitleIos": "iOS-Stimmen",
+    "engineSystemTitleAndroid": "Android-Stimmen",
+    "engineSystemTier": "immer verfügbar",
+    "engineTierLightest": "am leichtesten",
+    "engineTierBestQuality": "beste Qualität",
+    "engineTierFastestStart": "schnellster Start",
+    "engineSpecsLine": "{{voices}} Stimmen  ·  {{sizeMb}} MB  ·  ~{{ramMb}} MB RAM",
+    "engineSystemSpecsLine": "{{voices}} Stimmen",
+    "engineRemoveTitle": "{{engineTitle}} entfernen?",
+    "engineRemoveBody": "Gibt ~{{sizeMb}} MB auf diesem Gerät frei.",
+    "engineRemoveCancel": "Abbrechen",
+    "engineRemoveConfirm": "Entfernen",
+    "engineInstallCta": "Installieren · {{sizeMb}} MB",
+    "engineDownloadingLabel": "Wird heruntergeladen…  {{pct}}%  ·  {{mbDone}} / {{sizeMb}} MB",
+    "engineRetryCta": "Erneut versuchen",
+    "voicesEmptyState": "Keine Stimmen gefunden.",
+    "kokoroDeviceNote": "Manche Stimmen funktionieren möglicherweise nicht auf allen Geräten.",
+    "insufficientStorage": "Nicht genug Speicher — gib {{requiredMb}} MB frei, um diese Engine zu installieren ({{freeMb}} MB verfügbar)."
+  },
+  "onboarding": {
+    "back": "Zurück",
+    "skip": "Überspringen",
+    "skipForNow": "Vorerst überspringen",
+    "splash": {
+      "brand": "DRS AI",
+      "tagline": "Deine private KI, auf deinem Gerät"
+    },
+    "screen1": {
+      "title": "Triff deine Assistenten.",
+      "titleAccent": "Assistenten.",
+      "body": "Kleine, schlaue Freunde, die in deinem Telefon leben.\nRichten wir alles für dich ein - es dauert nur eine Minute.",
+      "cta": "Zeig mir alles",
+      "eyebrow": "Willkommen bei DRS AI"
+    },
+    "screen2": {
+      "title": "Jederzeit,\nüberall.",
+      "body": "Deine Assistenten leben in deinem Telefon.\nKein Internet, kein Empfang - sie funktionieren im Flugzeug, abseits der Netze und in abgelegenen Dörfern.",
+      "highlight": "Kein Internet, kein Empfang",
+      "cta": "Weiter",
+      "eyebrow": "Die Idee",
+      "titleAccent": "Jederzeit,"
+    },
+    "screen3": {
+      "title": "Kleiner,\naber deins.",
+      "titleAccent": "Kleiner,",
+      "body": "Assistenten auf deinem Telefon sind schnell und privat - aber leichter als Cloud-KI. Denk an einen Begleiter für die Tasche, nicht an ein allwissendes Orakel.",
+      "highlight": "schnell und privat",
+      "cta": "Verstanden",
+      "eyebrow": "Ein Hinweis"
+    },
+    "screen4": {
+      "title": "Nichts verlässt dein Telefon.",
+      "titleAccent": "verlässt",
+      "body": "Keine Konten. Keine Cloud. Kein Tracking. Deine Gespräche bleiben deine.",
+      "highlight": "Keine Konten. Keine Cloud. Kein Tracking.",
+      "cta": "Jetzt starten",
+      "eyebrow": "Datenschutz versprochen"
+    },
+    "screen5": {
+      "title": "Wofür soll dein Assistent sein?",
+      "body": "Wähle, worüber du sprechen möchtest - wir finden einen Assistenten, der zu deinem Telefon passt.",
+      "topic": {
+        "smartchat": "Smarter Chat",
+        "coding": "Programmieren",
+        "education": "Lernen",
+        "roleplay": "Rollenspiel",
+        "creative_writing": "Kreatives Schreiben",
+        "else": "Suchst du etwas anderes?"
+      },
+      "topicDescription": {
+        "smartchat": "Freundlicher Begleiter für den Alltag",
+        "coding": "Code schreiben, debuggen, erklären",
+        "education": "Lernen, erklären, abfragen",
+        "roleplay": "Charaktere, Szenarien",
+        "creative_writing": "Geschichten, Ideen, Entwürfe",
+        "else": "Alle Assistenten später in der App ansehen"
+      }
+    },
+    "screen6": {
+      "cta": "{{name}} herunterladen",
+      "ctaTemplate": "{{name}} herunterladen ({{size}})",
+      "useTemplate": "{{name}} verwenden",
+      "deviceRamSuffix": "GB RAM",
+      "deviceFreeSuffix": "GB frei",
+      "recommended": "Empfohlen",
+      "downloaded": "Heruntergeladen",
+      "modelTier": {
+        "quick": "Schnell",
+        "balanced": "Ausgewogen",
+        "best": "Beste"
+      },
+      "subtitleTemplate": "{{name}} denkt mit einem kleinen KI-Modell auf deinem Telefon - wähle eines, das passt.",
+      "assistant": {
+        "pip": {
+          "body": "Wir haben einen perfekten Assistenten für dich gefunden - einen freundlichen Begleiter für den Alltag. Schlau genug für fast alles, leicht genug für jedes Telefon."
+        },
+        "codie": {
+          "body": "Das ist Codie — dein lokaler Pair-Programmer. Liest Code, schreibt Code und erklärt knifflige Stellen, ohne jemals dein Telefon zu verlassen."
+        },
+        "sage": {
+          "body": "Sage ist geduldig, neugierig und führt dich Schritt für Schritt durch Ideen. Ein Lernbegleiter für die Tasche."
+        },
+        "echo": {
+          "body": "Echo ist ein vielseitiger Rollenspiel-Begleiter — bleibt in der Rolle, malt Szenen und folgt, wohin deine Geschichte führt."
+        },
+        "muse": {
+          "body": "Muse hilft dir beim Schreiben. Schlägt Formulierungen vor, findet den Rhythmus und bewahrt deinen Ton."
+        }
+      }
+    }
+  },
+  "downloadBanner": {
+    "titleByAssistant": "{{name}} wird heruntergeladen",
+    "titleByModel": "{{name}} wird heruntergeladen",
+    "extraInProgress": "+{{count}} weitere in Bearbeitung"
   }
 }

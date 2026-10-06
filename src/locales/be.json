@@ -32,37 +32,116 @@
     "close": "Закрыць",
     "clear": "Ачысціць усё",
     "gallery": "Галерэя",
-    "noResults": "Нічога не знойдзена"
+    "noResults": "Нічога не знойдзена",
+    "openDrawer": "Адкрыць бакавае меню",
+    "openMenu": "Адкрыць меню",
+    "closeMenu": "Закрыць меню"
   },
   "settings": {
     "modelInitializationSettings": "Налады ініцыялізацыі мадэлі",
     "metal": "Metal",
     "metalDescription": "Апаратна-паскораны API ад Apple.",
+    "metalRequiresNewerIOS": "Паскарэнне Metal патрабуе iOS 18 або навейшай версіі. Абнавіце прыладу, каб карыстацца гэтай функцыяй.",
     "openCL": "OpenCL (эксперыментальна)",
+    "openCLDescription": "Паскарэнне на GPU для відэакарт Adreno. Хутчэйшая апрацоўка промптаў, але генерацыя не заўсёды хутчэйшая.",
+    "openCLNotAvailable": "OpenCL недаступны на гэтай прыладзе. Патрабуецца відэакарта Adreno з функцыямі CPU i8mm і dotprod.",
+    "openCLMissingCPUFeatures": "OpenCL патрабуе функцый CPU i8mm і dotprod, якіх няма на гэтай прыладзе.",
+    "openCLQuantizationNote": "Заўвага: чыста квантызаваныя мадэлі Q4_0 найлепш працуюць з OpenCL.",
+    "openCLDocsLink": "Падрабязнасці — у дакументацыі OpenCL для llama.cpp.",
     "layersOnGPU": "Слаі на GPU: {{gpuLayers}}",
     "deviceSelection": "Выбар прылады",
     "deviceSelectionIOS": "Прылада (Metal)",
+    "deviceSelectionIOSDescription": "Выберыце Metal GPU або рэжым толькі CPU",
+    "deviceSelectionAndroidDescription": "Выберыце вылічальную прыладу (CPU, GPU або Hexagon NPU)",
     "cpuOnlyNoAccelerators": "Толькі CPU — не выяўлена апаратных паскаральнікаў",
     "contextSize": "Памер кантэксту",
     "contextSizePlaceholder": "Увядзіце памер кантэксту (мін {{minContextSize}})",
+    "invalidContextSizeError": "Увядзіце карэктны лік (мінімум {{minContextSize}})",
+    "modelReloadNotice": "Каб змяненні ўступілі ва ўзе, патрэбна перазагрузка мадэлі.",
     "advancedSettings": "Пашыраныя налады",
     "batchSize": "Памер пакета (Batch Size)",
     "batchSizeDescription": "Памер пакета: {{batchSize}}{{effectiveBatch}}",
     "effectiveLabel": "эфектыўны",
     "physicalBatchSize": "Фізічны памер пакета",
+    "physicalBatchSizeDescription": "Фізічны памер пакета: {{physicalBatchSize}}{{effectivePhysicalBatch}}",
+    "cpuThreads": "Патокі працэсара",
+    "cpuThreadsDescription": "Выкарыстоўваецца {{threads}} з {{maxThreads}} даступных патокаў",
+    "imageMaxTokens": "Макс. токенаў для відарысаў",
+    "imageMaxTokensDescription": "Максімум токенаў для апрацоўкі відарысаў: {{tokens}}{{effectiveTokens}} (менш = хутчэй, менш дэталей)",
+    "flashAttention": "Flash Attention",
+    "flashAttentionDescription": "Уключыць Flash Attention для хутчэйшай апрацоўкі",
+    "flashAttentionIOSDescription": "Увага, эканомная па памяці (аўтаматычна ўключана на Metal)",
+    "flashAttentionAndroidDescription": "Павінна быць адключана для захавання/загрузкі стану OpenCL",
+    "flashAttentionAuto": "Аўта",
+    "flashAttentionOn": "Укл.",
+    "flashAttentionOff": "Выкл.",
+    "keyCacheType": "Тып кэшу ключоў (Key Cache)",
+    "keyCacheTypeDescription": "Выберыце тып кэшу для вылічэння ключоў",
+    "keyCacheTypeDisabledDescription": "Уключыце Flash Attention, каб змяніць тып кэшу",
     "valueCacheType": "Тып кэшу значэнняў (Value Cache)",
-    "modelLoadingSettings": "Налады загрузкі мадэлі",
-    "importChats": "Імпартаваць сесіі чата",
+    "valueCacheTypeDescription": "Выберыце тып кэшу для вылічэння значэнняў",
+    "valueCacheTypeDisabledDescription": "Уключыце Flash Attention, каб змяніць тып кэшу",
     "memorySettings": "Налады памяці",
+    "useMlock": "Блакаванне ў памяці (mlock)",
+    "useMlockDescription": "Змушае сістэму трымаць мадэль у RAM без выцяснення на дыск і сціскання",
+    "useMmap": "Адлюстраванне ў памяці (mmap)",
+    "useMmapDescription": "Выкарыстоўваць файлы, адлюстраваныя ў памяці, для хутчэйшай загрузкі мадэлі",
+    "useMmapTrue": "Уключана",
+    "useMmapFalse": "Выключана",
+    "useMmapTrueDescription": "Заўсёды адлюстроўваць файлы ў памяці для хутчэйшай загрузкі",
+    "useMmapFalseDescription": "Пры ўключанай перапакоўцы ваг рэкамендуецца адключыць, каб не падвойваць выдаткі памяці",
+    "weightRepacking": "Уключыць перапакоўку ваг",
+    "weightRepackingDescription": "Хутчэйшая апрацоўка промптаў з мінімальнымі выдаткамі памяці, калі адлюстраванне ў памяці адключана. Генерацыя токенаў не змяняецца.",
+    "speculativeDecoding": "Спекулятыўнае дэкадаванне",
+    "speculativeDecodingDescription": "Выкарыстоўвае малую мадэль-чарнавік (або ўбудаваную мадэль MTP) для прадбачання токенаў і паскарэння генерацыі. Эксперыментальна.",
+    "speculativeNotMTPCapable": "Актыўная мадэль не падтрымлівае спекулятыўнае дэкадаванне, і сумяшчальны чарнавік не падключаны, таму для яе гэтая опцыя не дзейнічае. Да мадэляў з падтрымкай яна ўжываецца аўтаматычна.",
+    "speculativeDraftModel": "Мадэль-чарнавік",
+    "speculativeDraftModelDescription": "Генеруе токены-чарнавікі для актыўнай мадэлі.",
+    "speculativeDraftModelNone": "Не выбрана (убудаваная MTP)",
+    "speculativeDraftModelIgnoredOverridden": "Актыўная мадэль мае ўласную мадэль-чарнавік, таму гэты выбар ігнаруецца.",
+    "speculativeDraftModelIgnoredIncompatible": "Гэты чарнавік несумяшчальны з актыўнай мадэллю, таму ігнаруецца.",
+    "speculativeDraftModelIgnoredNotCapable": "Гэтая мадэль не мае чарнавых слаёў, таму не можа служыць мадэллю-чарнавіком.",
+    "speculativeDraftKeyCacheType": "Тып кэшу ключоў чарнавіка",
+    "speculativeDraftValueCacheType": "Тып кэшу значэнняў чарнавіка",
+    "speculativeDraftNGpuLayers": "Слаі чарнавіка на GPU",
+    "speculativeDraftNGpuLayersDescription": "Колькасць слаёў мадэлі-чарнавіка для пераносу на GPU.",
+    "speculativeDraftCacheTypeInactiveDescription": "Ужываецца, калі запускаецца спекулятыўнае дэкадаванне.",
+    "ttsAvailability": "Сінтэз маўлення",
+    "ttsAvailabilityDescription": "Чытаць адказы асістэнта ўслых.",
+    "ttsAvailabilityLowMemoryWarning": "Памяць прылады на мяжы — функцыя можа працаваць ненадзейна.",
+    "modelLoadingSettings": "Налады загрузкі мадэлі",
+    "autoOffloadLoad": "Аўтавыгрузка/Загрузка",
+    "autoOffloadLoadDescription": "Выгружаць мадэль, калі праграма ў фонавым рэжыме.",
+    "autoNavigateToChat": "Аўтапераход да чата",
+    "autoNavigateToChatDescription": "Пераходзіць да чата пры пачатку загрузкі.",
+    "appSettings": "Налады праграмы",
     "language": "Мова",
     "languageSheetTitle": "Мова",
     "languageSearchPlaceholder": "Пошук моў",
+    "languageRestartTitle": "Патрабуецца перазапуск",
+    "languageRestartMessage": "Напрамак размяшчэння для гэтай мовы змяніўся. Перезапусціце праграму, каб ужыць змяненні цалкам.",
+    "languageRestartNow": "Перазапусціць зараз",
+    "languageRestartLater": "Пазней",
     "darkMode": "Цёмны рэжым",
     "displayMemoryUsage": "Паказваць выкарыстанне памяці",
+    "displayMemoryUsageDescription": "Паказваць выкарыстанне памяці на старонцы чата.",
+    "exportOptions": "Параметры экспартавання",
+    "exportLegacyChats": "Экспартаваць старыя чаты",
+    "exportLegacyChatsDescription": "Выкарыстоўвайце, калі міграцыя не ўдалася або трэба аднавіць старыя сесіі чата.",
     "exportButton": "Экспартаваць",
+    "importChats": "Імпартаваць сесіі чата",
+    "importChatsDescription": "Імпартаваць сесіі чата з (экспартаванага) JSON-файла.",
     "importButton": "Імпартаваць",
+    "importSuccess": "Імпартавана сесій чата: {{count}}.",
+    "importError": "Не ўдалося імпартаваць сесіі чата. Праверце фармат файла.",
     "internetSearch": {
       "title": "Пошук у інтэрнэце",
+      "description": "Дазвольце асістэнтам шукаць у сеціве ўласнымі інструментамі. Выкарыстоўвайце свой ключ API — DRS AI ніколі не захоўвае вашыя ключы і не перанакіроўвае запыты.",
+      "providerLabel": "Сэрвіс пошуку",
+      "providerGated": "Ужо хутка",
+      "keyLabel": "Ключ API",
+      "keyIsSet": "Для {{provider}} зададзены ключ.",
+      "keyNotSet": "Для {{provider}} не зададзена ключа.",
       "setKeyButton": "Задаць ключ",
       "updateKeyButton": "Абнавіць ключ",
       "clearKeyButton": "Выдаліць ключ",
@@ -70,20 +149,52 @@
       "keyUpdateError": "Не ўдалося абнавіць ключ. Паспрабуйце зноў.",
       "showKeyAccessibilityLabel": "Паказаць ключ API",
       "hideKeyAccessibilityLabel": "Схаваць ключ API",
-      "consentRevoke": "Адклікаць",
-      "consentAccept": "Я разумею",
-      "keyLabel": "Ключ API",
-      "keyIsSet": "Для {{provider}} зададзены ключ.",
-      "keyNotSet": "Для {{provider}} не зададзена ключа.",
-      "consentGivenTitle": "Пошук у інтэрнэце ўключаны",
+      "resultCountLabel": "Вынікаў на пошукавы запыт",
+      "resultCountDescription": "Менш вынікаў — больш месца ў кантэксце мадэлі.",
       "consentTitle": "Пошукавыя запыты выходзяць за межы вашай прылады",
-      "providerLabel": "Сэрвіс пошуку",
-      "providerGated": "Ужо хутка",
-      "resultCountLabel": "Вынікаў на пошукавы запыт"
+      "consentDescription": "Калі асістэнт шукае ў сеціве, ваш запыт дасылаецца абранаму сэрвісу праз інтэрнэт. Калі асістэнт чытае старонку, URL і змесціва могуць быць дасланы прадвызначанай службе чытання (r.jina.ai), калі ў абранага сэрвісу няма ўласнага чытача. Ключы і запыты ніколі не дасылаюцца DRS AI.",
+      "consentAccept": "Я разумею",
+      "consentRequired": "Прыміце паведамленне вышэй, каб задаць ключ і ўключыць пошук.",
+      "consentGivenTitle": "Пошук у інтэрнэце ўключаны",
+      "consentGivenDescription": "Запыты і чытанне старонак могуць выходзіць з вашай прылады, як апісана вышэй.",
+      "consentRevoke": "Адклікаць"
     },
+    "apiSettingsTitle": "Налады API",
+    "huggingFaceTokenLabel": "Токен Hugging Face",
+    "tokenIsSetDescription": "Токен зададзены. Патрэбны для доступу да мадэляў з абмежаваным доступам.",
+    "setTokenDescription": "Задайце токен для доступу да мадэляў Hugging Face з абмежаваным доступам.",
+    "setTokenButton": "Задаць токен",
+    "useHfTokenLabel": "Выкарыстоўваць токен HF",
+    "useHfTokenDescription": "Уключыце выкарыстанне токена для API-запытаў. Адключыце, калі токен выклікае праблемы з аўтэнтыфікацыяй.",
     "cacheStorageTitle": "Кэш і сховішча",
+    "clearAssistantCaches": "Ачысціць кэш асістэнтаў",
+    "clearAssistantCachesDescription": "Ачышчае кэшаваныя даныя, што паскараюць працу асістэнтаў. Гэта не паўплывае на асістэнтаў і гісторыю чата.",
+    "clearCachesButton": "Ачысціць кэш",
+    "clearCachesConfirmTitle": "Ачысціць кэш асістэнтаў?",
+    "clearCachesConfirmMessage": "Будуць ачышчаны ўсе кэшаваныя даныя сесій ({{fileCount}} файлаў, {{size}}). Пасля ачысткі асістэнты пры першым запуску могуць працаваць павольней. Гэта не паўплывае на асістэнтаў і гісторыю чата.",
+    "clearCachesSuccess": "Ачышчана файлаў кэшу: {{count}}.",
+    "clearCachesError": "Не ўдалося ачысціць кэш. Паспрабуйце яшчэ раз.",
+    "noCachesToClear": "Няма чаго ачышчаць.",
+    "serverName": "Назва сервера",
+    "serverUrl": "URL сервера",
+    "serverUrlPlaceholder": "напр., http://192.168.1.100:1234",
+    "requestTimeout": "Тайм-аўт запыту (сек)",
+    "requestTimeoutPlaceholder": "Неабавязкова — пакіньце пустым для прадвызначанага значэння",
+    "requestTimeoutHelp": "Максімальнае чаканне адказу павольнага сервера. Пакіньце пустым для прадвызначанага значэння.",
     "serverType": "Тып сервера",
+    "serverTypeHelp": "Вызначаецца аўтаматычна; змяніце, калі вызначана памылкова.",
+    "apiKey": "Ключ API",
+    "apiKeyPlaceholder": "Неабавязкова — патрабуецца для OpenAI/Groq",
+    "apiKeyDescription": "Захоўваецца бяспечна на прыладзе.",
+    "remoteModel": "Аддаленая",
+    "remotePrivacyNotice": "Паведамленні, якія адпраўляюцца на аддаленыя серверы, выходзяць за межы вашай прылады. Падключайцеся толькі да тых сервераў, якім вы давяраеце.",
+    "remoteIndicator": "Аддаленая",
+    "serverUrlRequired": "Патрабуецца URL сервера",
+    "serverUrlInvalid": "Няправільны фармат URL",
+    "serverUrlHttpWarning": "Нешыфраваны HTTP дазволены толькі для лакальных адрасоў у сетцы. Для публічных сервераў выкарыстоўвайце https://.",
+    "addRemoteModel": "Дадаць аддаленую мадэль",
     "yourServers": "Вашы серверы",
+    "orConnectNewServer": "або падключыцеся да новага сервера",
     "selectModel": "Выбраць мадэль",
     "addModel": "Дадаць мадэль",
     "connected": "Падключана",
@@ -100,298 +211,161 @@
     "removeServerMessage": "Выдаліць сервер {{serverName}} і мадэлі на ім ({{count}})?",
     "removeRemoteModel": "Выдаліць {{modelName}} ({{serverName}})?",
     "retryConnection": "Паўтарыць спробу",
-    "apiKey": "Ключ API",
-    "remoteModel": "Аддаленая",
-    "remoteIndicator": "Аддаленая",
-    "serverUrlRequired": "Патрабуецца URL сервера",
-    "serverUrlInvalid": "Няправільны фармат URL",
-    "flashAttentionOn": "Укл.",
-    "flashAttentionOff": "Выкл.",
-    "flashAttentionAuto": "Аўта",
-    "useMmapTrue": "Уключана",
-    "useMmapFalse": "Выключана",
-    "appSettings": "Налады праграмы",
-    "exportOptions": "Параметры экспартавання",
-    "serverName": "Назва сервера",
-    "serverUrl": "URL сервера",
-    "serverUrlPlaceholder": "напр., http://192.168.1.100:1234",
-    "addRemoteModel": "Дадаць аддаленую мадэль",
+    "enterUrlManually": "Увесці URL уручную",
     "manageServers": "Кіраваць серверамі",
-    "cpuThreads": "Патокі працэсара",
-    "huggingFaceTokenLabel": "Токен Hugging Face",
-    "setTokenButton": "Задаць токен",
-    "useHfTokenLabel": "Выкарыстоўваць токен HF",
-    "orConnectNewServer": "або падключыцеся да новага сервера",
-    "apiKeyDescription": "Захоўваецца бяспечна на прыладзе.",
-    "remotePrivacyNotice": "Паведамленні, якія адпраўляюцца на аддаленыя серверы, выходзяць за межы вашай прылады. Падключайцеся толькі да тых сервераў, якім вы давяраеце."
-  },
-  "benchmark": {
-    "benchmarkResultCard": {
-      "actions": {
-        "deleteButton": " "
-      },
-      "errors": {
-        "genericRetry": "Паўтарыць спробу"
-      },
-      "results": {
-        "tokensPerSecond": "ток/с",
-        "totalTime": "Агульны час"
-      },
-      "modelSettings": {
-        "context": "Кантэкст: {{context}}",
-        "batch": "Пакет (Batch): {{batch}}",
-        "ubatch": "UBatch: {{ubatch}}",
-        "gpuLayers": "Слаі відэакарты: {{layers}}"
-      },
-      "modelMeta": {
-        "params": "парам."
-      }
-    },
-    "deviceInfoCard": {
-      "fields": {
-        "instructions": "Інструкцыі",
-        "version": "Версія",
-        "gpuType": "Тып відэакарты",
-        "architecture": "Архітэктура",
-        "totalMemory": "Агулам памяці",
-        "deviceId": "ID прылады",
-        "gpuRenderer": "Сродак візуалізацыі",
-        "gpuVendor": "Пастаўшчык"
-      },
-      "sections": {
-        "appInfo": "Звесткі пра праграму",
-        "cpuDetails": "Звесткі пра працэсар",
-        "gpuDetails": "Звесткі пра відэакарту"
-      },
-      "title": "Інфармацыя пра прыладу",
-      "deviceSummary": "{{brand}} {{model}} • {{systemName}} {{systemVersion}}"
-    },
-    "dialogs": {
-      "shareResults": {
-        "performanceMetrics": "• Метрыкі прадукцыйнасці",
-        "dontShowAgain": "Больш не паказваць гэта паведамленне"
-      },
-      "deleteResult": {
-        "title": "Выдаліць вынік"
-      }
-    },
-    "sections": {
-      "testResults": "Вынікі тэста"
-    },
-    "buttons": {
-      "clearAll": "Ачысціць усё",
-      "done": "Гатова",
-      "cancel": "Скасаваць",
-      "delete": "Выдаліць",
-      "share": "Абагуліць",
-      "sharing": "Ідзе абагульванне…",
-      "viewRawData": "Паказаць неапрацаваныя даныя",
-      "advancedSettings": "Пашыраныя налады",
-      "hideRawData": "Схаваць неапрацаваныя даныя",
-      "startTest": "Пачаць тэст",
-      "runningTest": "Ідзе правядзенне тэста…"
-    },
-    "title": "Параўнаўчы тэст",
-    "modelSelector": {
-      "prompt": "Выбраць мадэль",
-      "noModels": "Няма спампаваных мадэляў"
-    },
-    "messages": {
-      "pleaseSelectModel": "Спачатку выберыце і ініцыялізуйце мадэль"
-    }
-  },
-  "components": {
-    "modelSettingsSheet": {
-      "reasoningSection": "Разважанне"
-    }
-  },
-  "voiceAndSpeech": {
-    "supertonicLanguageNames": {
-      "id": "Інданезійская",
-      "ar": "Арабская",
-      "bg": "Балгарская",
-      "hr": "Харвацкая",
-      "cs": "Чэшская",
-      "da": "Дацкая",
-      "nl": "Нідэрландская",
-      "en": "Англійская",
-      "et": "Эстонская",
-      "fi": "Фінская",
-      "fr": "Французская",
-      "de": "Нямецкая",
-      "el": "Грэчаская",
-      "hi": "Хіндзі",
-      "hu": "Венгерская",
-      "it": "Італьянская",
-      "ja": "Японская",
-      "ko": "Карэйская",
-      "lv": "Латышская",
-      "lt": "Літоўская",
-      "pl": "Польская",
-      "pt": "Партугальская",
-      "ro": "Румынская",
-      "ru": "Руская",
-      "sk": "Славацкая",
-      "sl": "Славенская",
-      "es": "Іспанская",
-      "sv": "Шведская",
-      "tr": "Турэцкая",
-      "uk": "Украінская",
-      "vi": "В’етнамская"
-    },
-    "supertonicLanguageSearchPlaceholder": "Пошук моў",
-    "openSettingsLabel": "Налады TTS",
-    "playMessageLabel": "Прайграць паведамленне",
-    "stopMessageLabel": "Спыніць паведамленне",
-    "engineRetryCta": "Паспрабаваць зноў",
-    "engineRemoveCancel": "Скасаваць",
-    "engineRemoveConfirm": "Выдаліць",
-    "engineInstallCta": "Усталяваць · {{sizeMb}} МБ",
-    "engineDownloadingLabel": "Ідзе спампоўванне…  {{pct}}%  ·  {{mbDone}} / {{sizeMb}} МБ",
-    "engineTierLightest": "найлягчэйшы",
-    "engineTierBestQuality": "найлепшая якасць",
-    "engineTierFastestStart": "найхутчэйшы запуск",
-    "voicesTitle": "Галасы",
-    "supertonicLanguageSheetTitle": "Мова",
-    "previewButton": "Перадпрагляд",
-    "stopPreviewButton": "Спыніць перадпрагляд",
-    "supertonicLanguageLabel": "Мова",
-    "supertonicLanguageAuto": "Аўтаматычна",
-    "voiceRowTitle": "Голас"
-  },
-  "chat": {
-    "increaseContextCancel": "Не зараз",
-    "webSearch": {
-      "noResults": "Няма рэзультатаў",
-      "searchResultsTitle": "Рэзультаты пошуку",
-      "resultsCountOne": "1 рэзультат"
-    },
-    "increaseContextReloadingShort": "Ідзе перазагрузка…",
-    "increaseContextSliderA11yLabel": "Памер кантэксту",
-    "increaseContextSliderA11yValue": "Токенаў: {{tokens}}",
-    "contextBannerDismiss": "Адхіліць",
-    "contextNewChat": "Новы чат",
-    "load": "Загрузіць"
-  },
-  "onboarding": {
-    "screen6": {
-      "modelTier": {
-        "quick": "Хуткая",
-        "balanced": "Збалансаваная",
-        "best": "Найлепшая"
-      },
-      "deviceRamSuffix": "ГБ RAM"
-    },
-    "screen5": {
-      "topic": {
-        "smartchat": "Разумны чат",
-        "coding": "Праграмаванне",
-        "education": "Адукацыя",
-        "roleplay": "Ролевыя гульні",
-        "creative_writing": "Творчае пісьмо",
-        "else": "Шукаеце нешта іншае?"
-      },
-      "topicDescription": {
-        "smartchat": "Прыязны штодзённы кампаньён",
-        "coding": "Код, адладка, тлумачэнні",
-        "education": "Вучоба, тлумачэнні, тэсты",
-        "roleplay": "Персанажы, сцэнарыі",
-        "creative_writing": "Гісторыі, ідэі, чарнавікі"
-      }
-    },
-    "screen2": {
-      "cta": "Далей",
-      "eyebrow": "Ідэя"
-    },
-    "back": "Назад",
-    "skip": "Прапусціць",
-    "skipForNow": "Пакуль прапусціць",
-    "splash": {
-      "brand": "DRS AI"
-    },
-    "screen3": {
-      "cta": "Зразумела",
-      "eyebrow": "Перасцярога"
-    },
-    "screen4": {
-      "cta": "Пачнём"
-    }
-  },
-  "errors": {
-    "cameraErrorTitle": "Памылка камеры",
-    "galleryErrorTitle": "Памылка Галерэі"
-  },
-  "htmlPreview": {
-    "closePreview": "Закрыць перадпрагляд",
-    "defaultTitle": "Перадпрагляд",
-    "copyHtml": "Скапіяваць HTML"
-  },
-  "screenTitles": {
-    "chat": "Чат",
-    "models": "Мадэлі",
-    "benchmark": "Параўнаўчы тэст",
-    "settings": "Налады",
-    "appInfo": "Звесткі пра праграму"
+    "exportLegacyError": "Не ўдалося экспартаваць старыя сесіі чата. Магчыма, файла не існуе."
   },
   "memory": {
+    "shortWarning": "Папярэджанне пра памяць",
+    "multimodalWarning": "Рэсурсаў гэтай прылады можа не хапіць для мультымадальных мадэляў.",
+    "memoryTight": "Памяць на мяжы",
+    "lowMemory": "Мала памяці",
+    "memoryDetailMessage": "Гэтай мадэлі патрэбна ~{{needed}}, але прыдатнай лічыцца толькі ~{{available}}. Ацэнкі дакладнеюць па меры карыстання праграмай.",
+    "estimatedMemory": "Ацэнка памяці: ~{{size}}",
     "alerts": {
+      "memoryWarningTitle": "Папярэджанне пра памяць",
+      "memoryWarningMessage": "Гэтая мадэль можа перавысіць даступную памяць, што можа выклікаць нестабільнасць. Працягнуць загрузку?",
+      "multimodalWarningTitle": "Папярэджанне пра прадукцыйнасць прылады",
+      "multimodalWarningMessage": "Рэсурсаў гэтай прылады можа не хапіць для мультымадальных мадэляў. Загрузка можа выклікаць нестабільнасць. Усё роўна працягнуць?",
+      "combinedWarningTitle": "Папярэджанне пра прадукцыйнасць",
+      "combinedWarningMessage": "Гэтая мадэль можа перавысіць даступную памяць, а рэсурсаў прылады можа не хапіць для мультымадальных мадэляў. Загрузка можа выклікаць нестабільнасць. Усё роўна працягнуць?",
       "cancel": "Скасаваць",
       "continue": "Працягнуць"
     }
   },
+  "storage": {
+    "checkFailed": "Не ўдалося праверыць сховішча",
+    "lowStorage": "Мала месца! Мадэль {{modelSize}} > {{freeSpace}} вольна"
+  },
+  "generation": {
+    "modelNotInitialized": "Кантэкст мадэлі не ініцыялізаваны",
+    "failedToGenerate": "Не ўдалося згенераваць вынік"
+  },
   "models": {
+    "fileManagement": {
+      "fileAlreadyExists": "Файл ужо існуе",
+      "fileAlreadyExistsMessage": "Файл з такім імем ужо існуе. Што вы хочаце зрабіць?",
+      "replace": "Замяніць",
+      "keepBoth": "Пакінуць абодва",
+      "copyingModel": "Ідзе капіяванне файла мадэлі…",
+      "copyFailed": "Не ўдалося скапіяваць файл мадэлі"
+    },
     "labels": {
       "localModel": "Лакальная",
       "hfModel": "HF",
       "unknownGroup": "Невядома",
       "availableToUse": "Гатова да выкарыстання",
-      "availableToDownload": "Даступна для спампоўвання"
-    },
-    "multimodal": {
-      "selected": "Выбрана",
-      "select": "Выбраць",
-      "reload": "Перазагрузіць",
-      "reloadModelTitle": "Перазагрузіць мадэль",
-      "visionControls": {
-        "textOnlyMode": "Толькі тэкст",
-        "textOnlyModeDescription": "Апрацоўваць толькі тэкст",
-        "visionEnabled": "Бачанне ўключана",
-        "visionDisabled": "Бачанне выключана",
-        "enableVision": "Уключыць магчымасці бачання",
-        "disableVision": "Выключыць магчымасці бачання",
-        "visionMode": "Бачанне ўключана",
-        "downloadWithVision": "Спампаваць з магчымасцю бачання",
-        "downloadTextOnly": "Спампаваць толькі тэкставую версію"
-      },
-      "download": "Спампаваць",
-      "settings": "Налады мультымадальнасці",
-      "cannotDeleteTitle": "Немагчыма выдаліць"
+      "availableToDownload": "Даступна для спампоўвання",
+      "useAddButtonForMore": "Выкарыстоўвайце кнопку +, каб знайсці больш мадэляў"
     },
     "vision": "Бачанне",
+    "mmproj": "Праектар",
+    "multimodal": {
+      "settings": "Налады мультымадальнасці",
+      "projectionModels": "Праекцыйныя мадэлі",
+      "noCompatibleModels": "Сумяшчальных праекцыйных мадэляў не знойдзена",
+      "noProjectionModels": "Няма даступных праекцыйных мадэляў",
+      "selected": "Выбрана",
+      "select": "Выбраць",
+      "download": "Спампаваць",
+      "projectionNeededTitle": "Патрэбна праекцыйная мадэль",
+      "projectionNeededMessage": "Гэтай мадэлі патрэбна праекцыйная мадэль для мультымадальных магчымасцяў.",
+      "projectionMissingWarning": "Праекцыйная мадэль адсутнічае",
+      "projectionMissingShort": "Няма праекцыі",
+      "reloadModelTitle": "Перазагрузіць мадэль",
+      "reloadModelMessage": "Каб ужыць новую праекцыйную мадэль, мадэль трэба перазагрузіць. Перазагрузіць зараз?",
+      "reload": "Перазагрузіць",
+      "deleteProjectionTitle": "Выдаліць праекцыйную мадэль",
+      "deleteProjectionMessage": "Вы ўпэўнены, што хочаце выдаліць гэтую праекцыйную мадэль?",
+      "cannotDeleteTitle": "Немагчыма выдаліць",
+      "visionControls": {
+        "enableVision": "Уключыць магчымасці бачання",
+        "disableVision": "Выключыць магчымасці бачання",
+        "visionEnabled": "Бачанне ўключана",
+        "visionDisabled": "Бачанне выключана",
+        "textOnlyMode": "Толькі тэкст",
+        "visionMode": "Бачанне ўключана",
+        "downloadWithVision": "Спампаваць з магчымасцю бачання",
+        "downloadTextOnly": "Спампаваць толькі тэкставую версію",
+        "visionToggleDescription": "Уключыць магчымасць апрацоўкі відарысаў",
+        "projectionModelSize": "праекцыйная мадэль +{{size}}",
+        "visionModeDescription": "Апрацоўваць відарысы і тэкст",
+        "textOnlyModeDescription": "Апрацоўваць толькі тэкст",
+        "includesVisionCapability": "З падтрымкай бачання",
+        "requiresProjectionModel": "Спачатку спампуйце сумяшчальную праекцыйную мадэль"
+      },
+      "cannotDeleteActive": "Гэтая праекцыйная мадэль зараз актыўная.",
+      "cannotDeleteInUse": "Гэту праекцыйную мадэль выкарыстоўваюць спампаваныя мадэлі LLM:",
+      "dependentModels": "Залежныя мадэлі:",
+      "visionWillBeDisabled": "Для гэтых мадэляў магчымасці бачання будуць адключаны."
+    },
+    "buttons": {
+      "addFromHuggingFace": "Дадаць з Hugging Face",
+      "addLocalModel": "Дадаць лакальную мадэль",
+      "reset": "Скінуць"
+    },
+    "modelsHeaderRight": {
+      "menuTitleHf": "Мадэлі з Hugging Face",
+      "menuTitleDownloaded": "Спампаваныя мадэлі",
+      "menuTitleGrouped": "Групаваць паводле тыпаў мадэляў",
+      "menuTitleReset": "Скінуць спіс мадэляў"
+    },
+    "modelsResetDialog": {
+      "proceedWithReset": "Працягнуць скід",
+      "confirmReset": "Пацвердзіць скід"
+    },
+    "chatTemplate": {
+      "label": "Базавы шаблон чата:"
+    },
+    "details": {
+      "title": "Даступныя файлы GGUF"
+    },
     "modelFile": {
-      "labels": {
-        "downloadSpeed": "{{speed}}"
+      "alerts": {
+        "cannotRemoveTitle": "Немагчыма выдаліць",
+        "modelPreset": "Мадэль устаноўлена як прэсет.",
+        "downloadedFirst": "Мадэль спампавана. Спачатку выдаліце файл.",
+        "removeTitle": "Выдаліць мадэль",
+        "removeMessage": "Вы ўпэўнены, што хочаце выдаліць гэтую мадэль са спіса?",
+        "removeError": "Не ўдалося выдаліць мадэль.",
+        "alreadyDownloadedTitle": "Мадэль ужо спампавана",
+        "alreadyDownloadedMessage": "Гэта мадэль ужо спампавана.",
+        "deleteTitle": "Выдаліць мадэль",
+        "deleteMessage": "Вы ўпэўнены, што хочаце выдаліць гэтую спампаваную мадэль?"
       },
       "buttons": {
         "remove": "Выдаліць"
       },
-      "alerts": {
-        "cannotRemoveTitle": "Немагчыма выдаліць",
-        "deleteTitle": "Выдаліць мадэль",
-        "removeTitle": "Выдаліць мадэль",
-        "removeError": "Не ўдалося выдаліць мадэль.",
-        "alreadyDownloadedTitle": "Мадэль ужо спампавана",
-        "alreadyDownloadedMessage": "Гэта мадэль ужо спампавана."
-      },
       "warnings": {
+        "storage": {
+          "message": "Недастаткова месца ў сховішчы.",
+          "shortMessage": "Мала месца"
+        },
+        "memory": {
+          "message": "Памер мадэлі набліжаецца да агульнага аб'ёму памяці прылады або перавышае яго. Гэта можа выклікаць нечаканыя паводзіны."
+        },
         "legacy": {
+          "message": "Стары фармат квантызацыі — мадэль можа не запусціцца.",
           "shortMessage": "Састарэлая квантызацыя"
-        }
+        },
+        "multiple": "Папярэджанняў: {{count}}"
+      },
+      "labels": {
+        "downloadSpeed": "{{speed}}"
       }
     },
     "search": {
       "noResults": "Не знойдзена мадэляў",
+      "loadingMore": "Загрузка...",
+      "searchPlaceholder": "Пошук мадэляў на Hugging Face",
+      "modelUpdatedLong": "Абноўлена {{time}} таму",
+      "modelUpdatedShort": "{{time}} таму",
+      "modelUpdatedJustNowLong": "Абноўлена толькі што",
+      "modelUpdatedJustNowShort": "толькі што",
+      "errorOccurred": "Не ўдалося загрузіць мадэлі. Паспрабуйце яшчэ раз.",
       "filters": {
+        "author": "Аўтар",
+        "authorPlaceholder": "Фільтраваць паводле аўтара…",
         "sortBy": "Сартаваць паводле",
         "clearFilters": "Ачысціць фільтры",
         "showFilters": "Паказаць фільтры",
@@ -399,25 +373,22 @@
         "sortRelevance": "Рэлевантнасць",
         "sortDownloads": "Спампоўванні",
         "sortRecent": "Нядаўна абноўленыя",
-        "sortLikes": "Найбольш упадабанняў",
-        "author": "Аўтар",
-        "authorPlaceholder": "Фільтраваць паводле аўтара…"
-      },
-      "modelUpdatedJustNowShort": "толькі што"
+        "sortLikes": "Найбольш упадабанняў"
+      }
     },
     "hubRun": {
       "title": "Спампаваць мадэль",
+      "resolving": "Загрузка звестак пра мадэль…",
       "cancel": "Скасаваць",
       "retry": "Паўтарыць спробу",
-      "invalidLinkTitle": "Няправільная спасылка"
-    },
-    "modelsResetDialog": {
-      "confirmReset": "Пацвердзіць скід",
-      "proceedWithReset": "Працягнуць скід"
+      "invalidLinkTitle": "Няправільная спасылка",
+      "invalidLinkMessage": "У гэтай спасылцы Hugging Face няма мадэлі або файла, ці яны няправільныя.",
+      "resolveError": "Не ўдалося загрузіць звесткі пра мадэль. Праверце сувязь і паспрабуйце зноў."
     },
     "modelCard": {
       "alerts": {
         "deleteTitle": "Выдаліць мадэль",
+        "deleteMessage": "Вы ўпэўнены, што хочаце выдаліць гэтую спампаваную мадэль?",
         "removeTitle": "Выдаліць мадэль",
         "removeMessage": "Вы ўпэўнены, што хочаце выдаліць мадэль са спіса?"
       },
@@ -435,20 +406,622 @@
         "visionNotSupported": "Не падтрымліваецца",
         "visionUnknown": "Невядома",
         "capabilities": "здольнасці.",
-        "modelName": "Назва мадэлі"
+        "modelName": "Назва мадэлі",
+        "contextLength": "Даўжыня кантэксту",
+        "architecture": "Архітэктура",
+        "author": "Аўтар",
+        "requiresProjectionModel": "Патрабуецца праекцыйная мадэль",
+        "downloadProjectionModel": "Спампаваць праекцыйную мадэль",
+        "viewModelCardOnHuggingFace": "Картка мадэлі на Hugging Face",
+        "draftOnlyReason": "Толькі мадэль-чарнавік. Выберыце яе ў Налады → Спекулятыўнае дэкадаванне."
+      },
+      "accessibility": {
+        "expandDetails": "Разгарнуць дэталі",
+        "collapseDetails": "Згарнуць дэталі",
+        "memoryWarning": "Папярэджанне пра памяць",
+        "integrityWarning": "Папярэджанне пра цэласнасць",
+        "downloadProgress": "Прагрэс спампоўвання",
+        "loadingIndicator": "Загрузка",
+        "loadButton": "Загрузіць мадэль",
+        "offloadButton": "Выгрузіць мадэль",
+        "downloadButton": "Спампаваць мадэль",
+        "settingsButton": "Налады мадэлі",
+        "deleteButton": "Выдаліць мадэль",
+        "removeButton": "Выдаліць мадэль",
+        "expandDetailsButton": "Разгарнуць дэталі мадэлі",
+        "memoryWarningButton": "Паказаць дэталі папярэджання пра памяць",
+        "integrityWarningButton": "Паказаць дэталі папярэджання пра цэласнасць",
+        "memoryWarningSnackbar": "Паведамленне-папярэджанне пра памяць"
       }
     },
-    "fileManagement": {
-      "replace": "Замяніць",
-      "copyingModel": "Ідзе капіяванне файла мадэлі…",
-      "copyFailed": "Не ўдалося скапіяваць файл мадэлі",
-      "fileAlreadyExists": "Файл ужо існуе",
-      "fileAlreadyExistsMessage": "Файл з такім імем ужо існуе. Што вы хочаце зрабіць?",
-      "keepBoth": "Пакінуць абодва"
+    "modelSettings": {
+      "template": {
+        "label": "Шаблон:",
+        "editButton": "Рэдагаваць",
+        "dialogTitle": "Рэдагаваць шаблон чата",
+        "note1": "Заўвага: змена шаблону можа змяніць BOS, EOS і сістэмны промпт.",
+        "note2": "Выкарыстоўваецца Nunjucks. Пакіньце пустым, каб узяць шаблон мадэлі.",
+        "placeholder": "Увядзіце свой шаблон чата тут...",
+        "closeButton": "Закрыць"
+      },
+      "stopWords": {
+        "label": "СТОП-СЛОВЫ",
+        "placeholder": "Дадаць новае стоп-слова"
+      },
+      "tokenSettings": {
+        "bos": "BOS",
+        "eos": "EOS",
+        "addGenerationPrompt": "Дадаваць промпт генерацыі",
+        "bosTokenPlaceholder": "Токен BOS",
+        "eosTokenPlaceholder": "Токен EOS",
+        "systemPrompt": "Сістэмны промпт"
+      }
     },
-    "buttons": {
-      "addLocalModel": "Дадаць лакальную мадэль",
-      "reset": "Скінуць"
+    "modelDescription": {
+      "size": "Памер: ",
+      "parameters": "Параметры: ",
+      "separator": " | ",
+      "notAvailable": "н/д"
+    },
+    "modelCapabilities": {
+      "questionAnswering": "Адказы на пытанні",
+      "summarization": "Рэфераванне",
+      "reasoning": "Разважанне",
+      "roleplay": "Ролевыя гульні",
+      "instructions": "Выкананне інструкцый",
+      "code": "Генерацыя кода",
+      "math": "Матэматычныя задачы",
+      "multilingual": "Шматмоўнасць",
+      "rewriting": "Перапісанне",
+      "creativity": "Творчае пісьмо",
+      "vision": "Бачанне",
+      "mtp": "Спекулятыўныя (MTP)",
+      "mtpDraft": "Спекулятыўны чарнавік"
+    },
+    "emptyTitle": "Мадэляў яшчэ няма",
+    "emptyHint": "Націсніце +, каб спампаваць з Hugging Face, дадаць лакальную мадэль або падключыць аддалены сервер."
+  },
+  "modelsHub": {
+    "title": "Мадэлі",
+    "subtitle": "Пошук, спампоўванне і кіраванне ўсімі мадэлямі, якія можа запусціць праграма.",
+    "searchPlaceholder": "Пошук мадэляў, выдаўцоў, задач…",
+    "retry": "Паўтарыць спробу",
+    "notAvailable": "Недаступна",
+    "noDownloadableFile": "У гэтым рэпазіторыі няма файлаў GGUF для спампоўвання",
+    "downloadStarted": "Спампоўванне пачалося",
+    "seeAll": "Паказаць усе",
+    "exploreAction": "Вывучыць мадэлі",
+    "emptyTitle": "Яшчэ няма ўстаноўленых мадэляў",
+    "emptyHint": "Праглядзіце каталог і спампуйце мадэль, якая падойдзе да вашай прылады і вашых задач.",
+    "fitScore": "{score}/100 — прыдатнасць",
+    "installedFromRepo": "Устаноўлена з гэтага рэпазіторыя",
+    "installedBadge": "Устаноўлена",
+    "noFiles": "У гэтым рэпазіторыі не апублікавана файлаў GGUF.",
+    "visionFilesTitle": "Файлы праекцыі бачання (mmproj)",
+    "visionFilesHint": "Гэтыя невялікія файлы дадаюць разуменне відарысаў адпаведнай тэкставай мадэлі; яны спампоўваюцца аўтаматычна разам з мадэлямі бачання.",
+    "downloadFile": "Спампаваць файл",
+    "downloadShort": "Атрымаць",
+    "version": "Версія",
+    "engineUnsupportedShort": "Не запускаецца лакальна",
+    "engineYes": "GGUF — працуе лакальна (llama.cpp)",
+    "engineNo": "Не падтрымліваецца лакальным рухавіком",
+    "capabilitiesTitle": "Магчымасці",
+    "categoryEngineNotice": "Гэтая катэгорыя паказ рэальныя рэпазіторыі, але лакальны рухавік GGUF пакуль не можа выконваць такія мадэлі, таму спампоўванне тут адключана. Нічога не імітуецца — калі з'явіцца падтрымка ў рухавіку, іх можна будзе спампаваць.",
+    "categoryInstalledSection": "Вашы мадэлі ў гэтай катэгорыі",
+    "categoryRemoteSection": "Знайсці на HuggingFace",
+    "featuredTitle": "Абраныя мадэлі",
+    "recommendedTitle": "Рэкамендавана для вашай прылады",
+    "recentTitle": "Нядаўна дададзеныя",
+    "favoritesTitle": "Улюбёнае",
+    "installedTitle": "Устаноўленыя",
+    "wifiOnly": "Толькі па Wi-Fi",
+    "categoriesTitle": "Катэгорыі",
+    "installedCount": "Устаноўлена: {count}",
+    "discover": "Агляд",
+    "device": {
+      "ram": "RAM",
+      "storage": "Вольнае сховішча",
+      "cpu": "CPU",
+      "gpu": "GPU",
+      "gpuOk": "З паскарэннем",
+      "gpuNo": "Толькі CPU"
+    },
+    "compat": {
+      "excellent": "Выдатная сумяшчальнасць",
+      "good": "Добрая сумяшчальнасць",
+      "limited": "Абмежаваная сумяшчальнасць",
+      "notRecommended": "Не рэкамендуецца",
+      "unknown": "Сумяшчальнасць невядома"
+    },
+    "reasons": {
+      "engineUnsupported": "Гэты тып мадэляў не працуе на лакальным рухавіку GGUF",
+      "engineSupported": "Працуе на лакальным рухавіку GGUF",
+      "memoryComfortable": "Выкарыстанне памяці будзе камфортным",
+      "memoryOk": "Выкарыстанне памяці прымальнае",
+      "memoryTight": "Памяці будзе мала — магчыма запаволенне",
+      "memoryInsufficient": "RAM гэтай прылады недастаткова для загрузкі",
+      "memoryUnknown": "Патрэбу памяці немагчыма ацаніць паводле даных рэпазіторыя",
+      "storagePlenty": "Дастаткова вольнага сховішча",
+      "storageTight": "Пасля ўстаноўкі месца будзе на мяжы",
+      "storageInsufficient": "Недастаткова вольнага сховішча",
+      "storageUnknown": "Не ўдалося вызначыць вольнае сховішча",
+      "cpuGood": "Працэсар мае дастаткова ядраў для хуткай інферэнцыі",
+      "cpuOk": "Працэсар упораецца, умерана хутка",
+      "cpuLimited": "Мала ядраў працэсара — інферэнцыя будзе павольнай",
+      "cpuUnknown": "Не ўдалося вызначыць колькасць ядраў працэсара",
+      "gpuSupported": "Даступна паскарэнне на GPU",
+      "gpuUnsupported": "Без паскарэння на GPU — працуе на CPU",
+      "gpuUnknown": "Не ўдалося вызначыць падтрымку GPU"
+    },
+    "overviewTemplate": "Мадэль тыпу {categories} ад {author} з прыкладна {params} параметраў, распаўсюджваецца як файлы GGUF для лакальнай аўтаномнай інферэнцыі на гэтай прыладзе.",
+    "overviewBlocked": "Гэта рэальны рэпазіторый, але тып яго мадэлі не выконваецца лакальным рухавіком, таму спампаваць яго тут немагчыма.",
+    "statsTemplate": "На HuggingFace: {downloads} спампоўванняў · {likes} упадабанняў.",
+    "tech": {
+      "architecture": "Архітэктура",
+      "parameters": "Параметры",
+      "contextLength": "Даўжыня кантэксту",
+      "formats": "Фарматы",
+      "quantization": "Квантызацыі",
+      "fileCount": "Файлы GGUF",
+      "version": "Рэвізія (sha)",
+      "lastModified": "Апошняе абнаўленне",
+      "license": "Ліцэнзія",
+      "engine": "Рухавік"
+    },
+    "capabilities": {
+      "offline": "Аўтаномны рэжым",
+      "context": "Кантэкст",
+      "arabic": "Падтрымка арабскай",
+      "multilingual": "Шматмоўнасць"
+    },
+    "tabs": {
+      "overview": "Агляд",
+      "technical": "Тэхнічныя звесткі",
+      "files": "Файлы"
+    },
+    "categories": {
+      "text": "Тэкставыя",
+      "vision": "Бачанне",
+      "reasoning": "Разважанне",
+      "coding": "Праграмаванне",
+      "multimodal": "Мультымадальныя",
+      "embedding": "Эмбедынгі",
+      "translation": "Пераклад",
+      "audio": "Аўдыя",
+      "image": "Відарысы",
+      "video": "Відэа",
+      "general": "Агульныя"
+    },
+    "dialog": {
+      "aboutTitle": "Пра гэту мадэль",
+      "aboutTemplate": "Мадэль GGUF ({family}) ад {author}. Пасля спампоўвання працуе цалкам аўтаномна на гэтай прыладзе. Памер ніжэй — дакладны памер файла паводле звестак HuggingFace.",
+      "familyUnknown": "GGUF",
+      "file": "Файл",
+      "downloadSize": "Памер спампоўвання",
+      "extraVisionFiles": "Дадатковыя файлы бачання (mmproj)",
+      "storageAfter": "Занята пасля ўстаноўкі",
+      "offline": "Працуе аўтаномна",
+      "offlineYes": "Так — цалкам на прыладзе",
+      "context": "Даўжыня кантэксту",
+      "wifiOnlyWaiting": "Уключана спампоўванне толькі па Wi-Fi. Праз мабільны інтэрнэт гэтае спампоўванне пачакае ў чарзе да аднаўлення Wi-Fi.",
+      "engineUnsupported": "Гэты тып мадэляў (генерацыя відарысаў/відэа/аўдыя) не можа выконвацца лакальным рухавіком GGUF, таму спампоўванне адключана. Нічога фіктыўнага — спіс рэальны, проста рухавік гэта не запусціць.",
+      "confirmDownload": "Спампаваць мадэль",
+      "starting": "Пачынаем…"
+    },
+    "storage": {
+      "title": "Сховішча мадэляў",
+      "entryHint": "Разбіўка выкарыстання, найбуйнейшыя мадэлі, ачыстка",
+      "used": "Занята мадэлямі",
+      "available": "Даступна",
+      "distribution": "Паводле катэгорый",
+      "largest": "Найбуйнейшыя мадэлі",
+      "orphans": "Незавершаныя і пакінутыя файлы",
+      "orphansFound": "{count} файлаў · можна вызваліць {size}",
+      "orphansNone": "Ачышчаць нічога — у сховішчы парадак.",
+      "cleanNow": "Ачысціць",
+      "cleanTitle": "Выдаліць пакінутыя файлы?",
+      "cleanMessage": "{count} незавершаных або пакінутых файлаў будзе выдалена назаўсёды.",
+      "cleanConfirm": "Выдаліць",
+      "checking": "Праверка сховішча…",
+      "enough": "Дастаткова вольнага месца",
+      "notEnough": "Недастаткова вольнага месца",
+      "required": "Патрабуецца",
+      "availableLabel": "Даступна",
+      "deficit": "Не хапае {amount}"
+    },
+    "downloads": {
+      "title": "Спампоўванні",
+      "emptyTitle": "Няма спампоўванняў",
+      "emptyHint": "Спампаваныя мадэлі з'яўляюцца тут з бягучым прагрэсам; кіраваць імі можна і аўтаномна.",
+      "active": "Ідзе спампоўванне",
+      "paused": "Прыпынена",
+      "pausedHint": "Прыпынена — працягнецца з таго ж месца",
+      "verifying": "Праверка",
+      "verifyingHint": "Праверка цэласнасці файла (памер + кантрольная сума) перад устаноўкай",
+      "completed": "Завершана",
+      "remaining": "≈",
+      "pause": "Прыпыніць",
+      "resume": "Працягнуць",
+      "cancel": "Скасаваць"
+    },
+    "updates": {
+      "title": "Абнаўленні",
+      "check": "Праверыць абнаўленні",
+      "checking": "Праверка…",
+      "recheck": "Праверыць яшчэ раз",
+      "upToDate": "Усе ўстаноўленыя мадэлі адпавядаюць сваім апошнім рэвізіям.",
+      "update": "Абнавіць"
+    },
+    "sort": {
+      "title": "Сартаванне",
+      "recommended": "Найбольш прыдатныя",
+      "downloads": "Найбольш спампоўванняў",
+      "newest": "Найнавейшыя",
+      "name": "Назва",
+      "sizeAsc": "Спачатку найменшыя",
+      "sizeDesc": "Спачатку найбуйнейшыя"
+    },
+    "search": {
+      "installedSection": "Вашы мадэлі",
+      "hfSection": "Вынікі з HuggingFace",
+      "noResults": "Мадэлі не знойдзены",
+      "noResultsHint": "Паспрабуйце іншую назву, выдаўца або задачу.",
+      "errorTitle": "Пошук не ўдаўся"
+    }
+  },
+  "completionParams": {
+    "include_thinking_in_context": "Уключаць часткі разважанняў ШІ ў кантэкст, што дасылаецца мадэлі. Адключэнне можа зэканоміць месца кантэксту. Можа паўплываць на прадукцыйнасць.",
+    "jinja": "Уключыць шаблоны Jinja для фарматавання чата. У гэтым выпадку апрацоўка шаблону чата ідзе праз Jinja для лепшай сумяшчальнасці з сучаснымі мадэлямі.",
+    "grammar": "Ужываць пэўныя правілы граматыкі, каб згенераваны тэкст трымаўся заданай структуры або фармату",
+    "stop": "Задайце фразы, якія будуць спыняць генерацыю тэксту",
+    "n_predict": "Максімальная колькасць токенаў для генерацыі. Выберыце «Без абмежавання» або «Уласнае», каб задаць значэнне.",
+    "n_probs": "Паказваць імавернасці альтэрнатыўных слоў.",
+    "top_k": "Кіраваць крэатыўнасцю, абмяжоўваючы выбар слоў K найбольш імавернымі варыянтамі. Меншыя значэнні робяць адказы больш сканцэнтраванымі",
+    "top_p": "Баланс крэатыўнасці і звязнасці. Большыя значэнні (каля 1.0) даюць больш крэатыўныя, але магчыма менш сканцэнтраваныя адказы",
+    "min_p": "Мінімальная імавернасць, пры якой токен улічваецца. Адфільтроўвае малаверагодныя словы, змяншаючы безглуздыя адказы па-за кантэкстам",
+    "temperature": "Кіраваць суадносінамі крэатыўнасці і прадказальнасці. Большыя значэнні робяць адказы больш крэатыўнымі, але менш сканцэнтраванымі",
+    "penalty_last_n": "Наколькі далёка ўглыб правяраць паўторы. Большыя значэнні дапамагаюць пазбегнуць доўгатэрміновых паўтораў",
+    "penalty_repeat": "Змяншае паўторы слоў. Большыя значэнні робяць мову адказаў больш разнастайнай",
+    "penalty_freq": "Штрафуе залішне ўжываныя словы. Большыя значэнні стымулююць шырэйшы слоўнікавы запас",
+    "penalty_present": "Змяншае паўторы тэм і ідэй. Большыя значэнні стымулююць больш разнастайны кантэнт",
+    "mirostat": "Уключыць пашыраны кантроль крэатыўнасці адказаў. Усталюйце 1 або 2 (плаўней) для разумнай падстройкі выпадковасці і звязнасці ў рэжыме рэальнага часу.",
+    "mirostat_tau": "Задае мэтавы ўзровень крэатыўнасці Mirostat. Большыя значэнні даюць больш разнастайныя і багатыя адказы, меншыя — больш сканцэнтраваныя вынікі.",
+    "mirostat_eta": "Як хутка Mirostat рэгулюе крэатыўнасць. Большыя значэнні — хутчэйшая падстройка",
+    "dry_multiplier": "Сіла функцыі DRY (Don't Repeat Yourself). Большыя значэнні мацней перашкаджаюць паўторам",
+    "dry_base": "Базавы штраф за паўторы ў рэжыме DRY. Большыя значэнні дзейнічаюць агрэсіўней",
+    "dry_allowed_length": "Колькі слоў можа паўтарацца, пакуль не ўключыцца штраф DRY",
+    "dry_penalty_last_n": "Наколькі далёка ўглыб шукаць паўторы ў рэжыме DRY",
+    "dry_sequence_breakers": "Сімвалы, якія скідваюць выяўленне паўтораў у рэжыме DRY",
+    "ignore_eos": "Працягваць генерацыю, нават калі мадэль хоча спыніцца. Карысна для падоўжаных адказаў",
+    "logit_bias": "Уплывае на тое, наколькі імаверна з'яўленне пэўных слоў у адказе",
+    "seed": "Задае зерне генератара выпадковых лікаў. Карысна для паўтаральных вынікаў",
+    "xtc_probability": "Задае імавернасць выдалення токенаў праз сэмплер XTC. 0 — адключана",
+    "xtc_threshold": "Задае мінімальны парог імавернасці для выдалення токенаў праз сэмплер XTC (> 0.5 адключае XTC)",
+    "typical_p": "Уключае лакальна тыповую сэмпляцыю з параметрам p. 1.0 — адключана"
+  },
+  "about": {
+    "screenTitle": "Звесткі пра праграму",
+    "description": "Праграма, якая прыносіць моўныя мадэлі проста на ваш тэлефон. Працуе на плячах llama.cpp і llama.rn.",
+    "supportProject": "Падтрымаць праект",
+    "supportProjectDescription": "Калі вам падабаецца DRS AI, падтрымайце праект:",
+    "githubButton": "Зорачка на GitHub",
+    "orBy": "або",
+    "versionCopiedTitle": "Версію скапіявана",
+    "versionCopiedDescription": "Звесткі пра версію скапіяваны ў буфер абмену",
+    "tour": "Агляд",
+    "tourDescription": "Праглядзіце прывітальныя экраны яшчэ раз, каб убачыць, што ўмее DRS AI.",
+    "showIntroButton": "Паказаць уводзіны зноў",
+    "privacyPolicy": "Палітыка прыватнасці",
+    "termsOfService": "Умовы выкарыстання",
+    "versionFormat": "Версія {{version}} ({{build}})",
+    "successTitle": "Поспех"
+  },
+  "feedback": {
+    "title": "Даслаць водгук",
+    "description": "Ваш галас мае значэнне! Раскажыце, як DRS AI вам дапамагае і што мы можам палепшыць.",
+    "shareThoughtsButton": "Падзяліцца думкамі",
+    "useCase": {
+      "label": "Для чаго вы выкарыстоўваеце DRS AI?",
+      "placeholder": "напр., рэфераванне, ролевыя гульні і г.д."
+    },
+    "featureRequests": {
+      "label": "Прапанова функцыі",
+      "placeholder": "Якія функцыі вы хацелі б убачыць?"
+    },
+    "generalFeedback": {
+      "label": "Агульны водгук",
+      "placeholder": "Падзяліцеся любымі іншымі думкамі."
+    },
+    "usageFrequency": {
+      "label": "Як часта вы карыстаецеся DRS AI? (неабавязкова)",
+      "options": {
+        "daily": "Штодня",
+        "weekly": "Штотыдзень",
+        "monthly": "Штомесяц",
+        "rarely": "Рэдка"
+      }
+    },
+    "email": {
+      "label": "Email для сувязі (неабавязкова)",
+      "placeholder": "Ваш адрас email"
+    },
+    "submit": "Даслаць водгук",
+    "validation": {
+      "required": "Калі ласка, напішыце хоць нейкі водгук"
+    },
+    "success": "Дзякуй за ваш водгук!",
+    "error": {
+      "general": "Памылка адпраўлення водгуку. Паспрабуйце яшчэ раз."
+    }
+  },
+  "components": {
+    "attachmentButton": {
+      "attachmentButtonAccessibilityLabel": "Даслаць медыя"
+    },
+    "bubble": {
+      "msPerToken": "{{value}}мс/токен",
+      "tokensPerSec": "{{value}} ток/с",
+      "ttft": "{{value}}мс TTFT",
+      "draftAccepted": "чарнавік: {{accepted}}/{{total}} ({{pct}}%)",
+      "interrupted": "Перарвана",
+      "truncated": "Абрэзана — хутчэй за ўсё, кантэкст поўны"
+    },
+    "exportUtils": {
+      "fileSaved": "Файл захаваны",
+      "fileSavedMessage": "Файл захаваны ў тэчку Downloads як {{filename}}",
+      "share": "Абагуліць",
+      "ok": "ОК",
+      "shareError": "Памылка абагульвання",
+      "shareErrorMessage": "Не ўдалося абагуліць файл. Паспрабуйце яшчэ раз.",
+      "saveError": "Памылка захавання ў Downloads",
+      "saveOptions": "Параметры захавання",
+      "saveOptionsMessage": "Не ўдалося захаваць напрамую ў Downloads. Абагуліць файл замест гэтага?",
+      "cancel": "Скасаваць",
+      "shareContentErrorMessage": "Не ўдалося абагуліць змесціва. Паспрабуйце яшчэ раз.",
+      "exportError": "Памылка экспартавання",
+      "exportErrorMessage": "Памылка пры экспартаванні файла. Паспрабуйце яшчэ раз.",
+      "permissionRequired": "Патрабуецца дазвол на сховішча",
+      "permissionMessage": "Патрабуецца дазвол, каб захаваць экспарт у тэчку Downloads.",
+      "permissionDenied": "Дазвол адхілены",
+      "permissionDeniedMessage": "Без дазволу на сховішча функцыя экспартавання будзе адключана.",
+      "continue": "Працягнуць"
+    },
+    "thinkingBubble": {
+      "reasoning": "Разважанне"
+    },
+    "pendingIndicator": {
+      "preparingTool": "Рыхтуем інструмент",
+      "buildingPage": "Ствараем старонку",
+      "calculating": "Разлічваем",
+      "lookingUpTime": "Правяраем час",
+      "stopping": "Спыняем…"
+    },
+    "toolMetrics": {
+      "tokens": "{{count}} токенаў",
+      "elapsed": "{{seconds}}с"
+    },
+    "chatEmptyPlaceholder": {
+      "noModelsTitle": "Няма даступных мадэляў",
+      "noModelsDescription": "Спампуйце мадэль, каб пачаць чат з DRS AI",
+      "noModelsButton": "Спампаваць мадэль",
+      "activateModelTitle": "Актывуйце мадэль, каб пачаць",
+      "activateModelDescription": "Выберыце мадэль і спампуйце яе. Пасля спампоўвання націсніце «Загрузіць» побач з мадэллю і пачынайце чат.",
+      "activateModelButton": "Выбраць мадэль",
+      "loading": "Загрузка...",
+      "gettingReadyTitle": "{{name}} рыхтуецца",
+      "gettingReadyDescription": "Павядомім, як толькі ваш асістэнт зможа чаціць. Націсніце на банер зверху, каб убачыць, як ідзе справа."
+    },
+    "chatInput": {
+      "inputPlaceholder": "Паведамленне",
+      "thinkingToggle": {
+        "enableThinking": "Уключыць рэжым разважання",
+        "disableThinking": "Выключыць рэжым разважання",
+        "thinkingEnabled": "Рэжым разважання ўключаны",
+        "thinkingDisabled": "Рэжым разважання выключаны",
+        "thinkText": "Думаць",
+        "cycleEffort": "Узровень разважання: {{level}}. Двойчы націсніце, каб змяніць узровень"
+      }
+    },
+    "contentReportSheet": {
+      "title": "Паскардзіцца на змесціва",
+      "privacyNote": "Мы не дасылаем змесціва паведамленняў і дэталі размовы. Апішыце пэўную праблему, з якой вы сутыкнуліся.",
+      "categoryLabel": "Катэгорыя скаргі",
+      "selectCategory": "Выберыце катэгорыю",
+      "categories": {
+        "hate": "Мова варожасці",
+        "sexual": "Сэксуальнае змесціва",
+        "selfHarm": "Самапашкоджанне",
+        "violence": "Гвалт",
+        "other": "Іншае"
+      },
+      "descriptionLabel": "Апісанне",
+      "descriptionPlaceholder": "Апішыце праблему з гэтым змесцівам...",
+      "includeModelInfo": "Уключыць звесткі пра мадэль",
+      "includeModelInfoDescription": "Дадаць назву і ідэнтыфікатар мадэлі, каб дапамагчы нам у разглядзе",
+      "noActiveModelNote": "Зараз няма актыўнай мадэлі",
+      "submit": "Даслаць скаргу",
+      "validation": {
+        "title": "Не хапае інфармацыі",
+        "message": "Выберыце катэгорыю і дадайце апісанне."
+      },
+      "success": {
+        "title": "Скаргу даслана",
+        "message": "Дзякуй за вашу скаргу. Мы яе разгледзім і прымем адпаведныя меры."
+      },
+      "error": {
+        "title": "Не ўдалося даслаць скаргу",
+        "message": "Не ўдалося даслаць скаргу. Паспрабуйце яшчэ раз."
+      }
+    },
+    "modelErrorReportSheet": {
+      "title": "Паведаміць пра праблему загрузкі мадэлі",
+      "privacyNote": "Дапамажыце палепшыць DRS AI, падзяліўшыся дэталямі гэтай памылкі. Ніжэй паказана, што будзе даслана — любы пункт можна адключыць.",
+      "errorMessage": "Тэкст памылкі",
+      "modelInfo": "Звесткі пра мадэль",
+      "modelName": "Назва",
+      "modelSource": "Крыніца",
+      "modelSize": "Памер",
+      "contextParams": "Параметры кантэксту",
+      "deviceInfo": "Звесткі пра прыладу",
+      "deviceModel": "Прылада",
+      "osVersion": "АС",
+      "memoryInfo": "Памяць",
+      "cpuArchitecture": "CPU",
+      "isEmulator": "Эмулятар",
+      "additionalInfoLabel": "Дадатковы кантэкст (неабавязкова)",
+      "additionalInfoPlaceholder": "Любыя дадатковыя дэталі, якія дапамогуць нам зразумець праблему...",
+      "submit": "Даслаць справаздачу",
+      "success": {
+        "title": "Справаздачу даслана",
+        "message": "Дзякуй за дапамогу ў паляпшэнні DRS AI. Ваша справаздача дапаможа нам выправіць гэту праблему."
+      },
+      "error": {
+        "title": "Не ўдалося даслаць справаздачу",
+        "message": "Не ўдалося даслаць справаздачу. Паспрабуйце пазней."
+      }
+    },
+    "chatGenerationSettingsSheet": {
+      "invalidValues": "Няправільныя значэнні",
+      "invalidNumericValuesMessage": "Павінна быць карэктным лікам",
+      "pleaseCorrect": "Выпраўце, калі ласка, наступнае:",
+      "ok": "ОК",
+      "saveChanges": "Захаваць змяненні",
+      "saveAsPreset": "Захаваць як прэсет",
+      "title_session": "Налады генерацыі чата (сесія)",
+      "title_preset": "Налады генерацыі чата (прэсет)",
+      "resetToSystemDefaults": "Скінуць да сістэмных значэнняў",
+      "resetToPreset": "Скінуць да прэсета",
+      "applytoPresetAlert": {
+        "title": "Поспех",
+        "message": "Гэтыя налады будуць ужыты да ўсіх наступных сесій"
+      },
+      "assistantSettings": "Налады асістэнта",
+      "settingsSource": "Крыніца налад"
+    },
+    "assistantGenerationSettingsSheet": {
+      "title": "Налады генерацыі — {{assistantName}}",
+      "invalidValues": "Няправільныя значэнні",
+      "invalidNumericValuesMessage": "Павінна быць карэктным лікам",
+      "pleaseCorrect": "Выпраўце, калі ласка, наступнае:",
+      "ok": "ОК",
+      "error": "Памылка",
+      "failedToSave": "Не ўдалося захаваць налады асістэнта",
+      "resetToGlobal": "Скінуць да глабальных значэнняў",
+      "resetToSystem": "Скінуць да сістэмных значэнняў",
+      "clearAssistantSettings": "Ачысціць налады асістэнта",
+      "customSettingsFor": "Уласныя налады для {{assistantName}}",
+      "inheritedSettingsFor": "Спадкаваныя налады для {{assistantName}}"
+    },
+    "chatHeaderTitle": {
+      "defaultTitle": "Чат"
+    },
+    "fileMessage": {
+      "fileButtonAccessibilityLabel": "Файл"
+    },
+    "chatAssistantModelPickerSheet": {
+      "modelsTab": "Мадэлі",
+      "assistantsTab": "Асістэнты",
+      "noAssistant": "Без асістэнта",
+      "disableAssistant": "Адключыць актыўнага асістэнта",
+      "noDescription": "Без апісання",
+      "assistantType": "Асістэнт",
+      "roleplayType": "Ролевая гульня",
+      "videoType": "Відэа",
+      "confirmationTitle": "Пацвярджэнне",
+      "modelSwitchMessage": "Гэты асістэнт мае іншую мадэль па змаўчанні ({{modelName}}). Пераключыцца на прадвызначаную мадэль асістэнта?",
+      "keepButton": "Пакінуць",
+      "switchButton": "Пераключыць"
+    },
+    "downloadErrorDialog": {
+      "downloadFailedTitle": "Не ўдалося спампаваць",
+      "downloadFailedMessage": "Не ўдалося спампаваць мадэль: {{message}}",
+      "unauthorizedTitle": "Памылка аўтэнтыфікацыі",
+      "unauthorizedMessage": "Ваш токен Hugging Face, здаецца, недзейсны або састарэў. Абнавіце токен у наладах.",
+      "forbiddenTitle": "Доступ забаронены",
+      "forbiddenMessage": "У вас няма правоў доступу да гэтай мадэлі. Праверце, што:",
+      "forbiddenSteps": [
+        "ваш токен мае дазвол \"read\"",
+        "вы запрасілі і атрымалі доступ да гэтай мадэлі",
+        "уладальнік мадэлі ўхваліў ваш запыт на доступ"
+      ],
+      "getTokenTitle": "Атрымаць токен Hugging Face",
+      "getTokenMessage": "Для спампоўвання гэтай мадэлі патрабуецца токен Hugging Face.",
+      "getTokenSteps": [
+        "Перайдзіце на huggingface.co і ўвайдзіце",
+        "Перайдзіце ў Settings > Access Tokens",
+        "Стварыце новы токен з доступам \"read\"",
+        "Скапіюйце токен і ўстаўце яго ў поле токена"
+      ],
+      "tokenDisabledTitle": "Токен адключаны",
+      "tokenDisabledMessage": "Токен Hugging Face зададзены, але зараз адключаны. Для спампоўвання гэтай мадэлі патрабуецца токен. Уключыце токен, каб працягнуць.",
+      "enableAndRetry": "Уключыць і паўтарыць",
+      "goToSettings": "Перайсці ў Налады",
+      "tryAgain": "Паспрабаваць зноў",
+      "viewOnHuggingFace": "Мадэль на HF ↗"
+    },
+    "headerRight": {
+      "deleteChatTitle": "Выдаліць чат",
+      "deleteChatMessage": "Вы ўпэўнены, што хочаце выдаліць гэты чат?",
+      "generationSettings": "Налады генерацыі",
+      "model": "Мадэль",
+      "duplicateChatHistory": "Дубляваць гісторыю чата",
+      "makeChatTemporary": "Зрабіць чат часовым",
+      "export": "Экспарт/Імпарт",
+      "exportCurrentSession": "Экспартаваць бягучую сесію",
+      "exportCurrentSessionMarkdown": "Экспартаваць як Markdown",
+      "exportAllSessions": "Экспартаваць усе сесіі",
+      "exportChatSession": "Экспартаваць сесію чата",
+      "importSessions": "Імпартаваць сесіі",
+      "exportErrorTitle": "Памылка экспартавання",
+      "exportCurrentSessionError": "Не ўдалося экспартаваць бягучую сесію.",
+      "exportAllError": "Не ўдалося экспартаваць усе сесіі.",
+      "importSuccessTitle": "Імпарт удаўся",
+      "importErrorTitle": "Памылка імпарту"
+    },
+    "hfTokenSheet": {
+      "title": "Токен Hugging Face",
+      "description": "Патрабуецца для доступу да мадэляў з абмежаваным доступам",
+      "inputLabel": "Асабісты токен доступу",
+      "inputPlaceholder": "Устаўце токен тут",
+      "save": "Захаваць токен",
+      "saved": "Токен паспяхова захаваны",
+      "reset": "Скінуць токен",
+      "resetSuccess": "Токен паспяхова выдалены",
+      "instructions": "Як атрымаць токен:",
+      "instructionsSteps": [
+        "Перайдзіце на huggingface.co і ўвайдзіце",
+        "Перайдзіце ў Settings > Access Tokens",
+        "Стварыце новы токен з доступам \"read\"",
+        "Скапіюйце токен і ўстаўце яго ніжэй"
+      ],
+      "getTokenLink": "Атрымаць токен на huggingface.co ↗",
+      "error": {
+        "saving": "Памылка захавання токена",
+        "missing": "Патрабуецца токен Hugging Face",
+        "invalid": "Нядзейсны або састарэлы токен",
+        "gatedModelAccess": "У доступе да гэтай мадэлі з абмежаваным доступам адмоўлена"
+      },
+      "gatedModelIndicator": "Патрабуецца токен",
+      "tokenRequired": "Гэтай мадэлі патрабуецца токен доступу Hugging Face",
+      "searchErrorHint": "Ваш токен API Hugging Face недзейсны або састарэў. Каб працягнуць пошук, выдаліце токен або адключыце аўтэнтыфікацыю токенам у Наладах.",
+      "disableAndRetry": "Адключыць токен і паўтарыць"
+    },
+    "modelSettingsSheet": {
+      "modelSettings": "Налады мадэлі",
+      "saveChanges": "Захаваць змяненні",
+      "reasoningSection": "Разважанне",
+      "isReasoningModel": "Мадэль з разважаннем",
+      "isReasoningModelHelp": "Паказваць пераключальнік разважання для гэтай мадэлі, нават калі ён не вызначаны аўтаматычна.",
+      "supportsEffort": "Падтрымлівае ўзроўні разважання",
+      "effortValues": "Узроўні разважання, якія падтрымлівае мадэль",
+      "effortLevels": {
+        "minimal": "Мінімальны",
+        "low": "Нізкі",
+        "medium": "Сярэдні",
+        "high": "Высокі",
+        "xhigh": "Вельмі высокі",
+        "max": "Максімальны"
+      }
     },
     "modelsHeaderRight": {
       "menuTitleHf": "Мадэлі з Hugging Face",
@@ -456,11 +1029,837 @@
       "menuTitleGrouped": "Групаваць паводле тыпаў мадэляў",
       "menuTitleReset": "Скінуць спіс мадэляў"
     },
-    "details": {
-      "title": "Даступныя файлы GGUF"
+    "modelsResetDialog": {
+      "proceedWithReset": "Працягнуць скід",
+      "confirmReset": "Пацвердзіць скід"
+    },
+    "assistantSheet": {
+      "title": {
+        "edit": "Рэдагаваць асістэнта",
+        "newAssistant": "Новы асістэнт",
+        "newVideoAssistant": "Новы відэаасістэнт"
+      },
+      "description": "Апісанне",
+      "descriptionPlaceholder": "Дайце кароткае апісанне свайго асістэнта",
+      "parameters": "Параметры",
+      "generationSettings": "Налады генерацыі",
+      "configureGenerationSettings": "Наладзіць параметры генерацыі",
+      "validation": {
+        "nameRequired": "Патрабуецца назва",
+        "generatingPromptRequired": "Пры выкарыстанні промпта ШІ патрабуецца промпт генерацыі",
+        "promptModelRequired": "Пры выкарыстанні промпта ШІ патрабуецца мадэль генерацыі промпта"
+      },
+      "talents": "Таленты",
+      "talentNames": {
+        "render_html": "Перадпрагляд HTML",
+        "calculate": "Матэматычныя выразы",
+        "datetime": "Дата і час",
+        "web_search": "Пошук у інтэрнэце",
+        "read_url": "Чытанне вэб-старонкі"
+      },
+      "talentDescriptions": {
+        "render_html": "Паказваць HTML-дакументы непасрэдна ў чаце",
+        "calculate": "Вылічваць матэматычныя выразы",
+        "datetime": "Атрымліваць бягучую дату і час",
+        "web_search": "Шукаць у інтэрнэце актуальную інфармацыю (патрабуецца ключ API у Наладах)",
+        "read_url": "Чытаць поўнае змесціва вэб-старонкі (патрабуецца ключ API у Наладах)"
+      },
+      "greeting": {
+        "sectionLabel": "Вітанне",
+        "textLabel": "Вітальнае паведамленне",
+        "textPlaceholder": "Што гэты асістэнт павінен сказаць у пустым чаце?",
+        "suggestedPromptsLabel": "Прапанаваныя промпты",
+        "addPromptButton": "Дадаць промпт",
+        "promptPlaceholder": "Кароткі промпт для чыпу",
+        "removePromptLabel": "Выдаліць промпт"
+      }
+    },
+    "assistantPersonaSheet": {
+      "title": {
+        "create": "Стварыць асістэнта",
+        "edit": "Рэдагаваць асістэнта"
+      },
+      "assistantName": "Імя асістэнта",
+      "assistantNamePlaceholder": "Імя",
+      "defaultModel": "Мадэль па змаўчанні",
+      "defaultModelPlaceholder": "Выбраць мадэль",
+      "validation": {
+        "generatingPromptRequired": "Патрабуецца промпт генерацыі",
+        "promptModelRequired": "Патрабуецца мадэль генерацыі промпта"
+      },
+      "create": "Стварыць"
+    },
+    "modelNotAvailable": {
+      "noModelsDownloaded": "У вас яшчэ няма спампаваных мадэляў. Спампуйце мадэль спачатку.",
+      "downloadAModel": "Спампаваць мадэль",
+      "defaultModelNotDownloaded": "Гэты асістэнт рэкамендуе пэўную мадэль, якую трэба спампаваць, або выберыце іншую мадэль.",
+      "modelNotDownloadedShort": "Мадэль не спампавана",
+      "recommendedModel": "Рэкамендаваная мадэль",
+      "cancelDownload": "Скасаваць спампоўванне",
+      "download": "Спампаваць"
+    },
+    "roleplayPersonaSheet": {
+      "title": {
+        "create": "Стварыць ролевага асістэнта",
+        "edit": "Рэдагаваць ролевага асістэнта"
+      },
+      "assistantName": "Імя асістэнта",
+      "assistantNamePlaceholder": "Імя",
+      "defaultModel": "Мадэль па змаўчанні",
+      "defaultModelPlaceholder": "Выбраць мадэль",
+      "descriptionSection": "Апісанне",
+      "world": "Свет",
+      "worldPlaceholder": "Фэнтэзі",
+      "location": "Месца",
+      "locationPlaceholder": "Чарадзейны лес",
+      "locationSublabel": "Дзе адбываецца гісторыя?",
+      "aiRole": "Роля ШІ",
+      "aiRolePlaceholder": "Eldara, змайстраватая лясная фея",
+      "aiRoleSublabel": "Задайце ролю для персанажа",
+      "userRole": "Роля карыстальніка",
+      "userRolePlaceholder": "Сэр Elandor, адважны рыцар",
+      "userRoleSublabel": "Хто вы?",
+      "situation": "Сітуацыя",
+      "situationPlaceholder": "Задача выратавання, разгадванне таямніцы",
+      "toneStyle": "Тон/Стыль",
+      "toneStylePlaceholder": "Сур'ёзны",
+      "validation": {
+        "promptModelRequired": "Патрабуецца мадэль генерацыі промпта"
+      },
+      "create": "Стварыць"
+    },
+    "lookiePersonaSheet": {
+      "title": {
+        "create": "Стварыць асістэнта Lookie",
+        "edit": "Рэдагаваць асістэнта Lookie"
+      },
+      "assistantName": "Імя асістэнта",
+      "assistantNamePlaceholder": "Увядзіце імя для вашага асістэнта Lookie",
+      "visionModel": "Мадэль бачання",
+      "visionModelPlaceholder": "Выбраць мадэль бачання",
+      "requiredModelsSection": "Патрэбныя мадэлі",
+      "captureInterval": "Інтэрвал захопу",
+      "captureIntervalHelper": "Час паміж аўтаматычнымі захопамі ў мілісекундах",
+      "create": "Стварыць"
+    },
+    "sendButton": {
+      "accessibilityLabel": "Даслаць"
+    },
+    "systemPromptSection": {
+      "sectionTitle": "Сістэмны промпт",
+      "useAIPrompt": "Ствараць сістэмны промпт з дапамогай ШІ",
+      "modelSelector": {
+        "label": "Выберыце мадэль для генерацыі*",
+        "sublabel": "Рэкамендуецца: Llama 3.2 3B або Qwen3 4B Instruct 2507.",
+        "placeholder": "Выбраць мадэль"
+      },
+      "generatingPrompt": {
+        "label": "Мэта і кантэкст",
+        "placeholder": "Апішыце ролю, мэту або сцэнарый для гэтага асістэнта..."
+      },
+      "buttons": {
+        "loadingModel": "Загрузка мадэлі...",
+        "stopGenerating": "Спыніць генерацыю",
+        "generatePrompt": "Стварыць сістэмны промпт",
+        "resetParameters": "Скінуць параметры",
+        "resetTemplate": "Скінуць шаблон"
+      },
+      "systemPrompt": {
+        "label": "Сістэмны промпт",
+        "sublabel": "Спакойна рэдагуйце і эксперыментуйце, каб знайсці аптымальны промпт для вашага сцэнарыя",
+        "placeholder": "Вы карысны памочнік"
+      },
+      "warnings": {
+        "promptChanged": "Сістэмны промпт быў зменены ўручную"
+      }
+    },
+    "sidebarContent": {
+      "menuItems": {
+        "chat": "Чат",
+        "models": "Мадэлі",
+        "assistants": "Асістэнты",
+        "benchmark": "Параўнаўчы тэст",
+        "settings": "Налады",
+        "appInfo": "Звесткі пра праграму",
+        "testCompletion": "Завяршэнне тэста"
+      },
+      "deleteChatTitle": "Выдаліць чат",
+      "deleteChatMessage": "Вы ўпэўнены, што хочаце выдаліць гэты чат?",
+      "select": "Выбраць",
+      "nSelected": "Выбрана: {{count}}",
+      "selectAll": "Выбраць усе",
+      "deselectAll": "Зняць выбар з усіх",
+      "exportCount": "Экспарт ({{count}})",
+      "deleteCount": "Выдаліць ({{count}})",
+      "bulkDeleteTitle": "Выдаліць сесіі чата",
+      "bulkDeleteMessage": "Выдаліць сесій чата: {{count}}? Гэта дзеянне нельга адмяніць.",
+      "bulkDeleteError": "Не ўдалося выдаліць сесіі чата. Паспрабуйце яшчэ раз.",
+      "exportError": "Не ўдалося экспартаваць сесію чата. Паспрабуйце яшчэ раз.",
+      "bulkExportError": "Не ўдалося экспартаваць сесіі чата. Паспрабуйце яшчэ раз.",
+      "pin": "Замацаваць",
+      "unpin": "Адмацаваць",
+      "dateGroups": {
+        "pinned": "Замацаваныя",
+        "today": "Сёння",
+        "yesterday": "Учора",
+        "thisWeek": "На гэтым тыдні",
+        "lastWeek": "На мінулым тыдні",
+        "twoWeeksAgo": "2 тыдні таму",
+        "threeWeeksAgo": "3 тыдні таму",
+        "fourWeeksAgo": "4 тыдні таму",
+        "lastMonth": "У мінулым месяцы",
+        "older": "Старэйшыя"
+      },
+      "emptySessionsTitle": "Яшчэ няма чатаў",
+      "emptySessionsHint": "Пачніце новую размову з экрана чата"
+    },
+    "usageStats": {
+      "tooltip": {
+        "title": "Выкарыстанне памяці",
+        "used": "Занята: ",
+        "total": "Усяго: ",
+        "usage": "Выкарыстанне: "
+      },
+      "byteSizes": [
+        "Байт",
+        "КБ",
+        "МБ",
+        "ГБ"
+      ]
+    },
+    "chatView": {
+      "menuItems": {
+        "copy": "Скапіяваць",
+        "regenerate": "Генераваць нанова",
+        "regenerateWith": "Генераваць нанова праз",
+        "edit": "Рэдагаваць",
+        "reportContent": "Паскардзіцца на змесціва"
+      }
+    },
+    "assistantHeaderRight": {
+      "exportAllAssistants": "Экспартаваць усе асістэнты",
+      "importAssistants": "Імпартаваць асістэнтаў",
+      "importSuccess": "Імпартавана асістэнтаў: {{count}}.",
+      "importError": "Не ўдалося імпартаваць асістэнтаў. Праверце фармат файла.",
+      "exportErrorTitle": "Памылка экспартавання",
+      "exportAllError": "Не ўдалося экспартаваць усе асістэнты.",
+      "importSuccessTitle": "Імпарт удаўся",
+      "importErrorTitle": "Памылка імпарту"
+    },
+    "brandHeader": {
+      "tagline": "Ваш прыватны ШІ на прыладзе"
+    },
+    "authSheet": {
+      "signInTitle": "Уваход",
+      "signUpTitle": "Стварыць уліковы запіс",
+      "fullNameLabel": "Поўнае імя",
+      "emailLabel": "Email",
+      "passwordLabel": "Пароль",
+      "signInButton": "Увайсці",
+      "signUpButton": "Стварыць уліковы запіс",
+      "forgotPassword": "Забылі пароль?",
+      "or": "або",
+      "continueWithGoogle": "Працягнуць з Google",
+      "haveAccount": "Ужо маеце ўліковы запіс? ",
+      "noAccount": "Не маеце ўліковага запісу? ",
+      "signUpLink": "Зарэгістравацца",
+      "signInLink": "Увайсці",
+      "signingIn": "Уваход...",
+      "fillRequiredFields": "Запоўніце ўсе абавязковыя палі.",
+      "enterFullName": "Увядзіце поўнае імя.",
+      "enterEmailFirst": "Спачатку ўвядзіце адрас email.",
+      "accountCreatedTitle": "Уліковы запіс створаны",
+      "accountCreatedMessage": "Праверце email, каб пацвердзіць уліковы запіс.",
+      "welcomeBackTitle": "З вяртаннем!",
+      "welcomeBackMessage": "Вы паспяхова ўвайшлі.",
+      "googleErrorTitle": "Памылка ўваходу праз Google",
+      "passwordResetTitle": "Скід пароля",
+      "passwordResetMessage": "Праверце email з інструкцыямі па скідзе пароля.",
+      "authErrorTitle": "Памылка аўтэнтыфікацыі"
+    },
+    "squareAssistantCard": {
+      "videoAssistant": "Відэа ШІ-асістэнт",
+      "advancedAssistant": "Пашыраны ШІ-асістэнт",
+      "assistant": "ШІ-асістэнт",
+      "byCreator": "ад {{creator}}",
+      "downloadAssistantTitle": "Спампаваць асістэнта",
+      "downloadAssistantMessage": "Спампаваць \"{{assistantName}}\", каб пачаць чат?",
+      "download": "Спампаваць",
+      "downloadErrorTitle": "Памылка спампоўвання",
+      "downloadErrorMessage": "Не ўдалося спампаваць асістэнта. Паспрабуйце яшчэ раз.",
+      "startChatErrorMessage": "Не ўдалося пачаць чат. Паспрабуйце яшчэ раз.",
+      "switchModelTitle": "Пераключыць мадэль?",
+      "switchModelMessage": "Пераключыцца на \"{{modelName}}\" для гэтага асістэнта?",
+      "keepCurrent": "Пакінуць бягучую",
+      "switch": "Пераключыць",
+      "shareErrorTitle": "Памылка абагульвання",
+      "shareErrorMessage": "Не ўдалося абагуліць асістэнта. Паспрабуйце яшчэ раз."
     }
   },
-  "storage": {
-    "checkFailed": "Не ўдалося праверыць сховішча"
+  "assistantsScreen": {
+    "sectionTitles": {
+      "myAssistantsLocal": "Мае асістэнты (лакальныя)",
+      "myLibrary": "Мая бібліятэка (hub.drsai.app)",
+      "discoverAssistants": "Агляд асістэнтаў (hub.drsai.app)"
+    },
+    "systemPrompt": "Сістэмны промпт",
+    "videoAnalysis": "Аналіз відэа",
+    "videoAnalysisDescription": "Гэта відэаасістэнт на аснове ШІ, які дае каментары ў рэжыме рэальнага часу да відэапатоку з камеры вашай прылады.",
+    "captureInterval": "Інтэрвал захопу",
+    "captureIntervalUnit": "мс",
+    "world": "Свет",
+    "toneStyle": "Тон/Стыль",
+    "aiRole": "Роля ШІ",
+    "userRole": "Мая роля",
+    "prompt": "Промпт",
+    "assistant": "Асістэнт",
+    "roleplay": "Ролевая гульня",
+    "video": "Відэа",
+    "deleteAssistant": "Выдаліць асістэнта",
+    "deleteAssistantMessage": "Вы ўпэўнены, што хочаце выдаліць гэтага асістэнта?",
+    "missingModel": "Мадэль адсутнічае",
+    "missingModelMessage": "Мадэль па змаўчанні \"{{modelName}}\" для гэтага асістэнта недаступная. Спампуйце яе ў рэдактары або выберыце іншую мадэль.",
+    "search": "Пошук",
+    "profile": "Профіль",
+    "signIn": "Увайсці",
+    "addAssistant": "Дадаць асістэнта",
+    "signInToAccessLibrary": "Увайдзіце, каб атрымаць доступ да бібліятэкі з hub.drsai.app",
+    "signOut": "Выйсці",
+    "signOutConfirmation": "Вы ўпэўнены, што хочаце выйсці?",
+    "signOutError": "Не ўдалося выйсці. Паспрабуйце яшчэ раз.",
+    "account": "Уліковы запіс",
+    "signInToDrshub": "Увайсці ў Drshub",
+    "signInDescription": "Доступ да вашай бібліятэкі, стварэнне прыватных асістэнтаў і сінхранізацыя паміж прыладамі",
+    "searchAllAssistants": "Пошук па ўсіх асістэнтах...",
+    "deleteAssistantConfirmation": "Вы ўпэўнены, што хочаце выдаліць \"{{assistantName}}\"?",
+    "filters": {
+      "all": "Усе",
+      "myAssistants": "Мае асістэнты",
+      "local": "Лакальныя",
+      "video": "Відэа",
+      "free": "Бясплатныя",
+      "premium": "Premium"
+    },
+    "labels": {
+      "free": "Бясплатна",
+      "premium": "Premium",
+      "private": "Прыватны",
+      "download": "Спампаваць",
+      "getFree": "Атрымаць бясплатна"
+    },
+    "premiumAssistantDescription": "Premium-асістэнт з супольнасці hub.drsai.app",
+    "premiumInfoText": "Наведайце hub.drsai.app, каб знайсці больш асістэнтаў",
+    "sortOptions": {
+      "newest": "Найнавейшыя",
+      "oldest": "Найстарэйшыя",
+      "rating": "Найвышэйшая ацэнка",
+      "popular": "Найпапулярнейшыя"
+    },
+    "assistantDetailSheet": {
+      "by": "ад",
+      "unknown": "Невядома",
+      "rating": "Ацэнка",
+      "reviews": "Водгукі",
+      "created": "Створана",
+      "description": "Апісанне",
+      "noDescriptionAvailable": "Апісанне адсутнічае.",
+      "categories": "Катэгорыі",
+      "tags": "Тэгі",
+      "systemPrompt": "Сістэмны промпт",
+      "downloaded": "Спампавана",
+      "success": "Поспех",
+      "assistantAddedToCollection": "Асістэнт дададзены да вашай калекцыі!",
+      "error": "Памылка",
+      "failedToLoadDetails": "Не ўдалося загрузіць звесткі пра асістэнта",
+      "failedToDownload": "Не ўдалося спампаваць асістэнта",
+      "premiumAssistantMessage": "Гэта Premium-асістэнт.\n• Калі вы ўжо разблакіравалі яго праз уліковы запіс Drshub, проста ўвайдзіце, каб убачыць поўныя звесткі.\n• Яшчэ не разблакіравалі? Наведайце hub.drsai.app, каб даведацца больш.",
+      "notAvailable": "н/д",
+      "buyOnDrshub": "Купіць на Drshub",
+      "finalizingPurchase": "Афармляем куплю…",
+      "processingPurchase": "Апрацоўка — хутка будзе разблакіравана.",
+      "checkoutSessionExpired": "Тэрмін дзеяння вашай сесіі скончыўся. Увайдзіце зноў, каб працягнуць.",
+      "signInAgain": "Увайсці зноў",
+      "assistantNotAvailable": "Гэты асістэнт зараз недаступны для куплі.",
+      "checkoutFailed": "Штосьці пайшло не так. Паспрабуйце яшчэ раз."
+    },
+    "emptyLocal": "Яшчэ няма асістэнтаў.\nСтварыце свайго першага асістэнта праз кнопку +!",
+    "emptyFiltered": "Асістэнты не знойдзены.\nПаспрабуйце змяніць фільтры або пошукавы запыт."
+  },
+  "validation": {
+    "nameRequired": "Патрабуецца назва",
+    "systemPromptRequired": "Патрабуецца сістэмны промпт",
+    "worldRequired": "Патрабуецца свет",
+    "locationRequired": "Патрабуецца месца",
+    "aiRoleRequired": "Патрабуецца роля ШІ",
+    "userRoleRequired": "Патрабуецца роля карыстальніка",
+    "situationRequired": "Патрабуецца сітуацыя",
+    "toneStyleRequired": "Патрабуецца тон/стыль"
+  },
+  "camera": {
+    "permissionTitle": "Патрабуецца дазвол на камеру",
+    "permissionMessage": "DRS AI патрабуе доступ да камеры для аналізу відарысаў",
+    "requestingPermission": "Запыт дазволу на камеру...",
+    "noDevice": "Камеру не знойдзена",
+    "errorTitle": "Памылка камеры",
+    "errorMessage": "Памылка пры здымку фотаздымка",
+    "flip": "Разгарнуць",
+    "analyzing": "Аналіз відарыса...",
+    "startCamera": "Уключыць камеру",
+    "stopCamera": "Выключыць камеру",
+    "promptPlaceholder": "Што вы хочаце даведацца пра гэты відарыс?",
+    "takePhoto": "Камера"
+  },
+  "video": {
+    "permissionTitle": "Патрабуецца дазвол на камеру",
+    "permissionMessage": "DRS AI патрабуе доступ да камеры для аналізу відэа",
+    "requestingPermission": "Запыт дазволу на камеру...",
+    "noDevice": "Камеру не знойдзена",
+    "errorTitle": "Памылка камеры",
+    "errorMessage": "Здарылася памылка з камерай",
+    "flip": "Разгарнуць",
+    "analyzing": "Аналіз відэа...",
+    "startCamera": "Уключыць камеру",
+    "stopCamera": "Выключыць камеру",
+    "promptPlaceholder": "Што вы хочаце даведацца пра гэта відэа?",
+    "captureInterval": "Інтэрвал захопу",
+    "captureIntervalUnit": "мс",
+    "liveCommentary": "Жывы каментар",
+    "emptyPlaceholder": {
+      "title": "Вітаем у Lookie",
+      "subtitle": "Прыватны аналіз відэа ў рэжыме рэальнага часу на прыладзе",
+      "experimentalNotice": "Гэта эксперыментальная функцыя. Дакладнасць залежыць ад выбранай мадэлі, хуткасць — ад характарыстык прылады, а некаторыя мадэлі могуць не спрацаваць.",
+      "howToUse": "Як карыстацца:",
+      "step1": "• Адрэдагуйце промпт (неабавязкова), каб накіраваць аналіз",
+      "step2": "• Націсніце кнопку камеры, каб пачаць жывы аналіз відэа",
+      "step3": "• Змяняйце частату здымкаў, пакуль камера актыўная",
+      "step4": "• Пераключыцеся на іншага асістэнта для звычайнага тэкставага чата"
+    },
+    "defaultPrompt": "Што вы бачыце?",
+    "multimodalTitle": "Мультымадальнасць не ўключана",
+    "multimodalMessage": "Гэтая мадэль не падтрымлівае аналіз відарысаў. Загрузіце мультымадальную мадэль.",
+    "checkSupportError": "Не ўдалося праверыць, ці падтрымлівае мадэль відарысы."
+  },
+  "screenTitles": {
+    "chat": "Чат",
+    "models": "Мадэлі",
+    "assistants": "Асістэнты (эксперыментальна)",
+    "benchmark": "Параўнаўчы тэст",
+    "settings": "Налады",
+    "appInfo": "Звесткі пра праграму",
+    "testCompletion": "Завяршэнне тэста"
+  },
+  "chat": {
+    "conversationReset": "Размову скінута!",
+    "modelNotLoaded": "Мадэль не загружана. Ініцыялізуйце мадэль.",
+    "completionFailed": "Памылка генерацыі: ",
+    "toolCallTruncated": "Выклік інструмента абарваны — мадэлі, хутчэй за ўсё, не хапіла месца. Паспрабуйце большы кантэкст або меншы запыт.",
+    "speculativeInitFailed": "На гэтай прыладзе не ўдалося запусціць спекулятыўнае дэкадаванне для гэтай мадэлі — хутчэй за ўсё, не хапае памяці для кантэксту чарнавіка. Адключыце спекулятыўнае дэкадаванне ў Налады → Пашыраныя налады і паспрабуйце зноў.",
+    "loadingModel": "Загрузка мадэлі ...",
+    "typeYourMessage": "Увядзіце паведамленне тут",
+    "load": "Загрузіць",
+    "goToModels": "Перайсці да мадэляў",
+    "readyToChat": "Гатовыя да чата? Загрузіце апошнюю выкарыстаную мадэль.",
+    "pleaseLoadModel": "Загрузіце мадэль, каб пачаць чат.",
+    "multimodalNotEnabled": "Для гэтай мадэлі не ўключана мультымадальнасць. Відарысы будуць паказаны, але не апрацаваны ШІ.",
+    "cannotSendWithoutModel": "Спачатку загрузіце мадэль",
+    "toolCompatWarning": "Гэтая мадэль можа не падтрымліваць выклікі інструментаў. Вынікі могуць быць ненадзейнымі.",
+    "softCapWarning": "Пачніце новы чат для найлепшай прадукцыйнасці.",
+    "contextWarning": "Гэтая размова доўгая і хутка можа вычарпаць месца ў кантэксце.",
+    "contextRemoteHedged": "Гэты адказ мог быць абрэзаны. Паспрабуйце даслаць зноў або скараціць запыт.",
+    "contextFull": "У размове скончылася месца. Пачніце новы чат або павялічце памер кантэксту.",
+    "contextFullRemote": "У размове скончылася месца. Пачніце новы чат.",
+    "contextFullEscalated": "Месца ўсё яшчэ скончылася. Пачніце новы чат або павялічце памер кантэксту, каб працягнуць.",
+    "contextFullHeavyTalent": "У размове скончылася месца — {{talent}} звычайна патрабуе больш. Пачніце новы чат або павялічце памер кантэксту.",
+    "contextBannerDismiss": "Адхіліць",
+    "contextNewChat": "Новы чат",
+    "contextIncrease": "Павялічыць кантэкст",
+    "contextMoreRoom": "Больш месца",
+    "increaseContextTitle": "Дайце гэтаму чату больш месца",
+    "increaseContextBody": "Месца — гэта працоўная памяць мадэлі: колькі з гэтага чата яна можа ўтрымліваць у галаве адначасова. Больш месца — даўжэйшыя чаты да таго, як адказы пачнуць абразацца.",
+    "increaseContextTokensUnit": "токенаў",
+    "increaseContextWordsRam": "~{{words}} слоў · ≈{{ram}} RAM",
+    "increaseContextFitsChip": "Падыходзіць",
+    "increaseContextTightChip": "Упритык",
+    "increaseContextWontFitChip": "Не ўмясціцца",
+    "increaseContextFitsStatus": "Камфортна для гэтай прылады.",
+    "increaseContextFitsUnconstrainedStatus": "RAM хапае — абмежавана толькі мадэллю.",
+    "increaseContextTightStatus": "Пасля ~{{tokens}} памяць гэтай прылады можа на мяже і запаволіцца. Але спрабаваць можна.",
+    "increaseContextWontFitStatus": "~{{tokens}}, хутчэй за ўсё, не ўмясціцца ў памяць гэтай прылады. Выберыце меншы памер.",
+    "increaseContextModelMax": "{{tokens}} · максімум мадэлі",
+    "increaseContextHedge": "Перазагрузка зойме некалькі секунд. У вашым чаце нічога не страціцца.",
+    "increaseContextAdvanced": "Пашыраныя",
+    "increaseContextAdvancedBody": "Памер кантэксту для гэтага чата: {{from}} → {{to}} токенаў (максімум мадэлі {{max}}). Ліміт прылады — ацэнка; ён расце, калі большыя кантэксты паспяхова загружаюцца.",
+    "increaseContextSliderA11yLabel": "Памер кантэксту",
+    "increaseContextSliderA11yValue": "Токенаў: {{tokens}}",
+    "increaseContextConfirmSize": "Усталяваць {{size}}",
+    "increaseContextReloadingShort": "Ідзе перазагрузка…",
+    "increaseContextNoFitBody": "Большы кантэкст для гэтай мадэлі на гэтай прыладзе не ўмясціцца. Пачніце новы чат, каб працягнуць.",
+    "increaseContextCancel": "Не зараз",
+    "increaseContextReloading": "Перазагрузка мадэлі з большым кантэкстам…",
+    "increaseContextSuccess": "Кантэкст павялічаны да {{target}} токенаў.",
+    "increaseContextFailure": "Не ўдалося павялічыць памер кантэксту. Папярэдняе значэнне адноўлена.",
+    "assistantLoadHint": "Гэтаму асістэнту звычайна трэба больш месца, чым дазваляе бягучы памер кантэксту.",
+    "generatingPreview": "Стварэнне перадпрагляду… ({{tokens}} токенаў)",
+    "generatingPreviewPending": "Стварэнне перадпрагляду…",
+    "toolUsedChip": "выкарыстаў {{name}}",
+    "toolErrorBlock": "{{name}}: памылка",
+    "webSearch": {
+      "searched": "Пошук: {{query}}",
+      "noResults": "Няма рэзультатаў",
+      "noResultsFor": "Няма вынікаў для {{query}}",
+      "resultsCount": "Вынікаў: {{count}}",
+      "resultsCountOne": "1 рэзультат",
+      "searchResultsTitle": "Рэзультаты пошуку",
+      "showResultsAccessibilityLabel": "Паказаць вынікі пошуку ў сеціве для {{query}}",
+      "openLinkError": "Не ўдалося адкрыць гэтую спасылку."
+    }
+  },
+  "htmlPreview": {
+    "defaultTitle": "Перадпрагляд",
+    "showPreview": "Паказаць візуалізаваны перадпрагляд",
+    "showCode": "Паказаць код HTML",
+    "copyHtml": "Скапіяваць HTML",
+    "closePreview": "Закрыць перадпрагляд",
+    "openFullscreen": "Адкрыць на ўвесь экран: {{title}}"
+  },
+  "benchmark": {
+    "title": "Параўнаўчы тэст",
+    "modelSelector": {
+      "prompt": "Выбраць мадэль",
+      "noModels": "Няма спампаваных мадэляў"
+    },
+    "buttons": {
+      "advancedSettings": "Пашыраныя налады",
+      "startTest": "Пачаць тэст",
+      "runningTest": "Ідзе правядзенне тэста…",
+      "clearAll": "Ачысціць усё",
+      "done": "Гатова",
+      "cancel": "Скасаваць",
+      "delete": "Выдаліць",
+      "share": "Абагуліць",
+      "sharing": "Ідзе абагульванне…",
+      "viewRawData": "Паказаць неапрацаваныя даныя",
+      "hideRawData": "Схаваць неапрацаваныя даныя"
+    },
+    "messages": {
+      "pleaseSelectModel": "Спачатку выберыце і ініцыялізуйце мадэль",
+      "testWarning": "Заўвага: тэст для большых мадэляў можа ісці да 2-5 хвілін і не можа быць перарваны пасля запуску.",
+      "keepScreenOpen": "Не закрывайце гэты экран.",
+      "initializingModel": "Ініцыялізацыя мадэлі...",
+      "modelMaxValue": "(макс: {{maxValue}})"
+    },
+    "dialogs": {
+      "advancedSettings": {
+        "title": "Пашыраныя налады",
+        "testProfile": "Профіль тэсту",
+        "customParameters": "Уласныя параметры",
+        "description": "Тонкая падстройка параметраў тэсту пад пэўныя сцэнарыі праверкі."
+      },
+      "deleteResult": {
+        "title": "Выдаліць вынік",
+        "message": "Вы ўпэўнены, што хочаце выдаліць гэты вынік тэсту?"
+      },
+      "clearAllResults": {
+        "title": "Ачысціць усе вынікі",
+        "message": "Вы ўпэўнены, што хочаце выдаліць усе вынікі тэсту?"
+      },
+      "shareResults": {
+        "title": "Абагуліць вынікі тэсту",
+        "sharedDataTitle": "Да агульнага доступу далучана:",
+        "deviceAndModelInfo": "• Характарыстыкі прылады і звесткі пра мадэль",
+        "performanceMetrics": "• Метрыкі прадукцыйнасці",
+        "dontShowAgain": "Больш не паказваць гэта паведамленне"
+      }
+    },
+    "sections": {
+      "testResults": "Вынікі тэста"
+    },
+    "benchmarkResultCard": {
+      "modelMeta": {
+        "params": "парам."
+      },
+      "config": {
+        "title": "Канфігурацыя тэсту",
+        "format": "PP: {{pp}} • TG: {{tg}} • PL: {{pl}} • Rep: {{nr}}"
+      },
+      "modelSettings": {
+        "title": "Налады мадэлі",
+        "context": "Кантэкст: {{context}}",
+        "batch": "Пакет (Batch): {{batch}}",
+        "ubatch": "UBatch: {{ubatch}}",
+        "cpuThreads": "Патокі CPU: {{threads}}",
+        "gpuLayers": "Слаі відэакарты: {{layers}}",
+        "device": "Прылада: {{device}}",
+        "flashAttentionEnabled": "Flash Attention уключаны",
+        "flashAttentionDisabled": "Flash Attention выключаны",
+        "cacheTypes": "Тыпы кэшу: {{cacheK}}/{{cacheV}}"
+      },
+      "results": {
+        "promptProcessing": "Апрацоўка промпта",
+        "tokenGeneration": "Генерацыя токенаў",
+        "totalTime": "Агульны час",
+        "peakMemory": "Пік памяці",
+        "tokensPerSecond": "ток/с"
+      },
+      "actions": {
+        "deleteButton": " ",
+        "submittedText": "✓ Даслана ў",
+        "leaderboardLink": "AI Phone Leaderboard ↗",
+        "cannotShare": "Немагчыма абагуліць",
+        "cannotShareTooltip": "Вынікі лакальных мадэляў нельга абагуліць",
+        "submitButton": "Даслаць у рэйтынг",
+        "viewLeaderboard": "Адкрыць рэйтынг ↗"
+      },
+      "errors": {
+        "networkRetry": "Праверце сувязь і паўтарыце",
+        "appCheckRetry": "Паўтарыць дасыланне",
+        "serverRetry": "Паспрабуйце пазней",
+        "genericRetry": "Паўтарыць спробу",
+        "failedToSubmit": "Не ўдалося даслаць вынікі тэсту"
+      }
+    },
+    "deviceInfoCard": {
+      "title": "Інфармацыя пра прыладу",
+      "deviceSummary": "{{brand}} {{model}} • {{systemName}} {{systemVersion}}",
+      "coreSummary": "Ядраў: {{cores}} • {{memory}}",
+      "sections": {
+        "basicInfo": "Асноўныя звесткі",
+        "cpuDetails": "Звесткі пра працэсар",
+        "gpuDetails": "Звесткі пра відэакарту",
+        "hexagonDetails": "Hexagon DSP",
+        "appInfo": "Звесткі пра праграму"
+      },
+      "fields": {
+        "architecture": "Архітэктура",
+        "totalMemory": "Агулам памяці",
+        "deviceId": "ID прылады",
+        "cpuCores": "Ядры CPU",
+        "cpuModel": "Мадэль CPU",
+        "chipset": "Чыпсэт",
+        "instructions": "Інструкцыі",
+        "version": "Версія",
+        "gpuType": "Тып відэакарты",
+        "gpuRenderer": "Сродак візуалізацыі",
+        "gpuVendor": "Пастаўшчык",
+        "metalSupport": "Падтрымка Metal",
+        "openclSupport": "Падтрымка OpenCL",
+        "openclRequirement": "Патрабуюцца i8mm і dotprod"
+      },
+      "instructions": {
+        "format": "FP16: {{fp16}}, DotProd: {{dotProd}}, SVE: {{sve}}, I8MM: {{i8mm}}",
+        "yes": "✓",
+        "no": "✗"
+      },
+      "versionFormat": "{{version}} ({{buildNumber}})"
+    },
+    "presetDefault": "Па змаўчанні",
+    "presetFast": "Хуткі",
+    "presetCustom": "Уласны",
+    "params": {
+      "pp": "Колькасць токенаў апрацоўкі промпта (макс: фізічны памер пакета)",
+      "tg": "Колькасць токенаў генерацыі тэксту",
+      "pl": "Памер канвеернай паралельнасці",
+      "nr": "Колькасць паўтораў"
+    }
+  },
+  "errors": {
+    "unexpectedError": "Здарылася нечаканая памылка",
+    "hfAuthenticationError": "Памылка аўтэнтыфікацыі Hugging Face: токен адсутнічае або недзейсны",
+    "hfAuthenticationErrorSearch": "Памылка аўтэнтыфікацыі Hugging Face: недзейсны токен",
+    "authenticationError": "Памылка аўтэнтыфікацыі: токен адсутнічае або недзейсны",
+    "hfAuthorizationError": "Памылка аўтарызацыі Hugging Face: няма правоў доступу да гэтага рэсурсу",
+    "authorizationError": "Памылка аўтарызацыі: няма правоў доступу да гэтага рэсурсу",
+    "hfServerError": "Памылка сервера Hugging Face: праблема з серверам API",
+    "serverError": "Памылка сервера: праблема з серверам API",
+    "hfNetworkTimeout": "Тайм-аўт сеткі: запыт да Hugging Face выконваўся занадта доўга",
+    "networkTimeout": "Тайм-аўт сеткі: запыт выконваўся занадта доўга",
+    "hfNetworkError": "Памылка сеткі: не ўдалося падключыцца да API Hugging Face",
+    "networkError": "Памылка сеткі: не ўдалося падключыцца да API",
+    "downloadSetupFailedTitle": "Не ўдалося падрыхтаваць спампоўванне",
+    "downloadSetupFailedMessage": "Не ўдалося падрыхтаваць мадэль да спампоўвання: {{message}}",
+    "cameraErrorTitle": "Памылка камеры",
+    "cameraErrorMessage": "Не ўдалося зрабіць фота",
+    "galleryErrorTitle": "Памылка Галерэі",
+    "galleryErrorMessage": "Не ўдалося выбраць відарысы"
+  },
+  "simulator": {
+    "cameraNotAvailable": "Камера недаступная ў эмулятары. Скарыстайцеся рэальнай прыладай."
+  },
+  "voiceAndSpeech": {
+    "sectionTitle": "Голас і маўленне",
+    "voiceRowTitle": "Голас",
+    "notSet": "Не зададзена",
+    "previewButton": "Перадпрагляд",
+    "stopPreviewButton": "Спыніць перадпрагляд",
+    "voicesTitle": "Галасы",
+    "voicesEmptyHint": "Націсніце на любы голас, каб устанавіць і выкарыстоўваць яго. Або выберыце сістэмны голас — такія заўсёды даступныя.",
+    "supertonicStepsLabel": "Якасць (крокі дыфузіі)",
+    "supertonicLanguageLabel": "Мова",
+    "supertonicLanguageAuto": "Аўтаматычна",
+    "supertonicLanguageSheetTitle": "Мова",
+    "supertonicLanguageSearchPlaceholder": "Пошук моў",
+    "supertonicLanguageNames": {
+      "ar": "Арабская",
+      "bg": "Балгарская",
+      "hr": "Харвацкая",
+      "cs": "Чэшская",
+      "da": "Дацкая",
+      "nl": "Нідэрландская",
+      "en": "Англійская",
+      "et": "Эстонская",
+      "fi": "Фінская",
+      "fr": "Французская",
+      "de": "Нямецкая",
+      "el": "Грэчаская",
+      "hi": "Хіндзі",
+      "hu": "Венгерская",
+      "id": "Інданезійская",
+      "it": "Італьянская",
+      "ja": "Японская",
+      "ko": "Карэйская",
+      "lv": "Латышская",
+      "lt": "Літоўская",
+      "pl": "Польская",
+      "pt": "Партугальская",
+      "ro": "Румынская",
+      "ru": "Руская",
+      "sk": "Славацкая",
+      "sl": "Славенская",
+      "es": "Іспанская",
+      "sv": "Шведская",
+      "tr": "Турэцкая",
+      "uk": "Украінская",
+      "vi": "В’етнамская"
+    },
+    "toggleAutoSpeakLabel": "Пераключыць аўтаагучванне",
+    "openSettingsLabel": "Налады TTS",
+    "playMessageLabel": "Прайграць паведамленне",
+    "stopMessageLabel": "Спыніць паведамленне",
+    "autoSpeakLabel": "Аўтаагучванне адказаў",
+    "autoSpeakDescription": "Чытаць новыя адказы ўслых адразу па іх паступленні.",
+    "engineChipKitten": "Kitten",
+    "engineChipKokoro": "Kokoro",
+    "engineChipSupertonic": "Supertonic",
+    "engineChipSystem": "Сістэмны",
+    "stepsCount": "Крокаў: {{steps}}",
+    "engineKittenTagline": "Самы малы памер. Надзейны. Найлепшы для старэйшых прылад.",
+    "engineKokoroTagline": "Найвышэйшая якасць. Запускаецца павольней. Некаторыя галасы могуць не працаваць на ўсіх прыладах.",
+    "engineSupertonicTagline": "Найхутчэйшы запуск. Выкарыстоўвае больш RAM. Можа часам прапускаць словы.",
+    "engineSystemTagline": "Убудаваныя галасы АС. Заўсёды даступныя, без устаноўкі.",
+    "engineSystemTitleIos": "Галасы iOS",
+    "engineSystemTitleAndroid": "Галасы Android",
+    "engineSystemTier": "заўсёды даступны",
+    "engineTierLightest": "найлягчэйшы",
+    "engineTierBestQuality": "найлепшая якасць",
+    "engineTierFastestStart": "найхутчэйшы запуск",
+    "engineSpecsLine": "{{voices}} галасоў  ·  {{sizeMb}} МБ  ·  ~{{ramMb}} МБ RAM",
+    "engineSystemSpecsLine": "{{voices}} галасоў",
+    "engineRemoveTitle": "Выдаліць {{engineTitle}}?",
+    "engineRemoveBody": "Вызваліць ~{{sizeMb}} МБ на гэтай прыладзе.",
+    "engineRemoveCancel": "Скасаваць",
+    "engineRemoveConfirm": "Выдаліць",
+    "engineInstallCta": "Усталяваць · {{sizeMb}} МБ",
+    "engineDownloadingLabel": "Ідзе спампоўванне…  {{pct}}%  ·  {{mbDone}} / {{sizeMb}} МБ",
+    "engineRetryCta": "Паспрабаваць зноў",
+    "voicesEmptyState": "Галасы не знойдзены.",
+    "kokoroDeviceNote": "Некаторыя галасы могуць не працаваць на ўсіх прыладах.",
+    "insufficientStorage": "Недастаткова месца — вызваліце {{requiredMb}} МБ для ўстаноўкі гэтага рухавіка (даступна {{freeMb}} МБ)."
+  },
+  "onboarding": {
+    "back": "Назад",
+    "skip": "Прапусціць",
+    "skipForNow": "Пакуль прапусціць",
+    "splash": {
+      "brand": "DRS AI",
+      "tagline": "Ваш прыватны ШІ — на вашай прыладзе"
+    },
+    "screen1": {
+      "title": "Знаёмцеся з вашымі асістэнтамі.",
+      "titleAccent": "асістэнтамі.",
+      "body": "Разумныя маленькія сябры, якія жывуць у вашым тэлефоне.\nНаладзім усё за хвіліну.",
+      "cta": "Пачнём знаёмства",
+      "eyebrow": "Вітаем у DRS AI"
+    },
+    "screen2": {
+      "title": "Заўсёды,\nпаўсюль.",
+      "body": "Вашы асістэнты жывуць у вашым тэлефоне.\nБез інтэрнэту і сігналу — працуюць у самалёце, па-за сеткай, у далёкіх вёсках.",
+      "highlight": "Без інтэрнэту, без сігналу",
+      "cta": "Далей",
+      "eyebrow": "Ідэя",
+      "titleAccent": "Заўсёды,"
+    },
+    "screen3": {
+      "title": "Меншыя,\nале вашыя.",
+      "titleAccent": "Меншыя,",
+      "body": "Асістэнты ў вашым тэлефоне хуткія і прыватныя — але лягчэйшыя за воблачны ШІ. Думайце пра кішэннага кампаньёна, а не пра ўсеведучага аракула.",
+      "highlight": "хуткія і прыватныя",
+      "cta": "Зразумела",
+      "eyebrow": "Перасцярога"
+    },
+    "screen4": {
+      "title": "З тэлефона нічога не выходзіць.",
+      "titleAccent": "не выходзіць",
+      "body": "Без уліковых запісаў. Без воблака. Без сачэння. Вашы размовы застаюцца вашымі.",
+      "highlight": "Без уліковых запісаў. Без воблака. Без сачэння.",
+      "cta": "Пачнём",
+      "eyebrow": "Прыватнасць гарантавана"
+    },
+    "screen5": {
+      "title": "Для чаго вам асістэнт?",
+      "body": "Выберыце, пра што хочаце гаварыць, — мы падбярэм асістэнта, які падойдзе вашаму тэлефону.",
+      "topic": {
+        "smartchat": "Разумны чат",
+        "coding": "Праграмаванне",
+        "education": "Адукацыя",
+        "roleplay": "Ролевыя гульні",
+        "creative_writing": "Творчае пісьмо",
+        "else": "Шукаеце нешта іншае?"
+      },
+      "topicDescription": {
+        "smartchat": "Прыязны штодзённы кампаньён",
+        "coding": "Код, адладка, тлумачэнні",
+        "education": "Вучоба, тлумачэнні, тэсты",
+        "roleplay": "Персанажы, сцэнарыі",
+        "creative_writing": "Гісторыі, ідэі, чарнавікі",
+        "else": "Праглядзіце ўсіх асістэнтаў пазней у праграме"
+      }
+    },
+    "screen6": {
+      "cta": "Спампаваць {{name}}",
+      "ctaTemplate": "Спампаваць {{name}} ({{size}})",
+      "useTemplate": "Выкарыстоўваць {{name}}",
+      "deviceRamSuffix": "ГБ RAM",
+      "deviceFreeSuffix": "ГБ вольна",
+      "recommended": "Рэкамендавана",
+      "downloaded": "Спампавана",
+      "modelTier": {
+        "quick": "Хуткая",
+        "balanced": "Збалансаваная",
+        "best": "Найлепшая"
+      },
+      "subtitleTemplate": "{{name}} думае з дапамогай малой ШІ-мадэлі на вашым тэлефоне — выберыце падыходную.",
+      "assistant": {
+        "pip": {
+          "body": "Мы знайшлі для вас ідэальнага асістэнта — прыязнага штодзённага кампаньёна. Дастаткова разумнага для большасці задач, дастаткова лёгкага для любога тэлефона."
+        },
+        "codie": {
+          "body": "Знаёмцеся з Codie — вашым лакальным напарнікам па кодзе. Чытае код, піша код, тлумачыць складаныя месцы, не пакідаючы ваш тэлефон."
+        },
+        "sage": {
+          "body": "Sage цярплівы і дапытлівы, крок за крокам праводзіць вас праз ідэі. Настаўнік, што заўсёды ў вашай кішэні."
+        },
+        "echo": {
+          "body": "Echo — універсальны кампаньён для ролевых гульняў: трымаецца ролі, малюе сцэны і ідзе за вашай гісторыяй."
+        },
+        "muse": {
+          "body": "Muse дапамагае пісаць: прапануе фармулёўкі, знаходзіць рытм і захоўвае ваш тон."
+        }
+      }
+    }
+  },
+  "downloadBanner": {
+    "titleByAssistant": "{{name}} спампоўваецца",
+    "titleByModel": "{{name}} спампоўваецца",
+    "extraInProgress": "+{{count}} яшчэ ў працэсе"
   }
 }

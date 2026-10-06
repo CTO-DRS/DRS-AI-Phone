@@ -32,7 +32,10 @@
     "close": "Fechar",
     "clear": "Limpar Tudo",
     "gallery": "Galeria",
-    "noResults": "Nenhum resultado"
+    "noResults": "Nenhum resultado",
+    "openDrawer": "Abrir painel lateral",
+    "openMenu": "Abrir menu",
+    "closeMenu": "Fechar menu"
   },
   "settings": {
     "modelInitializationSettings": "Configurações de Inicialização do Modelo",
@@ -89,6 +92,20 @@
     "useMmapFalseDescription": "Recomenda-se desativar quando o reempacotamento de pesos estiver ativado, para evitar dobrar o uso de memória",
     "weightRepacking": "Ativar Reempacotamento de Pesos",
     "weightRepackingDescription": "Processamento de prompt mais rápido com sobrecarga mínima de memória quando o mapeamento de memória está desativado. A geração de tokens não é afetada.",
+    "speculativeDecoding": "Decodificação Especulativa",
+    "speculativeDecodingDescription": "Use um pequeno modelo de rascunho (ou um modelo MTP embutido) para prever tokens e acelerar a geração. Experimental.",
+    "speculativeNotMTPCapable": "O modelo ativo não é compatível com decodificação especulativa e nenhum modelo de rascunho compatível está pareado, então isso permanece desativado para ele, sem efeito. É aplicado automaticamente a modelos compatíveis.",
+    "speculativeDraftModel": "Modelo de Rascunho",
+    "speculativeDraftModelDescription": "Rascunha tokens para o modelo ativo.",
+    "speculativeDraftModelNone": "Nenhum (MTP embutido)",
+    "speculativeDraftModelIgnoredOverridden": "O modelo ativo já vem com seu próprio modelo de rascunho, então esta escolha é ignorada.",
+    "speculativeDraftModelIgnoredIncompatible": "Este modelo de rascunho não é compatível com o modelo ativo, então é ignorado.",
+    "speculativeDraftModelIgnoredNotCapable": "Este modelo não possui camadas de rascunho, então não pode ser usado como modelo de rascunho.",
+    "speculativeDraftKeyCacheType": "Tipo de Cache de Chave do Rascunho",
+    "speculativeDraftValueCacheType": "Tipo de Cache de Valor do Rascunho",
+    "speculativeDraftNGpuLayers": "Camadas de GPU do Rascunho",
+    "speculativeDraftNGpuLayersDescription": "Número de camadas do modelo de rascunho a descarregar para a GPU.",
+    "speculativeDraftCacheTypeInactiveDescription": "Aplicado quando a decodificação especulativa estiver em execução.",
     "ttsAvailability": "Conversão de texto em fala",
     "ttsAvailabilityDescription": "Ler as respostas do assistente em voz alta.",
     "ttsAvailabilityLowMemoryWarning": "A memória do seu dispositivo está baixa — isso pode não funcionar de forma confiável.",
@@ -99,6 +116,12 @@
     "autoNavigateToChatDescription": "Navegar para o chat quando o carregamento iniciar.",
     "appSettings": "Configurações do App",
     "language": "Idioma",
+    "languageSheetTitle": "Idioma",
+    "languageSearchPlaceholder": "Pesquisar idiomas",
+    "languageRestartTitle": "Reinício necessário",
+    "languageRestartMessage": "A direção do layout mudou para este idioma. Reinicie o app para aplicar a mudança por completo.",
+    "languageRestartNow": "Reiniciar agora",
+    "languageRestartLater": "Mais tarde",
     "darkMode": "Modo Escuro",
     "displayMemoryUsage": "Exibir Uso de Memória",
     "displayMemoryUsageDescription": "Exibir o uso de memória na página de chat.",
@@ -111,6 +134,31 @@
     "importButton": "Importar",
     "importSuccess": "{{count}} sessão(ões) de chat importada(s) com sucesso.",
     "importError": "Falha ao importar sessões de chat. Verifique o formato do arquivo.",
+    "internetSearch": {
+      "title": "Busca na internet",
+      "description": "Deixe os Assistentes pesquisarem na web com as próprias ferramentas. Use sua própria chave de API — o DRS AI nunca guarda suas chaves nem encaminha suas consultas.",
+      "providerLabel": "Provedor de busca",
+      "providerGated": "Em breve",
+      "keyLabel": "Chave de API",
+      "keyIsSet": "Chave configurada para {{provider}}.",
+      "keyNotSet": "Nenhuma chave configurada para {{provider}}.",
+      "setKeyButton": "Definir chave",
+      "updateKeyButton": "Atualizar chave",
+      "clearKeyButton": "Limpar chave",
+      "keyInputPlaceholder": "Cole sua chave de API do {{provider}}",
+      "keyUpdateError": "Não foi possível atualizar a chave. Tente novamente.",
+      "showKeyAccessibilityLabel": "Mostrar chave de API",
+      "hideKeyAccessibilityLabel": "Ocultar chave de API",
+      "resultCountLabel": "Resultados por busca",
+      "resultCountDescription": "Menos resultados deixam mais espaço no contexto do modelo.",
+      "consentTitle": "As buscas saem do seu dispositivo",
+      "consentDescription": "Quando um Assistente faz uma busca na web, sua consulta é enviada ao provedor selecionado pela internet. Quando um Assistente lê uma página, a URL e o conteúdo da página podem, em vez disso, ser enviados a um serviço de leitura padrão (r.jina.ai) caso o provedor selecionado não tenha um leitor nativo. Chaves e consultas nunca são enviadas ao DRS AI.",
+      "consentAccept": "Entendi",
+      "consentRequired": "Aceite o aviso acima para definir uma chave e ativar a busca.",
+      "consentGivenTitle": "A busca na web está ativada",
+      "consentGivenDescription": "As consultas e leituras de página podem sair do seu dispositivo, conforme descrito acima.",
+      "consentRevoke": "Revogar"
+    },
     "apiSettingsTitle": "Configurações de API",
     "huggingFaceTokenLabel": "Token do Hugging Face",
     "tokenIsSetDescription": "Token configurado. Necessário para acessar modelos restritos.",
@@ -133,6 +181,8 @@
     "requestTimeout": "Tempo Limite de Requisição (segundos)",
     "requestTimeoutPlaceholder": "Opcional - deixe vazio para o padrão",
     "requestTimeoutHelp": "Tempo máximo de espera por resposta de um servidor lento. Deixe vazio para o padrão.",
+    "serverType": "Tipo de Servidor",
+    "serverTypeHelp": "Detectado automaticamente; altere se estiver errado.",
     "apiKey": "Chave de API",
     "apiKeyPlaceholder": "Opcional - necessário para OpenAI/Groq",
     "apiKeyDescription": "Armazenada com segurança no dispositivo.",
@@ -163,49 +213,7 @@
     "retryConnection": "Tentar Novamente",
     "enterUrlManually": "Inserir URL manualmente",
     "manageServers": "Gerenciar Servidores",
-    "serverType": "Tipo de Servidor",
-    "serverTypeHelp": "Detectado automaticamente; altere se estiver errado.",
-    "internetSearch": {
-      "title": "Busca na internet",
-      "description": "Deixe os Assistentes pesquisarem na web com as próprias ferramentas. Use sua própria chave de API — o DRS AI nunca guarda suas chaves nem encaminha suas consultas.",
-      "providerLabel": "Provedor de busca",
-      "providerGated": "Em breve",
-      "keyLabel": "Chave de API",
-      "keyIsSet": "Chave configurada para {{provider}}.",
-      "keyNotSet": "Nenhuma chave configurada para {{provider}}.",
-      "setKeyButton": "Definir chave",
-      "updateKeyButton": "Atualizar chave",
-      "clearKeyButton": "Limpar chave",
-      "keyInputPlaceholder": "Cole sua chave de API do {{provider}}",
-      "keyUpdateError": "Não foi possível atualizar a chave. Tente novamente.",
-      "showKeyAccessibilityLabel": "Mostrar chave de API",
-      "hideKeyAccessibilityLabel": "Ocultar chave de API",
-      "resultCountLabel": "Resultados por busca",
-      "resultCountDescription": "Menos resultados deixam mais espaço no contexto do modelo.",
-      "consentTitle": "As buscas saem do seu dispositivo",
-      "consentDescription": "Quando um Assistente faz uma busca na web, sua consulta é enviada ao provedor selecionado pela internet. Quando um Assistente lê uma página, a URL e o conteúdo da página podem, em vez disso, ser enviados a um serviço de leitura padrão (r.jina.ai) caso o provedor selecionado não tenha um leitor nativo. Chaves e consultas nunca são enviadas ao DRS AI.",
-      "consentAccept": "Entendi",
-      "consentRequired": "Aceite o aviso acima para definir uma chave e ativar a busca.",
-      "consentGivenTitle": "A busca na web está ativada",
-      "consentGivenDescription": "As consultas e leituras de página podem sair do seu dispositivo, conforme descrito acima.",
-      "consentRevoke": "Revogar"
-    },
-    "languageSheetTitle": "Idioma",
-    "languageSearchPlaceholder": "Pesquisar idiomas",
-    "speculativeDecoding": "Decodificação Especulativa",
-    "speculativeDecodingDescription": "Use um pequeno modelo de rascunho (ou um modelo MTP embutido) para prever tokens e acelerar a geração. Experimental.",
-    "speculativeNotMTPCapable": "O modelo ativo não é compatível com decodificação especulativa e nenhum modelo de rascunho compatível está pareado, então isso permanece desativado para ele, sem efeito. É aplicado automaticamente a modelos compatíveis.",
-    "speculativeDraftModel": "Modelo de Rascunho",
-    "speculativeDraftModelDescription": "Rascunha tokens para o modelo ativo.",
-    "speculativeDraftModelNone": "Nenhum (MTP embutido)",
-    "speculativeDraftModelIgnoredOverridden": "O modelo ativo já vem com seu próprio modelo de rascunho, então esta escolha é ignorada.",
-    "speculativeDraftModelIgnoredIncompatible": "Este modelo de rascunho não é compatível com o modelo ativo, então é ignorado.",
-    "speculativeDraftModelIgnoredNotCapable": "Este modelo não possui camadas de rascunho, então não pode ser usado como modelo de rascunho.",
-    "speculativeDraftKeyCacheType": "Tipo de Cache de Chave do Rascunho",
-    "speculativeDraftValueCacheType": "Tipo de Cache de Valor do Rascunho",
-    "speculativeDraftNGpuLayers": "Camadas de GPU do Rascunho",
-    "speculativeDraftNGpuLayersDescription": "Número de camadas do modelo de rascunho a descarregar para a GPU.",
-    "speculativeDraftCacheTypeInactiveDescription": "Aplicado quando a decodificação especulativa estiver em execução."
+    "exportLegacyError": "Falha ao exportar sessões de chat antigas. O arquivo pode não existir."
   },
   "memory": {
     "shortWarning": "Aviso de Memória",
@@ -394,6 +402,9 @@
       "labels": {
         "skills": "Habilidades: ",
         "vision": "Visão",
+        "visionSupported": "Compatível",
+        "visionNotSupported": "Não compatível",
+        "visionUnknown": "Desconhecido",
         "capabilities": "capacidades.",
         "modelName": "Nome do Modelo",
         "contextLength": "Tamanho do Contexto",
@@ -402,9 +413,6 @@
         "requiresProjectionModel": "Requer modelo de projeção",
         "downloadProjectionModel": "Baixar modelo de projeção",
         "viewModelCardOnHuggingFace": "Ver Ficha do Modelo no Hugging Face",
-        "visionSupported": "Compatível",
-        "visionNotSupported": "Não compatível",
-        "visionUnknown": "Desconhecido",
         "draftOnlyReason": "Modelo apenas de rascunho. Selecione-o em Configurações → Decodificação especulativa."
       },
       "accessibility": {
@@ -469,6 +477,196 @@
       "vision": "Visão",
       "mtp": "Especulativo (MTP)",
       "mtpDraft": "Rascunho especulativo"
+    },
+    "emptyTitle": "Nenhum modelo ainda",
+    "emptyHint": "Toque em + para baixar do Hugging Face, adicionar um modelo local ou conectar a um servidor remoto."
+  },
+  "modelsHub": {
+    "title": "Modelos",
+    "subtitle": "Descubra, baixe e gerencie todos os modelos que o seu app pode executar.",
+    "searchPlaceholder": "Pesquisar modelos, publicadores, tarefas…",
+    "retry": "Tentar novamente",
+    "notAvailable": "Não disponível",
+    "noDownloadableFile": "Nenhum arquivo GGUF para baixar neste repositório",
+    "downloadStarted": "Download iniciado",
+    "seeAll": "Ver tudo",
+    "exploreAction": "Explorar modelos",
+    "emptyTitle": "Nenhum modelo instalado ainda",
+    "emptyHint": "Navegue pelo hub e baixe um modelo adequado ao seu dispositivo e ao seu trabalho.",
+    "fitScore": "{score}/100 de compatibilidade",
+    "installedFromRepo": "Instalado deste repositório",
+    "installedBadge": "Instalado",
+    "noFiles": "Nenhum arquivo GGUF publicado neste repositório.",
+    "visionFilesTitle": "Arquivos de projeção de visão (mmproj)",
+    "visionFilesHint": "Esses arquivos pequenos adicionam compreensão de imagens ao modelo de texto correspondente; eles são baixados automaticamente com os modelos de visão.",
+    "downloadFile": "Baixar arquivo",
+    "downloadShort": "Obter",
+    "version": "Versão",
+    "engineUnsupportedShort": "Não executável localmente",
+    "engineYes": "GGUF — roda localmente (llama.cpp)",
+    "engineNo": "Não suportado pelo motor local",
+    "capabilitiesTitle": "Recursos",
+    "categoryEngineNotice": "Esta categoria lista repositórios reais, mas o motor GGUF local ainda não consegue executar esse tipo de modelo, por isso os downloads estão desativados aqui. Nada é simulado — quando o motor passar a suportar, eles poderão ser baixados.",
+    "categoryInstalledSection": "Seus modelos nesta categoria",
+    "categoryRemoteSection": "Descobrir no HuggingFace",
+    "featuredTitle": "Modelos em destaque",
+    "recommendedTitle": "Recomendados para o seu dispositivo",
+    "recentTitle": "Adicionados recentemente",
+    "favoritesTitle": "Favoritos",
+    "installedTitle": "Instalados",
+    "wifiOnly": "Somente Wi-Fi",
+    "categoriesTitle": "Categorias",
+    "installedCount": "{count} instalados",
+    "discover": "Descobrir",
+    "device": {
+      "ram": "RAM",
+      "storage": "Armazenamento livre",
+      "cpu": "CPU",
+      "gpu": "GPU",
+      "gpuOk": "Acelerado",
+      "gpuNo": "Somente CPU"
+    },
+    "compat": {
+      "excellent": "Compatibilidade excelente",
+      "good": "Boa compatibilidade",
+      "limited": "Compatibilidade limitada",
+      "notRecommended": "Não recomendado",
+      "unknown": "Compatibilidade desconhecida"
+    },
+    "reasons": {
+      "engineUnsupported": "Este tipo de modelo não pode ser executado no motor GGUF local",
+      "engineSupported": "Roda no motor GGUF local",
+      "memoryComfortable": "O uso de memória será confortável",
+      "memoryOk": "O uso de memória é aceitável",
+      "memoryTight": "A memória ficará no limite — espere execuções mais lentas",
+      "memoryInsufficient": "A RAM deste dispositivo não é suficiente para carregá-lo",
+      "memoryUnknown": "A necessidade de memória não pode ser estimada a partir dos dados do repositório",
+      "storagePlenty": "Bastante armazenamento livre",
+      "storageTight": "O armazenamento ficará apertado após a instalação",
+      "storageInsufficient": "Armazenamento livre insuficiente",
+      "storageUnknown": "Não foi possível ler o armazenamento livre",
+      "cpuGood": "A CPU tem núcleos suficientes para inferência rápida",
+      "cpuOk": "A CPU consegue executá-lo em velocidade moderada",
+      "cpuLimited": "Poucos núcleos de CPU — a inferência será lenta",
+      "cpuUnknown": "Não foi possível ler o número de núcleos da CPU",
+      "gpuSupported": "A aceleração por GPU está disponível",
+      "gpuUnsupported": "Sem aceleração por GPU — roda na CPU",
+      "gpuUnknown": "Não foi possível determinar o suporte a GPU"
+    },
+    "overviewTemplate": "Um modelo {categories} publicado por {author} com cerca de {params} parâmetros, distribuído em arquivos GGUF para inferência local e offline neste dispositivo.",
+    "overviewBlocked": "Este é um repositório real, mas o tipo de modelo não é executável pelo motor local, por isso não pode ser baixado aqui.",
+    "statsTemplate": "No HuggingFace: {downloads} downloads · {likes} curtidas.",
+    "tech": {
+      "architecture": "Arquitetura",
+      "parameters": "Parâmetros",
+      "contextLength": "Comprimento do contexto",
+      "formats": "Formatos",
+      "quantization": "Quantizações",
+      "fileCount": "Arquivos GGUF",
+      "version": "Revisão (sha)",
+      "lastModified": "Última atualização",
+      "license": "Licença",
+      "engine": "Motor"
+    },
+    "capabilities": {
+      "offline": "Offline",
+      "context": "Contexto",
+      "arabic": "Suporte a árabe",
+      "multilingual": "Multilíngue"
+    },
+    "tabs": {
+      "overview": "Visão geral",
+      "technical": "Técnico",
+      "files": "Arquivos"
+    },
+    "categories": {
+      "text": "Texto",
+      "vision": "Visão",
+      "reasoning": "Raciocínio",
+      "coding": "Programação",
+      "multimodal": "Multimodal",
+      "embedding": "Embeddings",
+      "translation": "Tradução",
+      "audio": "Áudio",
+      "image": "Imagem",
+      "video": "Vídeo",
+      "general": "Geral"
+    },
+    "dialog": {
+      "aboutTitle": "Sobre este modelo",
+      "aboutTemplate": "Um modelo GGUF {family} de {author}. Ele roda totalmente offline neste dispositivo depois de baixado. O tamanho abaixo é o tamanho exato do arquivo informado pelo HuggingFace.",
+      "familyUnknown": "GGUF",
+      "file": "Arquivo",
+      "downloadSize": "Tamanho do download",
+      "extraVisionFiles": "Arquivos de visão adicionais (mmproj)",
+      "storageAfter": "Armazenamento usado após a instalação",
+      "offline": "Funciona offline",
+      "offlineYes": "Sim — totalmente no dispositivo",
+      "context": "Comprimento do contexto",
+      "wifiOnlyWaiting": "O download somente por Wi-Fi está ativado. Com dados móveis, este download ficará na fila até o Wi-Fi voltar.",
+      "engineUnsupported": "Este tipo de modelo (geração de imagem/vídeo/áudio) não pode ser executado pelo motor GGUF local, por isso o download está desativado. Nada de falso aqui — a listagem é real, o motor simplesmente não consegue executá-lo.",
+      "confirmDownload": "Baixar modelo",
+      "starting": "Iniciando…"
+    },
+    "storage": {
+      "title": "Armazenamento de modelos",
+      "entryHint": "Detalhamento do uso, maiores modelos, limpeza",
+      "used": "Usado por modelos",
+      "available": "Disponível",
+      "distribution": "Por categoria",
+      "largest": "Maiores modelos",
+      "orphans": "Arquivos incompletos e residuais",
+      "orphansFound": "{count} arquivos · {size} podem ser liberados",
+      "orphansNone": "Nada a limpar — o armazenamento está em ordem.",
+      "cleanNow": "Limpar",
+      "cleanTitle": "Excluir arquivos residuais?",
+      "cleanMessage": "{count} arquivos incompletos ou órfãos serão removidos permanentemente.",
+      "cleanConfirm": "Excluir",
+      "checking": "Verificando o armazenamento…",
+      "enough": "Espaço livre suficiente",
+      "notEnough": "Espaço livre insuficiente",
+      "required": "Necessário",
+      "availableLabel": "Disponível",
+      "deficit": "Faltam {amount}"
+    },
+    "downloads": {
+      "title": "Downloads",
+      "emptyTitle": "Nenhum download",
+      "emptyHint": "Os modelos que você baixar aparecem aqui com progresso em tempo real e continuam gerenciáveis offline.",
+      "active": "Baixando",
+      "paused": "Pausado",
+      "pausedHint": "Pausado — retoma da mesma posição de bytes",
+      "verifying": "Verificando",
+      "verifyingHint": "Verificação da integridade do arquivo (tamanho + checksum) antes da instalação",
+      "completed": "Concluído",
+      "remaining": "≈",
+      "pause": "Pausar",
+      "resume": "Retomar",
+      "cancel": "Cancelar"
+    },
+    "updates": {
+      "title": "Atualizações",
+      "check": "Verificar atualizações",
+      "checking": "Verificando…",
+      "recheck": "Verificar novamente",
+      "upToDate": "Todos os modelos instalados correspondem à revisão de origem.",
+      "update": "Atualizar"
+    },
+    "sort": {
+      "title": "Ordenar",
+      "recommended": "Melhor compatibilidade",
+      "downloads": "Mais baixados",
+      "newest": "Mais recentes",
+      "name": "Nome",
+      "sizeAsc": "Menores primeiro",
+      "sizeDesc": "Maiores primeiro"
+    },
+    "search": {
+      "installedSection": "Seus modelos",
+      "hfSection": "Resultados do HuggingFace",
+      "noResults": "Nenhum modelo encontrado",
+      "noResultsHint": "Tente outro nome, publicador ou tarefa.",
+      "errorTitle": "Falha na pesquisa"
     }
   },
   "completionParams": {
@@ -514,7 +712,9 @@
     "tourDescription": "Reveja as telas de boas-vindas para ver o que o DRS AI oferece.",
     "showIntroButton": "Mostrar introdução novamente",
     "privacyPolicy": "Política de Privacidade",
-    "termsOfService": "Termos de Serviço"
+    "termsOfService": "Termos de Serviço",
+    "versionFormat": "Versão {{version}} ({{build}})",
+    "successTitle": "Sucesso"
   },
   "feedback": {
     "title": "Enviar Feedback",
@@ -562,9 +762,9 @@
       "msPerToken": "{{value}}ms/token",
       "tokensPerSec": "{{value}} tokens/seg",
       "ttft": "{{value}}ms TTFT",
+      "draftAccepted": "rascunho: {{accepted}}/{{total}} ({{pct}}%)",
       "interrupted": "Interrompido",
-      "truncated": "Cortado — provavelmente o contexto está cheio",
-      "draftAccepted": "rascunho: {{accepted}}/{{total}} ({{pct}}%)"
+      "truncated": "Cortado — provavelmente o contexto está cheio"
     },
     "exportUtils": {
       "fileSaved": "Arquivo Salvo",
@@ -740,17 +940,17 @@
       "forbiddenTitle": "Acesso Negado",
       "forbiddenMessage": "Você não tem permissão para acessar este modelo. Verifique se:",
       "forbiddenSteps": [
-        "Seu token tem permissão de \"leitura\"",
-        "Você solicitou e recebeu acesso a este modelo",
-        "O proprietário do modelo aprovou sua solicitação de acesso"
+        "Your token has \"read\" permission",
+        "You requested and were granted access to this model",
+        "The model owner approved your access request"
       ],
       "getTokenTitle": "Obter Token do Hugging Face",
       "getTokenMessage": "Este modelo requer um token do Hugging Face para download.",
       "getTokenSteps": [
-        "Acesse huggingface.co e faça login",
-        "Vá até Settings > Access Tokens",
-        "Crie um novo token com acesso de \"leitura\"",
-        "Copie o token e cole no campo de token"
+        "Go to huggingface.co and sign in",
+        "Navigate to Settings > Access Tokens",
+        "Create a new token with \"read\" access",
+        "Copy the token and paste it in the token field"
       ],
       "tokenDisabledTitle": "O Token Está Desativado",
       "tokenDisabledMessage": "Você tem um token do Hugging Face configurado, mas ele está desativado no momento. Este modelo requer um token para download. Ative seu token para continuar.",
@@ -768,10 +968,15 @@
       "makeChatTemporary": "Tornar o chat temporário",
       "export": "Exportar/Importar",
       "exportCurrentSession": "Exportar sessão atual",
+      "exportCurrentSessionMarkdown": "Exportar como Markdown",
       "exportAllSessions": "Exportar todas as sessões",
       "exportChatSession": "Exportar sessão de chat",
       "importSessions": "Importar sessões",
-      "exportCurrentSessionMarkdown": "Exportar como Markdown"
+      "exportErrorTitle": "Erro de exportação",
+      "exportCurrentSessionError": "Falha ao exportar a sessão atual.",
+      "exportAllError": "Falha ao exportar todas as sessões.",
+      "importSuccessTitle": "Importação concluída",
+      "importErrorTitle": "Erro de importação"
     },
     "hfTokenSheet": {
       "title": "Token do Hugging Face",
@@ -784,10 +989,10 @@
       "resetSuccess": "Token removido com sucesso",
       "instructions": "Como obter um token:",
       "instructionsSteps": [
-        "Acesse huggingface.co e faça login",
-        "Vá até Settings > Access Tokens",
-        "Crie um novo token com acesso de \"leitura\"",
-        "Copie o token e cole abaixo"
+        "Go to huggingface.co and sign in",
+        "Navigate to Settings > Access Tokens",
+        "Create a new token with \"read\" access",
+        "Copy the token and paste it below"
       ],
       "getTokenLink": "Obtenha um token em huggingface.co ↗",
       "error": {
@@ -991,7 +1196,10 @@
       "bulkDeleteError": "Falha ao excluir sessões de chat. Tente novamente.",
       "exportError": "Falha ao exportar sessão de chat. Tente novamente.",
       "bulkExportError": "Falha ao exportar sessões de chat. Tente novamente.",
+      "pin": "Fixar",
+      "unpin": "Desafixar",
       "dateGroups": {
+        "pinned": "Fixadas",
         "today": "Hoje",
         "yesterday": "Ontem",
         "thisWeek": "Esta semana",
@@ -1000,11 +1208,10 @@
         "threeWeeksAgo": "Há 3 semanas",
         "fourWeeksAgo": "Há 4 semanas",
         "lastMonth": "Mês passado",
-        "older": "Mais antigos",
-        "pinned": "Fixadas"
+        "older": "Mais antigos"
       },
-      "pin": "Fixar",
-      "unpin": "Desafixar"
+      "emptySessionsTitle": "Nenhuma conversa ainda",
+      "emptySessionsHint": "Inicie uma nova conversa na tela de chat"
     },
     "usageStats": {
       "tooltip": {
@@ -1033,7 +1240,60 @@
       "exportAllAssistants": "Exportar todos os assistants",
       "importAssistants": "Importar assistants",
       "importSuccess": "{{count}} assistant(s) importado(s) com sucesso.",
-      "importError": "Falha ao importar assistants. Verifique o formato do arquivo."
+      "importError": "Falha ao importar assistants. Verifique o formato do arquivo.",
+      "exportErrorTitle": "Erro de exportação",
+      "exportAllError": "Falha ao exportar todos os assistentes.",
+      "importSuccessTitle": "Importação concluída",
+      "importErrorTitle": "Erro de importação"
+    },
+    "brandHeader": {
+      "tagline": "Sua IA privada no dispositivo"
+    },
+    "authSheet": {
+      "signInTitle": "Entrar",
+      "signUpTitle": "Criar conta",
+      "fullNameLabel": "Nome completo",
+      "emailLabel": "E-mail",
+      "passwordLabel": "Senha",
+      "signInButton": "Entrar",
+      "signUpButton": "Criar conta",
+      "forgotPassword": "Esqueceu a senha?",
+      "or": "ou",
+      "continueWithGoogle": "Continuar com o Google",
+      "haveAccount": "Já tem uma conta? ",
+      "noAccount": "Não tem uma conta? ",
+      "signUpLink": "Cadastre-se",
+      "signInLink": "Entrar",
+      "signingIn": "Entrando...",
+      "fillRequiredFields": "Preencha todos os campos obrigatórios.",
+      "enterFullName": "Digite seu nome completo.",
+      "enterEmailFirst": "Primeiro, digite seu endereço de e-mail.",
+      "accountCreatedTitle": "Conta criada",
+      "accountCreatedMessage": "Verifique seu e-mail para confirmar sua conta.",
+      "welcomeBackTitle": "Bem-vindo de volta!",
+      "welcomeBackMessage": "Você entrou com sucesso.",
+      "googleErrorTitle": "Erro ao entrar com o Google",
+      "passwordResetTitle": "Redefinição de senha",
+      "passwordResetMessage": "Verifique seu e-mail para ver as instruções de redefinição de senha.",
+      "authErrorTitle": "Erro de autenticação"
+    },
+    "squareAssistantCard": {
+      "videoAssistant": "Assistente de IA para vídeo",
+      "advancedAssistant": "Assistente de IA avançado",
+      "assistant": "Assistente de IA",
+      "byCreator": "por {{creator}}",
+      "downloadAssistantTitle": "Baixar assistente",
+      "downloadAssistantMessage": "Baixar \"{{assistantName}}\" para começar a conversar?",
+      "download": "Baixar",
+      "downloadErrorTitle": "Erro de download",
+      "downloadErrorMessage": "Falha ao baixar o assistente. Tente novamente.",
+      "startChatErrorMessage": "Falha ao iniciar a conversa. Tente novamente.",
+      "switchModelTitle": "Trocar de modelo?",
+      "switchModelMessage": "Trocar para \"{{modelName}}\" neste assistente?",
+      "keepCurrent": "Manter atual",
+      "switch": "Trocar",
+      "shareErrorTitle": "Erro ao compartilhar",
+      "shareErrorMessage": "Falha ao compartilhar o assistente. Tente novamente."
     }
   },
   "assistantsScreen": {
@@ -1121,7 +1381,9 @@
       "signInAgain": "Entrar novamente",
       "assistantNotAvailable": "Este assistant não está disponível para compra no momento.",
       "checkoutFailed": "Algo deu errado. Tente novamente."
-    }
+    },
+    "emptyLocal": "Nenhum assistente ainda.\nCrie seu primeiro assistente com o botão +!",
+    "emptyFiltered": "Nenhum assistente encontrado.\nTente ajustar seus filtros ou sua pesquisa."
   },
   "validation": {
     "nameRequired": "O nome é obrigatório",
@@ -1171,7 +1433,11 @@
       "step2": "• Toque no botão da câmera para iniciar a análise de vídeo ao vivo",
       "step3": "• Ajuste a frequência de capturas enquanto a câmera estiver ativa",
       "step4": "• Mude para outro assistant para o chat de texto normal"
-    }
+    },
+    "defaultPrompt": "O que você vê?",
+    "multimodalTitle": "Multimodal não ativado",
+    "multimodalMessage": "Este modelo não suporta análise de imagens. Carregue um modelo multimodal.",
+    "checkSupportError": "Falha ao verificar se o modelo suporta imagens."
   },
   "screenTitles": {
     "chat": "Chat",
@@ -1187,6 +1453,7 @@
     "modelNotLoaded": "Modelo não carregado. Inicialize o modelo.",
     "completionFailed": "Falha na completação: ",
     "toolCallTruncated": "Chamada de ferramenta cortada — o modelo provavelmente ficou sem espaço. Tente um contexto maior ou uma requisição menor.",
+    "speculativeInitFailed": "Este dispositivo não conseguiu iniciar a decodificação especulativa para este modelo — provavelmente não há memória suficiente para o contexto de rascunho. Desative a Decodificação especulativa em Configurações → Configurações Avançadas e tente novamente.",
     "loadingModel": "Carregando modelo ...",
     "typeYourMessage": "Digite sua mensagem aqui",
     "load": "Carregar",
@@ -1200,6 +1467,7 @@
     "contextWarning": "Esta conversa está ficando longa e pode ficar sem espaço em breve.",
     "contextRemoteHedged": "Esta resposta pode ter sido cortada. Tente enviar novamente ou encurtar a requisição.",
     "contextFull": "A conversa ficou sem espaço. Inicie um novo chat ou aumente o tamanho do contexto.",
+    "contextFullRemote": "A conversa ficou sem espaço. Comece um novo chat.",
     "contextFullEscalated": "Ainda sem espaço. Inicie um novo chat ou aumente o tamanho do contexto para continuar.",
     "contextFullHeavyTalent": "A conversa ficou sem espaço — {{talent}} costuma precisar de mais. Inicie um novo chat ou aumente o tamanho do contexto.",
     "contextBannerDismiss": "Dispensar",
@@ -1244,9 +1512,7 @@
       "searchResultsTitle": "Resultados da busca",
       "showResultsAccessibilityLabel": "Mostrar resultados da busca na web para {{query}}",
       "openLinkError": "Não foi possível abrir este link."
-    },
-    "contextFullRemote": "A conversa ficou sem espaço. Comece um novo chat.",
-    "speculativeInitFailed": "Este dispositivo não conseguiu iniciar a decodificação especulativa para este modelo — provavelmente não há memória suficiente para o contexto de rascunho. Desative a Decodificação especulativa em Configurações → Configurações Avançadas e tente novamente."
+    }
   },
   "htmlPreview": {
     "defaultTitle": "Pré-visualização",
@@ -1385,6 +1651,15 @@
         "no": "✗"
       },
       "versionFormat": "{{version}} ({{buildNumber}})"
+    },
+    "presetDefault": "Padrão",
+    "presetFast": "Rápido",
+    "presetCustom": "Personalizado",
+    "params": {
+      "pp": "Número de tokens de processamento do prompt (máx.: tamanho do lote físico)",
+      "tg": "Número de tokens de geração de texto",
+      "pl": "Tamanho do paralelismo de pipeline",
+      "nr": "Número de repetições"
     }
   },
   "errors": {
@@ -1495,7 +1770,8 @@
     "skip": "Pular",
     "skipForNow": "Pular por agora",
     "splash": {
-      "brand": "DRS AI"
+      "brand": "DRS AI",
+      "tagline": "Sua IA privada, no seu dispositivo"
     },
     "screen1": {
       "title": "Conheça seus assistants.",

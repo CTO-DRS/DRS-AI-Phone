@@ -1,5 +1,5 @@
 import React, {useState, useContext} from 'react';
-import {View, Linking} from 'react-native';
+import {View, ViewStyle, Linking} from 'react-native';
 
 import {Card, Text, Button, Tooltip} from 'react-native-paper';
 
@@ -119,7 +119,10 @@ export const BenchResultCard = ({result, onDelete, onShare}: Props) => {
 
     const capitalized = errorType.charAt(0).toUpperCase() + errorType.slice(1);
 
-    return styles[`error${capitalized}`] || styles.errorGeneric;
+    return (
+      (styles[`error${capitalized}` as keyof typeof styles] as ViewStyle) ||
+      styles.errorGeneric
+    );
   };
 
   return (

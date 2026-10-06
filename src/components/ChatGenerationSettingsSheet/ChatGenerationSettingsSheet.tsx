@@ -189,7 +189,8 @@ export const ChatGenerationSettingsSheet = ({
     // Convert string values to numbers where needed
     const processedSettings = Object.entries(settings).reduce(
       (acc, [key, value]) => {
-        const metadata = COMPLETION_PARAMS_METADATA[key];
+        const metadata =
+          COMPLETION_PARAMS_METADATA[key as keyof CompletionParams];
         if (metadata?.validation.type === 'numeric') {
           // Handle numeric conversion
           let numValue: number;
@@ -217,14 +218,14 @@ export const ChatGenerationSettingsSheet = ({
         return acc;
       },
       {settings: {}, errors: {}} as {
-        settings: typeof settings;
+        settings: Record<string, unknown>;
         errors: Record<string, string>;
       },
     );
 
     // Validate the converted values
     const validationResult = validateCompletionSettings(
-      processedSettings.settings,
+      processedSettings.settings as Partial<CompletionParams>,
     );
     const allErrors = {
       ...processedSettings.errors,
@@ -248,12 +249,12 @@ export const ChatGenerationSettingsSheet = ({
       // Only save if using custom settings (assistant settings are read-only)
       if (!isUsingAssistantSettings) {
         await chatSessionStore.updateSessionCompletionSettings(
-          processedSettings.settings,
+          processedSettings.settings as CompletionParams,
         );
       }
     } else {
       await chatSessionStore.setNewChatCompletionSettings(
-        processedSettings.settings,
+        processedSettings.settings as CompletionParams,
       );
     }
     onCloseSheet();

@@ -12,15 +12,8 @@ import type {
   DrshubAssistant,
 } from '../../types/drshub';
 
-export class DrshubError extends Error {
-  constructor(
-    message: string,
-    public details?: unknown,
-  ) {
-    super(message);
-    this.name = 'DrshubError';
-  }
-}
+import {DrshubError} from './DrshubError';
+export {DrshubError};
 
 // API Response types (matching the new API format)
 interface ApiAssistantResponse {

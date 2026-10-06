@@ -46,7 +46,7 @@ export const FABGroup: React.FC<FABGroupProps> = ({
   const theme = useTheme();
   const styles = createStyles(theme);
 
-  const onStateChange = ({open: isOpen}) => setOpen(isOpen);
+  const onStateChange = ({open: isOpen}: {open: boolean}) => setOpen(isOpen);
 
   const actions = useMemo(() => {
     const items = [

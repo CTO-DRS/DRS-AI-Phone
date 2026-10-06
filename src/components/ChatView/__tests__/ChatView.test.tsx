@@ -190,7 +190,7 @@ describe('chat', () => {
 
   it('renders ChatEmptyPlaceholder when no messages', () => {
     expect.assertions(1);
-    const messages = [];
+    const messages: MessageType.Any[] = [];
     const onSendPress = jest.fn();
     const onMessagePress = jest.fn();
     render(

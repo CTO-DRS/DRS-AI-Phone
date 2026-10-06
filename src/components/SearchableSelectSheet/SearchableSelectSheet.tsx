@@ -125,7 +125,7 @@ export const SearchableSelectSheet: React.FC<SearchableSelectSheetProps> = ({
           </View>
           <BottomSheetFlatList
             data={filtered}
-            keyExtractor={item => item.value}
+            keyExtractor={(item: SearchableSelectOption) => item.value}
             renderItem={renderItem}
             keyboardShouldPersistTaps="handled"
             style={styles.list}

@@ -1,5 +1,5 @@
 import React, {useState, useContext, useCallback, useRef} from 'react';
-import {TouchableOpacity, View} from 'react-native';
+import {ScrollViewProps, TouchableOpacity, View} from 'react-native';
 
 import {observer} from 'mobx-react';
 import {Text, Chip, Button} from 'react-native-paper';
@@ -203,8 +203,11 @@ export const SearchView = observer(
           keyExtractor={(item: HuggingFaceModel) => item.id}
           renderItem={renderItem}
           contentContainerStyle={styles.list}
-          renderScrollComponent={props => (
-            <Sheet.ScrollView bottomOffset={100} {...props} />
+          renderScrollComponent={(props: ScrollViewProps) => (
+            <Sheet.ScrollView
+              {...(props as React.ComponentProps<typeof Sheet.ScrollView>)}
+              bottomOffset={100}
+            />
           )}
           onEndReached={handleEndReached}
           onEndReachedThreshold={0.3}

@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {View} from 'react-native';
+import {ScrollViewProps, View} from 'react-native';
 
 import {Text, Chip, Tooltip} from 'react-native-paper';
 import {BottomSheetFlatList} from '@gorhom/bottom-sheet';
@@ -167,8 +167,11 @@ export const DetailsView = ({hfModel}: DetailsViewProps) => {
             </View>
           ) : null
         }
-        renderScrollComponent={props => (
-          <Sheet.ScrollView bottomOffset={100} {...props} />
+        renderScrollComponent={(props: ScrollViewProps) => (
+          <Sheet.ScrollView
+            {...(props as React.ComponentProps<typeof Sheet.ScrollView>)}
+            bottomOffset={100}
+          />
         )}
         contentContainerStyle={styles.list}
       />

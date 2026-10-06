@@ -6,6 +6,7 @@
     "rename": "Ubah Nama",
     "reset": "Atur Ulang",
     "save": "Simpan",
+    "stop": "Berhenti",
     "update": "Perbarui",
     "error": "Kesalahan",
     "export": "Ekspor",
@@ -31,8 +32,10 @@
     "close": "Tutup",
     "clear": "Bersihkan",
     "gallery": "Galeri",
-    "stop": "Berhenti",
-    "noResults": "Tidak ada hasil"
+    "noResults": "Tidak ada hasil",
+    "openDrawer": "Buka panel samping",
+    "openMenu": "Buka menu",
+    "closeMenu": "Tutup menu"
   },
   "settings": {
     "modelInitializationSettings": "Pengaturan Inisialisasi Model",
@@ -87,6 +90,25 @@
     "useMmapFalse": "Dinonaktifkan",
     "useMmapTrueDescription": "Selalu gunakan pemetaan memori untuk pemuatan lebih cepat",
     "useMmapFalseDescription": "Disarankan untuk dinonaktifkan ketika weight repacking diaktifkan untuk mencegah penggandaan penggunaan memori",
+    "weightRepacking": "Aktifkan Weight Repacking",
+    "weightRepackingDescription": "Pemrosesan prompt lebih cepat dengan overhead memori minimal ketika pemetaan memori dinonaktifkan. Generasi token tidak terdampak.",
+    "speculativeDecoding": "Decoding Spekulatif",
+    "speculativeDecodingDescription": "Gunakan model draf kecil (atau model MTP tertanam) untuk memprediksi token dan mempercepat pembuatan. Eksperimental.",
+    "speculativeNotMTPCapable": "Model aktif tidak mendukung decoding spekulatif dan tidak ada draf kompatibel yang dipasangkan, sehingga fitur ini tetap mati untuknya tanpa efek. Fitur ini berlaku secara otomatis untuk model yang mendukung.",
+    "speculativeDraftModel": "Model Draf",
+    "speculativeDraftModelDescription": "Membuat draf token untuk model aktif.",
+    "speculativeDraftModelNone": "Tidak ada (MTP tertanam)",
+    "speculativeDraftModelIgnoredOverridden": "Model aktif memiliki model draf sendiri, sehingga pilihan ini diabaikan.",
+    "speculativeDraftModelIgnoredIncompatible": "Draf ini tidak kompatibel dengan model aktif, sehingga diabaikan.",
+    "speculativeDraftModelIgnoredNotCapable": "Model ini tidak memiliki lapisan draf, sehingga tidak dapat digunakan sebagai model draf.",
+    "speculativeDraftKeyCacheType": "Tipe Cache Kunci Draf",
+    "speculativeDraftValueCacheType": "Tipe Cache Nilai Draf",
+    "speculativeDraftNGpuLayers": "Lapisan GPU Draf",
+    "speculativeDraftNGpuLayersDescription": "Jumlah lapisan model draf yang dialihkan ke GPU.",
+    "speculativeDraftCacheTypeInactiveDescription": "Berlaku setelah decoding spekulatif berjalan.",
+    "ttsAvailability": "Text-to-speech",
+    "ttsAvailabilityDescription": "Bacakan balasan asisten dengan suara.",
+    "ttsAvailabilityLowMemoryWarning": "Memori perangkat Anda rendah — fitur ini mungkin tidak bekerja dengan baik.",
     "modelLoadingSettings": "Pengaturan Pemuatan Model",
     "autoOffloadLoad": "Lepas/Muat Otomatis",
     "autoOffloadLoadDescription": "Lepas model saat aplikasi di latar belakang.",
@@ -94,6 +116,12 @@
     "autoNavigateToChatDescription": "Arahkan ke obrolan saat pemuatan dimulai.",
     "appSettings": "Pengaturan Aplikasi",
     "language": "Bahasa",
+    "languageSheetTitle": "Bahasa",
+    "languageSearchPlaceholder": "Cari bahasa",
+    "languageRestartTitle": "Mulai ulang diperlukan",
+    "languageRestartMessage": "Arah tata letak berubah untuk bahasa ini. Mulai ulang aplikasi untuk menerapkannya sepenuhnya.",
+    "languageRestartNow": "Mulai ulang sekarang",
+    "languageRestartLater": "Nanti",
     "darkMode": "Mode Gelap",
     "displayMemoryUsage": "Tampilkan Penggunaan Memori",
     "displayMemoryUsageDescription": "Tampilkan penggunaan memori di halaman obrolan.",
@@ -106,6 +134,31 @@
     "importButton": "Impor",
     "importSuccess": "Berhasil mengimpor {{count}} sesi obrolan.",
     "importError": "Gagal mengimpor sesi obrolan. Harap periksa format file.",
+    "internetSearch": {
+      "title": "Pencarian Internet",
+      "description": "Izinkan Asisten mencari di web dengan alat mereka sendiri. Bawa kunci API Anda sendiri — DRS AI tidak pernah menyimpan kunci Anda atau merutekan kueri Anda.",
+      "providerLabel": "Penyedia pencarian",
+      "providerGated": "Segera hadir",
+      "keyLabel": "Kunci API",
+      "keyIsSet": "Kunci telah diatur untuk {{provider}}.",
+      "keyNotSet": "Tidak ada kunci yang diatur untuk {{provider}}.",
+      "setKeyButton": "Atur Kunci",
+      "updateKeyButton": "Perbarui Kunci",
+      "clearKeyButton": "Hapus Kunci",
+      "keyInputPlaceholder": "Tempel kunci API {{provider}} Anda",
+      "keyUpdateError": "Gagal memperbarui kunci. Silakan coba lagi.",
+      "showKeyAccessibilityLabel": "Tampilkan kunci API",
+      "hideKeyAccessibilityLabel": "Sembunyikan kunci API",
+      "resultCountLabel": "Hasil per pencarian",
+      "resultCountDescription": "Lebih sedikit hasil menyisakan lebih banyak ruang dalam konteks model.",
+      "consentTitle": "Pencarian meninggalkan perangkat Anda",
+      "consentDescription": "Saat Asisten mencari di web, kueri Anda dikirim ke penyedia yang dipilih melalui internet. Saat Asisten membaca halaman, URL dan konten halaman dapat dikirim ke layanan pembaca default (r.jina.ai) jika penyedia yang dipilih tidak memiliki pembaca bawaan. Kunci dan kueri tidak pernah dikirim ke DRS AI.",
+      "consentAccept": "Saya mengerti",
+      "consentRequired": "Terima pengungkapan di atas untuk mengatur kunci dan mengaktifkan pencarian.",
+      "consentGivenTitle": "Pencarian web diaktifkan",
+      "consentGivenDescription": "Kueri dan pembacaan halaman dapat meninggalkan perangkat Anda seperti dijelaskan di atas.",
+      "consentRevoke": "Cabut"
+    },
     "apiSettingsTitle": "Pengaturan API",
     "huggingFaceTokenLabel": "Token Hugging Face",
     "tokenIsSetDescription": "Token telah diatur. Diperlukan untuk mengakses model bergerbang.",
@@ -122,11 +175,14 @@
     "clearCachesSuccess": "Berhasil membersihkan {{count}} file cache.",
     "clearCachesError": "Gagal membersihkan cache. Silakan coba lagi.",
     "noCachesToClear": "Tidak ada cache untuk dibersihkan.",
-    "weightRepacking": "Aktifkan Weight Repacking",
-    "weightRepackingDescription": "Pemrosesan prompt lebih cepat dengan overhead memori minimal ketika pemetaan memori dinonaktifkan. Generasi token tidak terdampak.",
     "serverName": "Nama Server",
     "serverUrl": "URL server",
     "serverUrlPlaceholder": "misalnya, http://192.168.1.100:1234",
+    "requestTimeout": "Batas Waktu Permintaan (detik)",
+    "requestTimeoutPlaceholder": "Opsional - kosongkan untuk pakai bawaan",
+    "requestTimeoutHelp": "Waktu tunggu maksimal untuk server yang lambat merespons. Kosongkan untuk pakai bawaan.",
+    "serverType": "Jenis Server",
+    "serverTypeHelp": "Terdeteksi otomatis; ubah jika keliru.",
     "apiKey": "Kunci API",
     "apiKeyPlaceholder": "Opsional - diperlukan untuk OpenAI/Groq",
     "apiKeyDescription": "Disimpan dengan aman di perangkat.",
@@ -157,55 +213,7 @@
     "retryConnection": "Coba lagi",
     "enterUrlManually": "Masukkan URL secara manual",
     "manageServers": "Kelola Server",
-    "ttsAvailability": "Text-to-speech",
-    "ttsAvailabilityDescription": "Bacakan balasan asisten dengan suara.",
-    "ttsAvailabilityLowMemoryWarning": "Memori perangkat Anda rendah — fitur ini mungkin tidak bekerja dengan baik.",
-    "requestTimeout": "Batas Waktu Permintaan (detik)",
-    "requestTimeoutHelp": "Waktu tunggu maksimal untuk server yang lambat merespons. Kosongkan untuk pakai bawaan.",
-    "requestTimeoutPlaceholder": "Opsional - kosongkan untuk pakai bawaan",
-    "serverType": "Jenis Server",
-    "serverTypeHelp": "Terdeteksi otomatis; ubah jika keliru.",
-    "internetSearch": {
-      "title": "Pencarian Internet",
-      "description": "Izinkan Asisten mencari di web dengan alat mereka sendiri. Bawa kunci API Anda sendiri — DRS AI tidak pernah menyimpan kunci Anda atau merutekan kueri Anda.",
-      "providerLabel": "Penyedia pencarian",
-      "providerGated": "Segera hadir",
-      "keyLabel": "Kunci API",
-      "keyIsSet": "Kunci telah diatur untuk {{provider}}.",
-      "keyNotSet": "Tidak ada kunci yang diatur untuk {{provider}}.",
-      "setKeyButton": "Atur Kunci",
-      "updateKeyButton": "Perbarui Kunci",
-      "clearKeyButton": "Hapus Kunci",
-      "keyInputPlaceholder": "Tempel kunci API {{provider}} Anda",
-      "keyUpdateError": "Gagal memperbarui kunci. Silakan coba lagi.",
-      "showKeyAccessibilityLabel": "Tampilkan kunci API",
-      "hideKeyAccessibilityLabel": "Sembunyikan kunci API",
-      "resultCountLabel": "Hasil per pencarian",
-      "resultCountDescription": "Lebih sedikit hasil menyisakan lebih banyak ruang dalam konteks model.",
-      "consentTitle": "Pencarian meninggalkan perangkat Anda",
-      "consentDescription": "Saat Asisten mencari di web, kueri Anda dikirim ke penyedia yang dipilih melalui internet. Saat Asisten membaca halaman, URL dan konten halaman dapat dikirim ke layanan pembaca default (r.jina.ai) jika penyedia yang dipilih tidak memiliki pembaca bawaan. Kunci dan kueri tidak pernah dikirim ke DRS AI.",
-      "consentAccept": "Saya mengerti",
-      "consentRequired": "Terima pengungkapan di atas untuk mengatur kunci dan mengaktifkan pencarian.",
-      "consentGivenTitle": "Pencarian web diaktifkan",
-      "consentGivenDescription": "Kueri dan pembacaan halaman dapat meninggalkan perangkat Anda seperti dijelaskan di atas.",
-      "consentRevoke": "Cabut"
-    },
-    "languageSheetTitle": "Bahasa",
-    "languageSearchPlaceholder": "Cari bahasa",
-    "speculativeDecoding": "Decoding Spekulatif",
-    "speculativeDecodingDescription": "Gunakan model draf kecil (atau model MTP tertanam) untuk memprediksi token dan mempercepat pembuatan. Eksperimental.",
-    "speculativeNotMTPCapable": "Model aktif tidak mendukung decoding spekulatif dan tidak ada draf kompatibel yang dipasangkan, sehingga fitur ini tetap mati untuknya tanpa efek. Fitur ini berlaku secara otomatis untuk model yang mendukung.",
-    "speculativeDraftModel": "Model Draf",
-    "speculativeDraftModelDescription": "Membuat draf token untuk model aktif.",
-    "speculativeDraftModelNone": "Tidak ada (MTP tertanam)",
-    "speculativeDraftModelIgnoredOverridden": "Model aktif memiliki model draf sendiri, sehingga pilihan ini diabaikan.",
-    "speculativeDraftModelIgnoredIncompatible": "Draf ini tidak kompatibel dengan model aktif, sehingga diabaikan.",
-    "speculativeDraftModelIgnoredNotCapable": "Model ini tidak memiliki lapisan draf, sehingga tidak dapat digunakan sebagai model draf.",
-    "speculativeDraftKeyCacheType": "Tipe Cache Kunci Draf",
-    "speculativeDraftValueCacheType": "Tipe Cache Nilai Draf",
-    "speculativeDraftNGpuLayers": "Lapisan GPU Draf",
-    "speculativeDraftNGpuLayersDescription": "Jumlah lapisan model draf yang dialihkan ke GPU.",
-    "speculativeDraftCacheTypeInactiveDescription": "Berlaku setelah decoding spekulatif berjalan."
+    "exportLegacyError": "Gagal mengekspor sesi obrolan lama. File mungkin tidak ada."
   },
   "memory": {
     "shortWarning": "Peringatan Memori",
@@ -368,6 +376,15 @@
         "sortLikes": "Asistening Disukai"
       }
     },
+    "hubRun": {
+      "title": "Unduh Model",
+      "resolving": "Memuat detail model…",
+      "cancel": "Batal",
+      "retry": "Coba Lagi",
+      "invalidLinkTitle": "Tautan Tidak Valid",
+      "invalidLinkMessage": "Tautan Hugging Face ini tidak ada atau memiliki model atau file yang tidak valid.",
+      "resolveError": "Gagal memuat detail model. Periksa koneksi Anda dan coba lagi."
+    },
     "modelCard": {
       "alerts": {
         "deleteTitle": "Hapus Model",
@@ -385,6 +402,9 @@
       "labels": {
         "skills": "Kemampuan: ",
         "vision": "Visi",
+        "visionSupported": "Didukung",
+        "visionNotSupported": "Tidak didukung",
+        "visionUnknown": "Tidak diketahui",
         "capabilities": "kemampuan.",
         "modelName": "Nama Model",
         "contextLength": "Panjang Konteks",
@@ -393,9 +413,6 @@
         "requiresProjectionModel": "Memerlukan model proyeksi",
         "downloadProjectionModel": "Unduh model proyeksi",
         "viewModelCardOnHuggingFace": "Lihat Kartu Model di Hugging Face",
-        "visionSupported": "Didukung",
-        "visionNotSupported": "Tidak didukung",
-        "visionUnknown": "Tidak diketahui",
         "draftOnlyReason": "Model khusus draf. Pilih di Pengaturan → Decoding spekulatif."
       },
       "accessibility": {
@@ -461,14 +478,195 @@
       "mtp": "Spekulatif (MTP)",
       "mtpDraft": "Draf spekulatif"
     },
-    "hubRun": {
-      "title": "Unduh Model",
-      "resolving": "Memuat detail model…",
-      "cancel": "Batal",
-      "retry": "Coba Lagi",
-      "invalidLinkTitle": "Tautan Tidak Valid",
-      "invalidLinkMessage": "Tautan Hugging Face ini tidak ada atau memiliki model atau file yang tidak valid.",
-      "resolveError": "Gagal memuat detail model. Periksa koneksi Anda dan coba lagi."
+    "emptyTitle": "Belum ada model",
+    "emptyHint": "Ketuk + untuk mengunduh dari Hugging Face, menambahkan model lokal, atau menghubungkan server jarak jauh."
+  },
+  "modelsHub": {
+    "title": "Model",
+    "subtitle": "Temukan, unduh, dan kelola setiap model yang dapat dijalankan aplikasi Anda.",
+    "searchPlaceholder": "Cari model, penerbit, tugas…",
+    "retry": "Coba lagi",
+    "notAvailable": "Tidak tersedia",
+    "noDownloadableFile": "Tidak ada file GGUF yang dapat diunduh di repositori ini",
+    "downloadStarted": "Unduhan dimulai",
+    "seeAll": "Lihat semua",
+    "exploreAction": "Jelajahi model",
+    "emptyTitle": "Belum ada model yang terinstal",
+    "emptyHint": "Jelajahi hub dan unduh model yang sesuai dengan perangkat dan pekerjaan Anda.",
+    "fitScore": "Kecocokan {score}/100",
+    "installedFromRepo": "Terinstal dari repositori ini",
+    "installedBadge": "Terinstal",
+    "noFiles": "Tidak ada file GGUF yang dipublikasikan di repositori ini.",
+    "visionFilesTitle": "File proyeksi visi (mmproj)",
+    "visionFilesHint": "File kecil ini menambahkan pemahaman gambar pada model teks yang sesuai; file ini diunduh otomatis bersama model visi.",
+    "downloadFile": "Unduh file",
+    "downloadShort": "Dapatkan",
+    "version": "Versi",
+    "engineUnsupportedShort": "Tidak dapat dijalankan secara lokal",
+    "engineYes": "GGUF — berjalan lokal (llama.cpp)",
+    "engineNo": "Tidak didukung oleh mesin lokal",
+    "capabilitiesTitle": "Kemampuan",
+    "categoryEngineNotice": "Kategori ini mencantumkan repositori sungguhan, tetapi mesin GGUF lokal belum dapat mengeksekusi jenis model ini, sehingga unduhan dinonaktifkan di sini. Tidak ada yang disimulasikan — saat dukungan mesin tersedia, model-model ini dapat diunduh.",
+    "categoryInstalledSection": "Model Anda di kategori ini",
+    "categoryRemoteSection": "Temukan di HuggingFace",
+    "featuredTitle": "Model unggulan",
+    "recommendedTitle": "Direkomendasikan untuk perangkat Anda",
+    "recentTitle": "Baru ditambahkan",
+    "favoritesTitle": "Favorit",
+    "installedTitle": "Terinstal",
+    "wifiOnly": "Hanya Wi-Fi",
+    "categoriesTitle": "Kategori",
+    "installedCount": "{count} terinstal",
+    "discover": "Temukan",
+    "device": {
+      "ram": "RAM",
+      "storage": "Penyimpanan tersedia",
+      "cpu": "CPU",
+      "gpu": "GPU",
+      "gpuOk": "Dipercepat",
+      "gpuNo": "Hanya CPU"
+    },
+    "compat": {
+      "excellent": "Kompatibilitas sangat baik",
+      "good": "Kompatibilitas baik",
+      "limited": "Kompatibilitas terbatas",
+      "notRecommended": "Tidak disarankan",
+      "unknown": "Kompatibilitas tidak diketahui"
+    },
+    "reasons": {
+      "engineUnsupported": "Jenis model ini tidak dapat berjalan pada mesin GGUF lokal",
+      "engineSupported": "Berjalan pada mesin GGUF lokal",
+      "memoryComfortable": "Penggunaan memori akan longgar",
+      "memoryOk": "Penggunaan memori masih dapat diterima",
+      "memoryTight": "Memori akan ketat — perkirakan proses lebih lambat",
+      "memoryInsufficient": "RAM perangkat ini tidak cukup untuk memuatnya",
+      "memoryUnknown": "Kebutuhan memori tidak dapat diperkirakan dari data repositori",
+      "storagePlenty": "Ruang penyimpanan bebas masih banyak",
+      "storageTight": "Penyimpanan akan ketat setelah menginstal",
+      "storageInsufficient": "Penyimpanan bebas tidak cukup",
+      "storageUnknown": "Penyimpanan bebas tidak dapat dibaca",
+      "cpuGood": "CPU memiliki cukup inti untuk inferensi cepat",
+      "cpuOk": "CPU dapat menjalankannya, cukup cepat",
+      "cpuLimited": "Inti CPU sedikit — inferensi akan lambat",
+      "cpuUnknown": "Jumlah inti CPU tidak dapat dibaca",
+      "gpuSupported": "Akselerasi GPU tersedia",
+      "gpuUnsupported": "Tidak ada akselerasi GPU — berjalan di CPU",
+      "gpuUnknown": "Dukungan GPU tidak dapat ditentukan"
+    },
+    "overviewTemplate": "Model {categories} yang dipublikasikan oleh {author} dengan sekitar {params} parameter, didistribusikan sebagai file GGUF untuk inferensi lokal secara offline di perangkat ini.",
+    "overviewBlocked": "Ini adalah repositori sungguhan, tetapi jenis modelnya tidak dapat dieksekusi oleh mesin lokal, sehingga tidak dapat diunduh di sini.",
+    "statsTemplate": "Di HuggingFace: {downloads} unduhan · {likes} suka.",
+    "tech": {
+      "architecture": "Arsitektur",
+      "parameters": "Parameter",
+      "contextLength": "Panjang konteks",
+      "formats": "Format",
+      "quantization": "Kuantisasi",
+      "fileCount": "File GGUF",
+      "version": "Revisi (sha)",
+      "lastModified": "Terakhir diperbarui",
+      "license": "Lisensi",
+      "engine": "Mesin"
+    },
+    "capabilities": {
+      "offline": "Offline",
+      "context": "Konteks",
+      "arabic": "Dukungan bahasa Arab",
+      "multilingual": "Multibahasa"
+    },
+    "tabs": {
+      "overview": "Ikhtisar",
+      "technical": "Teknis",
+      "files": "File"
+    },
+    "categories": {
+      "text": "Teks",
+      "vision": "Visi",
+      "reasoning": "Penalaran",
+      "coding": "Coding",
+      "multimodal": "Multimodal",
+      "embedding": "Embedding",
+      "translation": "Terjemahan",
+      "audio": "Audio",
+      "image": "Gambar",
+      "video": "Video",
+      "general": "Umum"
+    },
+    "dialog": {
+      "aboutTitle": "Tentang model ini",
+      "aboutTemplate": "Model GGUF {family} oleh {author}. Berjalan sepenuhnya offline di perangkat ini setelah diunduh. Ukuran di bawah ini adalah ukuran file persis yang dilaporkan HuggingFace.",
+      "familyUnknown": "GGUF",
+      "file": "File",
+      "downloadSize": "Ukuran unduhan",
+      "extraVisionFiles": "File visi tambahan (mmproj)",
+      "storageAfter": "Penyimpanan terpakai setelah instalasi",
+      "offline": "Berfungsi offline",
+      "offlineYes": "Ya — sepenuhnya di perangkat",
+      "context": "Panjang konteks",
+      "wifiOnlyWaiting": "Unduhan khusus Wi-Fi aktif. Dengan data seluler, unduhan ini akan menunggu di antrean hingga Wi-Fi kembali.",
+      "engineUnsupported": "Jenis model ini (pembuatan gambar/video/audio) tidak dapat dieksekusi oleh mesin GGUF lokal, sehingga pengunduhan dinonaktifkan. Tidak ada yang palsu di sini — daftarnya nyata, hanya saja mesin tidak dapat menjalankannya.",
+      "confirmDownload": "Unduh model",
+      "starting": "Memulai…"
+    },
+    "storage": {
+      "title": "Penyimpanan model",
+      "entryHint": "Rincian penggunaan, model terbesar, pembersihan",
+      "used": "Digunakan oleh model",
+      "available": "Tersedia",
+      "distribution": "Berdasarkan kategori",
+      "largest": "Model terbesar",
+      "orphans": "File tidak lengkap & tersisa",
+      "orphansFound": "{count} file · {size} dapat dibebaskan",
+      "orphansNone": "Tidak ada yang perlu dibersihkan — penyimpanan rapi.",
+      "cleanNow": "Bersihkan",
+      "cleanTitle": "Hapus file tersisa?",
+      "cleanMessage": "{count} file yang tidak selesai atau tak bertuan akan dihapus secara permanen.",
+      "cleanConfirm": "Hapus",
+      "checking": "Memeriksa penyimpanan…",
+      "enough": "Ruang kosong cukup",
+      "notEnough": "Ruang kosong tidak cukup",
+      "required": "Diperlukan",
+      "availableLabel": "Tersedia",
+      "deficit": "Kurang {amount}"
+    },
+    "downloads": {
+      "title": "Unduhan",
+      "emptyTitle": "Tidak ada unduhan",
+      "emptyHint": "Model yang Anda unduh muncul di sini dengan progres langsung, dan tetap dapat dikelola secara offline.",
+      "active": "Mengunduh",
+      "paused": "Dijeda",
+      "pausedHint": "Dijeda — melanjutkan dari posisi byte yang sama",
+      "verifying": "Memverifikasi",
+      "verifyingHint": "Memeriksa integritas file (ukuran + checksum) sebelum instalasi",
+      "completed": "Selesai",
+      "remaining": "≈",
+      "pause": "Jeda",
+      "resume": "Lanjutkan",
+      "cancel": "Batal"
+    },
+    "updates": {
+      "title": "Pembaruan",
+      "check": "Periksa pembaruan",
+      "checking": "Memeriksa…",
+      "recheck": "Periksa lagi",
+      "upToDate": "Semua model terinstal sesuai dengan revisi upstream-nya.",
+      "update": "Perbarui"
+    },
+    "sort": {
+      "title": "Urutkan",
+      "recommended": "Paling sesuai",
+      "downloads": "Unduhan terbanyak",
+      "newest": "Terbaru",
+      "name": "Nama",
+      "sizeAsc": "Terkecil lebih dulu",
+      "sizeDesc": "Terbesar lebih dulu"
+    },
+    "search": {
+      "installedSection": "Model Anda",
+      "hfSection": "Hasil HuggingFace",
+      "noResults": "Tidak ada model yang ditemukan",
+      "noResultsHint": "Coba nama, penerbit, atau tugas yang berbeda.",
+      "errorTitle": "Pencarian gagal"
     }
   },
   "completionParams": {
@@ -510,11 +708,13 @@
     "orBy": "atau dengan",
     "versionCopiedTitle": "Versi disalin",
     "versionCopiedDescription": "Informasi versi telah disalin ke papan klip",
-    "privacyPolicy": "Kebijakan Privasi",
-    "termsOfService": "Ketentuan Layanan",
     "tour": "Tur",
     "tourDescription": "Putar ulang layar selamat datang untuk melihat apa yang ditawarkan DRS AI.",
-    "showIntroButton": "Tampilkan intro lagi"
+    "showIntroButton": "Tampilkan intro lagi",
+    "privacyPolicy": "Kebijakan Privasi",
+    "termsOfService": "Ketentuan Layanan",
+    "versionFormat": "Versi {{version}} ({{build}})",
+    "successTitle": "Berhasil"
   },
   "feedback": {
     "title": "Kirim Masukan",
@@ -558,6 +758,14 @@
     "attachmentButton": {
       "attachmentButtonAccessibilityLabel": "Kirim media"
     },
+    "bubble": {
+      "msPerToken": "{{value}}md/token",
+      "tokensPerSec": "{{value}} token/detik",
+      "ttft": "{{value}}md TTFT",
+      "draftAccepted": "draf: {{accepted}}/{{total}} ({{pct}}%)",
+      "interrupted": "Terputus",
+      "truncated": "Terpotong — kemungkinan konteks penuh"
+    },
     "exportUtils": {
       "fileSaved": "File Disimpan",
       "fileSavedMessage": "File telah disimpan ke folder Unduhan Anda sebagai {{filename}}",
@@ -580,6 +788,17 @@
     },
     "thinkingBubble": {
       "reasoning": "Berpikir"
+    },
+    "pendingIndicator": {
+      "preparingTool": "Menyiapkan alat",
+      "buildingPage": "Membangun halaman",
+      "calculating": "Menghitung",
+      "lookingUpTime": "Mencari waktu",
+      "stopping": "Menghentikan…"
+    },
+    "toolMetrics": {
+      "tokens": "{{count}} token",
+      "elapsed": "{{seconds}} dtk"
     },
     "chatEmptyPlaceholder": {
       "noModelsTitle": "Tidak Ada Model Tersedia",
@@ -721,17 +940,17 @@
       "forbiddenTitle": "Akses Ditolak",
       "forbiddenMessage": "Anda tidak memiliki izin untuk mengakses model ini. Pastikan:",
       "forbiddenSteps": [
-        "Token Anda memiliki izin \"read\"",
-        "Anda telah meminta dan diberikan akses ke model ini",
-        "Pemilik model telah menyetujui permintaan akses Anda"
+        "Your token has \"read\" permission",
+        "You requested and were granted access to this model",
+        "The model owner approved your access request"
       ],
       "getTokenTitle": "Dapatkan Token Hugging Face",
       "getTokenMessage": "Model ini memerlukan token Hugging Face untuk diunduh.",
       "getTokenSteps": [
-        "Buka huggingface.co dan masuk",
-        "Buka Pengaturan > Access Tokens",
-        "Buat token baru dengan akses \"read\"",
-        "Salin token dan tempel di kolom token"
+        "Go to huggingface.co and sign in",
+        "Navigate to Settings > Access Tokens",
+        "Create a new token with \"read\" access",
+        "Copy the token and paste it in the token field"
       ],
       "tokenDisabledTitle": "Token Dinonaktifkan",
       "tokenDisabledMessage": "Anda memiliki token Hugging Face yang disetel, tetapi saat ini dinonaktifkan. Model ini memerlukan token untuk diunduh. Aktifkan token Anda untuk melanjutkan.",
@@ -749,10 +968,15 @@
       "makeChatTemporary": "Jadikan obrolan sementara",
       "export": "Ekspor/Impor",
       "exportCurrentSession": "Ekspor sesi saat ini",
+      "exportCurrentSessionMarkdown": "Ekspor sebagai Markdown",
       "exportAllSessions": "Ekspor semua sesi",
       "exportChatSession": "Ekspor sesi obrolan",
       "importSessions": "Impor sesi",
-      "exportCurrentSessionMarkdown": "Ekspor sebagai Markdown"
+      "exportErrorTitle": "Kesalahan Ekspor",
+      "exportCurrentSessionError": "Gagal mengekspor sesi saat ini.",
+      "exportAllError": "Gagal mengekspor semua sesi.",
+      "importSuccessTitle": "Impor Berhasil",
+      "importErrorTitle": "Kesalahan Impor"
     },
     "hfTokenSheet": {
       "title": "Token Hugging Face",
@@ -765,10 +989,10 @@
       "resetSuccess": "Token berhasil dihapus",
       "instructions": "Cara mendapatkan token:",
       "instructionsSteps": [
-        "Buka huggingface.co dan masuk",
-        "Buka Pengaturan > Access Tokens",
-        "Buat token baru dengan akses \"read\"",
-        "Salin token dan tempel di bawah ini"
+        "Go to huggingface.co and sign in",
+        "Navigate to Settings > Access Tokens",
+        "Create a new token with \"read\" access",
+        "Copy the token and paste it below"
       ],
       "getTokenLink": "Dapatkan token dari huggingface.co ↗",
       "error": {
@@ -972,7 +1196,10 @@
       "bulkDeleteError": "Gagal menghapus sesi obrolan. Silakan coba lagi.",
       "exportError": "Gagal mengekspor sesi obrolan. Silakan coba lagi.",
       "bulkExportError": "Gagal mengekspor sesi obrolan. Silakan coba lagi.",
+      "pin": "Sematkan",
+      "unpin": "Lepaskan sematan",
       "dateGroups": {
+        "pinned": "Disematkan",
         "today": "Hari Ini",
         "yesterday": "Kemarin",
         "thisWeek": "Minggu Ini",
@@ -981,11 +1208,10 @@
         "threeWeeksAgo": "3 Minggu Lalu",
         "fourWeeksAgo": "4 Minggu Lalu",
         "lastMonth": "Bulan Lalu",
-        "older": "Lebih Lama",
-        "pinned": "Disematkan"
+        "older": "Lebih Lama"
       },
-      "pin": "Sematkan",
-      "unpin": "Lepaskan sematan"
+      "emptySessionsTitle": "Belum ada obrolan",
+      "emptySessionsHint": "Mulai percakapan baru dari layar obrolan"
     },
     "usageStats": {
       "tooltip": {
@@ -995,7 +1221,7 @@
         "usage": "Penggunaan: "
       },
       "byteSizes": [
-        "Byte",
+        "Bytes",
         "KB",
         "MB",
         "GB"
@@ -1014,26 +1240,60 @@
       "exportAllAssistants": "Ekspor semua assistant",
       "importAssistants": "Impor assistant",
       "importSuccess": "Berhasil mengimpor {{count}} assistant.",
-      "importError": "Gagal mengimpor assistant. Harap periksa format file."
+      "importError": "Gagal mengimpor assistant. Harap periksa format file.",
+      "exportErrorTitle": "Kesalahan Ekspor",
+      "exportAllError": "Gagal mengekspor semua asisten.",
+      "importSuccessTitle": "Impor Berhasil",
+      "importErrorTitle": "Kesalahan Impor"
     },
-    "bubble": {
-      "msPerToken": "{{value}}md/token",
-      "tokensPerSec": "{{value}} token/detik",
-      "ttft": "{{value}}md TTFT",
-      "interrupted": "Terputus",
-      "truncated": "Terpotong — kemungkinan konteks penuh",
-      "draftAccepted": "draf: {{accepted}}/{{total}} ({{pct}}%)"
+    "brandHeader": {
+      "tagline": "AI pribadi Anda di perangkat"
     },
-    "pendingIndicator": {
-      "preparingTool": "Menyiapkan alat",
-      "buildingPage": "Membangun halaman",
-      "calculating": "Menghitung",
-      "lookingUpTime": "Mencari waktu",
-      "stopping": "Menghentikan…"
+    "authSheet": {
+      "signInTitle": "Masuk",
+      "signUpTitle": "Buat Akun",
+      "fullNameLabel": "Nama Lengkap",
+      "emailLabel": "Email",
+      "passwordLabel": "Kata Sandi",
+      "signInButton": "Masuk",
+      "signUpButton": "Buat Akun",
+      "forgotPassword": "Lupa Kata Sandi?",
+      "or": "atau",
+      "continueWithGoogle": "Lanjutkan dengan Google",
+      "haveAccount": "Sudah punya akun? ",
+      "noAccount": "Belum punya akun? ",
+      "signUpLink": "Daftar",
+      "signInLink": "Masuk",
+      "signingIn": "Sedang masuk...",
+      "fillRequiredFields": "Silakan isi semua kolom yang wajib.",
+      "enterFullName": "Silakan masukkan nama lengkap Anda.",
+      "enterEmailFirst": "Silakan masukkan alamat email Anda terlebih dahulu.",
+      "accountCreatedTitle": "Akun Dibuat",
+      "accountCreatedMessage": "Silakan periksa email Anda untuk memverifikasi akun.",
+      "welcomeBackTitle": "Selamat Datang Kembali!",
+      "welcomeBackMessage": "Anda berhasil masuk.",
+      "googleErrorTitle": "Kesalahan Masuk Google",
+      "passwordResetTitle": "Atur Ulang Kata Sandi",
+      "passwordResetMessage": "Periksa email Anda untuk petunjuk pengaturan ulang kata sandi.",
+      "authErrorTitle": "Kesalahan Autentikasi"
     },
-    "toolMetrics": {
-      "tokens": "{{count}} token",
-      "elapsed": "{{seconds}} dtk"
+    "squareAssistantCard": {
+      "videoAssistant": "Asisten AI Video",
+      "advancedAssistant": "Asisten AI Lanjutan",
+      "assistant": "Asisten AI",
+      "byCreator": "oleh {{creator}}",
+      "downloadAssistantTitle": "Unduh Asisten",
+      "downloadAssistantMessage": "Unduh \"{{assistantName}}\" untuk mulai mengobrol?",
+      "download": "Unduh",
+      "downloadErrorTitle": "Kesalahan Unduhan",
+      "downloadErrorMessage": "Gagal mengunduh asisten. Silakan coba lagi.",
+      "startChatErrorMessage": "Gagal memulai obrolan. Silakan coba lagi.",
+      "switchModelTitle": "Ganti Model?",
+      "switchModelMessage": "Beralih ke \"{{modelName}}\" untuk asisten ini?",
+      "keepCurrent": "Pertahankan Saat Ini",
+      "switch": "Ganti",
+      "shareErrorTitle": "Kesalahan Berbagi",
+      "shareErrorMessage": "Gagal berbagi asisten. Silakan coba lagi."
     }
   },
   "assistantsScreen": {
@@ -1121,7 +1381,9 @@
       "signInAgain": "Masuk Lagi",
       "assistantNotAvailable": "Asisten ini sedang tidak tersedia untuk dibeli saat ini.",
       "checkoutFailed": "Terjadi kesalahan. Silakan coba lagi."
-    }
+    },
+    "emptyLocal": "Belum ada Asisten.\nBuat Asisten pertama Anda menggunakan tombol +!",
+    "emptyFiltered": "Tidak ada Asisten yang ditemukan.\nCoba sesuaikan filter atau pencarian Anda."
   },
   "validation": {
     "nameRequired": "Nama wajib diisi",
@@ -1171,7 +1433,11 @@
       "step2": "• Ketuk tombol kamera untuk memulai analisis video langsung",
       "step3": "• Sesuaikan frekuensi tangkapan saat kamera aktif",
       "step4": "• Beralih ke assistant lain untuk obrolan teks biasa"
-    }
+    },
+    "defaultPrompt": "Apa yang Anda lihat?",
+    "multimodalTitle": "Multimodal Tidak Diaktifkan",
+    "multimodalMessage": "Model ini tidak mendukung analisis gambar. Silakan muat model multimodal.",
+    "checkSupportError": "Gagal memeriksa apakah model mendukung gambar."
   },
   "screenTitles": {
     "chat": "Obrolan",
@@ -1186,6 +1452,8 @@
     "conversationReset": "Obrolan diatur ulang!",
     "modelNotLoaded": "Model belum dimuat. Harap inisialisasi model.",
     "completionFailed": "Gagal menyelesaikan: ",
+    "toolCallTruncated": "Pemanggilan alat terpotong — model kemungkinan kehabisan ruang. Coba konteks yang lebih besar atau permintaan yang lebih kecil.",
+    "speculativeInitFailed": "Perangkat ini tidak dapat memulai decoding spekulatif untuk model ini — kemungkinan besar tidak ada cukup memori untuk konteks draf. Matikan Decoding spekulatif di Pengaturan → Pengaturan Lanjutan dan coba lagi.",
     "loadingModel": "Memuat model...",
     "typeYourMessage": "Ketik pesan Anda di sini",
     "load": "Muat",
@@ -1194,16 +1462,12 @@
     "pleaseLoadModel": "Muat model untuk mengobrol.",
     "multimodalNotEnabled": "Multimodal tidak diaktifkan untuk model ini. Gambar akan ditampilkan tetapi tidak diproses oleh AI.",
     "cannotSendWithoutModel": "Muat model terlebih dahulu",
-    "toolCallTruncated": "Pemanggilan alat terpotong — model kemungkinan kehabisan ruang. Coba konteks yang lebih besar atau permintaan yang lebih kecil.",
     "toolCompatWarning": "Model ini mungkin tidak mendukung pemanggilan alat. Hasil mungkin tidak andal.",
     "softCapWarning": "Mulai chat baru untuk performa terbaik.",
-    "generatingPreview": "Membuat pratinjau… ({{tokens}} token)",
-    "generatingPreviewPending": "Membuat pratinjau…",
-    "toolUsedChip": "menggunakan {{name}}",
-    "toolErrorBlock": "{{name}} gagal",
     "contextWarning": "Percakapan ini semakin panjang dan ruangnya mungkin akan segera habis.",
     "contextRemoteHedged": "Balasan ini mungkin terpotong. Coba kirim ulang atau persingkat permintaan.",
     "contextFull": "Ruang percakapan telah habis. Mulai obrolan baru atau tingkatkan ukuran konteks.",
+    "contextFullRemote": "Percakapan kehabisan ruang. Mulai obrolan baru.",
     "contextFullEscalated": "Ruang masih habis. Mulai obrolan baru, atau tingkatkan ukuran konteks untuk melanjutkan.",
     "contextFullHeavyTalent": "Ruang percakapan telah habis — {{talent}} cenderung membutuhkan lebih banyak. Mulai obrolan baru atau tingkatkan ukuran konteks.",
     "contextBannerDismiss": "Tutup",
@@ -1235,6 +1499,10 @@
     "increaseContextSuccess": "Konteks ditingkatkan menjadi {{target}} token.",
     "increaseContextFailure": "Gagal meningkatkan ukuran konteks. Pengaturan sebelumnya telah dipulihkan.",
     "assistantLoadHint": "Asisten ini cenderung membutuhkan lebih banyak ruang daripada yang diizinkan ukuran konteks saat ini.",
+    "generatingPreview": "Membuat pratinjau… ({{tokens}} token)",
+    "generatingPreviewPending": "Membuat pratinjau…",
+    "toolUsedChip": "menggunakan {{name}}",
+    "toolErrorBlock": "{{name}} gagal",
     "webSearch": {
       "searched": "Dicari: {{query}}",
       "noResults": "Tidak ada hasil",
@@ -1244,9 +1512,15 @@
       "searchResultsTitle": "Hasil pencarian",
       "showResultsAccessibilityLabel": "Tampilkan hasil pencarian web untuk {{query}}",
       "openLinkError": "Tidak dapat membuka tautan ini."
-    },
-    "contextFullRemote": "Percakapan kehabisan ruang. Mulai obrolan baru.",
-    "speculativeInitFailed": "Perangkat ini tidak dapat memulai decoding spekulatif untuk model ini — kemungkinan besar tidak ada cukup memori untuk konteks draf. Matikan Decoding spekulatif di Pengaturan → Pengaturan Lanjutan dan coba lagi."
+    }
+  },
+  "htmlPreview": {
+    "defaultTitle": "Pratinjau",
+    "showPreview": "Tampilkan pratinjau hasil render",
+    "showCode": "Tampilkan kode HTML",
+    "copyHtml": "Salin HTML",
+    "closePreview": "Tutup pratinjau",
+    "openFullscreen": "Buka layar penuh: {{title}}"
   },
   "benchmark": {
     "title": "Benchmark",
@@ -1377,6 +1651,15 @@
         "no": "✗"
       },
       "versionFormat": "{{version}} ({{buildNumber}})"
+    },
+    "presetDefault": "Bawaan",
+    "presetFast": "Cepat",
+    "presetCustom": "Kustom",
+    "params": {
+      "pp": "Jumlah token pemrosesan prompt (maks: ukuran batch fisik)",
+      "tg": "Jumlah token pembuatan teks",
+      "pl": "Ukuran paralelisme pipeline",
+      "nr": "Jumlah pengulangan"
     }
   },
   "errors": {
@@ -1411,39 +1694,6 @@
     "voicesTitle": "Suara-suara",
     "voicesEmptyHint": "Ketuk suara mana pun untuk menginstalnya dan menggunakannya. Atau pilih suara sistem — suara tersebut selalu tersedia.",
     "supertonicStepsLabel": "Kualitas (langkah difusi)",
-    "toggleAutoSpeakLabel": "Aktifkan/nonaktifkan fitur bicara otomatis",
-    "openSettingsLabel": "Pengaturan TTS",
-    "playMessageLabel": "Putar pesan",
-    "stopMessageLabel": "Hentikan pesan",
-    "autoSpeakLabel": "Respons otomatis",
-    "autoSpeakDescription": "Bacakan balasan baru dengan lantang saat balasan tersebut tiba.",
-    "engineChipKitten": "Kitten",
-    "engineChipKokoro": "Kokoro",
-    "engineChipSupertonic": "Supertonic",
-    "engineChipSystem": "Sistem",
-    "stepsCount": "{{steps}} langkah",
-    "engineKittenTagline": "Ukuran paling kecil. Andal. Terbaik untuk perangkat lama.",
-    "engineKokoroTagline": "Kualitas tertinggi. Lebih lambat saat memulai. Beberapa suara mungkin tidak berfungsi di semua perangkat.",
-    "engineSupertonicTagline": "Asistening cepat memulai. Menggunakan lebih banyak RAM. Mungkin sesekali menghilangkan kata.",
-    "engineSystemTagline": "Suara bawaan sistem operasi. Selalu tersedia, tanpa instalasi.",
-    "engineSystemTitleIos": "Suara iOS",
-    "engineSystemTitleAndroid": "Suara Android",
-    "engineSystemTier": "selalu tersedia",
-    "engineTierLightest": "paling ringan",
-    "engineTierBestQuality": "kualitas terbaik",
-    "engineTierFastestStart": "start tercepat",
-    "engineSpecsLine": "{{voices}} suara   ·   {{sizeMb}} MB   ·   ~{{ramMb}} MB RAM",
-    "engineSystemSpecsLine": "{{voices}} suara",
-    "engineRemoveTitle": "Hapus {{engineTitle}}?",
-    "engineRemoveBody": "Hemat ~{{sizeMb}} MB di perangkat ini.",
-    "engineRemoveCancel": "Batal",
-    "engineRemoveConfirm": "Hapus",
-    "engineInstallCta": "Pasang · {{sizeMb}} MB",
-    "engineDownloadingLabel": "Mendownload…  {{pct}}%  ·  {{mbDone}} / {{sizeMb}} MB",
-    "engineRetryCta": "Coba lagi",
-    "voicesEmptyState": "Suara tidak ditemukan.",
-    "kokoroDeviceNote": "Beberapa suara mungkin tidak berfungsi di semua perangkat.",
-    "insufficientStorage": "Ruang tidak mencukupi — bebaskan {{requiredMb}} MB untuk memasang mesin ini ({{freeMb}} MB tersedia).",
     "supertonicLanguageLabel": "Bahasa",
     "supertonicLanguageAuto": "Otomatis",
     "supertonicLanguageSheetTitle": "Bahasa",
@@ -1480,22 +1730,48 @@
       "tr": "Turki",
       "uk": "Ukraina",
       "vi": "Vietnam"
-    }
-  },
-  "htmlPreview": {
-    "defaultTitle": "Pratinjau",
-    "showPreview": "Tampilkan pratinjau hasil render",
-    "showCode": "Tampilkan kode HTML",
-    "copyHtml": "Salin HTML",
-    "closePreview": "Tutup pratinjau",
-    "openFullscreen": "Buka layar penuh: {{title}}"
+    },
+    "toggleAutoSpeakLabel": "Aktifkan/nonaktifkan fitur bicara otomatis",
+    "openSettingsLabel": "Pengaturan TTS",
+    "playMessageLabel": "Putar pesan",
+    "stopMessageLabel": "Hentikan pesan",
+    "autoSpeakLabel": "Respons otomatis",
+    "autoSpeakDescription": "Bacakan balasan baru dengan lantang saat balasan tersebut tiba.",
+    "engineChipKitten": "Kitten",
+    "engineChipKokoro": "Kokoro",
+    "engineChipSupertonic": "Supertonic",
+    "engineChipSystem": "Sistem",
+    "stepsCount": "{{steps}} langkah",
+    "engineKittenTagline": "Ukuran paling kecil. Andal. Terbaik untuk perangkat lama.",
+    "engineKokoroTagline": "Kualitas tertinggi. Lebih lambat saat memulai. Beberapa suara mungkin tidak berfungsi di semua perangkat.",
+    "engineSupertonicTagline": "Asistening cepat memulai. Menggunakan lebih banyak RAM. Mungkin sesekali menghilangkan kata.",
+    "engineSystemTagline": "Suara bawaan sistem operasi. Selalu tersedia, tanpa instalasi.",
+    "engineSystemTitleIos": "Suara iOS",
+    "engineSystemTitleAndroid": "Suara Android",
+    "engineSystemTier": "selalu tersedia",
+    "engineTierLightest": "paling ringan",
+    "engineTierBestQuality": "kualitas terbaik",
+    "engineTierFastestStart": "start tercepat",
+    "engineSpecsLine": "{{voices}} suara   ·   {{sizeMb}} MB   ·   ~{{ramMb}} MB RAM",
+    "engineSystemSpecsLine": "{{voices}} suara",
+    "engineRemoveTitle": "Hapus {{engineTitle}}?",
+    "engineRemoveBody": "Hemat ~{{sizeMb}} MB di perangkat ini.",
+    "engineRemoveCancel": "Batal",
+    "engineRemoveConfirm": "Hapus",
+    "engineInstallCta": "Pasang · {{sizeMb}} MB",
+    "engineDownloadingLabel": "Mendownload…  {{pct}}%  ·  {{mbDone}} / {{sizeMb}} MB",
+    "engineRetryCta": "Coba lagi",
+    "voicesEmptyState": "Suara tidak ditemukan.",
+    "kokoroDeviceNote": "Beberapa suara mungkin tidak berfungsi di semua perangkat.",
+    "insufficientStorage": "Ruang tidak mencukupi — bebaskan {{requiredMb}} MB untuk memasang mesin ini ({{freeMb}} MB tersedia)."
   },
   "onboarding": {
     "back": "Kembali",
     "skip": "Lewati",
     "skipForNow": "Lewati untuk sekarang",
     "splash": {
-      "brand": "DRS AI"
+      "brand": "DRS AI",
+      "tagline": "AI pribadi Anda, di perangkat Anda"
     },
     "screen1": {
       "title": "Temui para assistant Anda.",
