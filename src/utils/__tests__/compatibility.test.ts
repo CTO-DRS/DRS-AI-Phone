@@ -74,7 +74,9 @@ describe('computeModelCompatibility', () => {
       engineSupported: true,
       device: device({freeDiskBytes: 6 * GB}),
     });
-    expect(result.reasons.find(r => r.id === 'storage')?.severity).toBe('error');
+    expect(result.reasons.find(r => r.id === 'storage')?.severity).toBe(
+      'error',
+    );
     expect(result.level).toBe('limited');
   });
 
@@ -87,7 +89,9 @@ describe('computeModelCompatibility', () => {
     });
     expect(result.level).toBe('good');
     expect(result.level).not.toBe('excellent');
-    expect(result.reasons.find(r => r.id === 'memory')?.detail).toBe('memoryUnknown');
+    expect(result.reasons.find(r => r.id === 'memory')?.detail).toBe(
+      'memoryUnknown',
+    );
   });
 
   it('handles fully unknown device data without crashing', () => {
@@ -95,7 +99,13 @@ describe('computeModelCompatibility', () => {
       modelSizeBytes: 2 * GB,
       estimatedMemoryBytes: null,
       engineSupported: true,
-      device: device({ramBytes: null, freeDiskBytes: null, cpuCores: null, gpuSupported: null, deviceTier: null}),
+      device: device({
+        ramBytes: null,
+        freeDiskBytes: null,
+        cpuCores: null,
+        gpuSupported: null,
+        deviceTier: null,
+      }),
     });
     expect(['good', 'limited']).toContain(result.level);
     expect(result.reasons.length).toBeGreaterThan(0);
@@ -108,7 +118,9 @@ describe('computeModelCompatibility', () => {
       engineSupported: true,
       device: device({gpuSupported: false}),
     });
-    expect(result.reasons.find(r => r.id === 'gpu')?.detail).toBe('gpuUnsupported');
+    expect(result.reasons.find(r => r.id === 'gpu')?.detail).toBe(
+      'gpuUnsupported',
+    );
     expect(result.level).not.toBe('notRecommended');
   });
 });

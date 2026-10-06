@@ -21,7 +21,7 @@ Most AI apps are a thin window onto someone else's server — every message you 
 - **🔒 Private by default** — every prompt, response, and document stays on your device. Nothing is uploaded or stored on external servers.
 - **✈️ Works offline** — download a model once and it just works, with no connection and no account. On a plane, on a trail, anywhere.
 - **📱 Runs on hardware you already own** — real language models, voices, and tools, tuned to make the most of your phone's CPU, GPU, and NPU.
-- **🆓 Free and open source** — no subscription, no "pro" tier to unlock the AI. MIT-licensed and built in the open.
+- **🆓 Free and MIT-licensed** — no subscription, no "pro" tier to unlock the AI. The complete source code is available under the MIT license.
 
 > **Privacy note:** The only data that ever leaves your device is what you explicitly choose to share — opt-in benchmark sharing and feedback you submit through the app.
 

@@ -10,6 +10,7 @@ import {hfStore} from '../../../store';
 
 import {HuggingFaceModel} from '../../../utils/types';
 import {Sheet} from '../../../components';
+import {logger} from '../../../utils/logger';
 
 interface HFModelSearchProps {
   visible: boolean;
@@ -66,7 +67,7 @@ export const HFModelSearch: React.FC<HFModelSearchProps> = observer(
     };
 
     const handleSheetDismiss = () => {
-      console.log('Search sheet dismissed, clearing error state');
+      logger.debug('Search sheet dismissed, clearing error state');
       // Clear error state when the sheet is closed
       hfStore.clearError();
       onDismiss();

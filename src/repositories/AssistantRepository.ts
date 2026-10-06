@@ -10,6 +10,7 @@ import {
 } from '../utils/assistant-migration';
 import {CompletionParams} from '../utils/completionTypes';
 import {migrateCompletionSettings} from '../utils/completionSettingsVersions';
+import {logger} from '../utils/logger';
 
 class AssistantRepository {
   // Check if we need to migrate from JSON/AsyncStorage
@@ -20,7 +21,7 @@ class AssistantRepository {
       const migrationComplete = await RNFS.exists(migrationFlagPath);
 
       if (migrationComplete) {
-        console.log('Assistant database migration already completed');
+        logger.debug('Assistant database migration already completed');
         return false;
       }
 
@@ -33,7 +34,7 @@ class AssistantRepository {
         return false;
       }
 
-      console.log(
+      logger.debug(
         'Starting assistant migration from AsyncStorage to WatermelonDB...',
       );
 
@@ -60,7 +61,7 @@ class AssistantRepository {
               record.name = assistant.name;
               record.description = assistant.description;
               record.thumbnailUrl = assistant.thumbnail_url;
-              // console.log('Creating assistant with description:', assistant.description);
+              // logger.debug('Creating assistant with description:', assistant.description);
               record.systemPrompt = assistant.systemPrompt;
               record.originalSystemPrompt = assistant.originalSystemPrompt;
               record.isSystemPromptChanged = assistant.isSystemPromptChanged;
@@ -111,7 +112,7 @@ class AssistantRepository {
       // Optionally remove old data
       await AsyncStorage.removeItem('AssistantStore');
 
-      console.log(
+      logger.debug(
         `Successfully migrated ${legacyAssistants.length} assistants to database`,
       );
       return true;
@@ -408,7 +409,7 @@ class AssistantRepository {
 
       if (exists) {
         await RNFS.unlink(migrationFlagPath);
-        console.log('Assistant migration flag reset successfully');
+        logger.debug('Assistant migration flag reset successfully');
       }
 
       // Also clear all local assistants from database
@@ -423,7 +424,7 @@ class AssistantRepository {
         }
       });
 
-      console.log('All local assistants cleared from database');
+      logger.debug('All local assistants cleared from database');
     } catch (error) {
       console.error('Error resetting assistant migration:', error);
       throw error;

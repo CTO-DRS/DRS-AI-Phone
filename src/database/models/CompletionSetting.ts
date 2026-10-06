@@ -2,6 +2,7 @@ import {Model} from '@nozbe/watermelondb';
 import {field, text} from '@nozbe/watermelondb/decorators';
 import {CompletionParams} from '../../utils/completionTypes';
 import {migrateCompletionSettings} from '../../utils/completionSettingsVersions';
+import {logger} from '../../utils/logger';
 
 export default class CompletionSetting extends Model {
   static table = 'completion_settings';
@@ -24,10 +25,10 @@ export default class CompletionSetting extends Model {
       const migratedSettings = migrateCompletionSettings(parsedSettings);
 
       if (migratedSettings.version !== parsedSettings.version) {
-        console.log(
+        logger.debug(
           `Migrated completion settings from version ${parsedSettings.version} to ${migratedSettings.version} for session ${this.sessionId}`,
         );
-        console.log(
+        logger.debug(
           'Settings need to be saved by the repository with a proper database.write() call',
         );
       }

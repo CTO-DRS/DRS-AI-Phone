@@ -104,11 +104,11 @@ describe('ServerStore', () => {
     it('generates unique ids for each server', () => {
       const id1 = serverStore.addServer({
         name: 'Server 1',
-        url: 'http://a.com',
+        url: 'https://a.com',
       });
       const id2 = serverStore.addServer({
         name: 'Server 2',
-        url: 'http://b.com',
+        url: 'https://b.com',
       });
 
       expect(id1).not.toBe(id2);
@@ -788,15 +788,15 @@ describe('ServerStore', () => {
     it('fetches models for all servers', async () => {
       serverStore.addServer({
         name: 'Server 1',
-        url: 'http://a.com',
+        url: 'https://a.com',
       });
       serverStore.addServer({
         name: 'Server 2',
-        url: 'http://b.com',
+        url: 'https://b.com',
       });
       serverStore.addServer({
         name: 'Server 3',
-        url: 'http://c.com',
+        url: 'https://c.com',
       });
       jest.clearAllMocks();
 

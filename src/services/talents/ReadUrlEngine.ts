@@ -4,6 +4,7 @@ import type {PageContent} from '../search/types';
 import {budgetPage} from '../search/searchBudget';
 import {wrapUntrusted} from './untrustedContent';
 import {isReadUrlAllowed} from './readUrlAllowlist';
+import {logger} from '../../utils/logger';
 
 /**
  * Reject non-http(s) schemes and embedded credentials so a malicious page
@@ -88,7 +89,7 @@ export class ReadUrlEngine implements TalentEngine {
 
     const bounded = budgetPage(page, this.recommendedContextTokens);
     if (__DEV__) {
-      console.log('[read_url]', {
+      logger.debug('[read_url]', {
         url: targetUrl,
         provider: provider.read ? provider.id : 'default-reader',
         textLength: bounded.text.length,

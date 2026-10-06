@@ -23,6 +23,7 @@ import {useTheme} from '../../hooks';
 import {serverStore} from '../../store';
 import {L10nContext} from '../../utils';
 import {parseTimeoutMs} from '../../utils/timeout';
+import {isCleartextUrlAllowed} from '../../utils/network';
 import {SERVER_TYPE_DROPDOWN_OPTIONS} from '../../utils/serverTypes';
 import {testConnection} from '../../api/openai';
 import {t} from '../../locales';
@@ -148,8 +149,16 @@ export const ServerDetailsSheet: React.FC<ServerDetailsSheetProps> = observer(
       setSecureTextEntry(!secureTextEntry);
     };
 
+    const insecureUrlWarning = l10n.settings.serverUrlHttpWarning;
+
     const handleSave = useCallback(async () => {
       if (!serverId || !server) {
+        return;
+      }
+      // Hard gate (F-02): a repointed URL must not downgrade to public
+      // cleartext. Mirrors the ServerStore backstop below.
+      if (!isCleartextUrlAllowed(url.trim())) {
+        Alert.alert(server.name, insecureUrlWarning);
         return;
       }
       setIsSaving(true);
@@ -168,7 +177,16 @@ export const ServerDetailsSheet: React.FC<ServerDetailsSheetProps> = observer(
       } finally {
         setIsSaving(false);
       }
-    }, [serverId, server, url, apiKey, timeoutSeconds, serverType, onDismiss]);
+    }, [
+      serverId,
+      server,
+      url,
+      apiKey,
+      timeoutSeconds,
+      serverType,
+      onDismiss,
+      insecureUrlWarning,
+    ]);
 
     const handleRemoveServer = useCallback(() => {
       if (!serverId || !server) {

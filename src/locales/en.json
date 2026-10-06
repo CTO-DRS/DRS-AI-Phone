@@ -191,7 +191,7 @@
     "remoteIndicator": "Remote",
     "serverUrlRequired": "Server URL is required",
     "serverUrlInvalid": "Invalid URL format",
-    "serverUrlHttpWarning": "iOS requires HTTPS for non-local servers. Use https:// or a local network address.",
+    "serverUrlHttpWarning": "Unencrypted HTTP is only allowed for local network addresses. Use https:// for public servers.",
     "addRemoteModel": "Add Remote Model",
     "yourServers": "Your Servers",
     "orConnectNewServer": "or connect new server",

@@ -31,6 +31,7 @@ import {
   getVisionModelSizeBreakdown,
 } from './multimodalHelpers';
 import {isDraftOnlyFilename} from './mtp';
+import {logger} from '../utils/logger';
 
 export const L10nContext = React.createContext<
   (typeof l10n)[keyof typeof l10n]
@@ -356,7 +357,7 @@ export async function hasEnoughSpace(model: Model): Promise<boolean> {
     }
 
     const freeDiskBytes = await DeviceInfo.getFreeDiskStorage('important');
-    // console.log('Free disk space:', freeDiskBytes);
+    // logger.debug('Free disk space:', freeDiskBytes);
 
     return requiredSpaceBytes <= freeDiskBytes;
   } catch (error) {
@@ -670,7 +671,7 @@ export const safeParseJSON = (json: string) => {
       return JSON.parse(cleanJson);
     }
   } catch (error) {
-    console.log('Original json: ', json);
+    logger.debug('Original json: ', json);
     console.error('Error parsing JSON:', error);
     return {prompt: '', error: error};
   }

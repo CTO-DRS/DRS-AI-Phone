@@ -70,7 +70,7 @@ class DownloadWorker(
                     // Reload download info after update
                     val updatedDownload = downloadDao.getDownload(downloadId)
                     if (updatedDownload != null) {
-                        Log.d(TAG, "Updated download info: $updatedDownload")
+                        Log.d(TAG, "Updated download info: id=${updatedDownload.id} progress=${updatedDownload.downloadedBytes}/${updatedDownload.totalBytes}")
                     }
                 }
             }
@@ -85,10 +85,14 @@ class DownloadWorker(
                         addHeader("Range", range)
                     }
                     
-                    // Add authorization header if token is available
-                    download.authToken?.let { token ->
-                        Log.d(TAG, "Adding Authorization header for authenticated download")
-                        addHeader("Authorization", "Bearer $token")
+                    // Add authorization header if token is available.
+                    // The stored value is Keystore-encrypted ciphertext —
+                    // decrypt in memory and never log it (audit F-03).
+                    download.authToken?.let { storedToken ->
+                        DownloadTokenCryptor.decrypt(storedToken)?.let { token ->
+                            Log.d(TAG, "Adding Authorization header for authenticated download")
+                            addHeader("Authorization", "Bearer $token")
+                        }
                     }
                 }
                 .build()

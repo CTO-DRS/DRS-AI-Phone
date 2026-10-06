@@ -21,6 +21,7 @@ import {
   isBenchmarkRunnerUrl,
   parseBenchmarkAutostart,
 } from '../__automation__/benchmarkRoute';
+import {logger} from '../utils/logger';
 
 /**
  * Hook for handling deep link navigation
@@ -94,7 +95,7 @@ export const useDeepLinking = () => {
 
   const handleDeepLink = useCallback(
     async (params: DeepLinkParams) => {
-      console.log('Handling deep link:', params);
+      logger.debug('Handling deep link:', params);
 
       // Automation-bridge dispatch (E2E-only). DCE-stripped in prod because
       // __E2E__ inlines to false and the require() inside the gate is never

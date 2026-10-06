@@ -7,6 +7,7 @@ import {useTheme} from '../../../hooks';
 import {L10nContext} from '../../../utils';
 import {CloudPlusIcon} from '../../../assets/icons';
 import {createStyles} from './styles';
+import {logger} from '../../../utils/logger';
 
 interface FABGroupProps {
   onAddHFModel: () => void;
@@ -113,9 +114,9 @@ export const FABGroup: React.FC<FABGroupProps> = ({
       onStateChange={onStateChange}
       onPress={() => {
         if (open) {
-          console.log('FAB Group closed');
+          logger.debug('FAB Group closed');
         } else {
-          console.log('FAB Group opened');
+          logger.debug('FAB Group opened');
         }
       }}
       fabStyle={styles.fab}

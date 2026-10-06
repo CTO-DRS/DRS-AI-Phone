@@ -9,6 +9,7 @@ import type {SearchHit} from '../search/types';
 import {budgetHits, getCachedHits, setCachedHits} from '../search/searchBudget';
 import {wrapUntrusted} from './untrustedContent';
 import {allowReadUrls} from './readUrlAllowlist';
+import {logger} from '../../utils/logger';
 
 const PER_SNIPPET_CHARS = 280;
 
@@ -92,7 +93,7 @@ export class WebSearchEngine implements TalentEngine {
 
     if (budgeted.length === 0) {
       if (__DEV__) {
-        console.log('[web_search]', {query, provider: provider.id, count: 0});
+        logger.debug('[web_search]', {query, provider: provider.id, count: 0});
       }
       // No usable hits — provider returned none, or budgeting rejected them all.
       // Don't cache: a transient/all-rejected empty must not lock out retries or
@@ -107,7 +108,7 @@ export class WebSearchEngine implements TalentEngine {
     allowReadUrls(budgeted.map(h => h.url));
 
     if (__DEV__) {
-      console.log('[web_search]', {
+      logger.debug('[web_search]', {
         query,
         provider: provider.id,
         count: budgeted.length,

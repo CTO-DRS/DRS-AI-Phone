@@ -17,6 +17,7 @@ import type {
   DownloadConfig,
   DownloadResponse,
 } from '../../specs/NativeDownloadModule';
+import {logger} from '../../utils/logger';
 
 const TAG = 'DownloadManager';
 
@@ -53,7 +54,7 @@ export class DownloadManager {
   private cancelledModelIds = new Set<string>();
 
   constructor() {
-    console.log(`${TAG}: Initializing DownloadManager`);
+    logger.debug(`${TAG}: Initializing DownloadManager`);
     this.downloadJobs = observable.map(new Map());
     makeAutoObservable(this);
 
@@ -64,11 +65,11 @@ export class DownloadManager {
 
   private setupAndroidEventListener() {
     if (NativeDownloadModule) {
-      console.log(`${TAG}: Setting up Android event listeners`);
+      logger.debug(`${TAG}: Setting up Android event listeners`);
       this.eventEmitter = new NativeEventEmitter(NativeDownloadModule as any);
 
       this.eventEmitter.addListener('onDownloadProgress', event => {
-        // console.log(
+        // logger.debug(
         //   `${TAG}: Progress event received for ID ${event.downloadId}:`,
         //   {
         //     bytesWritten: event.bytesWritten,
@@ -116,7 +117,7 @@ export class DownloadManager {
           rawEta: etaSeconds,
         };
 
-        // console.log(
+        // logger.debug(
         //   `${TAG}: Updating progress for model ${job.model.id}:`,
         //   progress,
         // );
@@ -132,7 +133,7 @@ export class DownloadManager {
       });
 
       this.eventEmitter.addListener('onDownloadComplete', event => {
-        console.log(`${TAG}: Download completed for ID: ${event.downloadId}`);
+        logger.debug(`${TAG}: Download completed for ID: ${event.downloadId}`);
         // Find the job by download ID
         const job = Array.from(this.downloadJobs.values()).find(
           _job => _job.downloadId === event.downloadId,
@@ -157,7 +158,7 @@ export class DownloadManager {
           runInAction(() => {
             this.downloadJobs.delete(job.model.id);
           });
-          console.log(`${TAG}: Removed completed job: ${job.model.id}`);
+          logger.debug(`${TAG}: Removed completed job: ${job.model.id}`);
         } else {
           console.warn(
             `${TAG}: Completion event received for non-existent job: ${event.downloadId}`,
@@ -185,7 +186,7 @@ export class DownloadManager {
           runInAction(() => {
             this.downloadJobs.delete(job.model.id);
           });
-          console.log(`${TAG}: Removed failed job: ${job.model.id}`);
+          logger.debug(`${TAG}: Removed failed job: ${job.model.id}`);
         } else {
           console.warn(
             `${TAG}: Failure event received for non-existent job: ${event.downloadId}`,
@@ -215,7 +216,7 @@ export class DownloadManager {
       etaSeconds >= 60
         ? `${etaMinutes} ${l10nData.common.minutes}`
         : `${Math.ceil(etaSeconds)} ${l10nData.common.seconds}`;
-    console.log(`${TAG}: Calculated ETA:`, {
+    logger.debug(`${TAG}: Calculated ETA:`, {
       remainingBytes,
       speedBps,
       eta,
@@ -224,7 +225,7 @@ export class DownloadManager {
   }
 
   setCallbacks(callbacks: DownloadEventCallbacks) {
-    console.log(`${TAG}: Setting callbacks`);
+    logger.debug(`${TAG}: Setting callbacks`);
     this.callbacks = callbacks;
   }
 
@@ -243,7 +244,7 @@ export class DownloadManager {
   getDownloadProgress(modelId: string): number {
     const progress =
       this.downloadJobs.get(modelId)?.state.progress?.progress || 0;
-    console.log(`${TAG}: Getting progress for model ${modelId}:`, progress);
+    logger.debug(`${TAG}: Getting progress for model ${modelId}:`, progress);
     return progress;
   }
 
@@ -253,14 +254,14 @@ export class DownloadManager {
     authToken?: string | null,
     options?: {networkType?: 'WIFI' | 'ANY'},
   ): Promise<void> {
-    console.log(`${TAG}: Starting download for model:`, {
+    logger.debug(`${TAG}: Starting download for model:`, {
       modelId: model.id,
       destination: destinationPath,
       url: model.downloadUrl,
     });
 
     if (this.isDownloading(model.id)) {
-      console.log(`${TAG}: Download already in progress for model:`, model.id);
+      logger.debug(`${TAG}: Download already in progress for model:`, model.id);
       return;
     }
 
@@ -288,7 +289,7 @@ export class DownloadManager {
       destinationPath.lastIndexOf('/'),
     );
     try {
-      console.log(`${TAG}: Creating directory:`, dirPath);
+      logger.debug(`${TAG}: Creating directory:`, dirPath);
       await RNFS.mkdir(dirPath);
     } catch (err) {
       console.error(`${TAG}: Failed to create directory:`, err);
@@ -342,7 +343,7 @@ export class DownloadManager {
           ...(authToken ? {Authorization: `Bearer ${authToken}`} : {}),
         },
         begin: res => {
-          console.log(`${TAG}: Download started for ID: ${model.id}`, {
+          logger.debug(`${TAG}: Download started for ID: ${model.id}`, {
             statusCode: res.statusCode,
             contentLength: res.contentLength,
             headers: res.headers,
@@ -408,7 +409,7 @@ export class DownloadManager {
 
       // Store the jobId immediately for cancellation
       downloadJob.jobId = downloadResult.jobId;
-      console.log(
+      logger.debug(
         `${TAG}: Created download with jobId: ${downloadResult.jobId}`,
       );
 
@@ -421,7 +422,7 @@ export class DownloadManager {
       const result = await downloadResult.promise;
 
       if (result.statusCode === 200) {
-        console.log(
+        logger.debug(
           `${TAG}: Download completed successfully for ID: ${model.id}`,
         );
         this.callbacks.onComplete?.(model.id);
@@ -441,7 +442,7 @@ export class DownloadManager {
       // RNFS.stopDownload aborts the task, rejecting this promise. A user
       // cancel is not a failure — surface it as a distinct cancellation.
       if (this.cancelledModelIds.delete(model.id)) {
-        console.log(`${TAG}: Download cancelled by user for ID: ${model.id}`);
+        logger.debug(`${TAG}: Download cancelled by user for ID: ${model.id}`);
         runInAction(() => {
           this.downloadJobs.delete(model.id);
         });
@@ -473,7 +474,7 @@ export class DownloadManager {
     networkType: 'WIFI' | 'ANY' = 'ANY',
   ): Promise<void> {
     try {
-      console.log(`${TAG}: Starting Android download for model:`, {
+      logger.debug(`${TAG}: Starting Android download for model:`, {
         modelId: model.id,
         destination: destinationPath,
       });
@@ -503,7 +504,7 @@ export class DownloadManager {
 
       // Store the download ID
       downloadJob.downloadId = response.downloadId;
-      console.log(`${TAG}: Download started with ID: ${response.downloadId}`);
+      logger.debug(`${TAG}: Download started with ID: ${response.downloadId}`);
 
       // Add job to map after getting download ID
       runInAction(() => {
@@ -554,7 +555,7 @@ export class DownloadManager {
         runInAction(() => {
           job.state.isPaused = true;
         });
-        console.log(`${TAG}: Paused download for ${modelId}`);
+        logger.debug(`${TAG}: Paused download for ${modelId}`);
       }
       return paused;
     } catch (err) {
@@ -583,7 +584,7 @@ export class DownloadManager {
         runInAction(() => {
           job.state.isPaused = false;
         });
-        console.log(`${TAG}: Resumed download for ${modelId}`);
+        logger.debug(`${TAG}: Resumed download for ${modelId}`);
       }
       return resumed;
     } catch (err) {
@@ -604,7 +605,7 @@ export class DownloadManager {
   }
 
   async cancelDownload(modelId: string): Promise<void> {
-    console.log(`${TAG}: Attempting to cancel download:`, modelId);
+    logger.debug(`${TAG}: Attempting to cancel download:`, modelId);
     const job = this.downloadJobs.get(modelId);
     if (job) {
       // Mark as user-cancelled so the iOS download promise rejection is
@@ -612,7 +613,7 @@ export class DownloadManager {
       this.cancelledModelIds.add(modelId);
       try {
         if (Platform.OS === 'ios') {
-          console.log(
+          logger.debug(
             `${TAG}: Cancelling iOS download for ID: ${modelId}, jobId: ${job.jobId}`,
           );
           if (job.jobId) {
@@ -623,7 +624,7 @@ export class DownloadManager {
           NativeDownloadModule &&
           job.downloadId
         ) {
-          console.log(`${TAG}: Cancelling Android download:`, modelId);
+          logger.debug(`${TAG}: Cancelling Android download:`, modelId);
           await NativeDownloadModule.cancelDownload(job.downloadId);
           // Android cancel emits no failure event, so nothing consumes the
           // cancelled-id marker — clear it here to avoid leaking entries.
@@ -633,7 +634,7 @@ export class DownloadManager {
         // Clean up the partial download file
         const destinationPath = job.destination;
         if (destinationPath) {
-          console.log(
+          logger.debug(
             `${TAG}: Cleaning up partial download file:`,
             destinationPath,
           );
@@ -641,7 +642,7 @@ export class DownloadManager {
             const exists = await RNFS.exists(destinationPath);
             if (exists) {
               await RNFS.unlink(destinationPath);
-              console.log(
+              logger.debug(
                 `${TAG}: Successfully deleted partial download file:`,
                 destinationPath,
               );
@@ -664,7 +665,7 @@ export class DownloadManager {
           job.state.isDownloading = false;
           this.downloadJobs.delete(modelId);
         });
-        console.log(`${TAG}: Removed cancelled job:`, modelId);
+        logger.debug(`${TAG}: Removed cancelled job:`, modelId);
       } catch (err) {
         console.error(`${TAG}: Error cancelling download:`, {
           modelId,
@@ -678,16 +679,16 @@ export class DownloadManager {
   }
 
   cleanup() {
-    console.log(`${TAG}: Cleaning up download manager`);
+    logger.debug(`${TAG}: Cleaning up download manager`);
     if (Platform.OS === 'android' && this.eventEmitter) {
-      console.log(`${TAG}: Removing Android event listeners`);
+      logger.debug(`${TAG}: Removing Android event listeners`);
       this.eventEmitter.removeAllListeners('onDownloadProgress');
       this.eventEmitter.removeAllListeners('onDownloadComplete');
       this.eventEmitter.removeAllListeners('onDownloadFailed');
     }
     this.downloadJobs.clear();
     this.cancelledModelIds.clear();
-    console.log(`${TAG}: Download jobs cleared`);
+    logger.debug(`${TAG}: Download jobs cleared`);
   }
 
   /**
@@ -700,11 +701,11 @@ export class DownloadManager {
     }
 
     try {
-      console.log(`${TAG}: Syncing download jobs with native layer`);
+      logger.debug(`${TAG}: Syncing download jobs with native layer`);
 
       // Get active downloads from native module
       const activeDownloads = await NativeDownloadModule.getActiveDownloads();
-      console.log(
+      logger.debug(
         `${TAG}: Found ${activeDownloads.length} active downloads in native layer`,
       );
 
@@ -761,7 +762,7 @@ export class DownloadManager {
         runInAction(() => {
           this.downloadJobs.set(model.id, downloadJob);
         });
-        console.log(
+        logger.debug(
           `${TAG}: Restored download job for model: ${model.id}, progress: ${progress}%`,
         );
 
@@ -773,7 +774,7 @@ export class DownloadManager {
           // We need to tell the native module to re-register the observer for this download
           if (NativeDownloadModule.reattachDownloadObserver) {
             await NativeDownloadModule.reattachDownloadObserver(download.id);
-            console.log(
+            logger.debug(
               `${TAG}: Re-attached observer for download ID: ${download.id}`,
             );
           } else {

@@ -25,7 +25,7 @@ import {Sheet, TextInput} from '..';
 import {useTheme} from '../../hooks';
 import {serverStore} from '../../store';
 import {L10nContext} from '../../utils';
-import {isLocalHost} from '../../utils/network';
+import {isLocalHost, isCleartextUrlAllowed} from '../../utils/network';
 import {parseTimeoutMs} from '../../utils/timeout';
 import {
   SERVER_TYPE_DROPDOWN_OPTIONS,
@@ -200,6 +200,10 @@ export const RemoteModelSheet: React.FC<RemoteModelSheetProps> = observer(
     const showHttpWarning =
       url.startsWith('http://') && url.length > 7 && !isLocalHost(url);
 
+    // Hard gate (F-02): public hosts can never be saved over cleartext HTTP.
+    const cleartextBlocked = !isCleartextUrlAllowed(url.trim());
+    const insecureUrlWarning = l10n.settings.serverUrlHttpWarning;
+
     const toggleSecureEntry = () => {
       setSecureTextEntry(!secureTextEntry);
     };
@@ -266,6 +270,10 @@ export const RemoteModelSheet: React.FC<RemoteModelSheetProps> = observer(
       if (!selectedModelId) {
         return;
       }
+      if (!isCleartextUrlAllowed(url.trim())) {
+        setUrlError(insecureUrlWarning);
+        return;
+      }
       setIsSaving(true);
       try {
         let serverId = selectedServerId;
@@ -300,6 +308,7 @@ export const RemoteModelSheet: React.FC<RemoteModelSheetProps> = observer(
       serverType,
       onModelAdded,
       onDismiss,
+      insecureUrlWarning,
     ]);
 
     const selectedServer = selectedServerId
@@ -681,7 +690,10 @@ export const RemoteModelSheet: React.FC<RemoteModelSheetProps> = observer(
               onPress={handleAddModel}
               loading={isSaving}
               disabled={
-                isSaving || !selectedModelId || availableModels.length === 0
+                isSaving ||
+                !selectedModelId ||
+                availableModels.length === 0 ||
+                cleartextBlocked
               }
               style={styles.addButton}>
               {l10n.settings.addModel}

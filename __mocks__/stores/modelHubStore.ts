@@ -34,8 +34,8 @@ export const mockModelHubStore = {
     mockModelHubStore.wifiOnlyDownloads = enabled;
   }),
 
-  isAutoUpdate: jest.fn(
-    (id: string) => mockModelHubStore.autoUpdateIds.includes(id),
+  isAutoUpdate: jest.fn((id: string) =>
+    mockModelHubStore.autoUpdateIds.includes(id),
   ),
   toggleAutoUpdate: jest.fn((id: string) => {
     if (mockModelHubStore.autoUpdateIds.includes(id)) {
@@ -43,7 +43,10 @@ export const mockModelHubStore = {
         a => a !== id,
       );
     } else {
-      mockModelHubStore.autoUpdateIds = [...mockModelHubStore.autoUpdateIds, id];
+      mockModelHubStore.autoUpdateIds = [
+        ...mockModelHubStore.autoUpdateIds,
+        id,
+      ];
     }
   }),
 };

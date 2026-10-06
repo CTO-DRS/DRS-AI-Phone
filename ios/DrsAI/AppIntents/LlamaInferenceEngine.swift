@@ -12,6 +12,17 @@
 import Foundation
 import CryptoKit
 
+/// DEBUG-only logging guard (audit finding F-07 / recommendation R-07).
+/// Prints chat content, prompts, and engine internals in development builds;
+/// compiles to a no-op in release builds so no conversation text or prompt
+/// material ever reaches the unified log on user devices.
+@inline(__always)
+private func debugLog(_ message: @autoclosure () -> String) {
+    #if DEBUG
+    debugLog("[LlamaInferenceEngine] \(message())")
+    #endif
+}
+
 /// Manages llama.cpp inference for App Intents
 @available(iOS 16.0, *)
 actor LlamaInferenceEngine {
@@ -83,16 +94,16 @@ actor LlamaInferenceEngine {
             // llama.cpp minimum is typically 200, maximum is model-dependent but 4096 is a safe upper bound for background tasks
             if nCtx < 200 {
                 contextSize = 200
-                print("[LlamaInferenceEngine] n_ctx from app settings (\(nCtx)) is too small, using minimum: \(contextSize)")
+                debugLog("[LlamaInferenceEngine] n_ctx from app settings (\(nCtx)) is too small, using minimum: \(contextSize)")
             } else if nCtx > 4096 {
                 contextSize = 4096
-                print("[LlamaInferenceEngine] n_ctx from app settings (\(nCtx)) is too large, using maximum: \(contextSize)")
+                debugLog("[LlamaInferenceEngine] n_ctx from app settings (\(nCtx)) is too large, using maximum: \(contextSize)")
             } else {
                 contextSize = nCtx
-                print("[LlamaInferenceEngine] Using n_ctx from app settings: \(contextSize)")
+                debugLog("[LlamaInferenceEngine] Using n_ctx from app settings: \(contextSize)")
             }
         } else {
-            print("[LlamaInferenceEngine] Could not read n_ctx from app settings, using default: \(contextSize)")
+            debugLog("[LlamaInferenceEngine] Could not read n_ctx from app settings, using default: \(contextSize)")
         }
 
         // Initialize with model
@@ -106,9 +117,9 @@ actor LlamaInferenceEngine {
             "n_gpu_layers": 0, 
         ]
 
-        print("[LlamaInferenceEngine] Using \(recommendedThreads) threads (out of \(processorCount) cores) and context size \(contextSize)")
-        print("[LlamaInferenceEngine] Initializing model with params: \(params)")
-        print("[LlamaInferenceEngine] Model path: \(path)")
+        debugLog("[LlamaInferenceEngine] Using \(recommendedThreads) threads (out of \(processorCount) cores) and context size \(contextSize)")
+        debugLog("[LlamaInferenceEngine] Initializing model with params: \(params)")
+        debugLog("[LlamaInferenceEngine] Model path: \(path)")
 
         // Initialize context using our wrapper
         do {
@@ -116,7 +127,7 @@ actor LlamaInferenceEngine {
                 modelPath: path,
                 parameters: params,
                 onProgress: { progress in
-                    print("[LlamaInferenceEngine] Loading progress: \(progress)%")
+                    debugLog("[LlamaInferenceEngine] Loading progress: \(progress)%")
                 }
             )
 
@@ -141,10 +152,10 @@ actor LlamaInferenceEngine {
         guard let context = currentContext else {
             throw InferenceError.noModelLoaded
         }
-        print("[LlamaInferenceEngine] Running inference with system prompt: \(systemPrompt)")
-        print("[LlamaInferenceEngine] Running inference with user message: \(userMessage)")
-        print("[LlamaInferenceEngine] Running inference with completion settings: \(String(describing: completionSettings))")
-        print("[LlamaInferenceEngine] Running inference with parameters: \(String(describing: parameters))")
+        debugLog("[LlamaInferenceEngine] Running inference with system prompt: \(systemPrompt)")
+        debugLog("[LlamaInferenceEngine] Running inference with user message: \(userMessage)")
+        debugLog("[LlamaInferenceEngine] Running inference with completion settings: \(String(describing: completionSettings))")
+        debugLog("[LlamaInferenceEngine] Running inference with parameters: \(String(describing: parameters))")
 
         // Build messages array
         var messages: [[String: Any]] = []
@@ -169,7 +180,7 @@ actor LlamaInferenceEngine {
             throw InferenceError.inferenceFailed("Failed to serialize messages")
         }
 
-        print("[LlamaInferenceEngine] Serialized messages: \(messagesJson)")
+        debugLog("[LlamaInferenceEngine] Serialized messages: \(messagesJson)")
 
         // Format messages using getFormattedChatWithJinja to get full result including additional_stops
         // This matches the TypeScript completion method in llama.rn/src/index.ts
@@ -193,8 +204,8 @@ actor LlamaInferenceEngine {
         // Match the app's pattern: defaultCompletionParams → assistant settings → strip app-only keys
         // See: src/utils/completionSettingsVersions.ts and src/utils/completionTypes.ts
 
-        print("[LlamaInferenceEngine] Formatted prompt: \(formattedPrompt)")
-        print("[LlamaInferenceEngine] Additional stops from template: \(additionalStops)")
+        debugLog("[LlamaInferenceEngine] Formatted prompt: \(formattedPrompt)")
+        debugLog("[LlamaInferenceEngine] Additional stops from template: \(additionalStops)")
         // Start with default completion params (matching defaultCompletionParams from TypeScript)
         // Store default stop words to merge with assistant settings and template stops later
         let defaultStopWords: [String] = [
@@ -287,7 +298,7 @@ actor LlamaInferenceEngine {
             completionParams.removeValue(forKey: key)
         }
 
-        print("[LlamaInferenceEngine] Running inference with params: \(completionParams)")
+        debugLog("[LlamaInferenceEngine] Running inference with params: \(completionParams)")
 
         // Run completion
         do {
@@ -313,7 +324,7 @@ actor LlamaInferenceEngine {
     
     /// Release the current model to free memory
     func releaseModel() async {
-        print("[LlamaInferenceEngine] Releasing model")
+        debugLog("[LlamaInferenceEngine] Releasing model")
         if let context = currentContext {
             context.invalidate()
         }
@@ -329,7 +340,7 @@ actor LlamaInferenceEngine {
     /// @return Number of tokens saved
     func saveSessionCache(assistantId: String, modelId: String, systemPrompt: String, tokenSize: Int = -1) async -> Int {
         guard let context = currentContext else {
-            print("[LlamaInferenceEngine] Cannot save session - no model loaded")
+            debugLog("[LlamaInferenceEngine] Cannot save session - no model loaded")
             return 0
         }
 
@@ -337,14 +348,14 @@ actor LlamaInferenceEngine {
 
         do {
             let tokensSaved = Int(context.saveSession(sessionCachePath, size: Int32(tokenSize)))
-            print("[LlamaInferenceEngine] Saved session cache with \(tokensSaved) tokens")
+            debugLog("[LlamaInferenceEngine] Saved session cache with \(tokensSaved) tokens")
 
             // Save metadata for validation
             Self.saveSessionMetadata(for: assistantId, modelId: modelId, systemPrompt: systemPrompt)
 
             return tokensSaved
         } catch {
-            print("[LlamaInferenceEngine] Failed to save session: \(error.localizedDescription)")
+            debugLog("[LlamaInferenceEngine] Failed to save session: \(error.localizedDescription)")
             return 0
         }
     }
@@ -360,7 +371,7 @@ actor LlamaInferenceEngine {
     /// @return True if cache was loaded or regenerated successfully
     func loadSessionCache(assistantId: String, modelId: String, systemPrompt: String) async -> Bool {
         guard let context = currentContext else {
-            print("[LlamaInferenceEngine] Cannot load session - no model loaded")
+            debugLog("[LlamaInferenceEngine] Cannot load session - no model loaded")
             return false
         }
 
@@ -378,7 +389,7 @@ actor LlamaInferenceEngine {
 
                 if let sessionDict = session as? [String: Any],
                    let tokensLoaded = sessionDict["tokens_loaded"] as? Int {
-                    print("[LlamaInferenceEngine] Loaded valid cached session with \(tokensLoaded) tokens")
+                    debugLog("[LlamaInferenceEngine] Loaded valid cached session with \(tokensLoaded) tokens")
 
                     // // Log embd detokenized text for debugging
                     // if let prompt = sessionDict["prompt"] as? String {
@@ -387,19 +398,19 @@ actor LlamaInferenceEngine {
 
                     return true
                 } else {
-                    print("[LlamaInferenceEngine] Invalid session format, will regenerate")
+                    debugLog("[LlamaInferenceEngine] Invalid session format, will regenerate")
                 }
             } catch {
-                print("[LlamaInferenceEngine] Failed to load session: \(error.localizedDescription), will regenerate")
+                debugLog("[LlamaInferenceEngine] Failed to load session: \(error.localizedDescription), will regenerate")
             }
         } else {
             let reason = !cacheExists ? "cache missing" : "metadata invalid (model or system prompt changed)"
-            print("[LlamaInferenceEngine] Cache invalid: \(reason), regenerating...")
+            debugLog("[LlamaInferenceEngine] Cache invalid: \(reason), regenerating...")
         }
 
         // Cache is invalid or failed to load - regenerate it
         // Run minimal inference to load system prompt into memory
-        print("[LlamaInferenceEngine] Running minimal inference to load system prompt into memory...")
+        debugLog("[LlamaInferenceEngine] Running minimal inference to load system prompt into memory...")
 
         do {
             // Build messages array with system prompt and minimal user message
@@ -411,7 +422,7 @@ actor LlamaInferenceEngine {
             // Convert to JSON string
             guard let messagesJson = try? JSONSerialization.data(withJSONObject: messages),
                   let messagesStr = String(data: messagesJson, encoding: .utf8) else {
-                print("[LlamaInferenceEngine] Failed to serialize messages")
+                debugLog("[LlamaInferenceEngine] Failed to serialize messages")
                 return false
             }
 
@@ -423,7 +434,7 @@ actor LlamaInferenceEngine {
             )
 
             guard let formattedPrompt = formattedResult["prompt"] as? String, !formattedPrompt.isEmpty else {
-                print("[LlamaInferenceEngine] Failed to format chat messages")
+                debugLog("[LlamaInferenceEngine] Failed to format chat messages")
                 return false
             }
 
@@ -436,15 +447,15 @@ actor LlamaInferenceEngine {
                 tokenCount += 1
             }
 
-            print("[LlamaInferenceEngine] Minimal inference complete, generated \(tokenCount) token(s)")
+            debugLog("[LlamaInferenceEngine] Minimal inference complete, generated \(tokenCount) token(s)")
 
             // Now save the session with the system prompt loaded
             let tokensSaved = await saveSessionCache(assistantId: assistantId, modelId: modelId, systemPrompt: systemPrompt)
-            print("[LlamaInferenceEngine] Regenerated session cache with \(tokensSaved) tokens")
+            debugLog("[LlamaInferenceEngine] Regenerated session cache with \(tokensSaved) tokens")
 
             return tokensSaved > 0
         } catch {
-            print("[LlamaInferenceEngine] Failed to regenerate session cache: \(error.localizedDescription)")
+            debugLog("[LlamaInferenceEngine] Failed to regenerate session cache: \(error.localizedDescription)")
             return false
         }
     }
@@ -488,7 +499,7 @@ actor LlamaInferenceEngine {
             let jsonData = try JSONSerialization.data(withJSONObject: metadata, options: .prettyPrinted)
             try jsonData.write(to: URL(fileURLWithPath: metadataPath))
         } catch {
-            print("[LlamaInferenceEngine] Failed to save session metadata: \(error.localizedDescription)")
+            debugLog("[LlamaInferenceEngine] Failed to save session metadata: \(error.localizedDescription)")
         }
     }
 
@@ -511,7 +522,7 @@ actor LlamaInferenceEngine {
 
             return cachedModelId == modelId && cachedSystemPrompt == systemPrompt
         } catch {
-            print("[LlamaInferenceEngine] Failed to load session metadata: \(error.localizedDescription)")
+            debugLog("[LlamaInferenceEngine] Failed to load session metadata: \(error.localizedDescription)")
             return false
         }
     }

@@ -27,6 +27,7 @@ import {createStyles} from './styles';
 import {ResponseBubble} from '../ResponseBubble';
 
 import {L10nContext} from '../../utils';
+import {logger} from '../../utils/logger';
 
 interface EmbeddedVideoViewProps {
   onCapture: (imageBase64: string) => void;
@@ -65,9 +66,9 @@ export const EmbeddedVideoView = observer(
       if (!hasPermission) {
         const requestCameraPermission = async () => {
           try {
-            console.log('Requesting camera permission...');
+            logger.debug('Requesting camera permission...');
             const result = await requestPermission();
-            console.log('Camera permission result:', result);
+            logger.debug('Camera permission result:', result);
             if (!result) {
               // Permission was denied
               Alert.alert(

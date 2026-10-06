@@ -51,6 +51,7 @@ import {assistantStore, Assistant} from '../../store';
 import {hasVideoCapability} from '../../utils/assistant-capabilities';
 
 import type {DrshubAssistant} from '../../types/drshub';
+import {logger} from '../../utils/logger';
 
 const SectionGrid: React.FC<{
   section: {title: string; data: AssistantGridItem[]};
@@ -110,7 +111,7 @@ export const AssistantsScreen: React.FC = observer(() => {
         if (authService.isAuthenticated) {
           const needsSync = await syncService.needsSync();
           if (needsSync) {
-            console.log('Syncing with Drshub...');
+            logger.debug('Syncing with Drshub...');
             await syncService.syncAll();
           }
         }

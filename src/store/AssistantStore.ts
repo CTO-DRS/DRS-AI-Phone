@@ -51,6 +51,7 @@ import {
   downloadAssistantThumbnail,
   deleteAssistantThumbnail,
 } from '../utils/imageUtils';
+import {logger} from '../utils/logger';
 
 // Track each built-in separately so future defaults can still be introduced.
 // TODO: when adding another built-in assistant, extract a shared seed-once helper
@@ -81,8 +82,8 @@ class AssistantStore {
   constructor() {
     makeAutoObservable(this);
     this.initialize();
-    console.log('Assistant store initialized');
-    console.log('Assistants number: ', this.assistants.length);
+    logger.debug('Assistant store initialized');
+    logger.debug('Assistants number: ', this.assistants.length);
   }
 
   async initialize() {
@@ -109,7 +110,7 @@ class AssistantStore {
       // Check checkout eligibility for buy button gating
       this.checkCheckoutEligibility();
 
-      console.log('Assistant store initialization completed');
+      logger.debug('Assistant store initialization completed');
 
       runInAction(() => {
         this.isMigrating = false;
@@ -294,7 +295,7 @@ class AssistantStore {
       // Download thumbnail image if available
       if (drshubAssistant.thumbnail_url) {
         try {
-          console.log('Downloading thumbnail for assistant:', assistant.name);
+          logger.debug('Downloading thumbnail for assistant:', assistant.name);
           relativeThumbnailPath = await downloadAssistantThumbnail(
             assistant.id,
             drshubAssistant.thumbnail_url,
@@ -302,7 +303,7 @@ class AssistantStore {
 
           // Update the assistant with the relative path (no file:// protocol)
           assistant.thumbnail_url = relativeThumbnailPath;
-          console.log(
+          logger.debug(
             'Thumbnail downloaded successfully:',
             relativeThumbnailPath,
           );
@@ -324,7 +325,7 @@ class AssistantStore {
         if (relativeThumbnailPath) {
           try {
             await deleteAssistantThumbnail(relativeThumbnailPath);
-            console.log(
+            logger.debug(
               'Cleaned up thumbnail after database error:',
               relativeThumbnailPath,
             );
@@ -736,7 +737,7 @@ class AssistantStore {
       );
 
       if (!lookieAssistant) {
-        console.log('Creating default Lookie assistant...');
+        logger.debug('Creating default Lookie assistant...');
 
         // Offline constant — no network resolve at assistant init.
         const defaultModel = LOOKIE_DEFAULT_MODEL;
@@ -773,7 +774,7 @@ class AssistantStore {
 
         await this.addAssistant(assistantData);
       } else {
-        console.log('Lookie assistant already exists, skipping creation');
+        logger.debug('Lookie assistant already exists, skipping creation');
       }
       await AsyncStorage.setItem(LOOKIE_SEEDED_KEY, 'true');
     } catch (error) {

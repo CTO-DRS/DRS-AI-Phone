@@ -69,9 +69,11 @@ export const NON_LATIN_LOCALES: ReadonlyArray<AvailableLanguage> = [
   'zh',
   'zh_Hant',
   // Latin-script locales whose alphabet exceeds the bundled Fraunces
-  // subset (e.g. fr 'œ') and Cyrillic 'be' — headlines fall back to Inter.
+  // subset (e.g. fr 'œ', et 'ž'/'š') and Cyrillic 'be' — headlines fall
+  // back to Inter.
   'fr',
   'be',
+  'et',
 ];
 
 const isNonLatinLocale = (locale: AvailableLanguage): boolean =>
