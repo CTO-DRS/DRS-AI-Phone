@@ -12,6 +12,7 @@ import {
   MessageType,
   Model,
 } from './types';
+import {logger} from '../utils/logger';
 
 export const userId = 'y9d7f8pgn';
 export const assistantId = 'h3o3lc5xj';
@@ -439,7 +440,7 @@ export function removeThinkingParts(text: string): string {
   result = result.replace(/<thinking>[\s\S]*?<\/thinking>/g, '');
 
   // Log for debugging
-  console.log('Removed thinking parts from context');
+  logger.debug('Removed thinking parts from context');
 
   return result;
 }

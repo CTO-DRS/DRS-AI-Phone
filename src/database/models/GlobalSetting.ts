@@ -2,6 +2,7 @@ import {Model} from '@nozbe/watermelondb';
 import {field, text} from '@nozbe/watermelondb/decorators';
 import {CompletionParams} from '../../utils/completionTypes';
 import {migrateCompletionSettings} from '../../utils/completionSettingsVersions';
+import {logger} from '../../utils/logger';
 
 export default class GlobalSetting extends Model {
   static table = 'global_settings';
@@ -24,10 +25,10 @@ export default class GlobalSetting extends Model {
         // If settings were migrated, log it but don't try to save automatically
         // The repository should handle saving with proper database.write() calls
         if (migratedSettings.version !== parsedSettings.version) {
-          console.log(
+          logger.debug(
             `Migrated global completion settings from version ${parsedSettings.version} to ${migratedSettings.version} for key ${this.key}`,
           );
-          console.log(
+          logger.debug(
             'Global settings need to be saved by the repository with a proper database.write() call',
           );
         }

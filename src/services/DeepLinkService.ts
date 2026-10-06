@@ -5,6 +5,7 @@
  */
 
 import {NativeModules, NativeEventEmitter, Platform} from 'react-native';
+import {logger} from '../utils/logger';
 
 const {DeepLinkModule} = NativeModules;
 
@@ -44,7 +45,7 @@ class DeepLinkService {
     // Cleanup existing subscription first to prevent duplicates
     // This can happen during hot reload or if initialize() is called multiple times
     if (this.subscription) {
-      console.log(
+      logger.debug(
         'DeepLinkService: Cleaning up existing subscription before re-initializing',
       );
       this.subscription.remove();
@@ -55,7 +56,7 @@ class DeepLinkService {
     this.subscription = this.eventEmitter.addListener(
       'onDeepLink',
       (params: DeepLinkParams) => {
-        console.log('Deep link received:', params);
+        logger.debug('Deep link received:', params);
         this.notifyListeners(params);
       },
     );

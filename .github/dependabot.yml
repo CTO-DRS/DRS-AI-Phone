@@ -1,0 +1,37 @@
+# Dependabot keeps dependencies fresh and surfaces known CVEs as PRs.
+# Weekly cadence: grouped PRs stay reviewable without alert fatigue.
+
+version: 2
+
+updates:
+  # JS dependencies (yarn.lock is read automatically for the npm ecosystem)
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    groups:
+      js-minor-and-patch:
+        update-types:
+          - "minor"
+          - "patch"
+
+  # GitHub Actions used across .github/workflows
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+
+  # Ruby gems for fastlane (android + ios lanes)
+  - package-ecosystem: "bundler"
+    directory: "/android"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+
+  - package-ecosystem: "bundler"
+    directory: "/ios"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5

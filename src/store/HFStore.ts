@@ -10,6 +10,7 @@ import {processHFSearchResults} from '../utils/hf';
 import {ErrorState, createErrorState} from '../utils/errors';
 
 import {HuggingFaceModel} from '../utils/types';
+import {logger} from '../utils/logger';
 
 // Service name for keychain storage
 const HF_TOKEN_SERVICE = 'hf_token_service';
@@ -204,7 +205,7 @@ class HFStore {
   // Fetch the details (sizes, oid, lfs, ...) of the model files
   async fetchModelFileDetails(modelId: string) {
     try {
-      console.log('Fetching model file details for', modelId);
+      logger.debug('Fetching model file details for', modelId);
       const authToken = this.shouldUseToken ? this.hfToken : null;
       const fileDetails = await fetchModelFilesDetails(modelId, authToken);
       const model = this.models.find(m => m.id === modelId);
@@ -256,13 +257,15 @@ class HFStore {
 
     // If we have very few models and recent attempts, apply debouncing
     if (this.models.length < 5 && timeSinceLastAttempt < 2000) {
-      console.log('🔵 Preventing fetchMore: too few models and recent attempt');
+      logger.debug(
+        '🔵 Preventing fetchMore: too few models and recent attempt',
+      );
       return true;
     }
 
     // If we've had multiple consecutive small results, be more cautious
     if (this.consecutiveSmallResults >= 3 && timeSinceLastAttempt < 5000) {
-      console.log(
+      logger.debug(
         '🔵 Preventing fetchMore: multiple small results, applying longer debounce',
       );
       return true;
@@ -342,7 +345,7 @@ class HFStore {
 
   // Fetch the next page of models
   async fetchMoreModels() {
-    console.log('fetchMoreModels called');
+    logger.debug('fetchMoreModels called');
     if (!this.nextPageLink || this.isLoading) {
       return;
     }
@@ -354,7 +357,7 @@ class HFStore {
 
     // ⛔️ Don't refetch the same page over and over
     if (this.lastFetchedNextLink === this.nextPageLink) {
-      console.log(
+      logger.debug(
         '🔵 Skipping duplicate fetch for same nextPageLink:',
         this.nextPageLink,
       );

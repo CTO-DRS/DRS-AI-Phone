@@ -61,6 +61,7 @@ import {
   ChevronSelectorVerticalIcon,
   ChevronSelectorExpandedVerticalIcon,
 } from '../../../assets/icons';
+import {logger} from '../../../utils/logger';
 
 type ChatScreenNavigationProp = DrawerNavigationProp<RootDrawerParamList>;
 
@@ -624,7 +625,7 @@ export const ModelCard: React.FC<ModelCardProps> = observer(
               navigation.navigate('Chat');
             }
           } catch (e) {
-            console.log(`Error: ${e}`);
+            logger.debug(`Error: ${e}`);
           }
         }
       };

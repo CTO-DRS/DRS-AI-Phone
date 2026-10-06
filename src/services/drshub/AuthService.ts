@@ -14,6 +14,7 @@ import {
   GoogleSignin,
   statusCodes,
 } from '@react-native-google-signin/google-signin';
+import {logger} from '../../utils/logger';
 
 export interface Profile {
   id: string;
@@ -56,7 +57,7 @@ class AuthService {
 
       // Check if Supabase is properly configured
       if (this.isSupabaseConfigured()) {
-        console.log(
+        logger.debug(
           'AuthService: Supabase is configured, initializing auth listener',
         );
         // Listen for auth state changes
@@ -65,7 +66,7 @@ class AuthService {
         this.configureGoogleSignIn();
         // Check for existing session
         this.checkExistingSession().then(() => {
-          console.log('AuthService: Session restoration completed');
+          logger.debug('AuthService: Session restoration completed');
         });
       } else {
         console.warn(
@@ -74,7 +75,7 @@ class AuthService {
         this.isAuthenticated = false;
       }
 
-      console.log('AuthService: Constructor completed successfully');
+      logger.debug('AuthService: Constructor completed successfully');
     } catch (error) {
       console.error('AuthService: Error in constructor:', error);
       throw error;
@@ -198,7 +199,7 @@ class AuthService {
         iosClientId: GOOGLE_IOS_CLIENT_ID,
         offlineAccess: false,
       });
-      console.log('Google Sign-In configured successfully');
+      logger.debug('Google Sign-In configured successfully');
     } catch (error) {
       console.error('Error configuring Google Sign-In:', error);
     }
@@ -219,34 +220,43 @@ class AuthService {
       });
 
       // Check if Google Play Services are available
-      console.log('Checking Google Play Services...');
+      logger.debug('Checking Google Play Services...');
       await GoogleSignin.hasPlayServices();
-      console.log('Google Play Services available');
+      logger.debug('Google Play Services available');
 
       // Check if user is already signed in
-      console.log('Checking current user...');
+      logger.debug('Checking current user...');
       try {
         const currentUser = GoogleSignin.getCurrentUser();
         if (currentUser) {
-          console.log('User already signed in, signing out first...');
+          logger.debug('User already signed in, signing out first...');
           await GoogleSignin.signOut();
         }
       } catch (error) {
-        console.log('No current user signed in: ', error);
+        logger.debug('No current user signed in: ', error);
       }
 
       // Sign in with Google
-      console.log('Starting Google Sign-In...');
+      logger.debug('Starting Google Sign-In...');
+
+      // Replay-protection note (audit F-08): Supabase's nonce-verified
+      // sign-in flow requires passing a `nonce` to the Google SDK so its
+      // hash is embedded in the ID token. @react-native-google-signin v16
+      // exposes no nonce option in either its JS API or native code, so the
+      // flow cannot be enabled without patching the native modules. Until
+      // upstream support exists, `signInWithIdToken` runs without a nonce:
+      // the token is still signature-verified by Supabase against Google's
+      // keys, but replay within its validity window is not prevented here.
       const userInfo = await GoogleSignin.signIn();
-      console.log('Google Sign-In completed:', !!userInfo.data);
+      logger.debug('Google Sign-In completed:', !!userInfo.data);
 
       if (userInfo.data?.idToken) {
-        console.log(
+        logger.debug(
           'Google sign-in successful, attempting Supabase authentication...',
         );
-        console.log('ID Token length:', userInfo.data.idToken.length);
 
-        // Use the ID token to sign in with Supabase (nonce disabled)
+        // Use the ID token to sign in with Supabase (nonce unsupported by
+        // the Google SDK — see note above)
         const {data, error} = await supabase!.auth.signInWithIdToken({
           provider: 'google',
           token: userInfo.data.idToken,
@@ -258,7 +268,7 @@ class AuthService {
           });
           console.error('Supabase Google sign-in error:', error);
         } else {
-          console.log('Google sign-in successful:', data);
+          logger.debug('Google sign-in successful:', data);
         }
       } else {
         runInAction(() => {

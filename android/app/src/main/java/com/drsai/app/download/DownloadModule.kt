@@ -55,7 +55,8 @@ class DownloadModule(reactContext: ReactApplicationContext) : NativeDownloadModu
     }
 
     override fun startDownload(url: String, config: ReadableMap, promise: Promise) {
-        Log.d(TAG, "Starting download with config: $config")
+        // Never dump the full config: it can carry the plaintext authToken.
+        Log.d(TAG, "Starting download with config keys: ${config.keySet()}")
         scope.launch {
             try {
                 val downloadId = UUID.randomUUID().toString()
@@ -70,6 +71,9 @@ class DownloadModule(reactContext: ReactApplicationContext) : NativeDownloadModu
                 if (authToken != null) {
                     Log.d(TAG, "Authorization token provided for download")
                 }
+                // Encrypt before persisting: the Room row must never hold the
+                // plaintext token (audit F-03). Null when Keystore unavailable.
+                val encryptedToken = DownloadTokenCryptor.encrypt(authToken)
 
                 val networkType = when (config.getString("networkType")) {
                     "WIFI" -> NetworkType.WIFI
@@ -98,11 +102,11 @@ class DownloadModule(reactContext: ReactApplicationContext) : NativeDownloadModu
                     priority = priority,
                     networkType = networkType,
                     createdAt = System.currentTimeMillis(),
-                    authToken = authToken
+                    authToken = encryptedToken
                 )
 
                 withContext(Dispatchers.IO) {
-                    Log.d(TAG, "Inserting download into database: $download")
+                    Log.d(TAG, "Inserting download into database: id=$downloadId url=$url tokenEncrypted=${encryptedToken != null}")
                     downloadDao.insertDownload(download)
                 }
 

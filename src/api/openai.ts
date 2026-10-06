@@ -8,6 +8,7 @@ import {
   ToolCall,
 } from '../utils/completionTypes';
 import {RemoteModelCaps} from '../utils/types';
+import {logger} from '../utils/logger';
 
 /**
  * Raw API response shape from OpenAI /v1/models. The optional fields are what
@@ -858,14 +859,14 @@ export async function streamChatCompletion(
           const detail =
             errorBody?.error?.message || errorBody?.error || xhr.responseText;
           errorMessage = `Server error: ${xhr.status} — ${detail}`;
-          console.log(
+          logger.debug(
             '[OpenAI] Error:',
             errorBody?.error?.message || errorBody?.error,
           );
         } catch {
           if (xhr.responseText) {
             errorMessage = `Server error: ${xhr.status} — ${xhr.responseText.substring(0, 200)}`;
-            console.log(
+            logger.debug(
               '[OpenAI] Error (raw):',
               xhr.responseText.substring(0, 200),
             );

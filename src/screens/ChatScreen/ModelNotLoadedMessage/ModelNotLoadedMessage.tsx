@@ -13,6 +13,7 @@ import {modelStore} from '../../../store';
 
 import {L10nContext} from '../../../utils';
 import {Model, RootDrawerParamList} from '../../../utils/types';
+import {logger} from '../../../utils/logger';
 
 type ModelNotLoadedScreenNavigationProp =
   DrawerNavigationProp<RootDrawerParamList>;
@@ -39,10 +40,10 @@ export const ModelNotLoadedMessage: React.FC = () => {
       modelStore
         .selectModel(lastUsedModel)
         .then(() => {
-          console.log('initialized');
+          logger.debug('initialized');
         })
         .catch(e => {
-          console.log(`Error: ${e}`);
+          logger.debug(`Error: ${e}`);
         });
     }
   };

@@ -17,6 +17,7 @@ import {t} from '../../locales';
 import type {Assistant} from '../../types/assistant';
 import {CloseIcon, SettingsIcon} from '../../assets/icons';
 import {SkillsDisplay} from '../SkillsDisplay';
+import {logger} from '../../utils/logger';
 
 type Tab = 'models' | 'assistants';
 
@@ -149,7 +150,7 @@ export const ChatAssistantModelPickerSheet = observer(
           onClose();
           modelStore.selectModel(model);
         } catch (e) {
-          console.log(`Error: ${e}`);
+          logger.debug(`Error: ${e}`);
         }
       },
       [onModelSelect, onClose],

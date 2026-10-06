@@ -14,6 +14,7 @@ import {drshubService} from './DrshubService';
 import {DrshubErrorHandler, RetryHandler} from './ErrorHandler';
 
 import type {DrshubAssistant, SyncState} from '../../types/drshub';
+import {logger} from '../../utils/logger';
 
 export interface SyncProgress {
   current: number;
@@ -57,7 +58,7 @@ class SyncService {
 
       // Only sync if user is authenticated
       if (!authService.isAuthenticated) {
-        console.log('User not authenticated, skipping sync');
+        logger.debug('User not authenticated, skipping sync');
         return;
       }
 
