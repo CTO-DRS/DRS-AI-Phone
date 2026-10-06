@@ -1,5 +1,6 @@
 import {Platform} from 'react-native';
 import {loadLlamaModelInfo} from 'llama.rn';
+import {logger} from '../utils/logger';
 
 /**
  * Quantization types that are repackable and should use use_mmap=false
@@ -47,7 +48,7 @@ export async function isRepackableQuantization(
           numericValue,
         );
         if (isRepackable) {
-          console.log(
+          logger.debug(
             'Detected repackable quantization:',
             fileType,
             '(enum value:',
@@ -62,7 +63,7 @@ export async function isRepackableQuantization(
         fileType.toUpperCase().includes(quant.toUpperCase()),
       );
       if (isRepackable) {
-        console.log('Detected repackable quantization from string:', fileType);
+        logger.debug('Detected repackable quantization from string:', fileType);
       }
       return isRepackable;
     }
@@ -73,7 +74,7 @@ export async function isRepackableQuantization(
         fileType,
       );
       if (isRepackable) {
-        console.log('Detected repackable quantization from number:', fileType);
+        logger.debug('Detected repackable quantization from number:', fileType);
       }
       return isRepackable;
     }

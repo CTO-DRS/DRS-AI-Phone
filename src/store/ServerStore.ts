@@ -15,6 +15,11 @@ import {RemoteModelCaps, ServerConfig} from '../utils/types';
 import {ReasoningCapability} from '../utils/reasoningCapability';
 import {deriveListCapsMap} from '../utils/listCaps';
 import type {ListDerivedCaps} from '../utils/listCaps';
+import {isCleartextUrlAllowed} from '../utils/network';
+
+/** Rejected before a public-host cleartext URL can be persisted (F-02). */
+const INSECURE_URL_MESSAGE =
+  'Insecure URL: http:// is only allowed for local network addresses — use https:// for public servers';
 
 const KEYCHAIN_SERVICE_PREFIX = 'drsai-server-';
 
@@ -85,6 +90,10 @@ class ServerStore {
 
   // Actions
   addServer(config: Omit<ServerConfig, 'id'>): string {
+    // Hard gate (F-02): no cleartext HTTP to public hosts, LAN only.
+    if (!isCleartextUrlAllowed(config.url)) {
+      throw new Error(INSECURE_URL_MESSAGE);
+    }
     const id = `server-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     const newServer: ServerConfig = {
       ...config,
@@ -95,6 +104,10 @@ class ServerStore {
   }
 
   updateServer(id: string, updates: Partial<ServerConfig>): void {
+    // Hard gate (F-02): a repointed URL must not downgrade to public cleartext.
+    if (updates.url !== undefined && !isCleartextUrlAllowed(updates.url)) {
+      throw new Error(INSECURE_URL_MESSAGE);
+    }
     const server = this.servers.find(s => s.id === id);
     if (!server) {
       return;

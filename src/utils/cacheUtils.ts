@@ -1,5 +1,6 @@
 import * as RNFS from '@dr.pogodin/react-native-fs';
 import {Platform} from 'react-native';
+import {logger} from '../utils/logger';
 
 /**
  * Utility functions for managing KV cache files used for inference optimization
@@ -86,7 +87,7 @@ export const clearAllSessionCaches = async (): Promise<number> => {
     const exists = await RNFS.exists(cacheDir);
 
     if (!exists) {
-      console.log(
+      logger.debug(
         '[CacheUtils] Session cache directory does not exist, nothing to clear',
       );
       return 0;
@@ -100,7 +101,7 @@ export const clearAllSessionCaches = async (): Promise<number> => {
         try {
           await RNFS.unlink(file.path);
           deletedCount++;
-          console.log('[CacheUtils] Deleted cache file:', file.name);
+          logger.debug('[CacheUtils] Deleted cache file:', file.name);
         } catch (error) {
           console.error(
             '[CacheUtils] Failed to delete cache file:',
@@ -111,7 +112,7 @@ export const clearAllSessionCaches = async (): Promise<number> => {
       }
     }
 
-    console.log(`[CacheUtils] Cleared ${deletedCount} session cache files`);
+    logger.debug(`[CacheUtils] Cleared ${deletedCount} session cache files`);
     return deletedCount;
   } catch (error) {
     console.error('[CacheUtils] Error clearing session caches:', error);
@@ -140,7 +141,7 @@ export const clearSessionCacheForAssistant = async (
     const sessionExists = await RNFS.exists(sessionFile);
     if (sessionExists) {
       await RNFS.unlink(sessionFile);
-      console.log(
+      logger.debug(
         '[CacheUtils] Deleted session file for assistant:',
         assistantId,
       );
@@ -151,7 +152,7 @@ export const clearSessionCacheForAssistant = async (
     const metadataExists = await RNFS.exists(metadataFile);
     if (metadataExists) {
       await RNFS.unlink(metadataFile);
-      console.log(
+      logger.debug(
         '[CacheUtils] Deleted metadata file for assistant:',
         assistantId,
       );

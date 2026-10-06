@@ -1,6 +1,1865 @@
 {
   "common": {
     "cancel": "Avbryt",
-    "delete": "Ta bort"
+    "delete": "Ta bort",
+    "dismiss": "Avfärda",
+    "rename": "Byt namn",
+    "reset": "Återställ",
+    "save": "Spara",
+    "stop": "Stoppa",
+    "update": "Uppdatera",
+    "error": "Fel",
+    "export": "Exportera",
+    "networkError": "Nätverksfel. Försök igen.",
+    "downloadETA": "ETA",
+    "calculating": "beräknar...",
+    "second": "sek",
+    "seconds": "sek",
+    "year": "år",
+    "years": "år",
+    "month": "månad",
+    "months": "månader",
+    "week": "vecka",
+    "weeks": "veckor",
+    "day": "dag",
+    "days": "dagar",
+    "hour": "timme",
+    "hours": "timmar",
+    "minute": "min",
+    "minutes": "min",
+    "justNow": "just nu",
+    "ok": "OK",
+    "close": "Stäng",
+    "clear": "Rensa allt",
+    "gallery": "Galleri",
+    "noResults": "Inga resultat",
+    "openDrawer": "Öppna sidomeny",
+    "openMenu": "Öppna meny",
+    "closeMenu": "Stäng menyn"
+  },
+  "settings": {
+    "modelInitializationSettings": "Inställningar för modellinitiering",
+    "metal": "Metal",
+    "metalDescription": "Apples hårdvaruaccelererade API.",
+    "metalRequiresNewerIOS": "Metal-acceleration kräver iOS 18 eller senare. Uppgradera din enhet för att använda den här funktionen.",
+    "openCL": "OpenCL (experimentell)",
+    "openCLDescription": "GPU-acceleration för Adreno-GPU:er. Snabbare promptbearbetning, men genereringen blir inte alltid snabbare.",
+    "openCLNotAvailable": "OpenCL finns inte på den här enheten. Kräver Adreno-GPU med CPU-funktionerna i8mm och dotprod.",
+    "openCLMissingCPUFeatures": "OpenCL kräver CPU-funktionerna i8mm och dotprod, som inte finns på den här enheten.",
+    "openCLQuantizationNote": "Obs: Modeller som enbart kvantiserats med Q4_0 fungerar bäst med OpenCL.",
+    "openCLDocsLink": "Se llama.cpp:s OpenCL-dokumentation för detaljer.",
+    "layersOnGPU": "Lager på GPU: {{gpuLayers}}",
+    "deviceSelection": "Enhetsval",
+    "deviceSelectionIOS": "Enhet (Metal)",
+    "deviceSelectionIOSDescription": "Välj Metal-GPU eller läge med enbart CPU",
+    "deviceSelectionAndroidDescription": "Välj beräkningsenhet (CPU, GPU eller Hexagon-NPU)",
+    "cpuOnlyNoAccelerators": "Endast CPU – inga hårdvaruacceleratorer hittades",
+    "contextSize": "Kontextstorlek",
+    "contextSizePlaceholder": "Ange kontextstorlek (minst {{minContextSize}})",
+    "invalidContextSizeError": "Ange ett giltigt tal (minst {{minContextSize}})",
+    "modelReloadNotice": "Modellen måste laddas om för att ändringarna ska börja gälla.",
+    "advancedSettings": "Avancerade inställningar",
+    "batchSize": "Batchstorlek",
+    "batchSizeDescription": "Batchstorlek: {{batchSize}}{{effectiveBatch}}",
+    "effectiveLabel": "effektiv",
+    "physicalBatchSize": "Fysisk batchstorlek",
+    "physicalBatchSizeDescription": "Fysisk batchstorlek: {{physicalBatchSize}}{{effectivePhysicalBatch}}",
+    "cpuThreads": "CPU-trådar",
+    "cpuThreadsDescription": "Använder {{threads}} av {{maxThreads}} tillgängliga trådar",
+    "imageMaxTokens": "Max tokens för bild",
+    "imageMaxTokensDescription": "Maximalt antal tokens för bildbearbetning: {{tokens}}{{effectiveTokens}} (lägre = snabbare, mindre detalj)",
+    "flashAttention": "Flash Attention",
+    "flashAttentionDescription": "Aktivera Flash Attention för snabbare bearbetning",
+    "flashAttentionIOSDescription": "Minnessnål attention (aktiveras automatiskt på Metal)",
+    "flashAttentionAndroidDescription": "Måste vara avstängd för att OpenCL ska kunna spara/ladda tillstånd",
+    "flashAttentionAuto": "Auto",
+    "flashAttentionOn": "På",
+    "flashAttentionOff": "Av",
+    "keyCacheType": "Nyckelcachetyp",
+    "keyCacheTypeDescription": "Välj cachetyp för nyckelberäkning",
+    "keyCacheTypeDisabledDescription": "Aktivera Flash Attention för att ändra cachetyp",
+    "valueCacheType": "Värdecachetyp",
+    "valueCacheTypeDescription": "Välj cachetyp för värdeberäkning",
+    "valueCacheTypeDisabledDescription": "Aktivera Flash Attention för att ändra cachetyp",
+    "memorySettings": "Minnesinställningar",
+    "useMlock": "Använd minneslåsning",
+    "useMlockDescription": "Tvinga systemet att behålla modellen i RAM i stället för att växla ut eller komprimera den",
+    "useMmap": "Minnesmappning",
+    "useMmapDescription": "Använd minnesmappade filer för snabbare modellinläsning",
+    "useMmapTrue": "Aktiverad",
+    "useMmapFalse": "Inaktiverad",
+    "useMmapTrueDescription": "Använd alltid minnesmappning för snabbare inläsning",
+    "useMmapFalseDescription": "Inaktiverad rekommenderas när ompackning av vikter är aktiverad, för att undvika dubbel minnesanvändning",
+    "weightRepacking": "Aktivera ompackning av vikter",
+    "weightRepackingDescription": "Snabbare promptbearbetning med liten minnesoverhead när minnesmappning är avstängd. Tokengenereringen påverkas inte.",
+    "speculativeDecoding": "Spekulativ avkodning",
+    "speculativeDecodingDescription": "Använd en liten utkastmodell (eller en inbyggd MTP-modell) för att förutsäga tokens och snabba upp genereringen. Experimentell.",
+    "speculativeNotMTPCapable": "Den aktiva modellen stöder inte spekulativ avkodning och ingen kompatibel utkastmodell är kopplad, så det förblir avstängt för den utan effekt. Det aktiveras automatiskt för modeller som stöder det.",
+    "speculativeDraftModel": "Utkastmodell",
+    "speculativeDraftModelDescription": "Genererar utkast-tokens åt den aktiva modellen.",
+    "speculativeDraftModelNone": "Ingen (inbyggd MTP)",
+    "speculativeDraftModelIgnoredOverridden": "Den aktiva modellen har en egen utkastmodell, så det här valet ignoreras.",
+    "speculativeDraftModelIgnoredIncompatible": "Den här utkastmodellen är inte kompatibel med den aktiva modellen och ignoreras.",
+    "speculativeDraftModelIgnoredNotCapable": "Den här modellen har inga utkastlager och kan därför inte användas som utkastmodell.",
+    "speculativeDraftKeyCacheType": "Utkastets nyckelcachetyp",
+    "speculativeDraftValueCacheType": "Utkastets värdecachetyp",
+    "speculativeDraftNGpuLayers": "Utkastets GPU-lager",
+    "speculativeDraftNGpuLayersDescription": "Antal utkastmodelllager som avlastas till GPU:n.",
+    "speculativeDraftCacheTypeInactiveDescription": "Börjar gälla när spekulativ avkodning körs.",
+    "ttsAvailability": "Text-till-tal",
+    "ttsAvailabilityDescription": "Läs upp assistentens svar högt.",
+    "ttsAvailabilityLowMemoryWarning": "Enhetens minne är lågt – det här kanske inte fungerar tillförlitligt.",
+    "modelLoadingSettings": "Inställningar för modellinläsning",
+    "autoOffloadLoad": "Automatisk lossning/laddning",
+    "autoOffloadLoadDescription": "Lossa modellen när appen är i bakgrunden.",
+    "autoNavigateToChat": "Gå automatiskt till chatten",
+    "autoNavigateToChatDescription": "Byt till chatten när inläsningen startar.",
+    "appSettings": "Appinställningar",
+    "language": "Språk",
+    "languageSheetTitle": "Språk",
+    "languageSearchPlaceholder": "Sök språk",
+    "languageRestartTitle": "Omstart krävs",
+    "languageRestartMessage": "Layoutriktningen har ändrats för det här språket. Starta om appen för att tillämpa det helt.",
+    "languageRestartNow": "Starta om nu",
+    "languageRestartLater": "Senare",
+    "darkMode": "Mörkt läge",
+    "displayMemoryUsage": "Visa minnesanvändning",
+    "displayMemoryUsageDescription": "Visa minnesanvändning på chatsidan.",
+    "exportOptions": "Exportalternativ",
+    "exportLegacyChats": "Exportera äldre chattar",
+    "exportLegacyChatsDescription": "Använd det här om migreringen misslyckades eller om du behöver återställa gamla chattsessioner.",
+    "exportButton": "Exportera",
+    "importChats": "Importera chattsessioner",
+    "importChatsDescription": "Importera chattsessioner från en (exporterad) JSON-fil.",
+    "importButton": "Importera",
+    "importSuccess": "Importerade {{count}} chattsession(er).",
+    "importError": "Det gick inte att importera chattsessionerna. Kontrollera filformatet.",
+    "internetSearch": {
+      "title": "Internetsökning",
+      "description": "Låt assistenter söka på webben med sina egna verktyg. Använd din egen API-nyckel – DRS AI sparar aldrig dina nycklar eller skickar dina frågor via sina servrar.",
+      "providerLabel": "Sökleverantör",
+      "providerGated": "Kommer snart",
+      "keyLabel": "API-nyckel",
+      "keyIsSet": "Nyckel är angiven för {{provider}}.",
+      "keyNotSet": "Ingen nyckel angiven för {{provider}}.",
+      "setKeyButton": "Ange nyckel",
+      "updateKeyButton": "Uppdatera nyckel",
+      "clearKeyButton": "Rensa nyckel",
+      "keyInputPlaceholder": "Klistra in din {{provider}}-API-nyckel",
+      "keyUpdateError": "Det gick inte att uppdatera nyckeln. Försök igen.",
+      "showKeyAccessibilityLabel": "Visa API-nyckel",
+      "hideKeyAccessibilityLabel": "Dölj API-nyckel",
+      "resultCountLabel": "Resultat per sökning",
+      "resultCountDescription": "Färre resultat sparar mer utrymme i modellens kontext.",
+      "consentTitle": "Sökningar lämnar din enhet",
+      "consentDescription": "När en assistent söker på webben skickas din fråga till den valda leverantören över internet. När en assistent läser en sida kan URL:en och sidinnehållet i stället skickas till en standardläsartjänst (r.jina.ai) om den valda leverantören saknar egen läsare. Nycklar och frågor skickas aldrig till DRS AI.",
+      "consentAccept": "Jag förstår",
+      "consentRequired": "Godkänn informationen ovan för att ange en nyckel och aktivera sökning.",
+      "consentGivenTitle": "Webbsökning är aktiverad",
+      "consentGivenDescription": "Frågor och sidläsningar kan lämna din enhet enligt ovan.",
+      "consentRevoke": "Återkalla"
+    },
+    "apiSettingsTitle": "API-inställningar",
+    "huggingFaceTokenLabel": "Hugging Face-token",
+    "tokenIsSetDescription": "Token är angiven. Krävs för åtkomst till gateade modeller.",
+    "setTokenDescription": "Ange en token för att få åtkomst till gateade modeller på Hugging Face.",
+    "setTokenButton": "Ange token",
+    "useHfTokenLabel": "Använd HF-token",
+    "useHfTokenDescription": "Aktivera för att använda token vid API-anrop. Inaktivera om token orsakar autentiseringsproblem.",
+    "cacheStorageTitle": "Cache & lagring",
+    "clearAssistantCaches": "Rensa assistentcache",
+    "clearAssistantCachesDescription": "Rensar cachad data som används för att snabba upp assistenter. Det påverkar inte dina assistenter eller chatthistoriken.",
+    "clearCachesButton": "Rensa cache",
+    "clearCachesConfirmTitle": "Rensa assistentcache?",
+    "clearCachesConfirmMessage": "Det här rensar all cachad sessionsdata ({{fileCount}} filer, {{size}}). Assistenter kan vara långsammare vid första användningen efter rensningen. Det påverkar inte dina assistenter eller chatthistoriken.",
+    "clearCachesSuccess": "Rensade {{count}} cachefil(er).",
+    "clearCachesError": "Det gick inte att rensa cachen. Försök igen.",
+    "noCachesToClear": "Ingen cache att rensa.",
+    "serverName": "Servernamn",
+    "serverUrl": "Server-URL",
+    "serverUrlPlaceholder": "t.ex. http://192.168.1.100:1234",
+    "requestTimeout": "Tidsgräns för anrop (sekunder)",
+    "requestTimeoutPlaceholder": "Valfritt – lämna tomt för standardvärde",
+    "requestTimeoutHelp": "Längsta väntetid för ett långsamt serversvar. Lämna tomt för standardvärde.",
+    "serverType": "Servertyp",
+    "serverTypeHelp": "Upptäcks automatiskt; ändra om det är fel.",
+    "apiKey": "API-nyckel",
+    "apiKeyPlaceholder": "Valfritt – krävs för OpenAI/Groq",
+    "apiKeyDescription": "Lagras säkert på enheten.",
+    "remoteModel": "Fjärr",
+    "remotePrivacyNotice": "Meddelanden som skickas till fjärrservrar lämnar din enhet. Anslut bara till servrar du litar på.",
+    "remoteIndicator": "Fjärr",
+    "serverUrlRequired": "Server-URL krävs",
+    "serverUrlInvalid": "Ogiltigt URL-format",
+    "serverUrlHttpWarning": "iOS kräver HTTPS för icke-lokala servrar. Använd https:// eller en lokal nätverksadress.",
+    "addRemoteModel": "Lägg till fjärrmodell",
+    "yourServers": "Dina servrar",
+    "orConnectNewServer": "eller anslut en ny server",
+    "selectModel": "Välj modell",
+    "addModel": "Lägg till modell",
+    "connected": "Ansluten",
+    "connectionFailed": "Anslutningen misslyckades: {{error}}",
+    "connecting": "Ansluter...",
+    "noModelsAvailable": "Inga modeller tillgängliga på den här servern.",
+    "alreadyAdded": "Redan tillagd",
+    "connectedServers": "Anslutna servrar",
+    "modelsCount": "{{count}} modeller",
+    "serverDetails": "Serverinformation",
+    "modelsUsingServer": "Modeller som använder den här servern:",
+    "saveChanges": "Spara ändringar",
+    "removeServer": "Ta bort server",
+    "removeServerMessage": "Ta bort {{serverName}} och dess {{count}} modeller?",
+    "removeRemoteModel": "Ta bort {{modelName}} ({{serverName}})?",
+    "retryConnection": "Försök igen",
+    "enterUrlManually": "Ange URL manuellt",
+    "manageServers": "Hantera servrar",
+    "exportLegacyError": "Det gick inte att exportera äldre chattsessioner. Filen kanske inte finns."
+  },
+  "memory": {
+    "shortWarning": "Minnesvarning",
+    "multimodalWarning": "Den här enheten kanske inte har tillräckliga resurser för multimodala modeller.",
+    "memoryTight": "Minnet är snålt",
+    "lowMemory": "Lågt minne",
+    "memoryDetailMessage": "Den här modellen behöver ~{{needed}} men endast ~{{available}} beräknas vara användbart. Beräkningarna blir bättre ju mer du använder appen.",
+    "estimatedMemory": "Uppskattat minne: ~{{size}}",
+    "alerts": {
+      "memoryWarningTitle": "Minnesvarning",
+      "memoryWarningMessage": "Den här modellen kan överskrida tillgängligt minne, vilket kan orsaka instabilitet. Vill du fortsätta inläsningen?",
+      "multimodalWarningTitle": "Varning för enhetsprestanda",
+      "multimodalWarningMessage": "Den här enheten kanske inte har tillräckliga resurser för multimodala modeller. Inläsning kan orsaka instabilitet. Vill du ändå fortsätta?",
+      "combinedWarningTitle": "Prestandavarning",
+      "combinedWarningMessage": "Den här modellen kan överskrida tillgängligt minne och enheten kanske inte har tillräckliga resurser för multimodala modeller. Inläsning kan orsaka instabilitet. Vill du ändå fortsätta?",
+      "cancel": "Avbryt",
+      "continue": "Fortsätt"
+    }
+  },
+  "storage": {
+    "checkFailed": "Det gick inte att kontrollera lagringsutrymmet",
+    "lowStorage": "Lagringen är låg! Modell {{modelSize}} > {{freeSpace}} ledigt"
+  },
+  "generation": {
+    "modelNotInitialized": "Modellkontexten är inte initierad",
+    "failedToGenerate": "Det gick inte att generera utdata"
+  },
+  "models": {
+    "fileManagement": {
+      "fileAlreadyExists": "Filen finns redan",
+      "fileAlreadyExistsMessage": "En fil med det namnet finns redan. Vad vill du göra?",
+      "replace": "Ersätt",
+      "keepBoth": "Behåll båda",
+      "copyingModel": "Kopierar modellfil...",
+      "copyFailed": "Det gick inte att kopiera modellfilen"
+    },
+    "labels": {
+      "localModel": "Lokal",
+      "hfModel": "HF",
+      "unknownGroup": "Okänd",
+      "availableToUse": "Redo att använda",
+      "availableToDownload": "Tillgängliga att ladda ner",
+      "useAddButtonForMore": "Använd +-knappen för att hitta fler modeller"
+    },
+    "vision": "Vision",
+    "mmproj": "Projektor",
+    "multimodal": {
+      "settings": "Multimodala inställningar",
+      "projectionModels": "Projektionsmodeller",
+      "noCompatibleModels": "Inga kompatibla projektionsmodeller hittades",
+      "noProjectionModels": "Inga projektionsmodeller tillgängliga",
+      "selected": "Vald",
+      "select": "Välj",
+      "download": "Ladda ner",
+      "projectionNeededTitle": "Projektionsmodell krävs",
+      "projectionNeededMessage": "Den här modellen kräver en projektionsmodell för multimodala funktioner.",
+      "projectionMissingWarning": "Projektionsmodell saknas",
+      "projectionMissingShort": "Projektion saknas",
+      "reloadModelTitle": "Ladda om modellen",
+      "reloadModelMessage": "Modellen måste laddas om för att tillämpa den nya projektionsmodellen. Vill du ladda om nu?",
+      "reload": "Ladda om",
+      "deleteProjectionTitle": "Ta bort projektionsmodell",
+      "deleteProjectionMessage": "Är du säker på att du vill ta bort den här projektionsmodellen?",
+      "cannotDeleteTitle": "Kan inte tas bort",
+      "visionControls": {
+        "enableVision": "Aktivera visuella funktioner",
+        "disableVision": "Inaktivera visuella funktioner",
+        "visionEnabled": "Visuella funktioner aktiverade",
+        "visionDisabled": "Visuella funktioner inaktiverade",
+        "textOnlyMode": "Endast text",
+        "visionMode": "Vision aktiverad",
+        "downloadWithVision": "Ladda ner med vision",
+        "downloadTextOnly": "Ladda ner endast text",
+        "visionToggleDescription": "Aktivera bildbearbetning",
+        "projectionModelSize": "+{{size}} projektionsmodell",
+        "visionModeDescription": "Bearbeta bilder och text",
+        "textOnlyModeDescription": "Bearbeta endast text",
+        "includesVisionCapability": "Har stöd för vision",
+        "requiresProjectionModel": "Ladda ner en kompatibel projektionsmodell först"
+      },
+      "cannotDeleteActive": "Den här projektionsmodellen används just nu.",
+      "cannotDeleteInUse": "Den här projektionsmodellen används av nedladdade LLM-modeller:",
+      "dependentModels": "Beroende modeller:",
+      "visionWillBeDisabled": "Visuella funktioner kommer att inaktiveras för de här modellerna."
+    },
+    "buttons": {
+      "addFromHuggingFace": "Lägg till från Hugging Face",
+      "addLocalModel": "Lägg till lokal modell",
+      "reset": "Återställ"
+    },
+    "modelsHeaderRight": {
+      "menuTitleHf": "Hugging Face-modeller",
+      "menuTitleDownloaded": "Nedladdade modeller",
+      "menuTitleGrouped": "Gruppera efter modelltyp",
+      "menuTitleReset": "Återställ modellistan"
+    },
+    "modelsResetDialog": {
+      "proceedWithReset": "Fortsätt med återställning",
+      "confirmReset": "Bekräfta återställning"
+    },
+    "chatTemplate": {
+      "label": "Baschattmall:"
+    },
+    "details": {
+      "title": "Tillgängliga GGUF-filer"
+    },
+    "modelFile": {
+      "alerts": {
+        "cannotRemoveTitle": "Kan inte tas bort",
+        "modelPreset": "Modellen är förinställd.",
+        "downloadedFirst": "Modellen är nedladdad. Radera filen först.",
+        "removeTitle": "Ta bort modell",
+        "removeMessage": "Är du säker på att du vill ta bort den här modellen från listan?",
+        "removeError": "Det gick inte att ta bort modellen.",
+        "alreadyDownloadedTitle": "Modellen är redan nedladdad",
+        "alreadyDownloadedMessage": "Modellen är redan nedladdad.",
+        "deleteTitle": "Radera modell",
+        "deleteMessage": "Är du säker på att du vill radera den här nedladdade modellen?"
+      },
+      "buttons": {
+        "remove": "Ta bort"
+      },
+      "warnings": {
+        "storage": {
+          "message": "Inte tillräckligt med lagringsutrymme.",
+          "shortMessage": "Lågt lagringsutrymme"
+        },
+        "memory": {
+          "message": "Modellstorleken är nära eller överskrider enhetens totala minne. Det kan orsaka oväntat beteende."
+        },
+        "legacy": {
+          "message": "Äldre kvantiseringsformat – modellen kanske inte körs.",
+          "shortMessage": "Äldre kvantisering"
+        },
+        "multiple": "{{count}} varningar"
+      },
+      "labels": {
+        "downloadSpeed": "{{speed}}"
+      }
+    },
+    "search": {
+      "noResults": "Inga modeller hittades",
+      "loadingMore": "Laddar fler...",
+      "searchPlaceholder": "Sök Hugging Face-modeller",
+      "modelUpdatedLong": "Uppdaterades för {{time}} sedan",
+      "modelUpdatedShort": "för {{time}} sedan",
+      "modelUpdatedJustNowLong": "Uppdaterades just nu",
+      "modelUpdatedJustNowShort": "just nu",
+      "errorOccurred": "Det gick inte att läsa in modellerna. Försök igen.",
+      "filters": {
+        "author": "Skapare",
+        "authorPlaceholder": "Filtrera efter skapare...",
+        "sortBy": "Sortera efter",
+        "clearFilters": "Rensa filter",
+        "showFilters": "Visa filter",
+        "hideFilters": "Dölj filter",
+        "sortRelevance": "Relevans",
+        "sortDownloads": "Nedladdningar",
+        "sortRecent": "Senast uppdaterade",
+        "sortLikes": "Flest gillningar"
+      }
+    },
+    "hubRun": {
+      "title": "Ladda ner modell",
+      "resolving": "Läser in modellinformation…",
+      "cancel": "Avbryt",
+      "retry": "Försök igen",
+      "invalidLinkTitle": "Ogiltig länk",
+      "invalidLinkMessage": "Den här Hugging Face-länken saknar eller har en ogiltig modell eller fil.",
+      "resolveError": "Det gick inte att läsa in modellinformationen. Kontrollera anslutningen och försök igen."
+    },
+    "modelCard": {
+      "alerts": {
+        "deleteTitle": "Radera modell",
+        "deleteMessage": "Är du säker på att du vill radera den här nedladdade modellen?",
+        "removeTitle": "Ta bort modell",
+        "removeMessage": "Är du säker på att du vill ta bort den här modellen från listan?"
+      },
+      "buttons": {
+        "settings": "Inställningar",
+        "download": "Ladda ner",
+        "remove": "Ta bort",
+        "load": "Ladda",
+        "offload": "Lossa"
+      },
+      "labels": {
+        "skills": "Färdigheter: ",
+        "vision": "Vision",
+        "visionSupported": "Stöds",
+        "visionNotSupported": "Stöds inte",
+        "visionUnknown": "Okänt",
+        "capabilities": "funktioner.",
+        "modelName": "Modellnamn",
+        "contextLength": "Kontextlängd",
+        "architecture": "Arkitektur",
+        "author": "Skapare",
+        "requiresProjectionModel": "Kräver projektionsmodell",
+        "downloadProjectionModel": "Ladda ner projektionsmodell",
+        "viewModelCardOnHuggingFace": "Visa modellkortet på Hugging Face",
+        "draftOnlyReason": "Utkastmodell. Välj den under Inställningar → Spekulativ avkodning."
+      },
+      "accessibility": {
+        "expandDetails": "Visa detaljer",
+        "collapseDetails": "Dölj detaljer",
+        "memoryWarning": "Minnesvarning",
+        "integrityWarning": "Integritetsvarning",
+        "downloadProgress": "Nedladdningsförlopp",
+        "loadingIndicator": "Läser in",
+        "loadButton": "Ladda modell",
+        "offloadButton": "Lossa modell",
+        "downloadButton": "Ladda ner modell",
+        "settingsButton": "Modellinställningar",
+        "deleteButton": "Radera modell",
+        "removeButton": "Ta bort modell",
+        "expandDetailsButton": "Visa modellinformation",
+        "memoryWarningButton": "Visa detaljer om minnesvarning",
+        "integrityWarningButton": "Visa detaljer om integritetsvarning",
+        "memoryWarningSnackbar": "Minnesvarningsnotis"
+      }
+    },
+    "modelSettings": {
+      "template": {
+        "label": "Mall:",
+        "editButton": "Redigera",
+        "dialogTitle": "Redigera chattmall",
+        "note1": "Obs: Om du ändrar mallen kan BOS, EOS och systemprompten påverkas.",
+        "note2": "Använder Nunjucks. Lämna tomt för att använda modellens mall.",
+        "placeholder": "Skriv din chattmall här...",
+        "closeButton": "Stäng"
+      },
+      "stopWords": {
+        "label": "STOPPORD",
+        "placeholder": "Lägg till nytt stoppord"
+      },
+      "tokenSettings": {
+        "bos": "BOS",
+        "eos": "EOS",
+        "addGenerationPrompt": "Lägg till genereringsprompt",
+        "bosTokenPlaceholder": "BOS-token",
+        "eosTokenPlaceholder": "EOS-token",
+        "systemPrompt": "Systemprompt"
+      }
+    },
+    "modelDescription": {
+      "size": "Storlek: ",
+      "parameters": "Parametrar: ",
+      "separator": " | ",
+      "notAvailable": "–"
+    },
+    "modelCapabilities": {
+      "questionAnswering": "Frågesvar",
+      "summarization": "Sammanfattning",
+      "reasoning": "Resonerande",
+      "roleplay": "Rollspel",
+      "instructions": "Följer instruktioner",
+      "code": "Kodgenerering",
+      "math": "Matematik",
+      "multilingual": "Flerspråkig",
+      "rewriting": "Omskrivning",
+      "creativity": "Kreativt skrivande",
+      "vision": "Vision",
+      "mtp": "Spekulativ (MTP)",
+      "mtpDraft": "Spekulativt utkast"
+    },
+    "emptyTitle": "Inga modeller än",
+    "emptyHint": "Tryck på + för att ladda ner från Hugging Face, lägga till en lokal modell eller ansluta en fjärrserver."
+  },
+  "modelsHub": {
+    "title": "Modeller",
+    "subtitle": "Upptäck, ladda ner och hantera alla modeller som appen kan köra.",
+    "searchPlaceholder": "Sök modeller, utgivare, uppgifter…",
+    "retry": "Försök igen",
+    "notAvailable": "Inte tillgänglig",
+    "noDownloadableFile": "Ingen nedladdningsbar GGUF-fil i det här arkivet",
+    "downloadStarted": "Nedladdningen har startat",
+    "seeAll": "Visa alla",
+    "exploreAction": "Utforska modeller",
+    "emptyTitle": "Inga modeller installerade än",
+    "emptyHint": "Bläddra i hubben och ladda ner en modell som passar din enhet och ditt arbete.",
+    "fitScore": "{score}/100 passform",
+    "installedFromRepo": "Installerad från det här arkivet",
+    "installedBadge": "Installerad",
+    "noFiles": "Inga GGUF-filer har publicerats i det här arkivet.",
+    "visionFilesTitle": "Vision-projektionsfiler (mmproj)",
+    "visionFilesHint": "Dessa små filer ger den matchande textmodellen bildförståelse; de laddas ner automatiskt med vision-modeller.",
+    "downloadFile": "Ladda ner fil",
+    "downloadShort": "Hämta",
+    "version": "Version",
+    "engineUnsupportedShort": "Kan inte köras lokalt",
+    "engineYes": "GGUF – körs lokalt (llama.cpp)",
+    "engineNo": "Stöds inte av den lokala motorn",
+    "capabilitiesTitle": "Förmågor",
+    "categoryEngineNotice": "Den här kategorin listar riktiga arkiv, men den lokala GGUF-motorn kan ännu inte köra den här typen av modell, så nedladdning är inaktiverad här. Inget är simulerat – när motorstödet kommer blir de nedladdningsbara.",
+    "categoryInstalledSection": "Dina modeller i den här kategorin",
+    "categoryRemoteSection": "Upptäck på HuggingFace",
+    "featuredTitle": "Utvalda modeller",
+    "recommendedTitle": "Rekommenderade för din enhet",
+    "recentTitle": "Nyligen tillagda",
+    "favoritesTitle": "Favoriter",
+    "installedTitle": "Installerade",
+    "wifiOnly": "Endast Wi-Fi",
+    "categoriesTitle": "Kategorier",
+    "installedCount": "{count} installerade",
+    "discover": "Upptäck",
+    "device": {
+      "ram": "RAM",
+      "storage": "Ledigt utrymme",
+      "cpu": "CPU",
+      "gpu": "GPU",
+      "gpuOk": "Accelererad",
+      "gpuNo": "Endast CPU"
+    },
+    "compat": {
+      "excellent": "Utmärkt kompatibilitet",
+      "good": "Bra kompatibilitet",
+      "limited": "Begränsad kompatibilitet",
+      "notRecommended": "Rekommenderas inte",
+      "unknown": "Okänd kompatibilitet"
+    },
+    "reasons": {
+      "engineUnsupported": "Den här modelltypen kan inte köras på den lokala GGUF-motorn",
+      "engineSupported": "Körs på den lokala GGUF-motorn",
+      "memoryComfortable": "Minnesanvändningen blir bekväm",
+      "memoryOk": "Minnesanvändningen är acceptabel",
+      "memoryTight": "Minnet blir snålt – räkna med långsammare körningar",
+      "memoryInsufficient": "Enhetens RAM räcker inte för att läsa in den",
+      "memoryUnknown": "Minnesbehovet kan inte uppskattas från arkivdata",
+      "storagePlenty": "Gott om ledigt utrymme",
+      "storageTight": "Utrymmet blir snålt efter installation",
+      "storageInsufficient": "Inte tillräckligt med ledigt utrymme",
+      "storageUnknown": "Ledigt utrymme kunde inte läsas",
+      "cpuGood": "CPU:n har tillräckligt med kärnor för snabb inferens",
+      "cpuOk": "CPU:n klarar det, måttligt snabbt",
+      "cpuLimited": "Få CPU-kärnor – inferensen blir långsam",
+      "cpuUnknown": "Antalet CPU-kärnor kunde inte läsas",
+      "gpuSupported": "GPU-acceleration är tillgänglig",
+      "gpuUnsupported": "Ingen GPU-acceleration – körs på CPU",
+      "gpuUnknown": "GPU-stödet kunde inte fastställas"
+    },
+    "overviewTemplate": "En {categories}-modell publicerad av {author} med ungefär {params} parametrar, distribuerad som GGUF-filer för lokal, offline-inferens på den här enheten.",
+    "overviewBlocked": "Det här är ett riktigt arkiv, men dess modelltyp kan inte köras av den lokala motorn och kan därför inte laddas ner här.",
+    "statsTemplate": "På HuggingFace: {downloads} nedladdningar · {likes} gillningar.",
+    "tech": {
+      "architecture": "Arkitektur",
+      "parameters": "Parametrar",
+      "contextLength": "Kontextlängd",
+      "formats": "Format",
+      "quantization": "Kvantisering",
+      "fileCount": "GGUF-filer",
+      "version": "Revision (sha)",
+      "lastModified": "Senast uppdaterad",
+      "license": "Licens",
+      "engine": "Motor"
+    },
+    "capabilities": {
+      "offline": "Offline",
+      "context": "Kontext",
+      "arabic": "Stöd för arabiska",
+      "multilingual": "Flerspråkig"
+    },
+    "tabs": {
+      "overview": "Översikt",
+      "technical": "Teknik",
+      "files": "Filer"
+    },
+    "categories": {
+      "text": "Text",
+      "vision": "Vision",
+      "reasoning": "Resonerande",
+      "coding": "Kodning",
+      "multimodal": "Multimodal",
+      "embedding": "Embedding",
+      "translation": "Översättning",
+      "audio": "Ljud",
+      "image": "Bild",
+      "video": "Video",
+      "general": "Allmän"
+    },
+    "dialog": {
+      "aboutTitle": "Om den här modellen",
+      "aboutTemplate": "En {family}-GGUF-modell av {author}. Den körs helt offline på enheten när den har laddats ner. Storleken nedan är den exakta filstorlek som HuggingFace rapporterar.",
+      "familyUnknown": "GGUF",
+      "file": "Fil",
+      "downloadSize": "Nedladdningsstorlek",
+      "extraVisionFiles": "Extra vision-filer (mmproj)",
+      "storageAfter": "Utrymme som används efter installation",
+      "offline": "Fungerar offline",
+      "offlineYes": "Ja – helt på enheten",
+      "context": "Kontextlängd",
+      "wifiOnlyWaiting": "Endast Wi-Fi är aktiverat för nedladdningar. På mobildata står den här nedladdningen i kön tills Wi-Fi är tillbaka.",
+      "engineUnsupported": "Den här modelltypen (bild-/video-/ljudgenerering) kan inte köras av den lokala GGUF-motorn, så nedladdning är inaktiverad. Inget är simulerat – listningen är riktig, motorn kan bara inte köra den.",
+      "confirmDownload": "Ladda ner modell",
+      "starting": "Startar…"
+    },
+    "storage": {
+      "title": "Modelllagring",
+      "entryHint": "Användningsfördelning, största modeller, städning",
+      "used": "Används av modeller",
+      "available": "Tillgängligt",
+      "distribution": "Per kategori",
+      "largest": "Största modeller",
+      "orphans": "Ofullständiga och överblivna filer",
+      "orphansFound": "{count} filer · {size} kan frigöras",
+      "orphansNone": "Inget att städa – lagringen är prydlig.",
+      "cleanNow": "Städa upp",
+      "cleanTitle": "Radera överblivna filer?",
+      "cleanMessage": "{count} ofullständiga eller överblivna filer tas bort permanent.",
+      "cleanConfirm": "Radera",
+      "checking": "Kontrollerar lagring…",
+      "enough": "Tillräckligt med ledigt utrymme",
+      "notEnough": "Inte tillräckligt med ledigt utrymme",
+      "required": "Krävs",
+      "availableLabel": "Tillgängligt",
+      "deficit": "Saknar {amount}"
+    },
+    "downloads": {
+      "title": "Nedladdningar",
+      "emptyTitle": "Inga nedladdningar",
+      "emptyHint": "Modeller du laddar ner visas här med liveförlopp och förblir hanterbara offline.",
+      "active": "Laddar ner",
+      "paused": "Pausad",
+      "pausedHint": "Pausad – återupptas från samma position",
+      "verifying": "Verifierar",
+      "verifyingHint": "Kontrollerar filintegritet (storlek + checksumma) före installation",
+      "completed": "Klar",
+      "remaining": "≈",
+      "pause": "Pausa",
+      "resume": "Återuppta",
+      "cancel": "Avbryt"
+    },
+    "updates": {
+      "title": "Uppdateringar",
+      "check": "Sök efter uppdateringar",
+      "checking": "Söker…",
+      "recheck": "Sök igen",
+      "upToDate": "Alla installerade modeller matchar sina upstream-revisioner.",
+      "update": "Uppdatera"
+    },
+    "sort": {
+      "title": "Sortera",
+      "recommended": "Bäst passform",
+      "downloads": "Flest nedladdningar",
+      "newest": "Senaste",
+      "name": "Namn",
+      "sizeAsc": "Minsta först",
+      "sizeDesc": "Största först"
+    },
+    "search": {
+      "installedSection": "Dina modeller",
+      "hfSection": "HuggingFace-resultat",
+      "noResults": "Inga modeller hittades",
+      "noResultsHint": "Prova ett annat namn, en annan utgivare eller uppgift.",
+      "errorTitle": "Sökningen misslyckades"
+    }
+  },
+  "completionParams": {
+    "include_thinking_in_context": "Inkludera AI:s tanke-/resonemangsdelar i kontexten som skickas till modellen. Att stänga av detta kan spara kontextutrymme. Det kan påverka prestandan.",
+    "jinja": "Aktivera Jinja-mallning för chattformatering. När det är aktiverat används Jinja-baserad chattmallbearbetning för bättre kompatibilitet med moderna modeller.",
+    "grammar": "Tvinga fram specifika grammatikregler så att den genererade texten följer en viss struktur eller ett visst format",
+    "stop": "Definiera specifika fraser som stoppar textgenereringen",
+    "n_predict": "Maximalt antal tokens att generera. Ställ in på Obegränsad för ingen gräns, eller Anpassad för att ange ett värde.",
+    "n_probs": "Visa sannolikhetspoäng för alternativa ord.",
+    "top_k": "Styr kreativiteten genom att begränsa ordvalen till de K mest sannolika alternativen. Lägre värden gör svaren mer fokuserade",
+    "top_p": "Balansera kreativitet och sammanhang. Högre värden (nära 1,0) tillåter mer kreativa men möjligen mindre fokuserade svar",
+    "min_p": "Lägsta sannolikhet för att en token ska räknas. Filtrera bort osannolika ord för att minska meningslösa eller irrelevanta svar",
+    "temperature": "Styr kreativitet mot förutsägbarhet. Högre värden gör svaren mer kreativa men mindre fokuserade",
+    "penalty_last_n": "Hur långt bak som kontrolleras för upprepning. Större värden hjälper till att förhindra långvarig upprepning",
+    "penalty_repeat": "Motverka ordupprepning. Högre värden gör svaren språkligt mer varierade",
+    "penalty_freq": "Bestraffa överanvända ord. Högre värden uppmuntrar ett bredare ordförråd",
+    "penalty_present": "Minska upprepning av teman och idéer. Högre värden ger mer varierat innehåll",
+    "mirostat": "Aktivera avancerad kontroll över svarens kreativitet. Ställ in på 1 eller 2 (jämnare) för smarta justeringar i realtid av slumpmässighet och sammanhang.",
+    "mirostat_tau": "Ställ in målnivån för kreativitet i Mirostat. Högre värden ger mer varierade och fantasifulla svar, medan lägre värden ger mer fokuserade resultat.",
+    "mirostat_eta": "Hur snabbt Mirostat justerar kreativiteten. Högre värden ger snabbare justeringar",
+    "dry_multiplier": "Styrkan hos DRY-funktionen (Don't Repeat Yourself). Högre värden förhindrar upprepning kraftigt",
+    "dry_base": "Grundstraff för upprepning i DRY-läge. Högre värden motverkar uprepning mer aggressivt",
+    "dry_allowed_length": "Hur många ord som får upprepas innan DRY-straffet kickar in",
+    "dry_penalty_last_n": "Hur långt bak som letas efter upprepning i DRY-läge",
+    "dry_sequence_breakers": "Symboler som nollställer upprepningskontrollen i DRY-läge",
+    "ignore_eos": "Fortsätt generera även om modellen vill stanna. Användbart för att tvinga fram längre svar",
+    "logit_bias": "Påverka hur sannolikt det är att specifika ord dyker upp i svaret",
+    "seed": "Ställ in fröet (seed) för slumptalsgeneratorn. Användbart för reproducerbara resultat",
+    "xtc_probability": "Ställ in chansen för tokenborttag via XTC-samplern. 0 är inaktiverat",
+    "xtc_threshold": "Ställ in en lägsta sannolikhetsgräns för att tokens ska tas bort via XTC-samplern. (> 0,5 inaktiverar XTC)",
+    "typical_p": "Aktivera lokalt typisk sampling med parametern p. 1,0 är inaktiverat"
+  },
+  "about": {
+    "screenTitle": "Om appen",
+    "description": "En app som tar språkmodeller direkt till din telefon. Sitter på axlarna av llama.cpp och llama.rn.",
+    "supportProject": "Stöd projektet",
+    "supportProjectDescription": "Om du gillar att använda DRS AI kan du överväga att stödja projektet genom att:",
+    "githubButton": "Sätt en stjärna på GitHub",
+    "orBy": "eller genom att",
+    "versionCopiedTitle": "Version kopierad",
+    "versionCopiedDescription": "Versionsinformationen har kopierats till urklipp",
+    "tour": "Rundtur",
+    "tourDescription": "Spela upp välkomstskärmarna igen för att se vad DRS AI erbjuder.",
+    "showIntroButton": "Visa introduktionen igen",
+    "privacyPolicy": "Integritetspolicy",
+    "termsOfService": "Användarvillkor",
+    "versionFormat": "Version {{version}} ({{build}})",
+    "successTitle": "Lyckades"
+  },
+  "feedback": {
+    "title": "Skicka feedback",
+    "description": "Din röst betyder något! Berätta hur DRS AI hjälper dig och vad vi kan göra för att göra den ännu mer användbar.",
+    "shareThoughtsButton": "Dela dina tankar",
+    "useCase": {
+      "label": "Vad använder du DRS AI till?",
+      "placeholder": "t.ex. sammanfattning, rollspel osv."
+    },
+    "featureRequests": {
+      "label": "Funktionsönskan",
+      "placeholder": "Vilka funktioner skulle du vilja se?"
+    },
+    "generalFeedback": {
+      "label": "Allmän feedback",
+      "placeholder": "Dela gärna andra tankar du har."
+    },
+    "usageFrequency": {
+      "label": "Hur ofta använder du DRS AI? (Valfritt)",
+      "options": {
+        "daily": "Dagligen",
+        "weekly": "Veckovis",
+        "monthly": "Månadsvis",
+        "rarely": "Sällan"
+      }
+    },
+    "email": {
+      "label": "E-post för kontakt (valfritt)",
+      "placeholder": "Din e-postadress"
+    },
+    "submit": "Skicka feedback",
+    "validation": {
+      "required": "Skriv minst någon feedback"
+    },
+    "success": "Tack för din feedback!",
+    "error": {
+      "general": "Det gick inte att skicka feedbacken. Försök igen."
+    }
+  },
+  "components": {
+    "attachmentButton": {
+      "attachmentButtonAccessibilityLabel": "Skicka media"
+    },
+    "bubble": {
+      "msPerToken": "{{value}} ms/token",
+      "tokensPerSec": "{{value}} tokens/s",
+      "ttft": "{{value}} ms TTFT",
+      "draftAccepted": "utkast: {{accepted}}/{{total}} ({{pct}}%)",
+      "interrupted": "Avbruten",
+      "truncated": "Avklippt – kontexten är troligen full"
+    },
+    "exportUtils": {
+      "fileSaved": "Filen har sparats",
+      "fileSavedMessage": "Filen har sparats i mappen Nedladdningar som {{filename}}",
+      "share": "Dela",
+      "ok": "OK",
+      "shareError": "Delningsfel",
+      "shareErrorMessage": "Det gick inte att dela filen. Försök igen.",
+      "saveError": "Fel vid sparande i Nedladdningar",
+      "saveOptions": "Sparalternativ",
+      "saveOptionsMessage": "Det gick inte att spara direkt i Nedladdningar. Vill du dela filen i stället?",
+      "cancel": "Avbryt",
+      "shareContentErrorMessage": "Det gick inte att dela innehållet. Försök igen.",
+      "exportError": "Exportfel",
+      "exportErrorMessage": "Ett fel uppstod vid exporten. Försök igen.",
+      "permissionRequired": "Lagringsbehörighet krävs",
+      "permissionMessage": "Vi behöver behörighet för att spara din export i mappen Nedladdningar.",
+      "permissionDenied": "Behörighet nekades",
+      "permissionDeniedMessage": "Utan lagringsbehörighet inaktiveras exportfunktionen.",
+      "continue": "Fortsätt"
+    },
+    "thinkingBubble": {
+      "reasoning": "Resonemang"
+    },
+    "pendingIndicator": {
+      "preparingTool": "Förbereder verktyg",
+      "buildingPage": "Bygger sida",
+      "calculating": "Beräknar",
+      "lookingUpTime": "Slår upp tiden",
+      "stopping": "Avslutar…"
+    },
+    "toolMetrics": {
+      "tokens": "{{count}} tokens",
+      "elapsed": "{{seconds}}s"
+    },
+    "chatEmptyPlaceholder": {
+      "noModelsTitle": "Inga modeller tillgängliga",
+      "noModelsDescription": "Ladda ner en modell för att börja chatta med DRS AI",
+      "noModelsButton": "Ladda ner modell",
+      "activateModelTitle": "Aktivera en modell för att komma igång",
+      "activateModelDescription": "Välj modellen och ladda ner den. Tryck sedan på Ladda bredvid modellen och börja chatta.",
+      "activateModelButton": "Välj modell",
+      "loading": "Läser in...",
+      "gettingReadyTitle": "{{name}} gör sig redo",
+      "gettingReadyDescription": "Vi hör av oss så snart din assistent är redo att chatta. Tryck på banderollen längst upp för att se hur det går."
+    },
+    "chatInput": {
+      "inputPlaceholder": "Meddelande",
+      "thinkingToggle": {
+        "enableThinking": "Aktivera tankeläge",
+        "disableThinking": "Inaktivera tankeläge",
+        "thinkingEnabled": "Tankeläge aktiverat",
+        "thinkingDisabled": "Tankeläge inaktiverat",
+        "thinkText": "Tänk",
+        "cycleEffort": "Resonemangsdjup: {{level}}. Dubbeltryck för att växla nivå"
+      }
+    },
+    "contentReportSheet": {
+      "title": "Anmäl innehåll",
+      "privacyNote": "Vi skickar aldrig något meddelandeinnehåll eller samtalsuppgifter. Beskriv det specifika problem du stötte på.",
+      "categoryLabel": "Anmälningskategori",
+      "selectCategory": "Välj en kategori",
+      "categories": {
+        "hate": "Hatretorik",
+        "sexual": "Sexuellt innehåll",
+        "selfHarm": "Självskada",
+        "violence": "Våld",
+        "other": "Annat"
+      },
+      "descriptionLabel": "Beskrivning",
+      "descriptionPlaceholder": "Beskriv problemet med det här innehållet...",
+      "includeModelInfo": "Inkludera modellinformation",
+      "includeModelInfoDescription": "Inkludera modellnamn och identifierare för att hjälpa oss undersöka",
+      "noActiveModelNote": "Ingen modell är aktiv just nu",
+      "submit": "Skicka anmälan",
+      "validation": {
+        "title": "Information saknas",
+        "message": "Välj en kategori och ange en beskrivning."
+      },
+      "success": {
+        "title": "Anmälan skickad",
+        "message": "Tack för din anmälan. Vi granskar den och vidtar lämpliga åtgärder."
+      },
+      "error": {
+        "title": "Anmälan misslyckades",
+        "message": "Det gick inte att skicka anmälan. Försök igen."
+      }
+    },
+    "modelErrorReportSheet": {
+      "title": "Rapportera problem med modellinläsning",
+      "privacyNote": "Hjälp oss förbättra DRS AI genom att dela detaljer om det här felet. Se nedan vad som delas – du kan avmarkera sådant du inte vill skicka med.",
+      "errorMessage": "Felmeddelande",
+      "modelInfo": "Modellinformation",
+      "modelName": "Namn",
+      "modelSource": "Källa",
+      "modelSize": "Storlek",
+      "contextParams": "Kontextparametrar",
+      "deviceInfo": "Enhetsinformation",
+      "deviceModel": "Enhet",
+      "osVersion": "OS",
+      "memoryInfo": "Minne",
+      "cpuArchitecture": "CPU",
+      "isEmulator": "Emulator",
+      "additionalInfoLabel": "Ytterligare kontext (valfritt)",
+      "additionalInfoPlaceholder": "Alla ytterligare detaljer som kan hjälpa oss förstå problemet...",
+      "submit": "Skicka rapport",
+      "success": {
+        "title": "Rapport skickad",
+        "message": "Tack för att du hjälper oss förbättra DRS AI. Din rapport hjälper oss att åtgärda problemet."
+      },
+      "error": {
+        "title": "Rapport misslyckades",
+        "message": "Det gick inte att skicka rapporten. Försök igen senare."
+      }
+    },
+    "chatGenerationSettingsSheet": {
+      "invalidValues": "Ogiltiga värden",
+      "invalidNumericValuesMessage": "Måste vara ett giltigt tal",
+      "pleaseCorrect": "Rätta följande:",
+      "ok": "OK",
+      "saveChanges": "Spara ändringar",
+      "saveAsPreset": "Spara som förinställning",
+      "title_session": "Chattgenereringsinställningar (session)",
+      "title_preset": "Chattgenereringsinställningar (förinställning)",
+      "resetToSystemDefaults": "Återställ till systemstandard",
+      "resetToPreset": "Återställ till förinställning",
+      "applytoPresetAlert": {
+        "title": "Lyckades",
+        "message": "De här inställningarna tillämpas på alla framtida sessioner"
+      },
+      "assistantSettings": "Assistentinställningar",
+      "settingsSource": "Inställningskälla"
+    },
+    "assistantGenerationSettingsSheet": {
+      "title": "Genereringsinställningar – {{assistantName}}",
+      "invalidValues": "Ogiltiga värden",
+      "invalidNumericValuesMessage": "Måste vara ett giltigt tal",
+      "pleaseCorrect": "Rätta följande:",
+      "ok": "OK",
+      "error": "Fel",
+      "failedToSave": "Det gick inte att spara assistentinställningarna",
+      "resetToGlobal": "Återställ till globala standardvärden",
+      "resetToSystem": "Återställ till systemstandard",
+      "clearAssistantSettings": "Rensa assistentinställningar",
+      "customSettingsFor": "Anpassade inställningar för {{assistantName}}",
+      "inheritedSettingsFor": "Ärvda inställningar för {{assistantName}}"
+    },
+    "chatHeaderTitle": {
+      "defaultTitle": "Chatt"
+    },
+    "fileMessage": {
+      "fileButtonAccessibilityLabel": "Fil"
+    },
+    "chatAssistantModelPickerSheet": {
+      "modelsTab": "Modeller",
+      "assistantsTab": "Assistenter",
+      "noAssistant": "Ingen assistent",
+      "disableAssistant": "Inaktivera aktiv assistent",
+      "noDescription": "Ingen beskrivning",
+      "assistantType": "Assistent",
+      "roleplayType": "Rollspel",
+      "videoType": "Video",
+      "confirmationTitle": "Bekräftelse",
+      "modelSwitchMessage": "Den här assistenten har en annan standardmodell ({{modelName}}). Vill du byta till assistentens standardmodell?",
+      "keepButton": "Behåll",
+      "switchButton": "Byt"
+    },
+    "downloadErrorDialog": {
+      "downloadFailedTitle": "Nedladdningen misslyckades",
+      "downloadFailedMessage": "Det gick inte att ladda ner modellen: {{message}}",
+      "unauthorizedTitle": "Autentiseringen misslyckades",
+      "unauthorizedMessage": "Din Hugging Face-token verkar vara ogiltig eller utgången. Uppdatera din token i inställningarna.",
+      "forbiddenTitle": "Åtkomst nekad",
+      "forbiddenMessage": "Du har inte behörighet att komma åt den här modellen. Kontrollera att:",
+      "forbiddenSteps": [
+        "Din token har \"read\"-behörighet",
+        "Du har begärt och beviljats åtkomst till den här modellen",
+        "Modellägaren har godkänt din åtkomstbegäran"
+      ],
+      "getTokenTitle": "Skaffa Hugging Face-token",
+      "getTokenMessage": "Den här modellen kräver en Hugging Face-token för att laddas ner.",
+      "getTokenSteps": [
+        "Gå till huggingface.co och logga in",
+        "Gå till Settings > Access Tokens",
+        "Skapa en ny token med \"read\"-åtkomst",
+        "Kopiera token och klistra in den i tokenfältet"
+      ],
+      "tokenDisabledTitle": "Token är inaktiverad",
+      "tokenDisabledMessage": "Du har en Hugging Face-token angiven, men den är för närvarande inaktiverad. Den här modellen kräver en token för att laddas ner. Aktivera din token för att fortsätta.",
+      "enableAndRetry": "Aktivera och försök igen",
+      "goToSettings": "Gå till inställningar",
+      "tryAgain": "Försök igen",
+      "viewOnHuggingFace": "Visa modellen på HF ↗"
+    },
+    "headerRight": {
+      "deleteChatTitle": "Ta bort chatt",
+      "deleteChatMessage": "Är du säker på att du vill ta bort den här chatten?",
+      "generationSettings": "Genereringsinställningar",
+      "model": "Modell",
+      "duplicateChatHistory": "Duplicera chatthistorik",
+      "makeChatTemporary": "Gör chatten tillfällig",
+      "export": "Export/import",
+      "exportCurrentSession": "Exportera aktuell session",
+      "exportCurrentSessionMarkdown": "Exportera som Markdown",
+      "exportAllSessions": "Exportera alla sessioner",
+      "exportChatSession": "Exportera chattsession",
+      "importSessions": "Importera sessioner",
+      "exportErrorTitle": "Exportfel",
+      "exportCurrentSessionError": "Det gick inte att exportera den aktuella sessionen.",
+      "exportAllError": "Det gick inte att exportera alla sessioner.",
+      "importSuccessTitle": "Importen lyckades",
+      "importErrorTitle": "Importfel"
+    },
+    "hfTokenSheet": {
+      "title": "Hugging Face-token",
+      "description": "Krävs för att komma åt gateade modeller",
+      "inputLabel": "Personlig åtkomsttoken",
+      "inputPlaceholder": "Klistra in din token här",
+      "save": "Spara token",
+      "saved": "Token har sparats",
+      "reset": "Återställ token",
+      "resetSuccess": "Token har tagits bort",
+      "instructions": "Så här skaffar du en token:",
+      "instructionsSteps": [
+        "Gå till huggingface.co och logga in",
+        "Gå till Settings > Access Tokens",
+        "Skapa en ny token med \"read\"-åtkomst",
+        "Kopiera token och klistra in den nedan"
+      ],
+      "getTokenLink": "Skaffa en token från huggingface.co ↗",
+      "error": {
+        "saving": "Fel vid sparande av token",
+        "missing": "Hugging Face-token krävs",
+        "invalid": "Ogiltig eller utgången token",
+        "gatedModelAccess": "Åtkomst till den här gateade modellen nekades"
+      },
+      "gatedModelIndicator": "Kräver token",
+      "tokenRequired": "Den här modellen kräver en Hugging Face-åtkomsttoken",
+      "searchErrorHint": "Din Hugging Face-API-token är ogiltig eller utgången. För att fortsätta söka kan du ta bort token eller inaktivera tokenautentisering i inställningarna.",
+      "disableAndRetry": "Inaktivera token & försök igen"
+    },
+    "modelSettingsSheet": {
+      "modelSettings": "Modellinställningar",
+      "saveChanges": "Spara ändringar",
+      "reasoningSection": "Resonemang",
+      "isReasoningModel": "Resonerande modell",
+      "isReasoningModelHelp": "Visa tankereglaget för den här modellen, även om det inte upptäcktes automatiskt.",
+      "supportsEffort": "Stöder graderat resonemangsdjup",
+      "effortValues": "Nivåer av resonemangsdjup som modellen stöder",
+      "effortLevels": {
+        "minimal": "Minimal",
+        "low": "Låg",
+        "medium": "Medel",
+        "high": "Hög",
+        "xhigh": "Extra hög",
+        "max": "Max"
+      }
+    },
+    "modelsHeaderRight": {
+      "menuTitleHf": "Hugging Face-modeller",
+      "menuTitleDownloaded": "Nedladdade modeller",
+      "menuTitleGrouped": "Gruppera efter modelltyp",
+      "menuTitleReset": "Återställ modellistan"
+    },
+    "modelsResetDialog": {
+      "proceedWithReset": "Fortsätt med återställning",
+      "confirmReset": "Bekräfta återställning"
+    },
+    "assistantSheet": {
+      "title": {
+        "edit": "Redigera assistent",
+        "newAssistant": "Ny assistent",
+        "newVideoAssistant": "Ny videoassistent"
+      },
+      "description": "Beskrivning",
+      "descriptionPlaceholder": "Beskriv din assistent kortfattat",
+      "parameters": "Parametrar",
+      "generationSettings": "Genereringsinställningar",
+      "configureGenerationSettings": "Konfigurera genereringsinställningar",
+      "validation": {
+        "nameRequired": "Namn krävs",
+        "generatingPromptRequired": "Genereringsprompt krävs när AI-prompt används",
+        "promptModelRequired": "Promptgenereringsmodell krävs när AI-prompt används"
+      },
+      "talents": "Talanger",
+      "talentNames": {
+        "render_html": "HTML-förhandsvisning",
+        "calculate": "Matematiska uttryck",
+        "datetime": "Datum & tid",
+        "web_search": "Webbsökning",
+        "read_url": "Läsa webbsida"
+      },
+      "talentDescriptions": {
+        "render_html": "Visa HTML-dokument direkt i chatten",
+        "calculate": "Beräkna matematiska uttryck",
+        "datetime": "Hämta aktuellt datum och klockslag",
+        "web_search": "Sök på internet efter aktuell information (kräver API-nyckel i inställningarna)",
+        "read_url": "Läs hela innehållet på en webbsida (kräver API-nyckel i inställningarna)"
+      },
+      "greeting": {
+        "sectionLabel": "Hälsning",
+        "textLabel": "Hälsningsmeddelande",
+        "textPlaceholder": "Vad ska den här assistenten säga i en tom chatt?",
+        "suggestedPromptsLabel": "Föreslagna promptar",
+        "addPromptButton": "Lägg till prompt",
+        "promptPlaceholder": "En kort prompt för chippet",
+        "removePromptLabel": "Ta bort prompt"
+      }
+    },
+    "assistantPersonaSheet": {
+      "title": {
+        "create": "Skapa assistent",
+        "edit": "Redigera assistent"
+      },
+      "assistantName": "Assistentnamn",
+      "assistantNamePlaceholder": "Namn",
+      "defaultModel": "Standardmodell",
+      "defaultModelPlaceholder": "Välj modell",
+      "validation": {
+        "generatingPromptRequired": "Genereringsprompt krävs",
+        "promptModelRequired": "Promptgenereringsmodell krävs"
+      },
+      "create": "Skapa"
+    },
+    "modelNotAvailable": {
+      "noModelsDownloaded": "Du har inga modeller nedladdade än. Ladda ner en modell först.",
+      "downloadAModel": "Ladda ner en modell",
+      "defaultModelNotDownloaded": "Den här assistenten rekommenderar en specifik modell som behöver laddas ner, eller så kan du välja en annan modell.",
+      "modelNotDownloadedShort": "Modellen är inte nedladdad",
+      "recommendedModel": "Rekommenderad modell",
+      "cancelDownload": "Avbryt nedladdning",
+      "download": "Ladda ner"
+    },
+    "roleplayPersonaSheet": {
+      "title": {
+        "create": "Skapa rollspelsassistent",
+        "edit": "Redigera rollspelsassistent"
+      },
+      "assistantName": "Assistentnamn",
+      "assistantNamePlaceholder": "Namn",
+      "defaultModel": "Standardmodell",
+      "defaultModelPlaceholder": "Välj modell",
+      "descriptionSection": "Beskrivning",
+      "world": "Värld",
+      "worldPlaceholder": "Fantasy",
+      "location": "Plats",
+      "locationPlaceholder": "Den förtrollade skogen",
+      "locationSublabel": "Var utspelar sig historien?",
+      "aiRole": "AI:ns roll",
+      "aiRolePlaceholder": "Eldara, en retsam skogsvätte",
+      "aiRoleSublabel": "Ange karaktärens roll",
+      "userRole": "Användarens roll",
+      "userRolePlaceholder": "Sir Elandor, en modig riddare",
+      "userRoleSublabel": "Vem är du?",
+      "situation": "Situation",
+      "situationPlaceholder": "Räddningsuppdrag, lösa ett mysterium",
+      "toneStyle": "Ton/stil",
+      "toneStylePlaceholder": "Allvarlig",
+      "validation": {
+        "promptModelRequired": "Promptgenereringsmodell krävs"
+      },
+      "create": "Skapa"
+    },
+    "lookiePersonaSheet": {
+      "title": {
+        "create": "Skapa Lookie-assistent",
+        "edit": "Redigera Lookie-assistent"
+      },
+      "assistantName": "Assistentnamn",
+      "assistantNamePlaceholder": "Ange ett namn för din Lookie-assistent",
+      "visionModel": "Vision-modell",
+      "visionModelPlaceholder": "Välj en vision-modell",
+      "requiredModelsSection": "Nödvändiga modeller",
+      "captureInterval": "Fångstintervall",
+      "captureIntervalHelper": "Tid mellan automatiska fångster i millisekunder",
+      "create": "Skapa"
+    },
+    "sendButton": {
+      "accessibilityLabel": "Skicka"
+    },
+    "systemPromptSection": {
+      "sectionTitle": "Systemprompt",
+      "useAIPrompt": "Använd AI för att generera systemprompt",
+      "modelSelector": {
+        "label": "Välj modell för generering*",
+        "sublabel": "Rekommenderas: Llama 3.2 3B eller Qwen3 4B Instruct 2507.",
+        "placeholder": "Välj modell"
+      },
+      "generatingPrompt": {
+        "label": "Syfte & sammanhang",
+        "placeholder": "Beskriv rollen, syftet eller scenariot för den här assistenten..."
+      },
+      "buttons": {
+        "loadingModel": "Läser in modell...",
+        "stopGenerating": "Sluta generera",
+        "generatePrompt": "Generera systemprompt",
+        "resetParameters": "Återställ parametrar",
+        "resetTemplate": "Återställ mall"
+      },
+      "systemPrompt": {
+        "label": "Systemprompt",
+        "sublabel": "Redigera och experimentera fritt för att hitta den optimala prompten för ditt scenario",
+        "placeholder": "Du är en hjälpsam assistent"
+      },
+      "warnings": {
+        "promptChanged": "Systemprompten har ändrats manuellt"
+      }
+    },
+    "sidebarContent": {
+      "menuItems": {
+        "chat": "Chatt",
+        "models": "Modeller",
+        "assistants": "Assistenter",
+        "benchmark": "Benchmark",
+        "settings": "Inställningar",
+        "appInfo": "Om appen",
+        "testCompletion": "Testkomplettering"
+      },
+      "deleteChatTitle": "Ta bort chatt",
+      "deleteChatMessage": "Är du säker på att du vill ta bort den här chatten?",
+      "select": "Välj",
+      "nSelected": "{{count}} markerade",
+      "selectAll": "Markera alla",
+      "deselectAll": "Avmarkera alla",
+      "exportCount": "Exportera ({{count}})",
+      "deleteCount": "Ta bort ({{count}})",
+      "bulkDeleteTitle": "Ta bort chattsessioner",
+      "bulkDeleteMessage": "Ta bort {{count}} chattsession(er)? Det går inte att ångra.",
+      "bulkDeleteError": "Det gick inte att ta bort chattsessionerna. Försök igen.",
+      "exportError": "Det gick inte att exportera chattsessionen. Försök igen.",
+      "bulkExportError": "Det gick inte att exportera chattsessionerna. Försök igen.",
+      "pin": "Fäst",
+      "unpin": "Lossa",
+      "dateGroups": {
+        "pinned": "Fäst",
+        "today": "Idag",
+        "yesterday": "Igår",
+        "thisWeek": "Denna vecka",
+        "lastWeek": "Förra veckan",
+        "twoWeeksAgo": "2 veckor sedan",
+        "threeWeeksAgo": "3 veckor sedan",
+        "fourWeeksAgo": "4 veckor sedan",
+        "lastMonth": "Förra månaden",
+        "older": "Äldre"
+      },
+      "emptySessionsTitle": "Inga chattar än",
+      "emptySessionsHint": "Starta ett nytt samtal från chattskärmen"
+    },
+    "usageStats": {
+      "tooltip": {
+        "title": "Minnesanvändning",
+        "used": "Använt: ",
+        "total": "Totalt: ",
+        "usage": "Användning: "
+      },
+      "byteSizes": [
+        "Byte",
+        "KB",
+        "MB",
+        "GB"
+      ]
+    },
+    "chatView": {
+      "menuItems": {
+        "copy": "Kopiera",
+        "regenerate": "Generera igen",
+        "regenerateWith": "Generera igen med",
+        "edit": "Redigera",
+        "reportContent": "Anmäl innehåll"
+      }
+    },
+    "assistantHeaderRight": {
+      "exportAllAssistants": "Exportera alla assistenter",
+      "importAssistants": "Importera assistenter",
+      "importSuccess": "Importerade {{count}} assistent(er).",
+      "importError": "Det gick inte att importera assistenterna. Kontrollera filformatet.",
+      "exportErrorTitle": "Exportfel",
+      "exportAllError": "Det gick inte att exportera alla assistenter.",
+      "importSuccessTitle": "Importen lyckades",
+      "importErrorTitle": "Importfel"
+    },
+    "brandHeader": {
+      "tagline": "Din privata AI på enheten"
+    },
+    "authSheet": {
+      "signInTitle": "Logga in",
+      "signUpTitle": "Skapa konto",
+      "fullNameLabel": "Fullständigt namn",
+      "emailLabel": "E-post",
+      "passwordLabel": "Lösenord",
+      "signInButton": "Logga in",
+      "signUpButton": "Skapa konto",
+      "forgotPassword": "Glömt lösenordet?",
+      "or": "eller",
+      "continueWithGoogle": "Fortsätt med Google",
+      "haveAccount": "Har du redan ett konto? ",
+      "noAccount": "Har du inget konto? ",
+      "signUpLink": "Skapa konto",
+      "signInLink": "Logga in",
+      "signingIn": "Loggar in...",
+      "fillRequiredFields": "Fyll i alla obligatoriska fält.",
+      "enterFullName": "Ange ditt fullständiga namn.",
+      "enterEmailFirst": "Ange din e-postadress först.",
+      "accountCreatedTitle": "Kontot har skapats",
+      "accountCreatedMessage": "Kontrollera din e-post för att verifiera kontot.",
+      "welcomeBackTitle": "Välkommen tillbaka!",
+      "welcomeBackMessage": "Du har loggats in.",
+      "googleErrorTitle": "Fel vid Google-inloggning",
+      "passwordResetTitle": "Återställ lösenord",
+      "passwordResetMessage": "Kontrollera din e-post för instruktioner om lösenordsåterställning.",
+      "authErrorTitle": "Autentiseringsfel"
+    },
+    "squareAssistantCard": {
+      "videoAssistant": "Video-AI-assistent",
+      "advancedAssistant": "Avancerad AI-assistent",
+      "assistant": "AI-assistent",
+      "byCreator": "av {{creator}}",
+      "downloadAssistantTitle": "Ladda ner assistent",
+      "downloadAssistantMessage": "Ladda ner \"{{assistantName}}\" för att börja chatta?",
+      "download": "Ladda ner",
+      "downloadErrorTitle": "Nedladdningsfel",
+      "downloadErrorMessage": "Det gick inte att ladda ner assistenten. Försök igen.",
+      "startChatErrorMessage": "Det gick inte att starta chatten. Försök igen.",
+      "switchModelTitle": "Byta modell?",
+      "switchModelMessage": "Byta till \"{{modelName}}\" för den här assistenten?",
+      "keepCurrent": "Behåll nuvarande",
+      "switch": "Byt",
+      "shareErrorTitle": "Delningsfel",
+      "shareErrorMessage": "Det gick inte att dela assistenten. Försök igen."
+    }
+  },
+  "assistantsScreen": {
+    "sectionTitles": {
+      "myAssistantsLocal": "Mina assistenter (lokala)",
+      "myLibrary": "Mitt bibliotek (hub.drsai.app)",
+      "discoverAssistants": "Upptäck assistenter (hub.drsai.app)"
+    },
+    "systemPrompt": "Systemprompt",
+    "videoAnalysis": "Videoanalys",
+    "videoAnalysisDescription": "Det här är en videobaserad AI-assistent som ger kommentarer i realtid på videoströmmar från enhetens kamera.",
+    "captureInterval": "Fångstintervall",
+    "captureIntervalUnit": "ms",
+    "world": "Värld",
+    "toneStyle": "Ton/stil",
+    "aiRole": "AI:ns roll",
+    "userRole": "Min roll",
+    "prompt": "Prompt",
+    "assistant": "Assistent",
+    "roleplay": "Rollspel",
+    "video": "Video",
+    "deleteAssistant": "Ta bort assistent",
+    "deleteAssistantMessage": "Är du säker på att du vill ta bort den här assistenten?",
+    "missingModel": "Modell saknas",
+    "missingModelMessage": "Standardmodellen \"{{modelName}}\" för den här assistenten är inte tillgänglig. Ladda ner den i redigeringsbladet eller välj en annan modell.",
+    "search": "Sök",
+    "profile": "Profil",
+    "signIn": "Logga in",
+    "addAssistant": "Lägg till assistent",
+    "signInToAccessLibrary": "Logga in för att komma åt ditt bibliotek från hub.drsai.app",
+    "signOut": "Logga ut",
+    "signOutConfirmation": "Är du säker på att du vill logga ut?",
+    "signOutError": "Det gick inte att logga ut. Försök igen.",
+    "account": "Konto",
+    "signInToDrshub": "Logga in på Drshub",
+    "signInDescription": "Kom åt ditt bibliotek, skapa privata assistenter och synkronisera mellan enheter",
+    "searchAllAssistants": "Sök alla assistenter...",
+    "deleteAssistantConfirmation": "Är du säker på att du vill ta bort \"{{assistantName}}\"?",
+    "filters": {
+      "all": "Alla",
+      "myAssistants": "Mina assistenter",
+      "local": "Lokala",
+      "video": "Video",
+      "free": "Gratis",
+      "premium": "Premium"
+    },
+    "labels": {
+      "free": "Gratis",
+      "premium": "Premium",
+      "private": "Privat",
+      "download": "Ladda ner",
+      "getFree": "Hämta gratis"
+    },
+    "premiumAssistantDescription": "Premiumassistent från hub.drsai.app-gemenskapen",
+    "premiumInfoText": "Besök hub.drsai.app för att utforska fler assistenter",
+    "sortOptions": {
+      "newest": "Senaste",
+      "oldest": "Äldsta",
+      "rating": "Högst betyg",
+      "popular": "Populäraste"
+    },
+    "assistantDetailSheet": {
+      "by": "av",
+      "unknown": "Okänd",
+      "rating": "Betyg",
+      "reviews": "Recensioner",
+      "created": "Skapad",
+      "description": "Beskrivning",
+      "noDescriptionAvailable": "Ingen beskrivning tillgänglig.",
+      "categories": "Kategorier",
+      "tags": "Taggar",
+      "systemPrompt": "Systemprompt",
+      "downloaded": "Nedladdad",
+      "success": "Lyckades",
+      "assistantAddedToCollection": "Assistenten har lagts till i din samling!",
+      "error": "Fel",
+      "failedToLoadDetails": "Det gick inte att läsa in assistentinformationen",
+      "failedToDownload": "Det gick inte att ladda ner assistenten",
+      "premiumAssistantMessage": "Det här är en premiumassistent.\n• Har du redan låst upp den med ditt Drshub-konto? Logga bara in för att se all information.\n• Har du inte låst upp den än? Besök hub.drsai.app för att läsa mer.",
+      "notAvailable": "–",
+      "buyOnDrshub": "Köp på Drshub",
+      "finalizingPurchase": "Slutför ditt köp…",
+      "processingPurchase": "Bearbetar – låses upp inom kort.",
+      "checkoutSessionExpired": "Sessionen har upphört att gälla. Logga in igen för att fortsätta.",
+      "signInAgain": "Logga in igen",
+      "assistantNotAvailable": "Den här assistenten kan inte köpas just nu.",
+      "checkoutFailed": "Något gick fel. Försök igen."
+    },
+    "emptyLocal": "Inga assistenter än.\nSkapa din första assistent med +-knappen!",
+    "emptyFiltered": "Inga assistenter hittades.\nProva att ändra dina filter eller din sökning."
+  },
+  "validation": {
+    "nameRequired": "Namn krävs",
+    "systemPromptRequired": "Systemprompt krävs",
+    "worldRequired": "Värld krävs",
+    "locationRequired": "Plats krävs",
+    "aiRoleRequired": "AI:ns roll krävs",
+    "userRoleRequired": "Användarens roll krävs",
+    "situationRequired": "Situation krävs",
+    "toneStyleRequired": "Ton/stil krävs"
+  },
+  "camera": {
+    "permissionTitle": "Kamerabehörighet krävs",
+    "permissionMessage": "DRS AI behöver åtkomst till kameran för att analysera bilder",
+    "requestingPermission": "Begär behörighet för kamera...",
+    "noDevice": "Ingen kameraenhet hittades",
+    "errorTitle": "Kamerafel",
+    "errorMessage": "Ett fel uppstod när fotot togs",
+    "flip": "Vänd",
+    "analyzing": "Analyserar bilden...",
+    "startCamera": "Starta kameran",
+    "stopCamera": "Stoppa kameran",
+    "promptPlaceholder": "Vad vill du veta om den här bilden?",
+    "takePhoto": "Kamera"
+  },
+  "video": {
+    "permissionTitle": "Kamerabehörighet krävs",
+    "permissionMessage": "DRS AI behöver åtkomst till kameran för videoanalys",
+    "requestingPermission": "Begär behörighet för kamera...",
+    "noDevice": "Ingen kameraenhet hittades",
+    "errorTitle": "Kamerafel",
+    "errorMessage": "Ett fel uppstod med kameran",
+    "flip": "Vänd",
+    "analyzing": "Analyserar video...",
+    "startCamera": "Starta kameran",
+    "stopCamera": "Stoppa kameran",
+    "promptPlaceholder": "Vad vill du veta om den här videon?",
+    "captureInterval": "Fångstintervall",
+    "captureIntervalUnit": "ms",
+    "liveCommentary": "Livekommentar",
+    "emptyPlaceholder": {
+      "title": "Välkommen till Lookie",
+      "subtitle": "Privat videoanalys i realtid på enheten",
+      "experimentalNotice": "Det här är en experimentell funktion. Noggrannheten beror på den valda modellen, hastigheten på din enhets specifikationer, och vissa modeller kan misslyckas.",
+      "howToUse": "Så här använder du det:",
+      "step1": "• Redigera prompten (valfritt) för att styra analysen",
+      "step2": "• Tryck på kameraknappen för att starta livevideoanalys",
+      "step3": "• Justera frekvensen för bildfångst medan kameran är aktiv",
+      "step4": "• Byt till en annan assistent för vanlig textchatt"
+    },
+    "defaultPrompt": "Vad ser du?",
+    "multimodalTitle": "Multimodalt läge är inte aktiverat",
+    "multimodalMessage": "Den här modellen stöder inte bildanalys. Läs in en multimodal modell.",
+    "checkSupportError": "Det gick inte att kontrollera om modellen stöder bilder."
+  },
+  "screenTitles": {
+    "chat": "Chatt",
+    "models": "Modeller",
+    "assistants": "Assistenter (experimentell)",
+    "benchmark": "Benchmark",
+    "settings": "Inställningar",
+    "appInfo": "Om appen",
+    "testCompletion": "Testkomplettering"
+  },
+  "chat": {
+    "conversationReset": "Samtalet har återställts!",
+    "modelNotLoaded": "Modellen är inte inläst. Initiera modellen.",
+    "completionFailed": "Kompletteringen misslyckades: ",
+    "toolCallTruncated": "Verktygsanropet klipptes av – modellen fick troligen slut på utrymme. Prova en större kontext eller en mindre begäran.",
+    "speculativeInitFailed": "Den här enheten kunde inte starta spekulativ avkodning för modellen – troligen finns det inte tillräckligt med minne för utkastkontexten. Stäng av Spekulativ avkodning under Inställningar → Avancerade inställningar och försök igen.",
+    "loadingModel": "Läser in modell ...",
+    "typeYourMessage": "Skriv ditt meddelande här",
+    "load": "Ladda",
+    "goToModels": "Gå till Modeller",
+    "readyToChat": "Redo att chatta? Läs in den senast använda modellen.",
+    "pleaseLoadModel": "Läs in en modell för att chatta.",
+    "multimodalNotEnabled": "Multimodalt läge är inte aktiverat för den här modellen. Bilder visas men bearbetas inte av AI:n.",
+    "cannotSendWithoutModel": "Läs in en modell först",
+    "toolCompatWarning": "Den här modellen stöder kanske inte verktygsanrop. Resultaten kan vara opålitliga.",
+    "softCapWarning": "Starta en ny chatt för bästa prestanda.",
+    "contextWarning": "Det här samtalet blir långt och kan snart ta slut på utrymme.",
+    "contextRemoteHedged": "Svaret kan ha blivit avklippt. Prova att skicka igen eller förkorta begäran.",
+    "contextFull": "Samtalet tog slut på utrymme. Starta en ny chatt eller öka kontextstorleken.",
+    "contextFullRemote": "Samtalet tog slut på utrymme. Starta en ny chatt.",
+    "contextFullEscalated": "Fortfarande slut på utrymme. Starta en ny chatt, eller öka kontextstorleken för att fortsätta.",
+    "contextFullHeavyTalent": "Samtalet tog slut på utrymme – {{talent}} tenderar att behöva mer. Starta en ny chatt eller öka kontextstorleken.",
+    "contextBannerDismiss": "Avfärda",
+    "contextNewChat": "Ny chatt",
+    "contextIncrease": "Öka kontext",
+    "contextMoreRoom": "Mer utrymme",
+    "increaseContextTitle": "Ge den här chatten mer utrymme",
+    "increaseContextBody": "Utrymmet är modellens arbetsminne – hur mycket av chatten den kan ha i minnet på en gång. Mer utrymme betyder längre chattar innan svar klipps av.",
+    "increaseContextTokensUnit": "tokens",
+    "increaseContextWordsRam": "~{{words}} ord · ≈{{ram}} RAM",
+    "increaseContextFitsChip": "Passar",
+    "increaseContextTightChip": "Snålt",
+    "increaseContextWontFitChip": "Får inte plats",
+    "increaseContextFitsStatus": "Bekvämt för den här enheten.",
+    "increaseContextFitsUnconstrainedStatus": "Gott om RAM – begränsas bara av modellen.",
+    "increaseContextTightStatus": "Efter ~{{tokens}} kan den här enheten börja få ont om minne och bli långsam. Den kan ändå försöka.",
+    "increaseContextWontFitStatus": "~{{tokens}} får troligen inte plats i enhetens minne. Välj en mindre storlek.",
+    "increaseContextModelMax": "{{tokens}} · modellmax",
+    "increaseContextHedge": "Omladdningen tar några sekunder. Inget i din chatt går förlorat.",
+    "increaseContextAdvanced": "Avancerat",
+    "increaseContextAdvancedBody": "Kontextstorlek för den här chatten: {{from}} → {{to}} tokens (modellmax {{max}}). Enhetens gräns är en uppskattning och ökar när större kontexter laddas framgångsrikt.",
+    "increaseContextSliderA11yLabel": "Kontextstorlek",
+    "increaseContextSliderA11yValue": "{{tokens}} tokens",
+    "increaseContextConfirmSize": "Sätt till {{size}}",
+    "increaseContextReloadingShort": "Laddar om…",
+    "increaseContextNoFitBody": "Den här enheten rymmer ingen större kontext för den här modellen. Starta en ny chatt för att fortsätta.",
+    "increaseContextCancel": "Inte nu",
+    "increaseContextReloading": "Laddar om modellen med en större kontext…",
+    "increaseContextSuccess": "Kontexten har ökats till {{target}} tokens.",
+    "increaseContextFailure": "Det gick inte att öka kontextstorleken. Din tidigare inställning har återställts.",
+    "assistantLoadHint": "Den här assistenten tenderar att behöva mer utrymme än den nuvarande kontextstorleken tillåter.",
+    "generatingPreview": "Genererar förhandsvisning… ({{tokens}} tokens)",
+    "generatingPreviewPending": "Genererar förhandsvisning…",
+    "toolUsedChip": "använde {{name}}",
+    "toolErrorBlock": "{{name}} misslyckades",
+    "webSearch": {
+      "searched": "Sökte: {{query}}",
+      "noResults": "Inga resultat",
+      "noResultsFor": "Inga resultat för {{query}}",
+      "resultsCount": "{{count}} resultat",
+      "resultsCountOne": "1 resultat",
+      "searchResultsTitle": "Sökresultat",
+      "showResultsAccessibilityLabel": "Visa webbsökresultat för {{query}}",
+      "openLinkError": "Det gick inte att öppna länken."
+    }
+  },
+  "htmlPreview": {
+    "defaultTitle": "Förhandsvisning",
+    "showPreview": "Visa renderad förhandsvisning",
+    "showCode": "Visa HTML-kod",
+    "copyHtml": "Kopiera HTML",
+    "closePreview": "Stäng förhandsvisning",
+    "openFullscreen": "Öppna helskärm: {{title}}"
+  },
+  "benchmark": {
+    "title": "Benchmark",
+    "modelSelector": {
+      "prompt": "Välj modell",
+      "noModels": "Inga modeller nedladdade"
+    },
+    "buttons": {
+      "advancedSettings": "Avancerade inställningar",
+      "startTest": "Starta test",
+      "runningTest": "Kör test...",
+      "clearAll": "Rensa allt",
+      "done": "Klar",
+      "cancel": "Avbryt",
+      "delete": "Ta bort",
+      "share": "Dela",
+      "sharing": "Delar...",
+      "viewRawData": "Visa rådata",
+      "hideRawData": "Dölj rådata"
+    },
+    "messages": {
+      "pleaseSelectModel": "Välj och initiera en modell först",
+      "testWarning": "Obs: Testet kan pågå i upp till 2–5 minuter för större modeller och kan inte avbrytas när det väl har startat.",
+      "keepScreenOpen": "Håll den här skärmen öppen.",
+      "initializingModel": "Initierar modell...",
+      "modelMaxValue": "(max: {{maxValue}})"
+    },
+    "dialogs": {
+      "advancedSettings": {
+        "title": "Avancerade inställningar",
+        "testProfile": "Testprofil",
+        "customParameters": "Anpassade parametrar",
+        "description": "Finjustera benchmark-parametrarna för särskilda testscenarier."
+      },
+      "deleteResult": {
+        "title": "Ta bort resultat",
+        "message": "Är du säker på att du vill ta bort det här benchmarkresultatet?"
+      },
+      "clearAllResults": {
+        "title": "Rensa alla resultat",
+        "message": "Är du säker på att du vill ta bort alla benchmarkresultat?"
+      },
+      "shareResults": {
+        "title": "Dela benchmarkresultat",
+        "sharedDataTitle": "Delad data inkluderar:",
+        "deviceAndModelInfo": "• Enhetspecifikationer & modellinfo",
+        "performanceMetrics": "• Prestandamätvärden",
+        "dontShowAgain": "Visa inte det här meddelandet igen"
+      }
+    },
+    "sections": {
+      "testResults": "Testresultat"
+    },
+    "benchmarkResultCard": {
+      "modelMeta": {
+        "params": "parametrar"
+      },
+      "config": {
+        "title": "Benchmarkkonfiguration",
+        "format": "PP: {{pp}} • TG: {{tg}} • PL: {{pl}} • Rep: {{nr}}"
+      },
+      "modelSettings": {
+        "title": "Modellinställningar",
+        "context": "Kontext: {{context}}",
+        "batch": "Batch: {{batch}}",
+        "ubatch": "UBatch: {{ubatch}}",
+        "cpuThreads": "CPU-trådar: {{threads}}",
+        "gpuLayers": "GPU-lager: {{layers}}",
+        "device": "Enhet: {{device}}",
+        "flashAttentionEnabled": "Flash Attention aktiverad",
+        "flashAttentionDisabled": "Flash Attention inaktiverad",
+        "cacheTypes": "Cachetyper: {{cacheK}}/{{cacheV}}"
+      },
+      "results": {
+        "promptProcessing": "Promptbearbetning",
+        "tokenGeneration": "Tokengenerering",
+        "totalTime": "Total tid",
+        "peakMemory": "Högsta minnesanvändning",
+        "tokensPerSecond": "t/s"
+      },
+      "actions": {
+        "deleteButton": " ",
+        "submittedText": "✓ Delad till",
+        "leaderboardLink": "AI Phone Leaderboard ↗",
+        "cannotShare": "Kan inte dela",
+        "cannotShareTooltip": "Resultat från lokala modeller kan inte delas",
+        "submitButton": "Skicka till topplistan",
+        "viewLeaderboard": "Visa topplistan ↗"
+      },
+      "errors": {
+        "networkRetry": "Kontrollera anslutningen & försök igen",
+        "appCheckRetry": "Försök skicka igen",
+        "serverRetry": "Försök igen senare",
+        "genericRetry": "Försök igen",
+        "failedToSubmit": "Det gick inte att skicka in benchmarken"
+      }
+    },
+    "deviceInfoCard": {
+      "title": "Enhetsinformation",
+      "deviceSummary": "{{brand}} {{model}} • {{systemName}} {{systemVersion}}",
+      "coreSummary": "{{cores}} kärnor • {{memory}}",
+      "sections": {
+        "basicInfo": "Grundinfo",
+        "cpuDetails": "CPU-detaljer",
+        "gpuDetails": "GPU-detaljer",
+        "hexagonDetails": "Hexagon DSP",
+        "appInfo": "Om appen"
+      },
+      "fields": {
+        "architecture": "Arkitektur",
+        "totalMemory": "Totalt minne",
+        "deviceId": "Enhets-ID",
+        "cpuCores": "CPU-kärnor",
+        "cpuModel": "CPU-modell",
+        "chipset": "Chipset",
+        "instructions": "Instruktioner",
+        "version": "Version",
+        "gpuType": "GPU-typ",
+        "gpuRenderer": "Renderare",
+        "gpuVendor": "Tillverkare",
+        "metalSupport": "Metal-stöd",
+        "openclSupport": "OpenCL-stöd",
+        "openclRequirement": "Kräver i8mm & dotprod"
+      },
+      "instructions": {
+        "format": "FP16: {{fp16}}, DotProd: {{dotProd}}, SVE: {{sve}}, I8MM: {{i8mm}}",
+        "yes": "✓",
+        "no": "✗"
+      },
+      "versionFormat": "{{version}} ({{buildNumber}})"
+    },
+    "presetDefault": "Standard",
+    "presetFast": "Snabb",
+    "presetCustom": "Anpassad",
+    "params": {
+      "pp": "Antal promptbearbetningstokens (max: fysisk batchstorlek)",
+      "tg": "Antal textgenereringstokens",
+      "pl": "Storlek för pipeline-parallellism",
+      "nr": "Antal repetitioner"
+    }
+  },
+  "errors": {
+    "unexpectedError": "Ett oväntat fel uppstod",
+    "hfAuthenticationError": "Hugging Face-autentiseringsfel: Token saknas eller är ogiltig",
+    "hfAuthenticationErrorSearch": "Hugging Face-autentiseringsfel: Ogiltig token",
+    "authenticationError": "Autentiseringsfel: Token saknas eller är ogiltig",
+    "hfAuthorizationError": "Hugging Face-auktoriseringsfel: Ingen behörighet att komma åt resursen",
+    "authorizationError": "Auktoriseringsfel: Ingen behörighet att komma åt resursen",
+    "hfServerError": "Hugging Face-serverfel: Problem med API-servern",
+    "serverError": "Serverfel: Problem med API-servern",
+    "hfNetworkTimeout": "Nätverkstimeout: Begäran till Hugging Face tog för lång tid",
+    "networkTimeout": "Nätverkstimeout: Begäran tog för lång tid",
+    "hfNetworkError": "Nätverksfel: Det gick inte att ansluta till Hugging Face-API:t",
+    "networkError": "Nätverksfel: Det gick inte att ansluta till API:t",
+    "downloadSetupFailedTitle": "Förberedelse av nedladdning misslyckades",
+    "downloadSetupFailedMessage": "Det gick inte att förbereda modellen för nedladdning: {{message}}",
+    "cameraErrorTitle": "Kamerafel",
+    "cameraErrorMessage": "Det gick inte att ta fotot",
+    "galleryErrorTitle": "Gallerifel",
+    "galleryErrorMessage": "Det gick inte att välja bilder"
+  },
+  "simulator": {
+    "cameraNotAvailable": "Kameran är inte tillgänglig i simulatorn. Använd en fysisk enhet."
+  },
+  "voiceAndSpeech": {
+    "sectionTitle": "Röst & tal",
+    "voiceRowTitle": "Röst",
+    "notSet": "Inte angiven",
+    "previewButton": "Provlyssna",
+    "stopPreviewButton": "Stoppa provlyssning",
+    "voicesTitle": "Röster",
+    "voicesEmptyHint": "Tryck på en röst för att installera och använda den. Eller välj en systemröst – de är alltid tillgängliga.",
+    "supertonicStepsLabel": "Kvalitet (diffusionssteg)",
+    "supertonicLanguageLabel": "Språk",
+    "supertonicLanguageAuto": "Auto",
+    "supertonicLanguageSheetTitle": "Språk",
+    "supertonicLanguageSearchPlaceholder": "Sök språk",
+    "supertonicLanguageNames": {
+      "ar": "Arabiska",
+      "bg": "Bulgariska",
+      "hr": "Kroatiska",
+      "cs": "Tjeckiska",
+      "da": "Danska",
+      "nl": "Nederländska",
+      "en": "Engelska",
+      "et": "Estniska",
+      "fi": "Finska",
+      "fr": "Franska",
+      "de": "Tyska",
+      "el": "Grekiska",
+      "hi": "Hindi",
+      "hu": "Ungerska",
+      "id": "Indonesiska",
+      "it": "Italienska",
+      "ja": "Japanska",
+      "ko": "Koreanska",
+      "lv": "Lettiska",
+      "lt": "Litauiska",
+      "pl": "Polska",
+      "pt": "Portugisiska",
+      "ro": "Rumänska",
+      "ru": "Ryska",
+      "sk": "Slovakiska",
+      "sl": "Slovenska",
+      "es": "Spanska",
+      "sv": "Svenska",
+      "tr": "Turkiska",
+      "uk": "Ukrainska",
+      "vi": "Vietnamesiska"
+    },
+    "toggleAutoSpeakLabel": "Växla automatisk uppläsning",
+    "openSettingsLabel": "TTS-inställningar",
+    "playMessageLabel": "Spela upp meddelande",
+    "stopMessageLabel": "Stoppa uppläsning",
+    "autoSpeakLabel": "Läs upp svar automatiskt",
+    "autoSpeakDescription": "Läs upp nya svar när de kommer.",
+    "engineChipKitten": "Kitten",
+    "engineChipKokoro": "Kokoro",
+    "engineChipSupertonic": "Supertonic",
+    "engineChipSystem": "System",
+    "stepsCount": "{{steps}} steg",
+    "engineKittenTagline": "Minst fotavtryck. Tillförlitlig. Bäst på äldre enheter.",
+    "engineKokoroTagline": "Högst kvalitet. Långsammare start. Vissa röster kanske inte fungerar på alla enheter.",
+    "engineSupertonicTagline": "Snabbast start. Använder mer RAM. Kan ibland tappa ord.",
+    "engineSystemTagline": "Inbyggda OS-röster. Alltid tillgängliga, ingen installation.",
+    "engineSystemTitleIos": "iOS-röster",
+    "engineSystemTitleAndroid": "Android-röster",
+    "engineSystemTier": "alltid tillgänglig",
+    "engineTierLightest": "lättast",
+    "engineTierBestQuality": "bästa kvalitet",
+    "engineTierFastestStart": "snabbast start",
+    "engineSpecsLine": "{{voices}} röster  ·  {{sizeMb}} MB  ·  ~{{ramMb}} MB RAM",
+    "engineSystemSpecsLine": "{{voices}} röster",
+    "engineRemoveTitle": "Ta bort {{engineTitle}}?",
+    "engineRemoveBody": "Frigör ~{{sizeMb}} MB på den här enheten.",
+    "engineRemoveCancel": "Avbryt",
+    "engineRemoveConfirm": "Ta bort",
+    "engineInstallCta": "Installera · {{sizeMb}} MB",
+    "engineDownloadingLabel": "Laddar ner…  {{pct}}%  ·  {{mbDone}} / {{sizeMb}} MB",
+    "engineRetryCta": "Försök igen",
+    "voicesEmptyState": "Inga röster hittades.",
+    "kokoroDeviceNote": "Vissa röster kanske inte fungerar på alla enheter.",
+    "insufficientStorage": "Inte tillräckligt med utrymme – frigör {{requiredMb}} MB för att installera motorn ({{freeMb}} MB tillgängligt)."
+  },
+  "onboarding": {
+    "back": "Tillbaka",
+    "skip": "Hoppa över",
+    "skipForNow": "Hoppa över för nu",
+    "splash": {
+      "brand": "DRS AI",
+      "tagline": "Din privata AI, på din enhet"
+    },
+    "screen1": {
+      "title": "Möt dina assistenter.",
+      "titleAccent": "assistenter.",
+      "body": "Smarta små vänner som bor i din telefon.\nVi sätter igång – det tar bara en minut.",
+      "cta": "Visa mig runt",
+      "eyebrow": "Välkommen till DRS AI"
+    },
+    "screen2": {
+      "title": "När som helst,\nvar som helst.",
+      "body": "Dina assistenter bor i din telefon.\nInget internet, ingen signal – de fungerar på flygplan, utanför nätet, i avlägsna byar.",
+      "highlight": "Inget internet, ingen signal",
+      "cta": "Nästa",
+      "eyebrow": "Idén",
+      "titleAccent": "När som helst,"
+    },
+    "screen3": {
+      "title": "Mindre,\nmen din.",
+      "titleAccent": "Mindre,",
+      "body": "Assistenter i din telefon är snabba och privata – men lättare än moln-AI. Tänk fickföljeslagare, inte allvetande orakel.",
+      "highlight": "snabba och privata",
+      "cta": "Uppfattat",
+      "eyebrow": "Bra att veta"
+    },
+    "screen4": {
+      "title": "Ingenting lämnar din telefon.",
+      "titleAccent": "lämnar",
+      "body": "Inga konton. Ingen moln. Ingen spårning. Dina samtal förblir dina.",
+      "highlight": "Inga konton. Ingen moln. Ingen spårning.",
+      "cta": "Kom igång",
+      "eyebrow": "Lovad integritet"
+    },
+    "screen5": {
+      "title": "Vad ska din assistent göra?",
+      "body": "Välj vad du vill prata om – vi matchar en assistent som passar din telefon.",
+      "topic": {
+        "smartchat": "Smart chatt",
+        "coding": "Kodning",
+        "education": "Lärande",
+        "roleplay": "Rollspel",
+        "creative_writing": "Kreativt skrivande",
+        "else": "Letar du efter något annat?"
+      },
+      "topicDescription": {
+        "smartchat": "Vänlig vardagsföljeslagare",
+        "coding": "Koda, felsöka, förklara",
+        "education": "Lära, förklara, öva",
+        "roleplay": "Karaktärer, scenarier",
+        "creative_writing": "Berättelser, idéer, utkast",
+        "else": "Bläddra bland alla assistenter senare i appen"
+      }
+    },
+    "screen6": {
+      "cta": "Ladda ner {{name}}",
+      "ctaTemplate": "Ladda ner {{name}} ({{size}})",
+      "useTemplate": "Använd {{name}}",
+      "deviceRamSuffix": "GB RAM",
+      "deviceFreeSuffix": "GB ledigt",
+      "recommended": "Rekommenderas",
+      "downloaded": "Nedladdad",
+      "modelTier": {
+        "quick": "Snabb",
+        "balanced": "Balanserad",
+        "best": "Bäst"
+      },
+      "subtitleTemplate": "{{name}} tänker med en liten AI-modell i din telefon – välj en som passar.",
+      "assistant": {
+        "pip": {
+          "body": "Vi hittade en perfekt assistent åt dig – en vänlig vardagsföljeslagare. Smart nog för det mesta, lätt nog för vilken telefon som helst."
+        },
+        "codie": {
+          "body": "Möt Codie – din lokala programmeringspartner. Läser kod, skriver kod och förklarar knepiga detaljer utan att någonsin lämna din telefon."
+        },
+        "sage": {
+          "body": "Sage är tålmodig, nyfiken och guidar dig genom idéer steg för steg. En studiekompis du har i fickan."
+        },
+        "echo": {
+          "body": "Echo är en mångsidig rollspelskompanjon – håller karaktären, målar upp scener och följer vart din historia leder."
+        },
+        "muse": {
+          "body": "Muse hjälper dig skriva. Föreslår formuleringar, hittar rytmen och bevarar din ton."
+        }
+      }
+    }
+  },
+  "downloadBanner": {
+    "titleByAssistant": "{{name}} laddas ner",
+    "titleByModel": "{{name}} laddas ner",
+    "extraInProgress": "+{{count}} fler pågår"
   }
 }

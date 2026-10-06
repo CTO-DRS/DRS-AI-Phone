@@ -10,6 +10,7 @@ import 'react-native-get-random-values';
 import {user as defaultUser} from '../../utils/chat';
 
 import {hasVideoCapability} from '../../utils/assistant-capabilities';
+import {logger} from '../../utils/logger';
 
 interface VideoAssistantScreenProps {
   activeAssistant: Assistant;
@@ -59,7 +60,7 @@ export const VideoAssistantScreen = observer(
         );
 
         if (assistantDefaultModel) {
-          console.log(
+          logger.debug(
             'Initializing Video Assistant model with projection model',
           );
 
@@ -74,7 +75,7 @@ export const VideoAssistantScreen = observer(
             );
 
             if (projectionModel) {
-              console.log(
+              logger.debug(
                 'Found default projection model:',
                 projectionModel.name,
               );
@@ -82,7 +83,7 @@ export const VideoAssistantScreen = observer(
               modelStore
                 .getModelFullPath(projectionModel)
                 .then(projectionModelPath => {
-                  console.log(
+                  logger.debug(
                     'Initializing with projection model path:',
                     projectionModelPath,
                   );
@@ -104,7 +105,7 @@ export const VideoAssistantScreen = observer(
               modelStore.initContext(assistantDefaultModel);
             }
           } else {
-            console.log(
+            logger.debug(
               'Model does not support multimodal or has no default projection model',
             );
             modelStore.initContext(assistantDefaultModel);

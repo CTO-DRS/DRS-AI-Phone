@@ -1,14 +1,1865 @@
 {
   "common": {
-    "cancel": "Katkesta",
+    "cancel": "Tühista",
     "delete": "Kustuta",
     "dismiss": "Loobu",
     "rename": "Muuda nime",
     "reset": "Lähtesta",
     "save": "Salvesta",
+    "stop": "Peata",
     "update": "Uuenda",
     "error": "Viga",
     "export": "Ekspordi",
-    "networkError": "Võrguühenduse viga. Palun proovi uuesti."
+    "networkError": "Võrguühenduse viga. Palun proovi uuesti.",
+    "downloadETA": "ETA",
+    "calculating": "arvutan...",
+    "second": "sek",
+    "seconds": "sek",
+    "year": "aasta",
+    "years": "aastat",
+    "month": "kuu",
+    "months": "kuud",
+    "week": "nädal",
+    "weeks": "nädalat",
+    "day": "päev",
+    "days": "päeva",
+    "hour": "tund",
+    "hours": "tundi",
+    "minute": "min",
+    "minutes": "min",
+    "justNow": "just nüüd",
+    "ok": "OK",
+    "close": "Sulge",
+    "clear": "Tühjenda kõik",
+    "gallery": "Galerii",
+    "noResults": "Tulemusi pole",
+    "openDrawer": "Ava külgriba",
+    "openMenu": "Ava menüü",
+    "closeMenu": "Sulge menüü"
+  },
+  "settings": {
+    "modelInitializationSettings": "Mudeli käivitamise seaded",
+    "metal": "Metal",
+    "metalDescription": "Apple'i riistvarakiirenduse API.",
+    "metalRequiresNewerIOS": "Metal-kiirendus vajab iOS 18 või uuemat. Palun uuenda oma seade, et seda funktsiooni kasutada.",
+    "openCL": "OpenCL (eksperimentaalne)",
+    "openCLDescription": "GPU-kiirendus Adreno graafikakaartidele. Promptide töötlemine on kiirem, kuid genereerimine ei pruugi alati kiirem olla.",
+    "openCLNotAvailable": "OpenCL pole selles seadmes saadaval. Vajalik on Adreno GPU, millel on i8mm ja dotprod protsessori omadused.",
+    "openCLMissingCPUFeatures": "OpenCL vajab i8mm ja dotprod protsessori omadusi, mis pole selles seadmes saadaval.",
+    "openCLQuantizationNote": "Märkus: puhtalt Q4_0 kvantiseeritud mudelid töötavad OpenCL-ga kõige paremini.",
+    "openCLDocsLink": "Vaata üksikasju llama.cpp OpenCL-i dokumentatsioonist.",
+    "layersOnGPU": "Kihid GPU-l: {{gpuLayers}}",
+    "deviceSelection": "Seadme valik",
+    "deviceSelectionIOS": "Seade (Metal)",
+    "deviceSelectionIOSDescription": "Vali Metal GPU või ainult CPU režiim",
+    "deviceSelectionAndroidDescription": "Vali arvutuseseade (CPU, GPU või Hexagon NPU)",
+    "cpuOnlyNoAccelerators": "Ainult CPU – riistvarakiirendeid ei tuvastatud",
+    "contextSize": "Konteksti suurus",
+    "contextSizePlaceholder": "Sisesta konteksti suurus (miinimum {{minContextSize}})",
+    "invalidContextSizeError": "Palun sisesta korrektne number (miinimum {{minContextSize}})",
+    "modelReloadNotice": "Muudatuste jõustumiseks tuleb mudel uuesti laadida.",
+    "advancedSettings": "Lisaseaded",
+    "batchSize": "Partii suurus",
+    "batchSizeDescription": "Partii suurus: {{batchSize}}{{effectiveBatch}}",
+    "effectiveLabel": "efektiivne",
+    "physicalBatchSize": "Füüsiline partii suurus",
+    "physicalBatchSizeDescription": "Füüsiline partii suurus: {{physicalBatchSize}}{{effectivePhysicalBatch}}",
+    "cpuThreads": "Protsessori lõimed",
+    "cpuThreadsDescription": "Kasutab {{threads}} lõimest {{maxThreads}} saadavalolevast",
+    "imageMaxTokens": "Pildi maksimaalsed tokenid",
+    "imageMaxTokensDescription": "Maksimaalne tokenite arv pildi töötlemiseks: {{tokens}}{{effectiveTokens}} (vähem = kiirem, vähem detaile)",
+    "flashAttention": "Flash Attention",
+    "flashAttentionDescription": "Luba Flash Attention kiirema töötlemise jaoks",
+    "flashAttentionIOSDescription": "Mälusäästlik attention (lubatakse automaatselt Metaliga)",
+    "flashAttentionAndroidDescription": "OpenCL oleku salvestamiseks ja laadimiseks peab see olema välja lülitatud",
+    "flashAttentionAuto": "Auto",
+    "flashAttentionOn": "Sees",
+    "flashAttentionOff": "Väljas",
+    "keyCacheType": "Võtmevahemälu tüüp",
+    "keyCacheTypeDescription": "Vali võtme arvutamise vahemälu tüüp",
+    "keyCacheTypeDisabledDescription": "Vahemälu tüübi muutmiseks luba Flash Attention",
+    "valueCacheType": "Väärtusvahemälu tüüp",
+    "valueCacheTypeDescription": "Vali väärtuse arvutamise vahemälu tüüp",
+    "valueCacheTypeDisabledDescription": "Vahemälu tüübi muutmiseks luba Flash Attention",
+    "memorySettings": "Mälu seaded",
+    "useMlock": "Kasuta mälulukku",
+    "useMlockDescription": "Sunnib süsteemi hoidma mudelit RAM-is, selle asemel et seda saalefaili tõsta või tihendada",
+    "useMmap": "Mälu kaardistamine",
+    "useMmapDescription": "Kasuta mällu kaardistatud faile mudeli kiiremaks laadimiseks",
+    "useMmapTrue": "Lubatud",
+    "useMmapFalse": "Keelatud",
+    "useMmapTrueDescription": "Kasuta alati mälu kaardistamist kiirema laadimise jaoks",
+    "useMmapFalseDescription": "Kaalude ümberpaigutuse lubamisel on keelamine soovitatav, et vältida mälukasutuse kahekordistumist",
+    "weightRepacking": "Luba kaalude ümberpaigutus",
+    "weightRepackingDescription": "Kiirem promptide töötlemine minimaalse mälukuluga, kui mälu kaardistamine on keelatud. Tokenite genereerimist ei mõjuta.",
+    "speculativeDecoding": "Spekulatiivne dekodeerimine",
+    "speculativeDecodingDescription": "Kasuta väikest abimudelit (või sisseehitatud MTP-mudelit) tokenite ennustamiseks ja genereerimise kiirendamiseks. Eksperimentaalne.",
+    "speculativeNotMTPCapable": "Aktiivne mudel ei toeta spekulatiivset dekodeerimist ega ole ühilduva abimudeliga seotud, seega see jääb selle jaoks välja lülitatuks ega mõjuta midagi. See rakendub automaatselt toega mudelitele.",
+    "speculativeDraftModel": "Abimudel",
+    "speculativeDraftModelDescription": "Loob aktiivsele mudelile tokenite mustandeid.",
+    "speculativeDraftModelNone": "Puudub (sisseehitatud MTP)",
+    "speculativeDraftModelIgnoredOverridden": "Aktiivsel mudelil on oma abimudel, seega seda valikut ignoreeritakse.",
+    "speculativeDraftModelIgnoredIncompatible": "See abimudel ei ühildu aktiivse mudeliga, seega seda ignoreeritakse.",
+    "speculativeDraftModelIgnoredNotCapable": "Sellel mudelil pole abikihte, seega seda ei saa abimudelina kasutada.",
+    "speculativeDraftKeyCacheType": "Abimudeli võtmevahemälu tüüp",
+    "speculativeDraftValueCacheType": "Abimudeli väärtusvahemälu tüüp",
+    "speculativeDraftNGpuLayers": "Abimudeli GPU-kihid",
+    "speculativeDraftNGpuLayersDescription": "Mitu abimudeli kihti GPU-le üle kanda.",
+    "speculativeDraftCacheTypeInactiveDescription": "Hakatakse kasutama, kui spekulatiivne dekodeerimine töötab.",
+    "ttsAvailability": "Tekstist kõneks",
+    "ttsAvailabilityDescription": "Loe abilise vastuseid valjusti ette.",
+    "ttsAvailabilityLowMemoryWarning": "Seadme mälu on vähe – see ei pruugi töötada usaldusväärselt.",
+    "modelLoadingSettings": "Mudeli laadimise seaded",
+    "autoOffloadLoad": "Automaatne vabastamine/laadimine",
+    "autoOffloadLoadDescription": "Vabasta mudel mälust, kui rakendus on taustal.",
+    "autoNavigateToChat": "Liigu automaatselt vestlusesse",
+    "autoNavigateToChatDescription": "Liigu vestluse vaatesse, kui laadimine algab.",
+    "appSettings": "Rakenduse seaded",
+    "language": "Keel",
+    "languageSheetTitle": "Keel",
+    "languageSearchPlaceholder": "Otsi keeli",
+    "languageRestartTitle": "Vajalik on taaskäivitus",
+    "languageRestartMessage": "Selle keele jaoks muutus paigutuse suund. Taaskäivita rakendus, et muudatus täielikult rakenduda.",
+    "languageRestartNow": "Taaskäivita kohe",
+    "languageRestartLater": "Hiljem",
+    "darkMode": "Tume režiim",
+    "displayMemoryUsage": "Näita mälukasutust",
+    "displayMemoryUsageDescription": "Näita mälukasutust vestluse lehel.",
+    "exportOptions": "Eksportimise valikud",
+    "exportLegacyChats": "Ekspordi vanad vestlused",
+    "exportLegacyChatsDescription": "Kasuta seda, kui migreerimine ebaõnnestus või kui tahad taastada vanu vestlussessioone.",
+    "exportButton": "Ekspordi",
+    "importChats": "Impordi vestlussessioonid",
+    "importChatsDescription": "Impordi vestlussessioonid (eksporditud) JSON-failist.",
+    "importButton": "Impordi",
+    "importSuccess": "Imporditi edukalt {{count}} vestlussessioon(id).",
+    "importError": "Vestlussessioonide importimine ebaõnnestus. Palun kontrolli faili vormingut.",
+    "internetSearch": {
+      "title": "Internetiotsing",
+      "description": "Luba abilistel otsida veebist oma tööriistadega. Kasuta oma API-võtit – DRS AI ei hoia kunagi sinu võtmeid ega suuna sinu päringuid.",
+      "providerLabel": "Otsingupakkuja",
+      "providerGated": "Varsti saadaval",
+      "keyLabel": "API-võti",
+      "keyIsSet": "Võti on määratud teenusele {{provider}}.",
+      "keyNotSet": "Teenusele {{provider}} pole võtit määratud.",
+      "setKeyButton": "Määra võti",
+      "updateKeyButton": "Uuenda võtit",
+      "clearKeyButton": "Kustuta võti",
+      "keyInputPlaceholder": "Kleebi oma {{provider}} API-võti",
+      "keyUpdateError": "Võtme uuendamine ebaõnnestus. Palun proovi uuesti.",
+      "showKeyAccessibilityLabel": "Näita API-võtit",
+      "hideKeyAccessibilityLabel": "Peida API-võti",
+      "resultCountLabel": "Tulemusi otsingu kohta",
+      "resultCountDescription": "Vähem tulemusi jätavad mudeli kontekstis rohkem ruumi.",
+      "consentTitle": "Otsingud lahkuvad sinu seadmest",
+      "consentDescription": "Kui abiline otsib veebist, saadetakse sinu päring valitud pakkujale interneti kaudu. Kui abiline loeb lehekülge, saadetakse URL-i ja lehe sisu hoopis vaikimisi lugejateenusele (r.jina.ai), kui valitud pakkujal pole oma lugejat. Võtmeid ja päringuid ei saadeta kunagi DRS AI-le.",
+      "consentAccept": "Sain aru",
+      "consentRequired": "Nõustu ülaltoodud teabega, et määrata võti ja lubada otsing.",
+      "consentGivenTitle": "Veebiotsing on lubatud",
+      "consentGivenDescription": "Päringud ja lehekülgede lugemine võivad lahkuda sinu seadmest, nagu ülal kirjeldatud.",
+      "consentRevoke": "Eemalda nõusolek"
+    },
+    "apiSettingsTitle": "API seaded",
+    "huggingFaceTokenLabel": "Hugging Face'i token",
+    "tokenIsSetDescription": "Token on määratud. Vajalik lukustatud mudelitele juurdepääsuks.",
+    "setTokenDescription": "Määra token, et pääseda ligi Hugging Face'i lukustatud mudelitele.",
+    "setTokenButton": "Määra token",
+    "useHfTokenLabel": "Kasuta HF tokenit",
+    "useHfTokenDescription": "Luba token API-päringutes. Keela, kui token põhjustab autentimisprobleeme.",
+    "cacheStorageTitle": "Vahemälu ja salvestusruum",
+    "clearAssistantCaches": "Tühjenda abiliste vahemälu",
+    "clearAssistantCachesDescription": "Tühjendab vahemälutud andmed, mida kasutatakse abiliste kiirendamiseks. See ei mõjuta sinu abilisi ega vestlusajalugu.",
+    "clearCachesButton": "Tühjenda vahemälu",
+    "clearCachesConfirmTitle": "Tühjendada abiliste vahemälu?",
+    "clearCachesConfirmMessage": "See tühjendab kogu vahemälutud sessiooniandmed ({{fileCount}} faili, {{size}}). Pärast tühjendamist võivad abilised esmakasutusel olla aeglasemad. See ei mõjuta sinu abilisi ega vestlusajalugu.",
+    "clearCachesSuccess": "Tühjendati edukalt {{count}} vahemälufail(i).",
+    "clearCachesError": "Vahemälu tühjendamine ebaõnnestus. Palun proovi uuesti.",
+    "noCachesToClear": "Pole midagi tühjendada.",
+    "serverName": "Serveri nimi",
+    "serverUrl": "Serveri URL",
+    "serverUrlPlaceholder": "nt http://192.168.1.100:1234",
+    "requestTimeout": "Päringu ajalõpp (sekundites)",
+    "requestTimeoutPlaceholder": "Valikuline – jäta vaikeväärtuse jaoks tühjaks",
+    "requestTimeoutHelp": "Maksimaalne ooteaeg aeglase serveri vastusele. Jäta tühjaks vaikeväärtuse jaoks.",
+    "serverType": "Serveri tüüp",
+    "serverTypeHelp": "Tuvastatakse automaatselt; muuda, kui see on vale.",
+    "apiKey": "API-võti",
+    "apiKeyPlaceholder": "Valikuline – vajalik OpenAI/Groq jaoks",
+    "apiKeyDescription": "Salvestatakse turvaliselt seadmesse.",
+    "remoteModel": "Kaugmudel",
+    "remotePrivacyNotice": "Kaugserveritesse saadetud sõnumid lahkuvad sinu seadmest. Ühendu ainult serveritega, mida usaldad.",
+    "remoteIndicator": "Kaug",
+    "serverUrlRequired": "Serveri URL on nõutav",
+    "serverUrlInvalid": "Vigane URL-i vorming",
+    "serverUrlHttpWarning": "iOS nõuab mittekohalike serverite jaoks HTTPS-i. Kasuta https:// või kohalikku võrguaadressi.",
+    "addRemoteModel": "Lisa kaugmudel",
+    "yourServers": "Sinu serverid",
+    "orConnectNewServer": "või loo ühendus uue serveriga",
+    "selectModel": "Vali mudel",
+    "addModel": "Lisa mudel",
+    "connected": "Ühendatud",
+    "connectionFailed": "Ühendus ebaõnnestus: {{error}}",
+    "connecting": "Ühendan...",
+    "noModelsAvailable": "Selles serveris pole saadaval ühtegi mudelit.",
+    "alreadyAdded": "Juba lisatud",
+    "connectedServers": "Ühendatud serverid",
+    "modelsCount": "{{count}} mudelit",
+    "serverDetails": "Serveri üksikasjad",
+    "modelsUsingServer": "Seda serverit kasutavad mudelid:",
+    "saveChanges": "Salvesta muudatused",
+    "removeServer": "Eemalda server",
+    "removeServerMessage": "Eemaldada {{serverName}} ja selle {{count}} mudelit?",
+    "removeRemoteModel": "Eemaldada {{modelName}} ({{serverName}})?",
+    "retryConnection": "Proovi uuesti",
+    "enterUrlManually": "Sisesta URL käsitsi",
+    "manageServers": "Halda servereid",
+    "exportLegacyError": "Vana vestlussessioonide eksportimine ebaõnnestus. Faili ei pruugi olla olemas."
+  },
+  "memory": {
+    "shortWarning": "Mälu hoiatus",
+    "multimodalWarning": "Sellel seadmel ei pruugi olla multimodaalsete mudelite jaoks piisavalt ressursse.",
+    "memoryTight": "Mälu on vähe",
+    "lowMemory": "Vähe mälu",
+    "memoryDetailMessage": "See mudel vajab ~{{needed}}, kuid kasutatavaks hinnatakse ainult ~{{available}}. Hinnangud täpsustuvad, kui rohkem rakendust kasutad.",
+    "estimatedMemory": "Hinnanguline mälu: ~{{size}}",
+    "alerts": {
+      "memoryWarningTitle": "Mälu hoiatus",
+      "memoryWarningMessage": "See mudel võib ületada saadavaloleva mälu, mis võib põhjustada ebastabiilsust. Jätkata laadimisega?",
+      "multimodalWarningTitle": "Seadme jõudluse hoiatus",
+      "multimodalWarningMessage": "Sellel seadmel ei pruugi olla multimodaalsete mudelite jaoks piisavalt ressursse. Laadimine võib põhjustada ebastabiilsust. Jätkata ikkagi?",
+      "combinedWarningTitle": "Jõudluse hoiatus",
+      "combinedWarningMessage": "See mudel võib ületada saadavaloleva mälu ja sellel seadmel ei pruugi olla multimodaalsete mudelite jaoks piisavalt ressursse. Laadimine võib põhjustada ebastabiilsust. Jätkata ikkagi?",
+      "cancel": "Tühista",
+      "continue": "Jätka"
+    }
+  },
+  "storage": {
+    "checkFailed": "Salvestusruumi kontrollimine ebaõnnestus",
+    "lowStorage": "Salvestusruum on vähe! Mudel {{modelSize}} > {{freeSpace}} vaba"
+  },
+  "generation": {
+    "modelNotInitialized": "Mudeli kontekst pole lähtestatud",
+    "failedToGenerate": "Väljundi genereerimine ebaõnnestus"
+  },
+  "models": {
+    "fileManagement": {
+      "fileAlreadyExists": "Fail on juba olemas",
+      "fileAlreadyExistsMessage": "Selle nimega fail on juba olemas. Mida soovid teha?",
+      "replace": "Asenda",
+      "keepBoth": "Jäta mõlemad",
+      "copyingModel": "Kopeerin mudelifaili...",
+      "copyFailed": "Mudelifaili kopeerimine ebaõnnestus"
+    },
+    "labels": {
+      "localModel": "Kohalik",
+      "hfModel": "HF",
+      "unknownGroup": "Tundmatu",
+      "availableToUse": "Valmis kasutamiseks",
+      "availableToDownload": "Saadaval allalaadimiseks",
+      "useAddButtonForMore": "Rohkemate mudelite leidmiseks kasuta nuppu +"
+    },
+    "vision": "Pilditugi",
+    "mmproj": "Projektor",
+    "multimodal": {
+      "settings": "Multimodaalsed seaded",
+      "projectionModels": "Projektsioonimudelid",
+      "noCompatibleModels": "Ühilduvaid projektsioonimudeleid ei leitud",
+      "noProjectionModels": "Projektsioonimudeleid pole saadaval",
+      "selected": "Valitud",
+      "select": "Vali",
+      "download": "Laadi alla",
+      "projectionNeededTitle": "Vajalik on projektsioonimudel",
+      "projectionNeededMessage": "See mudel vajab multimodaalsete võimete jaoks projektsioonimudelit.",
+      "projectionMissingWarning": "Projektsioonimudel puudub",
+      "projectionMissingShort": "Projektsioon puudub",
+      "reloadModelTitle": "Laadi mudel uuesti",
+      "reloadModelMessage": "Uue projektsioonimudeli rakendamiseks tuleb mudel uuesti laadida. Kas laadida nüüd?",
+      "reload": "Laadi uuesti",
+      "deleteProjectionTitle": "Kustuta projektsioonimudel",
+      "deleteProjectionMessage": "Kas oled kindel, et soovid selle projektsioonimudeli kustutada?",
+      "cannotDeleteTitle": "Ei saa kustutada",
+      "visionControls": {
+        "enableVision": "Luba pilditugi",
+        "disableVision": "Keela pilditugi",
+        "visionEnabled": "Pilditugi lubatud",
+        "visionDisabled": "Pilditugi keelatud",
+        "textOnlyMode": "Ainult tekst",
+        "visionMode": "Pilditugi lubatud",
+        "downloadWithVision": "Laadi alla pilditoega",
+        "downloadTextOnly": "Laadi alla ainult tekstiga",
+        "visionToggleDescription": "Luba piltide töötlemise võimalused",
+        "projectionModelSize": "+{{size}} projektsioonimudel",
+        "visionModeDescription": "Töötle pilte ja teksti",
+        "textOnlyModeDescription": "Töötle ainult teksti",
+        "includesVisionCapability": "Sisaldab pilditoe võimet",
+        "requiresProjectionModel": "Laadi kõigepealt alla ühilduv projektsioonimudel"
+      },
+      "cannotDeleteActive": "See projektsioonimudel on praegu aktiivne.",
+      "cannotDeleteInUse": "Seda projektsioonimudelit kasutavad allalaaditud LLM-mudelid:",
+      "dependentModels": "Sõltuvad mudelid:",
+      "visionWillBeDisabled": "Nende mudelite pilditugi keelatakse."
+    },
+    "buttons": {
+      "addFromHuggingFace": "Lisa Hugging Face'ist",
+      "addLocalModel": "Lisa kohalik mudel",
+      "reset": "Lähtesta"
+    },
+    "modelsHeaderRight": {
+      "menuTitleHf": "Hugging Face'i mudelid",
+      "menuTitleDownloaded": "Allalaaditud mudelid",
+      "menuTitleGrouped": "Rühmita mudelitüübi järgi",
+      "menuTitleReset": "Lähtesta mudelite loend"
+    },
+    "modelsResetDialog": {
+      "proceedWithReset": "Jätka lähtestamist",
+      "confirmReset": "Kinnita lähtestamine"
+    },
+    "chatTemplate": {
+      "label": "Baasvestluse mall:"
+    },
+    "details": {
+      "title": "Saadavalolevad GGUF-failid"
+    },
+    "modelFile": {
+      "alerts": {
+        "cannotRemoveTitle": "Ei saa eemaldada",
+        "modelPreset": "Mudel on eelseadistatud.",
+        "downloadedFirst": "Mudel on allalaaditud. Palun kustuta kõigepealt fail.",
+        "removeTitle": "Eemalda mudel",
+        "removeMessage": "Kas oled kindel, et soovid selle mudeli loendist eemaldada?",
+        "removeError": "Mudeli eemaldamine ebaõnnestus.",
+        "alreadyDownloadedTitle": "Mudel on juba allalaaditud",
+        "alreadyDownloadedMessage": "Mudel on juba allalaaditud.",
+        "deleteTitle": "Kustuta mudel",
+        "deleteMessage": "Kas oled kindel, et soovid selle allalaaditud mudeli kustutada?"
+      },
+      "buttons": {
+        "remove": "Eemalda"
+      },
+      "warnings": {
+        "storage": {
+          "message": "Piisavalt salvestusruumi pole saadaval.",
+          "shortMessage": "Vähe salvestusruumi"
+        },
+        "memory": {
+          "message": "Mudeli suurus on lähedal või ületab seadme kogumälu. See võib põhjustada ootamatut käitumist."
+        },
+        "legacy": {
+          "message": "Vana kvantiseerimisvorming – mudel ei pruugi töötada.",
+          "shortMessage": "Vana kvantiseerimine"
+        },
+        "multiple": "{{count}} hoiatust"
+      },
+      "labels": {
+        "downloadSpeed": "{{speed}}"
+      }
+    },
+    "search": {
+      "noResults": "Mudeleid ei leitud",
+      "loadingMore": "Laadin veel...",
+      "searchPlaceholder": "Otsi Hugging Face'i mudeleid",
+      "modelUpdatedLong": "Uuendatud {{time}} tagasi",
+      "modelUpdatedShort": "{{time}} tagasi",
+      "modelUpdatedJustNowLong": "Uuendatud just nüüd",
+      "modelUpdatedJustNowShort": "just nüüd",
+      "errorOccurred": "Mudelite laadimine ei õnnestu. Palun proovi uuesti.",
+      "filters": {
+        "author": "Autor",
+        "authorPlaceholder": "Filtreeri autori järgi...",
+        "sortBy": "Järjesta",
+        "clearFilters": "Tühjenda filtrid",
+        "showFilters": "Näita filtreid",
+        "hideFilters": "Peida filtrid",
+        "sortRelevance": "Asjakohasus",
+        "sortDownloads": "Allalaadimised",
+        "sortRecent": "Hiljuti uuendatud",
+        "sortLikes": "Enim meelditud"
+      }
+    },
+    "hubRun": {
+      "title": "Laadi mudel alla",
+      "resolving": "Laadin mudeli üksikasju…",
+      "cancel": "Tühista",
+      "retry": "Proovi uuesti",
+      "invalidLinkTitle": "Vigane link",
+      "invalidLinkMessage": "Selles Hugging Face'i lingis on mudel või fail puudu või vigane.",
+      "resolveError": "Mudeli üksikasjade laadimine ei õnnestunud. Kontrolli ühendust ja proovi uuesti."
+    },
+    "modelCard": {
+      "alerts": {
+        "deleteTitle": "Kustuta mudel",
+        "deleteMessage": "Kas oled kindel, et soovid selle allalaaditud mudeli kustutada?",
+        "removeTitle": "Eemalda mudel",
+        "removeMessage": "Kas oled kindel, et soovid selle mudeli loendist eemaldada?"
+      },
+      "buttons": {
+        "settings": "Seaded",
+        "download": "Laadi alla",
+        "remove": "Eemalda",
+        "load": "Laadi",
+        "offload": "Vabasta"
+      },
+      "labels": {
+        "skills": "Võimed: ",
+        "vision": "Pilditugi",
+        "visionSupported": "on toetatud",
+        "visionNotSupported": "ei ole toetatud",
+        "visionUnknown": "on teadmata",
+        "capabilities": "võimalus.",
+        "modelName": "Mudeli nimi",
+        "contextLength": "Konteksti pikkus",
+        "architecture": "Arhitektuur",
+        "author": "Autor",
+        "requiresProjectionModel": "Vajab projektsioonimudelit",
+        "downloadProjectionModel": "Laadi alla projektsioonimudel",
+        "viewModelCardOnHuggingFace": "Vaata mudelikaarti Hugging Face'is",
+        "draftOnlyReason": "Ainult abimudel (draft). Vali see jaotisest Seaded → Spekulatiivne dekodeerimine."
+      },
+      "accessibility": {
+        "expandDetails": "Ava üksikasjad",
+        "collapseDetails": "Sulge üksikasjad",
+        "memoryWarning": "Mälu hoiatus",
+        "integrityWarning": "Terviklikkuse hoiatus",
+        "downloadProgress": "Allalaadimise edenemine",
+        "loadingIndicator": "Laadimine",
+        "loadButton": "Laadi mudel",
+        "offloadButton": "Vabasta mudel mälust",
+        "downloadButton": "Laadi mudel alla",
+        "settingsButton": "Mudeli seaded",
+        "deleteButton": "Kustuta mudel",
+        "removeButton": "Eemalda mudel",
+        "expandDetailsButton": "Ava mudeli üksikasjad",
+        "memoryWarningButton": "Näita mäluhoiatuse üksikasju",
+        "integrityWarningButton": "Näita terviklikkuse hoiatuse üksikasju",
+        "memoryWarningSnackbar": "Mäluhoiatuse teavitus"
+      }
+    },
+    "modelSettings": {
+      "template": {
+        "label": "Mall:",
+        "editButton": "Muuda",
+        "dialogTitle": "Muuda vestluse malli",
+        "note1": "Märkus: malli muutmine võib muuta BOS-i, EOS-i ja süsteemi prompti.",
+        "note2": "Kasutab Nunjucks'i. Jäta tühjaks, et kasutada mudeli enda malli.",
+        "placeholder": "Sisesta siia oma vestluse mall...",
+        "closeButton": "Sulge"
+      },
+      "stopWords": {
+        "label": "PEATUSSÕNAD",
+        "placeholder": "Lisa uus peatussõna"
+      },
+      "tokenSettings": {
+        "bos": "BOS",
+        "eos": "EOS",
+        "addGenerationPrompt": "Lisa genereerimise prompt",
+        "bosTokenPlaceholder": "BOS-token",
+        "eosTokenPlaceholder": "EOS-token",
+        "systemPrompt": "Süsteemi prompt"
+      }
+    },
+    "modelDescription": {
+      "size": "Suurus: ",
+      "parameters": "Parameetrid: ",
+      "separator": " | ",
+      "notAvailable": "puudub"
+    },
+    "modelCapabilities": {
+      "questionAnswering": "Küsimustele vastamine",
+      "summarization": "Kokkuvõtete tegemine",
+      "reasoning": "Järeldamine",
+      "roleplay": "Rollimäng",
+      "instructions": "Juhiste järgimine",
+      "code": "Koodi genereerimine",
+      "math": "Matemaatika",
+      "multilingual": "Mitmekeelne",
+      "rewriting": "Ümbersõnastamine",
+      "creativity": "Loovkirjutamine",
+      "vision": "Pilditugi",
+      "mtp": "Spekulatiivne (MTP)",
+      "mtpDraft": "Spekulatiivne abimudel"
+    },
+    "emptyTitle": "Mudeleid pole veel",
+    "emptyHint": "Puuduta nuppu +, et laadida alla Hugging Face'ist, lisada kohalik mudel või ühendada kaugserver."
+  },
+  "modelsHub": {
+    "title": "Mudelid",
+    "subtitle": "Avasta, laadi alla ja halda kõiki mudeleid, mida rakendus suudab käivitada.",
+    "searchPlaceholder": "Otsi mudeleid, avaldajaid, ülesandeid…",
+    "retry": "Proovi uuesti",
+    "notAvailable": "Pole saadaval",
+    "noDownloadableFile": "Selles repositooriumis pole allalaaditavat GGUF-faili",
+    "downloadStarted": "Allalaadimine alustatud",
+    "seeAll": "Vaata kõiki",
+    "exploreAction": "Avasta mudeleid",
+    "emptyTitle": "Ühtegi mudelit pole veel paigaldatud",
+    "emptyHint": "Sirvi hubi ja laadi alla mudel, mis sobib sinu seadmega ja sinu töö jaoks.",
+    "fitScore": "{score}/100 sobivus",
+    "installedFromRepo": "Paigaldatud sellest repositooriumist",
+    "installedBadge": "Paigaldatud",
+    "noFiles": "Selles repositooriumis pole avaldatud GGUF-faile.",
+    "visionFilesTitle": "Pilditoe projektsioonifailid (mmproj)",
+    "visionFilesHint": "Need väikesed failid lisavad vastavale tekstimudelile piltide mõistmise; nad laaditakse alla automaatselt koos pildimudelitega.",
+    "downloadFile": "Laadi fail alla",
+    "downloadShort": "Laadi",
+    "version": "Versioon",
+    "engineUnsupportedShort": "Kohalikult ei käivitu",
+    "engineYes": "GGUF – töötab kohalikult (llama.cpp)",
+    "engineNo": "Kohalik mootor ei toeta seda",
+    "capabilitiesTitle": "Võimed",
+    "categoryEngineNotice": "See kategooria loetleb päris repositooriume, kuid kohalik GGUF-i mootor ei suuda seda tüüpi mudeleid veel käivitada, seega on allalaadimine siin keelatud. Midagi ei simuleerita – kui mootori tugi lisandub, muutuvad need allalaaditavaks.",
+    "categoryInstalledSection": "Sinu mudelid selles kategoorias",
+    "categoryRemoteSection": "Avasta HuggingFace'ist",
+    "featuredTitle": "Esiletõstetud mudelid",
+    "recommendedTitle": "Soovitatud sinu seadmele",
+    "recentTitle": "Hiljuti lisatud",
+    "favoritesTitle": "Lemmikud",
+    "installedTitle": "Paigaldatud",
+    "wifiOnly": "Ainult Wi-Fi",
+    "categoriesTitle": "Kategooriad",
+    "installedCount": "{count} paigaldatud",
+    "discover": "Avasta",
+    "device": {
+      "ram": "RAM",
+      "storage": "Vaba salvestusruum",
+      "cpu": "CPU",
+      "gpu": "GPU",
+      "gpuOk": "Kiirendatud",
+      "gpuNo": "Ainult CPU"
+    },
+    "compat": {
+      "excellent": "Suurepärane ühilduvus",
+      "good": "Hea ühilduvus",
+      "limited": "Piiratud ühilduvus",
+      "notRecommended": "Pole soovitatud",
+      "unknown": "Ühilduvus teadmata"
+    },
+    "reasons": {
+      "engineUnsupported": "Seda mudelitüüpi ei saa kohalikul GGUF-i mootoril käivitada",
+      "engineSupported": "Töötab kohalikul GGUF-i mootoril",
+      "memoryComfortable": "Mälukasutus jääb mugavalt väikseks",
+      "memoryOk": "Mälukasutus on aktsepteeritav",
+      "memoryTight": "Mälu on kitsas – oleta aeglasemat tööd",
+      "memoryInsufficient": "Selle seadme RAM ei ole selle laadimiseks piisav",
+      "memoryUnknown": "Mäluvajadust repositooriumi andmete põhjal hinnata ei saa",
+      "storagePlenty": "Vaba salvestusruumi on küllalt",
+      "storageTight": "Pärast paigaldamist jääb salvestusruum kitsaks",
+      "storageInsufficient": "Vaba salvestusruumi ei ole piisavalt",
+      "storageUnknown": "Vaba salvestusruumi ei õnnestunud lugeda",
+      "cpuGood": "CPU-l on piisavalt tuumi kiireks järeldamiseks",
+      "cpuOk": "CPU suudab seda käitada, mõõduka kiirusega",
+      "cpuLimited": "CPU tuumi on vähe – järeldamine on aeglane",
+      "cpuUnknown": "CPU tuumade arvu ei õnnestunud lugeda",
+      "gpuSupported": "GPU-kiirendus on saadaval",
+      "gpuUnsupported": "GPU-kiirendust pole – töötab CPU-l",
+      "gpuUnknown": "GPU tuge ei õnnestunud kindlaks teha"
+    },
+    "overviewTemplate": "Mudel kategooriast {categories}, mille avaldas {author}, umbes {params} parameetriga, jagatud GGUF-failidena kohalikuks võrguühenduseta järeldamiseks selles seadmes.",
+    "overviewBlocked": "See on päris repositoorium, kuid selle mudeliliiki kohalik mootor käivitada ei saa, seega siin seda allalaadida ei saa.",
+    "statsTemplate": "HuggingFace'is: {downloads} allalaadimist · {likes} meeldimist.",
+    "tech": {
+      "architecture": "Arhitektuur",
+      "parameters": "Parameetrid",
+      "contextLength": "Konteksti pikkus",
+      "formats": "Vormingud",
+      "quantization": "Kvantiseerimised",
+      "fileCount": "GGUF-failid",
+      "version": "Redaktsioon (sha)",
+      "lastModified": "Viimati uuendatud",
+      "license": "Litsents",
+      "engine": "Mootor"
+    },
+    "capabilities": {
+      "offline": "Võrguühenduseta",
+      "context": "Kontekst",
+      "arabic": "Araabia keele tugi",
+      "multilingual": "Mitmekeelne"
+    },
+    "tabs": {
+      "overview": "Ülevaade",
+      "technical": "Tehniline",
+      "files": "Failid"
+    },
+    "categories": {
+      "text": "Tekst",
+      "vision": "Pilditugi",
+      "reasoning": "Järeldamine",
+      "coding": "Kood",
+      "multimodal": "Multimodaalne",
+      "embedding": "Embedding",
+      "translation": "Tõlge",
+      "audio": "Heli",
+      "image": "Pilt",
+      "video": "Video",
+      "general": "Üldine"
+    },
+    "dialog": {
+      "aboutTitle": "Selle mudeli kohta",
+      "aboutTemplate": "{family} GGUF-mudel autorilt {author}. Pärast allalaadimist töötab see selles seadmes täielikult võrguühenduseta. Allpool toodud suurus on HuggingFace'i esitatud täpne failisuurus.",
+      "familyUnknown": "GGUF",
+      "file": "Fail",
+      "downloadSize": "Allalaadimise suurus",
+      "extraVisionFiles": "Lisapilditoe failid (mmproj)",
+      "storageAfter": "Salvestusruum pärast paigaldamist",
+      "offline": "Töötab võrguühenduseta",
+      "offlineYes": "Jah – täielikult seadmes",
+      "context": "Konteksti pikkus",
+      "wifiOnlyWaiting": "Sisse on lülitatud ainult Wi-Fi kaudu allalaadimine. Mobiilse andmeside puhul jääb see allalaadimine järjekorda ootama, kuni Wi-Fi on taas olemas.",
+      "engineUnsupported": "Seda mudeliliiki (pildi/video/heli genereerimine) ei saa kohalik GGUF-i mootor käivitada, seega allalaadimine on keelatud. Siin pole midagi võltsi – loend on päris, mootor ei lihtsalt suuda seda käitada.",
+      "confirmDownload": "Laadi mudel alla",
+      "starting": "Alustan…"
+    },
+    "storage": {
+      "title": "Mudelite salvestusruum",
+      "entryHint": "Kasutuse jaotus, suurimad mudelid, koristus",
+      "used": "Mudelite kasutuses",
+      "available": "Saadaval",
+      "distribution": "Kategooriate kaupa",
+      "largest": "Suurimad mudelid",
+      "orphans": "Lõpetamata ja jäänukfailid",
+      "orphansFound": "{count} faili · {size} saab vabastada",
+      "orphansNone": "Pole midagi puhastada – salvestusruum on korras.",
+      "cleanNow": "Puhasta",
+      "cleanTitle": "Kustutada jäänukfailid?",
+      "cleanMessage": "{count} lõpetamata või jäänukfaili eemaldatakse jäädavalt.",
+      "cleanConfirm": "Kustuta",
+      "checking": "Kontrollin salvestusruumi…",
+      "enough": "Vaba ruumi on piisavalt",
+      "notEnough": "Vaba ruumi ei ole piisavalt",
+      "required": "Vajalik",
+      "availableLabel": "Saadaval",
+      "deficit": "Puudu on {amount}"
+    },
+    "downloads": {
+      "title": "Allalaadimised",
+      "emptyTitle": "Allalaadimisi pole",
+      "emptyHint": "Siia ilmuvad allalaaditavad mudelid koos reaalajas edenemisega ja neid saab hallata ka võrguühenduseta.",
+      "active": "Laadin alla",
+      "paused": "Peatatud",
+      "pausedHint": "Peatatud – jätkab samast baidipositsioonist",
+      "verifying": "Kontrollin",
+      "verifyingHint": "Kontrollin faili terviklikkust (suurus + kontrollsumma) enne paigaldamist",
+      "completed": "Lõpetatud",
+      "remaining": "≈",
+      "pause": "Peata",
+      "resume": "Jätka",
+      "cancel": "Tühista"
+    },
+    "updates": {
+      "title": "Uuendused",
+      "check": "Kontrolli uuendusi",
+      "checking": "Kontrollin…",
+      "recheck": "Kontrolli uuesti",
+      "upToDate": "Kõik paigaldatud mudelid vastavad oma lähterepositooriumi redaktsioonile.",
+      "update": "Uuenda"
+    },
+    "sort": {
+      "title": "Järjesta",
+      "recommended": "Parim sobivus",
+      "downloads": "Enim allalaaditud",
+      "newest": "Uusimad",
+      "name": "Nimi",
+      "sizeAsc": "Väiksemad esiteks",
+      "sizeDesc": "Suuremad esiteks"
+    },
+    "search": {
+      "installedSection": "Sinu mudelid",
+      "hfSection": "HuggingFace'i tulemused",
+      "noResults": "Mudeleid ei leitud",
+      "noResultsHint": "Proovi teist nime, avaldajat või ülesannet.",
+      "errorTitle": "Otsing ebaõnnestus"
+    }
+  },
+  "completionParams": {
+    "include_thinking_in_context": "Lisa mudelile saadetavasse konteksti AI mõtlemise/järeldamise osad. Selle keelamine säästab kontekstiruumi. Võib mõjutada jõudlust.",
+    "jinja": "Luba Jinja mallipõhine vestluse vormindus. Kui lubatud, kasutatakse Jinja-põhist vestlusmallide töötlust, et tagada parem ühilduvus moodsate mudelitega.",
+    "grammar": "Jõusta konkreetsed grammatikareeglid, et genereeritud tekst järgiks kindlat struktuuri või vormingut",
+    "stop": "Määra konkreetsed fraasid, mis peatavad teksti genereerimise",
+    "n_predict": "Maksimaalne genereeritavate tokenite arv. Määra valikule Piiramatu, et piirang puuduks, või valikule Kohandatud, et sisestada väärtus.",
+    "n_probs": "Näita alternatiivsete sõnade tõenäosusskoore.",
+    "top_k": "Piira sõnavalikut K kõige tõenäolisema variandiga, et juhtida loovust. Madalamad väärtused teevad vastused keskendunumaks",
+    "top_p": "Tasakaalusta loovust ja sidusust. Kõrgemad väärtused (lähedal 1,0) võimaldavad loovamaid, kuid potentsiaalselt vähem keskendunud vastuseid",
+    "min_p": "Minimaalne tõenäosus, et tokenit üldse arvestataks. Kõrvalda ebatõenäolised sõnad, et vähendada mõttetuid või kontekstiväliseid vastuseid",
+    "temperature": "Juhi loovust vastu ennustatavust. Kõrgemad väärtused teevad vastused loovamaks, kuid vähem keskendunuks",
+    "penalty_last_n": "Kui kaugele tagasi korduste otsimiseks vaadata. Suuremad väärtused aitavad vältida pikaajalist kordamist",
+    "penalty_repeat": "Vähenda sõnade kordamist. Kõrgemad väärtused muudavad vastused keeleliselt mitmekesisemaks",
+    "penalty_freq": "Karista liigselt kasutatavaid sõnu. Kõrgemad väärtused soodustavad laiema sõnavaliku kasutamist",
+    "penalty_present": "Vähenda teemade ja ideede kordumist. Kõrgemad väärtused soodustavad mitmekesisemat sisu",
+    "mirostat": "Luba täiustatud juhtimine vastuste loovuse üle. Määra 1 või 2 (siledam), et juhuslikkust ja sidusust nutikalt reaalajas kohandada.",
+    "mirostat_tau": "Määra Mirostat'i sihtloovuse tase. Kõrgemad väärtused võimaldavad mitmekesisemaid ja fantaasiarikkamaid vastuseid, madalamad tagavad keskendunumad väljundid.",
+    "mirostat_eta": "Kui kiiresti Mirostat loovust kohandab. Kõrgemad väärtused tähendavad kiiremat kohandamist",
+    "dry_multiplier": "DRY-funktsiooni (Don't Repeat Yourself) tugevus. Kõrgemad väärtused takistavad kordamist palju tugevamalt",
+    "dry_base": "Baaskaristus kordamise eest DRY-režiimis. Kõrgemad väärtused on kordamise ennetamisel agressiivsemad",
+    "dry_allowed_length": "Mitu sõna võib korduda, enne kui DRY karistus rakendub",
+    "dry_penalty_last_n": "Kui kaugele tagasi DRY-režiimis kordust otsida",
+    "dry_sequence_breakers": "Sümbolid, mis lähtestavad DRY-režiimis korduste kontrolli",
+    "ignore_eos": "Jätka genereerimist ka siis, kui mudel tahab lõpetada. Kasulik pikemate vastuste sundimiseks",
+    "logit_bias": "Mõjuta, kui tõenäoliselt konkreetsed sõnad vastuses ilmuvad",
+    "seed": "Määra juhuslike arvude generaatori seeme. Kasulik korratavate tulemuste jaoks",
+    "xtc_probability": "Määra tokenite eemaldamise tõenäosus XTC-sampleriga. 0 = keelatud",
+    "xtc_threshold": "Määra minimaalne tõenäosuslävi tokenitele, mis XTC-sampleriga eemaldatakse. (> 0,5 keelab XTC)",
+    "typical_p": "Luba lokaalselt tüüpiline valim parameetriga p. 1,0 = keelatud"
+  },
+  "about": {
+    "screenTitle": "Rakenduse teave",
+    "description": "Rakendus, mis toob keelemudelid otse sinu telefoni. Püstitub llama.cpp ja llama.rn õlgadele.",
+    "supportProject": "Toeta projekti",
+    "supportProjectDescription": "Kui sulle meeldib DRS AI kasutada, kaalu projekti toetamist:",
+    "githubButton": "Anna GitHubis täht",
+    "orBy": "või",
+    "versionCopiedTitle": "Versioon kopeeritud",
+    "versionCopiedDescription": "Versiooni teave on kopeeritud lõikelauale",
+    "tour": "Tutvustus",
+    "tourDescription": "Esita tutvustusvaated uuesti, et näha, mida DRS AI pakub.",
+    "showIntroButton": "Näita tutvustust uuesti",
+    "privacyPolicy": "Privaatsuspoliitika",
+    "termsOfService": "Teenuse tingimused",
+    "versionFormat": "Versioon {{version}} ({{build}})",
+    "successTitle": "Õnnestus"
+  },
+  "feedback": {
+    "title": "Saada tagasisidet",
+    "description": "Sinu arvamus on oluline! Räägi meile, kuidas DRS AI sind aitab ja mida saaksime teha, et see oleks veel kasulikum.",
+    "shareThoughtsButton": "Jaga oma mõtteid",
+    "useCase": {
+      "label": "Milleks sina DRS AI-d kasutad?",
+      "placeholder": "nt kokkuvõtted, rollimäng jne"
+    },
+    "featureRequests": {
+      "label": "Funktsioonisoovitus",
+      "placeholder": "Milliseid funktsioone sooviksid näha?"
+    },
+    "generalFeedback": {
+      "label": "Üldine tagasiside",
+      "placeholder": "Jaga mõnda muud mõtet, mis sul on."
+    },
+    "usageFrequency": {
+      "label": "Kui sageli kasutad DRS AI-d? (Valikuline)",
+      "options": {
+        "daily": "Iga päev",
+        "weekly": "Kord nädalas",
+        "monthly": "Kord kuus",
+        "rarely": "Harva"
+      }
+    },
+    "email": {
+      "label": "Kontakti e-post (Valikuline)",
+      "placeholder": "Sinu e-posti aadress"
+    },
+    "submit": "Saada tagasiside",
+    "validation": {
+      "required": "Palun kirjuta vähemalt mõni tagasiside"
+    },
+    "success": "Aitäh tagasiside eest!",
+    "error": {
+      "general": "Tagasiside saatmisel tekkis viga. Palun proovi uuesti."
+    }
+  },
+  "components": {
+    "attachmentButton": {
+      "attachmentButtonAccessibilityLabel": "Saada meediat"
+    },
+    "bubble": {
+      "msPerToken": "{{value}} ms/token",
+      "tokensPerSec": "{{value}} tokenit/s",
+      "ttft": "{{value}} ms TTFT",
+      "draftAccepted": "draft: {{accepted}}/{{total}} ({{pct}}%)",
+      "interrupted": "Katkestatud",
+      "truncated": "Kärbitud – kontekst on tõenäoliselt täis"
+    },
+    "exportUtils": {
+      "fileSaved": "Fail salvestatud",
+      "fileSavedMessage": "Fail salvestati sinu allalaadimiste kausta nimega {{filename}}",
+      "share": "Jaga",
+      "ok": "OK",
+      "shareError": "Jagamise viga",
+      "shareErrorMessage": "Faili jagamine ei õnnestunud. Palun proovi uuesti.",
+      "saveError": "Viga allalaadimiste kausta salvestamisel",
+      "saveOptions": "Salvestamise valikud",
+      "saveOptionsMessage": "Otse allalaadimiste kausta salvestada ei saa. Kas soovid hoopis faili jagada?",
+      "cancel": "Tühista",
+      "shareContentErrorMessage": "Sisu jagamine ei õnnestunud. Palun proovi uuesti.",
+      "exportError": "Eksportimise viga",
+      "exportErrorMessage": "Faili eksportimisel tekkis viga. Palun proovi uuesti.",
+      "permissionRequired": "Vajalik on salvestusõigus",
+      "permissionMessage": "Ekspordi allalaadimiste kausta salvestamiseks vajame luba.",
+      "permissionDenied": "Luba puudub",
+      "permissionDeniedMessage": "Salvestusloa puudumisel on eksportimise funktsioon keelatud.",
+      "continue": "Jätka"
+    },
+    "thinkingBubble": {
+      "reasoning": "Järeldamine"
+    },
+    "pendingIndicator": {
+      "preparingTool": "Valmistan tööriista",
+      "buildingPage": "Loon lehekülge",
+      "calculating": "Arvutan",
+      "lookingUpTime": "Otsin aega üles",
+      "stopping": "Peatan…"
+    },
+    "toolMetrics": {
+      "tokens": "{{count}} tokenit",
+      "elapsed": "{{seconds}} s"
+    },
+    "chatEmptyPlaceholder": {
+      "noModelsTitle": "Mudeleid pole saadaval",
+      "noModelsDescription": "Laadi alla mudel, et alustada vestlust DRS AI-ga",
+      "noModelsButton": "Laadi mudel alla",
+      "activateModelTitle": "Alustamiseks aktiveeri mudel",
+      "activateModelDescription": "Vali mudel ja laadi see alla. Pärast allalaadimist puuduta mudeli kõrval nuppu Laadi ja alusta vestlust.",
+      "activateModelButton": "Vali mudel",
+      "loading": "Laadin...",
+      "gettingReadyTitle": "{{name}} valmistub",
+      "gettingReadyDescription": "Anname kohe märku, kui sinu abiline saab vestelda. Puuduta üleval olevat bännerit, et näha, kuidas läheb."
+    },
+    "chatInput": {
+      "inputPlaceholder": "Sõnum",
+      "thinkingToggle": {
+        "enableThinking": "Luba mõtlemise režiim",
+        "disableThinking": "Keela mõtlemise režiim",
+        "thinkingEnabled": "Mõtlemise režiim lubatud",
+        "thinkingDisabled": "Mõtlemise režiim keelatud",
+        "thinkText": "Mõtle",
+        "cycleEffort": "Järeldamise panus: {{level}}. Topeltklõpsa, et panuse taset vahetada"
+      }
+    },
+    "contentReportSheet": {
+      "title": "Teata sisust",
+      "privacyNote": "Me ei saada ühtegi sõnumi sisu ega vestluse üksikasju. Palun kirjelda konkreetset probleemi, millega kohtusid.",
+      "categoryLabel": "Teate kategooria",
+      "selectCategory": "Vali kategooria",
+      "categories": {
+        "hate": "Vihakõne",
+        "sexual": "Seksuaalne sisu",
+        "selfHarm": "Enesevigastamine",
+        "violence": "Vägivald",
+        "other": "Muu"
+      },
+      "descriptionLabel": "Kirjeldus",
+      "descriptionPlaceholder": "Palun kirjelda selle sisuga seotud probleemi...",
+      "includeModelInfo": "Lisa mudeli teave",
+      "includeModelInfoDescription": "Lisa mudeli nimi ja identifikaator, mis aitab meil uurida",
+      "noActiveModelNote": "Praegu pole ühtegi mudelit aktiivne",
+      "submit": "Saada teade",
+      "validation": {
+        "title": "Info puudub",
+        "message": "Palun vali kategooria ja kirjelda probleemi."
+      },
+      "success": {
+        "title": "Teade saadetud",
+        "message": "Aitäh teate eest. Me vaatame selle üle ja võtame asjakohased meetmed."
+      },
+      "error": {
+        "title": "Teate saatmine ebaõnnestus",
+        "message": "Teate saatmine ebaõnnestus. Palun proovi uuesti."
+      }
+    },
+    "modelErrorReportSheet": {
+      "title": "Teata mudeli laadimise probleemist",
+      "privacyNote": "Aita DRS AI-d paremaks teha, jagades selle vea üksikasju. Vaata allpool üle, mida jagatakse – ükskõik millise punkti võid valikust eemaldada.",
+      "errorMessage": "Veateade",
+      "modelInfo": "Mudeli teave",
+      "modelName": "Nimi",
+      "modelSource": "Allikas",
+      "modelSize": "Suurus",
+      "contextParams": "Konteksti parameetrid",
+      "deviceInfo": "Seadme teave",
+      "deviceModel": "Seade",
+      "osVersion": "OS",
+      "memoryInfo": "Mälu",
+      "cpuArchitecture": "CPU",
+      "isEmulator": "Emulaator",
+      "additionalInfoLabel": "Lisakontekst (valikuline)",
+      "additionalInfoPlaceholder": "Mis tahes lisainfo, mis aitaks meil probleemi mõista...",
+      "submit": "Saada teade",
+      "success": {
+        "title": "Teade saadetud",
+        "message": "Aitäh, et aitad DRS AI-d paremaks teha. Sinu teade aitab meil selle probleemi lahendada."
+      },
+      "error": {
+        "title": "Teate saatmine ebaõnnestus",
+        "message": "Teate saatmine ebaõnnestus. Palun proovi hiljem uuesti."
+      }
+    },
+    "chatGenerationSettingsSheet": {
+      "invalidValues": "Vigased väärtused",
+      "invalidNumericValuesMessage": "Peab olema korrektne number",
+      "pleaseCorrect": "Palun paranda järgnev:",
+      "ok": "OK",
+      "saveChanges": "Salvesta muudatused",
+      "saveAsPreset": "Salvesta eelseadistusena",
+      "title_session": "Vestluse genereerimise seaded (sessioon)",
+      "title_preset": "Vestluse genereerimise seaded (eelseadistus)",
+      "resetToSystemDefaults": "Lähtesta süsteemi vaikeväärtustele",
+      "resetToPreset": "Lähtesta eelseadistusele",
+      "applytoPresetAlert": {
+        "title": "Õnnestus",
+        "message": "Neid seadeid rakendatakse kõigile tulevastele sessioonidele"
+      },
+      "assistantSettings": "Abilise seaded",
+      "settingsSource": "Seadete allikas"
+    },
+    "assistantGenerationSettingsSheet": {
+      "title": "Genereerimise seaded – {{assistantName}}",
+      "invalidValues": "Vigased väärtused",
+      "invalidNumericValuesMessage": "Peab olema korrektne number",
+      "pleaseCorrect": "Palun paranda järgnev:",
+      "ok": "OK",
+      "error": "Viga",
+      "failedToSave": "Abilise seadete salvestamine ebaõnnestus",
+      "resetToGlobal": "Lähtesta globaalsetele vaikeväärtustele",
+      "resetToSystem": "Lähtesta süsteemi vaikeväärtustele",
+      "clearAssistantSettings": "Kustuta abilise seaded",
+      "customSettingsFor": "Kohandatud seaded abilisele {{assistantName}}",
+      "inheritedSettingsFor": "Pärinud seaded abilisele {{assistantName}}"
+    },
+    "chatHeaderTitle": {
+      "defaultTitle": "Vestlus"
+    },
+    "fileMessage": {
+      "fileButtonAccessibilityLabel": "Fail"
+    },
+    "chatAssistantModelPickerSheet": {
+      "modelsTab": "Mudelid",
+      "assistantsTab": "Abilised",
+      "noAssistant": "Abilist pole",
+      "disableAssistant": "Keela aktiivne abiline",
+      "noDescription": "Kirjeldust pole",
+      "assistantType": "Abiline",
+      "roleplayType": "Rollimäng",
+      "videoType": "Video",
+      "confirmationTitle": "Kinnitus",
+      "modelSwitchMessage": "Sellel abilisel on teistsugune vaikemudel ({{modelName}}). Kas lülituda abilise vaikemudelile?",
+      "keepButton": "Jäta",
+      "switchButton": "Lülita"
+    },
+    "downloadErrorDialog": {
+      "downloadFailedTitle": "Allalaadimine ebaõnnestus",
+      "downloadFailedMessage": "Mudeli allalaadimine ebaõnnestus: {{message}}",
+      "unauthorizedTitle": "Autentimine ebaõnnestus",
+      "unauthorizedMessage": "Sinu Hugging Face'i token tundub olevat vigane või aegunud. Palun uuenda tokenit seadetes.",
+      "forbiddenTitle": "Juurdepääs keelatud",
+      "forbiddenMessage": "Sul pole sellele mudelile juurdepääsuõigust. Palun veendu, et:",
+      "forbiddenSteps": [
+        "Sinu tokenil on \"read\" õigus",
+        "Sa oled taotlenud ja saanud sellele mudelile juurdepääsu",
+        "Mudeli omanik kinnitas sinu juurdepääsupäringu"
+      ],
+      "getTokenTitle": "Hangi Hugging Face'i token",
+      "getTokenMessage": "Selle mudeli allalaadimiseks on vaja Hugging Face'i tokenit.",
+      "getTokenSteps": [
+        "Mine huggingface.co lehele ja logi sisse",
+        "Ava Settings > Access Tokens",
+        "Loo uus token \"read\" juurdepääsuga",
+        "Kopeeri token ja kleebi see tokeniväljale"
+      ],
+      "tokenDisabledTitle": "Token on keelatud",
+      "tokenDisabledMessage": "Sul on Hugging Face'i token määratud, kuid see on praegu keelatud. Selle mudeli allalaadimiseks on vaja tokenit. Jätka, et token lubada.",
+      "enableAndRetry": "Luba ja proovi uuesti",
+      "goToSettings": "Mine seadetesse",
+      "tryAgain": "Proovi uuesti",
+      "viewOnHuggingFace": "Vaata mudelit HF-is ↗"
+    },
+    "headerRight": {
+      "deleteChatTitle": "Kustuta vestlus",
+      "deleteChatMessage": "Kas oled kindel, et soovid selle vestluse kustutada?",
+      "generationSettings": "Genereerimise seaded",
+      "model": "Mudel",
+      "duplicateChatHistory": "Paljunda vestlusajalugu",
+      "makeChatTemporary": "Tee vestlus ajutiseks",
+      "export": "Ekspordi/impordi",
+      "exportCurrentSession": "Ekspordi praegune sessioon",
+      "exportCurrentSessionMarkdown": "Ekspordi Markdownina",
+      "exportAllSessions": "Ekspordi kõik sessioonid",
+      "exportChatSession": "Ekspordi vestlussessioon",
+      "importSessions": "Impordi sessioonid",
+      "exportErrorTitle": "Eksportimise viga",
+      "exportCurrentSessionError": "Praeguse sessiooni eksportimine ebaõnnestus.",
+      "exportAllError": "Kõigi sessioonide eksportimine ebaõnnestus.",
+      "importSuccessTitle": "Importimine õnnestus",
+      "importErrorTitle": "Importimise viga"
+    },
+    "hfTokenSheet": {
+      "title": "Hugging Face'i token",
+      "description": "Vajalik lukustatud mudelitele juurdepääsuks",
+      "inputLabel": "Isiklik juurdepääsutoken",
+      "inputPlaceholder": "Kleebi oma token siia",
+      "save": "Salvesta token",
+      "saved": "Token salvestati edukalt",
+      "reset": "Lähtesta token",
+      "resetSuccess": "Token eemaldati edukalt",
+      "instructions": "Kuidas tokenit hankida:",
+      "instructionsSteps": [
+        "Mine huggingface.co lehele ja logi sisse",
+        "Ava Settings > Access Tokens",
+        "Loo uus token \"read\" juurdepääsuga",
+        "Kopeeri token ja kleebi see allpool"
+      ],
+      "getTokenLink": "Hangi token huggingface.co lehelt ↗",
+      "error": {
+        "saving": "Viga tokeni salvestamisel",
+        "missing": "Vajalik on Hugging Face'i token",
+        "invalid": "Vigane või aegunud token",
+        "gatedModelAccess": "Juurdepääs sellele lukustatud mudelile keelati"
+      },
+      "gatedModelIndicator": "Vajalik on token",
+      "tokenRequired": "See mudel vajab Hugging Face'i juurdepääsutokenit",
+      "searchErrorHint": "Sinu Hugging Face'i API-token on vigane või aegunud. Otsimise jätkamiseks eemalda token või keela tokeni autentimine seadetes.",
+      "disableAndRetry": "Keela token ja proovi uuesti"
+    },
+    "modelSettingsSheet": {
+      "modelSettings": "Mudeli seaded",
+      "saveChanges": "Salvesta muudatused",
+      "reasoningSection": "Järeldamine",
+      "isReasoningModel": "Järeldusmudel",
+      "isReasoningModelHelp": "Näita selle mudeli jaoks mõtlemise juhtimist, isegi kui seda ei tuvastatud automaatselt.",
+      "supportsEffort": "Toetab astmelist panust",
+      "effortValues": "Panuse tasemed, mida see mudel toetab",
+      "effortLevels": {
+        "minimal": "Minimaalne",
+        "low": "Madal",
+        "medium": "Keskmine",
+        "high": "Kõrge",
+        "xhigh": "Eriti kõrge",
+        "max": "Maksimaalne"
+      }
+    },
+    "modelsHeaderRight": {
+      "menuTitleHf": "Hugging Face'i mudelid",
+      "menuTitleDownloaded": "Allalaaditud mudelid",
+      "menuTitleGrouped": "Rühmita mudelitüübi järgi",
+      "menuTitleReset": "Lähtesta mudelite loend"
+    },
+    "modelsResetDialog": {
+      "proceedWithReset": "Jätka lähtestamist",
+      "confirmReset": "Kinnita lähtestamine"
+    },
+    "assistantSheet": {
+      "title": {
+        "edit": "Muuda abilist",
+        "newAssistant": "Uus abiline",
+        "newVideoAssistant": "Uus videoabiline"
+      },
+      "description": "Kirjeldus",
+      "descriptionPlaceholder": "Sisesta lühikirjeldus oma abilise kohta",
+      "parameters": "Parameetrid",
+      "generationSettings": "Genereerimise seaded",
+      "configureGenerationSettings": "Seadista genereerimise seadeid",
+      "validation": {
+        "nameRequired": "Nimi on nõutav",
+        "generatingPromptRequired": "AI prompti kasutamisel on genereerimise prompt nõutav",
+        "promptModelRequired": "AI prompti kasutamisel on prompti genereerimise mudel nõutav"
+      },
+      "talents": "Oskused",
+      "talentNames": {
+        "render_html": "HTML-i eelvaade",
+        "calculate": "Matemaatilised avaldised",
+        "datetime": "Kuupäev ja kellaaeg",
+        "web_search": "Veebiotsing",
+        "read_url": "Loe veebilehekülge"
+      },
+      "talentDescriptions": {
+        "render_html": "Kuva HTML-dokumendid otse vestluses",
+        "calculate": "Arvuta matemaatilisi avaldisi",
+        "datetime": "Hangi praegune kuupäev ja kellaaeg",
+        "web_search": "Otsi internetist ajakohast teavet (vajab API-võtit seadetes)",
+        "read_url": "Loe veebilehekülje täielikku sisu (vajab API-võtit seadetes)"
+      },
+      "greeting": {
+        "sectionLabel": "Tervitus",
+        "textLabel": "Tervitussõnum",
+        "textPlaceholder": "Mida peaks see abiline tühja vestluse korral ütlema?",
+        "suggestedPromptsLabel": "Soovitatud promptid",
+        "addPromptButton": "Lisa prompt",
+        "promptPlaceholder": "Lühike prompt märgise jaoks",
+        "removePromptLabel": "Eemalda prompt"
+      }
+    },
+    "assistantPersonaSheet": {
+      "title": {
+        "create": "Loo abiline",
+        "edit": "Muuda abilist"
+      },
+      "assistantName": "Abilise nimi",
+      "assistantNamePlaceholder": "Nimi",
+      "defaultModel": "Vaikemudel",
+      "defaultModelPlaceholder": "Vali mudel",
+      "validation": {
+        "generatingPromptRequired": "Genereerimise prompt on nõutav",
+        "promptModelRequired": "Prompti genereerimise mudel on nõutav"
+      },
+      "create": "Loo"
+    },
+    "modelNotAvailable": {
+      "noModelsDownloaded": "Sul pole veel ühtegi mudelit allalaaditud. Palun laadi kõigepealt alla mudel.",
+      "downloadAModel": "Laadi alla mudel",
+      "defaultModelNotDownloaded": "See abiline soovitab konkreetset mudelit, mis tuleb allalaadida, või saad valida teise mudeli.",
+      "modelNotDownloadedShort": "Mudel pole allalaaditud",
+      "recommendedModel": "Soovitatud mudel",
+      "cancelDownload": "Tühista allalaadimine",
+      "download": "Laadi alla"
+    },
+    "roleplayPersonaSheet": {
+      "title": {
+        "create": "Loo rollimängu abiline",
+        "edit": "Muuda rollimängu abilist"
+      },
+      "assistantName": "Abilise nimi",
+      "assistantNamePlaceholder": "Nimi",
+      "defaultModel": "Vaikemudel",
+      "defaultModelPlaceholder": "Vali mudel",
+      "descriptionSection": "Kirjeldus",
+      "world": "Maailm",
+      "worldPlaceholder": "Fantaasia",
+      "location": "Asukoht",
+      "locationPlaceholder": "Loitsutud mets",
+      "locationSublabel": "Kus lugu toimub?",
+      "aiRole": "AI roll",
+      "aiRolePlaceholder": "Eldara, paharetlik metsahaldjas",
+      "aiRoleSublabel": "Määra tegelase roll",
+      "userRole": "Kasutaja roll",
+      "userRolePlaceholder": "Rüütel Elandor, vapper sõdalane",
+      "userRoleSublabel": "Kes sina oled?",
+      "situation": "Olukord",
+      "situationPlaceholder": "Päästmisoperatsioon, mõistatuse lahendamine",
+      "toneStyle": "Toon/stiil",
+      "toneStylePlaceholder": "Tõsine",
+      "validation": {
+        "promptModelRequired": "Prompti genereerimise mudel on nõutav"
+      },
+      "create": "Loo"
+    },
+    "lookiePersonaSheet": {
+      "title": {
+        "create": "Loo Lookie abiline",
+        "edit": "Muuda Lookie abilist"
+      },
+      "assistantName": "Abilise nimi",
+      "assistantNamePlaceholder": "Sisesta nimi oma Lookie abilisele",
+      "visionModel": "Pildimudel",
+      "visionModelPlaceholder": "Vali pildimudel",
+      "requiredModelsSection": "Vajalikud mudelid",
+      "captureInterval": "Võttevahemik",
+      "captureIntervalHelper": "Aeg automaatsete võtete vahel millisekundites",
+      "create": "Loo"
+    },
+    "sendButton": {
+      "accessibilityLabel": "Saada"
+    },
+    "systemPromptSection": {
+      "sectionTitle": "Süsteemi prompt",
+      "useAIPrompt": "Kasuta AI-t süsteemi prompti genereerimiseks",
+      "modelSelector": {
+        "label": "Vali genereerimise mudel*",
+        "sublabel": "Soovituslik: Llama 3.2 3B või Qwen3 4B Instruct 2507.",
+        "placeholder": "Vali mudel"
+      },
+      "generatingPrompt": {
+        "label": "Eesmärk ja kontekst",
+        "placeholder": "Kirjelda selle abilise rolli, eesmärki või stsenaariumi..."
+      },
+      "buttons": {
+        "loadingModel": "Laadin mudelit...",
+        "stopGenerating": "Peata genereerimine",
+        "generatePrompt": "Genereeri süsteemi prompt",
+        "resetParameters": "Lähtesta parameetrid",
+        "resetTemplate": "Lähtesta mall"
+      },
+      "systemPrompt": {
+        "label": "Süsteemi prompt",
+        "sublabel": "Muuda ja katseta julgelt, et leida oma stsenaariumi jaoks optimaalne prompt",
+        "placeholder": "Sina oled abivalmis abiline"
+      },
+      "warnings": {
+        "promptChanged": "Süsteemi prompti on käsitsi muudetud"
+      }
+    },
+    "sidebarContent": {
+      "menuItems": {
+        "chat": "Vestlus",
+        "models": "Mudelid",
+        "assistants": "Abilised",
+        "benchmark": "Jõudlustest",
+        "settings": "Seaded",
+        "appInfo": "Rakenduse teave",
+        "testCompletion": "Completioni test"
+      },
+      "deleteChatTitle": "Kustuta vestlus",
+      "deleteChatMessage": "Kas oled kindel, et soovid selle vestluse kustutada?",
+      "select": "Vali",
+      "nSelected": "{{count}} valitud",
+      "selectAll": "Vali kõik",
+      "deselectAll": "Tühista kõik valikud",
+      "exportCount": "Ekspordi ({{count}})",
+      "deleteCount": "Kustuta ({{count}})",
+      "bulkDeleteTitle": "Kustuta vestlussessioonid",
+      "bulkDeleteMessage": "Kustutada {{count}} vestlussessioon? Seda toimingut ei saa tagasi võtta.",
+      "bulkDeleteError": "Vestlussessioonide kustutamine ebaõnnestus. Palun proovi uuesti.",
+      "exportError": "Vestlussessiooni eksportimine ebaõnnestus. Palun proovi uuesti.",
+      "bulkExportError": "Vestlussessioonide eksportimine ebaõnnestus. Palun proovi uuesti.",
+      "pin": "Kinnita",
+      "unpin": "Eemalda kinnitus",
+      "dateGroups": {
+        "pinned": "Kinnitatud",
+        "today": "Täna",
+        "yesterday": "Eile",
+        "thisWeek": "Sel nädalal",
+        "lastWeek": "Möödunud nädalal",
+        "twoWeeksAgo": "2 nädalat tagasi",
+        "threeWeeksAgo": "3 nädalat tagasi",
+        "fourWeeksAgo": "4 nädalat tagasi",
+        "lastMonth": "Möödunud kuul",
+        "older": "Vanemad"
+      },
+      "emptySessionsTitle": "Vestlusi pole veel",
+      "emptySessionsHint": "Alusta uut vestlust vestlusvaatest"
+    },
+    "usageStats": {
+      "tooltip": {
+        "title": "Mälukasutus",
+        "used": "Kasutusel: ",
+        "total": "Kokku: ",
+        "usage": "Kasutus: "
+      },
+      "byteSizes": [
+        "baiti",
+        "KB",
+        "MB",
+        "GB"
+      ]
+    },
+    "chatView": {
+      "menuItems": {
+        "copy": "Kopeeri",
+        "regenerate": "Genereeri uuesti",
+        "regenerateWith": "Genereeri uuesti mudeliga",
+        "edit": "Muuda",
+        "reportContent": "Teata sisust"
+      }
+    },
+    "assistantHeaderRight": {
+      "exportAllAssistants": "Ekspordi kõik abilised",
+      "importAssistants": "Impordi abilised",
+      "importSuccess": "Imporditi edukalt {{count}} abiline.",
+      "importError": "Abiliste importimine ebaõnnestus. Palun kontrolli faili vormingut.",
+      "exportErrorTitle": "Eksportimise viga",
+      "exportAllError": "Kõigi abiliste eksportimine ebaõnnestus.",
+      "importSuccessTitle": "Importimine õnnestus",
+      "importErrorTitle": "Importimise viga"
+    },
+    "brandHeader": {
+      "tagline": "Sinu privaatne AI otse seadmes"
+    },
+    "authSheet": {
+      "signInTitle": "Logi sisse",
+      "signUpTitle": "Loo konto",
+      "fullNameLabel": "Täisnimi",
+      "emailLabel": "E-post",
+      "passwordLabel": "Salasõna",
+      "signInButton": "Logi sisse",
+      "signUpButton": "Loo konto",
+      "forgotPassword": "Unustasid salasõna?",
+      "or": "või",
+      "continueWithGoogle": "Jätka Google'iga",
+      "haveAccount": "Juba on konto? ",
+      "noAccount": "Pole kontot? ",
+      "signUpLink": "Registreeru",
+      "signInLink": "Logi sisse",
+      "signingIn": "Login sisse...",
+      "fillRequiredFields": "Palun täida kõik nõutud väljad.",
+      "enterFullName": "Palun sisesta oma täisnimi.",
+      "enterEmailFirst": "Palun sisesta kõigepealt oma e-posti aadress.",
+      "accountCreatedTitle": "Konto loodud",
+      "accountCreatedMessage": "Konto kinnitamiseks vaata oma e-posti.",
+      "welcomeBackTitle": "Tere tulemast tagasi!",
+      "welcomeBackMessage": "Sisselogimine õnnestus.",
+      "googleErrorTitle": "Google'i sisselogimise viga",
+      "passwordResetTitle": "Salasõna lähtestamine",
+      "passwordResetMessage": "Salasõna lähtestamise juhised on saadetud sinu e-postile.",
+      "authErrorTitle": "Autentimise viga"
+    },
+    "squareAssistantCard": {
+      "videoAssistant": "Video-AI-abiline",
+      "advancedAssistant": "Täiustatud AI-abiline",
+      "assistant": "AI-abiline",
+      "byCreator": "autor {{creator}}",
+      "downloadAssistantTitle": "Laadi alla abiline",
+      "downloadAssistantMessage": "Laadi abiline \"{{assistantName}}\" alla, et alustada vestlust?",
+      "download": "Laadi alla",
+      "downloadErrorTitle": "Allalaadimise viga",
+      "downloadErrorMessage": "Abilise allalaadimine ebaõnnestus. Palun proovi uuesti.",
+      "startChatErrorMessage": "Vestluse alustamine ebaõnnestus. Palun proovi uuesti.",
+      "switchModelTitle": "Lülituda mudelile?",
+      "switchModelMessage": "Lülituda selle abilise jaoks mudelile \"{{modelName}}\"?",
+      "keepCurrent": "Jäta praegune",
+      "switch": "Lülita",
+      "shareErrorTitle": "Jagamise viga",
+      "shareErrorMessage": "Abilise jagamine ebaõnnestus. Palun proovi uuesti."
+    }
+  },
+  "assistantsScreen": {
+    "sectionTitles": {
+      "myAssistantsLocal": "Minu abilised (kohalikud)",
+      "myLibrary": "Minu raamatukogu (hub.drsai.app)",
+      "discoverAssistants": "Avasta abilisi (hub.drsai.app)"
+    },
+    "systemPrompt": "Süsteemi prompt",
+    "videoAnalysis": "Videoanalüüs",
+    "videoAnalysisDescription": "See on videopõhine AI-abiline, mis kommenteerib reaalajas sinu seadme kaamera videovoogu.",
+    "captureInterval": "Võttevahemik",
+    "captureIntervalUnit": "ms",
+    "world": "Maailm",
+    "toneStyle": "Toon/stiil",
+    "aiRole": "AI roll",
+    "userRole": "Minu roll",
+    "prompt": "Prompt",
+    "assistant": "Abiline",
+    "roleplay": "Rollimäng",
+    "video": "Video",
+    "deleteAssistant": "Kustuta abiline",
+    "deleteAssistantMessage": "Kas oled kindel, et soovid selle abilise kustutada?",
+    "missingModel": "Mudel puudub",
+    "missingModelMessage": "Selle abilise vaikemudel \"{{modelName}}\" pole saadaval. Palun laadi see alla muutmise vaates või vali teine mudel.",
+    "search": "Otsi",
+    "profile": "Profiil",
+    "signIn": "Logi sisse",
+    "addAssistant": "Lisa abiline",
+    "signInToAccessLibrary": "Logi sisse, et näha oma raamatukogu teenuses hub.drsai.app",
+    "signOut": "Logi välja",
+    "signOutConfirmation": "Kas oled kindel, et soovid välja logida?",
+    "signOutError": "Väljalogimine ebaõnnestus. Palun proovi uuesti.",
+    "account": "Konto",
+    "signInToDrshub": "Logi sisse Drshub'i",
+    "signInDescription": "Ligipääs oma raamatukogule, privaatsete abiliste loomine ja sünkroonimine seadmete vahel",
+    "searchAllAssistants": "Otsi kõigist abilistest...",
+    "deleteAssistantConfirmation": "Kas oled kindel, et soovid kustutada \"{{assistantName}}\"?",
+    "filters": {
+      "all": "Kõik",
+      "myAssistants": "Minu abilised",
+      "local": "Kohalik",
+      "video": "Video",
+      "free": "Tasuta",
+      "premium": "Premium"
+    },
+    "labels": {
+      "free": "Tasuta",
+      "premium": "Premium",
+      "private": "Privaatne",
+      "download": "Laadi alla",
+      "getFree": "Hangi tasuta"
+    },
+    "premiumAssistantDescription": "Premium-abiline hub.drsai.app kogukonnast",
+    "premiumInfoText": "Külasta hub.drsai.app lehte, et avastada rohkem abilisi",
+    "sortOptions": {
+      "newest": "Uusimad",
+      "oldest": "Vanimad",
+      "rating": "Kõrgemalt hinnatud",
+      "popular": "Enim populaarsed"
+    },
+    "assistantDetailSheet": {
+      "by": "autor",
+      "unknown": "Tundmatu",
+      "rating": "Hinnang",
+      "reviews": "Arvustused",
+      "created": "Loodud",
+      "description": "Kirjeldus",
+      "noDescriptionAvailable": "Kirjeldus puudub.",
+      "categories": "Kategooriad",
+      "tags": "Sildid",
+      "systemPrompt": "Süsteemi prompt",
+      "downloaded": "Allalaaditud",
+      "success": "Õnnestus",
+      "assistantAddedToCollection": "Abiline lisati sinu kogu!",
+      "error": "Viga",
+      "failedToLoadDetails": "Abilise üksikasjade laadimine ebaõnnestus",
+      "failedToDownload": "Abilise allalaadimine ebaõnnestus",
+      "premiumAssistantMessage": "See on Premium-abiline.\n• Kui oled selle juba oma Drshub'i kontoga avanud, logi lihtsalt sisse, et näha kõiki üksikasju.\n• Pole veel avanud? Külasta hub.drsai.app, et rohkem teada saada.",
+      "notAvailable": "puudub",
+      "buyOnDrshub": "Osta Drshub'ist",
+      "finalizingPurchase": "Lõpitan ostu…",
+      "processingPurchase": "Töötlen – avaneb varsti.",
+      "checkoutSessionExpired": "Sinu sessioon aegus. Jätkamiseks logi uuesti sisse.",
+      "signInAgain": "Logi uuesti sisse",
+      "assistantNotAvailable": "See abiline ei ole praegu ostmiseks saadaval.",
+      "checkoutFailed": "Midagi läks valesti. Palun proovi uuesti."
+    },
+    "emptyLocal": "Abilisi pole veel.\nLoo oma esimene abiline + nupu abil!",
+    "emptyFiltered": "Abilisi ei leitud.\nProovi muuta filtreid või otsingut."
+  },
+  "validation": {
+    "nameRequired": "Nimi on nõutav",
+    "systemPromptRequired": "Süsteemi prompt on nõutav",
+    "worldRequired": "Maailm on nõutav",
+    "locationRequired": "Asukoht on nõutav",
+    "aiRoleRequired": "AI roll on nõutav",
+    "userRoleRequired": "Kasutaja roll on nõutav",
+    "situationRequired": "Olukord on nõutav",
+    "toneStyleRequired": "Toon/stiil on nõutav"
+  },
+  "camera": {
+    "permissionTitle": "Vajalik on kaamera luba",
+    "permissionMessage": "DRS AI vajab kaamera ligipääsu piltide analüüsimiseks",
+    "requestingPermission": "Küsin kaamera luba...",
+    "noDevice": "Kaameraseadet ei leitud",
+    "errorTitle": "Kaamera viga",
+    "errorMessage": "Foto tegemisel tekkis viga",
+    "flip": "Pööra",
+    "analyzing": "Analüüsin pilti...",
+    "startCamera": "Käivita kaamera",
+    "stopCamera": "Peata kaamera",
+    "promptPlaceholder": "Mida sa selle pildi kohta teada soovid?",
+    "takePhoto": "Kaamera"
+  },
+  "video": {
+    "permissionTitle": "Vajalik on kaamera luba",
+    "permissionMessage": "DRS AI vajab kaamera ligipääsu videoanalüüsiks",
+    "requestingPermission": "Küsin kaamera luba...",
+    "noDevice": "Kaameraseadet ei leitud",
+    "errorTitle": "Kaamera viga",
+    "errorMessage": "Kaameraga tekkis viga",
+    "flip": "Pööra",
+    "analyzing": "Analüüsin videot...",
+    "startCamera": "Käivita kaamera",
+    "stopCamera": "Peata kaamera",
+    "promptPlaceholder": "Mida sa selle video kohta teada soovid?",
+    "captureInterval": "Võttevahemik",
+    "captureIntervalUnit": "ms",
+    "liveCommentary": "Reaalajas kommentaar",
+    "emptyPlaceholder": {
+      "title": "Tere tulemast Lookie juurde",
+      "subtitle": "Privaatne reaalajas videoanalüüs otse seadmes",
+      "experimentalNotice": "See on eksperimentaalne funktsioon. Täpsus sõltub valitud mudelist, kiirus sinu seadme omadustest ja mõned mudelid ei pruugi töötada.",
+      "howToUse": "Kuidas kasutada:",
+      "step1": "• Muuda prompti (valikuline), et analüüsi suunata",
+      "step2": "• Puuduta kaamera nuppu, et alustada reaalajas videoanalüüsi",
+      "step3": "• Reguleeri hetktõmmiste sagedust kaamera töötamise ajal",
+      "step4": "• Lülitu teisele abilisele tavalise tekstivestluse jaoks"
+    },
+    "defaultPrompt": "Mida sa näed?",
+    "multimodalTitle": "Multimodaalsus pole lubatud",
+    "multimodalMessage": "See mudel ei toeta piltide analüüsi. Palun laadi multimodaalne mudel.",
+    "checkSupportError": "Mudeli pilditoe kontrollimine ebaõnnestus."
+  },
+  "screenTitles": {
+    "chat": "Vestlus",
+    "models": "Mudelid",
+    "assistants": "Abilised (eksperimentaalne)",
+    "benchmark": "Jõudlustest",
+    "settings": "Seaded",
+    "appInfo": "Rakenduse teave",
+    "testCompletion": "Completioni test"
+  },
+  "chat": {
+    "conversationReset": "Vestlus lähtestati!",
+    "modelNotLoaded": "Mudel pole laaditud. Palun laadi mudel.",
+    "completionFailed": "Genereerimine ebaõnnestus: ",
+    "toolCallTruncated": "Tööriista kutse katkes – mudelil jääb tõenäoliselt ruum otsa. Proovi suuremat konteksti või väiksemat päringut.",
+    "speculativeInitFailed": "See seade ei suutnud selle mudeli jaoks spekulatiivset dekodeerimist käivitada – kõige tõenäolisemalt pole abikonteksti jaoks piisavalt mälu. Lülita jaotises Seaded → Lisaseaded välja Spekulatiivne dekodeerimine ja proovi uuesti.",
+    "loadingModel": "Laadin mudelit ...",
+    "typeYourMessage": "Kirjuta siia oma sõnum",
+    "load": "Laadi",
+    "goToModels": "Mine mudelite juurde",
+    "readyToChat": "Valmis vestlema? Laadi viimati kasutatud mudel.",
+    "pleaseLoadModel": "Vestlemiseks laadi kõigepealt mudel.",
+    "multimodalNotEnabled": "Selle mudeli jaoks pole multimodaalsus lubatud. Pildid kuvatakse, kuid AI ei töötle neid.",
+    "cannotSendWithoutModel": "Laadi kõigepealt mudel",
+    "toolCompatWarning": "See mudel ei pruugi toetada tööriistade kutsumist. Tulemused ei pruugi olla usaldusväärsed.",
+    "softCapWarning": "Parima jõudluse jaoks alusta uut vestlust.",
+    "contextWarning": "See vestlus muutub pikaks ja ruum võib peagi otsa saada.",
+    "contextRemoteHedged": "See vastus võib olla kärbitud. Proovi uuesti saata või päringut lühendada.",
+    "contextFull": "Vestluse ruum sai otsa. Alusta uut vestlust või suurenda konteksti suurust.",
+    "contextFullRemote": "Vestluse ruum sai otsa. Alusta uut vestlust.",
+    "contextFullEscalated": "Ruum on ikka otsas. Alusta uut vestlust või suurenda jätkamiseks konteksti suurust.",
+    "contextFullHeavyTalent": "Vestluse ruum sai otsa – {{talent}} vajab tavaliselt rohkem. Alusta uut vestlust või suurenda konteksti suurust.",
+    "contextBannerDismiss": "Loobu",
+    "contextNewChat": "Uus vestlus",
+    "contextIncrease": "Suurenda konteksti",
+    "contextMoreRoom": "Enam ruumi",
+    "increaseContextTitle": "Anna sellele vestlusele rohkem ruumi",
+    "increaseContextBody": "Ruum on mudeli töömälu – kui palju see sellest vestlusest korraga meeles saab hoida. Rohkem ruumi tähendab pikemaid vestlusi, enne kui vastused kärbitakse.",
+    "increaseContextTokensUnit": "tokenit",
+    "increaseContextWordsRam": "~{{words}} sõna · ≈{{ram}} RAM",
+    "increaseContextFitsChip": "Sobib",
+    "increaseContextTightChip": "Kitsas",
+    "increaseContextWontFitChip": "Ei mahu",
+    "increaseContextFitsStatus": "Selle seadme jaoks mugav.",
+    "increaseContextFitsUnconstrainedStatus": "RAM-i on küllalt – piirab ainult mudel.",
+    "increaseContextTightStatus": "Alates ~{{tokens}} võib sellel seadmel mälu otsa saada ja see aeglustuda. Proovida saab siiski.",
+    "increaseContextWontFitStatus": "~{{tokens}} ei mahu tõenäoliselt selle seadme mällu. Vali väiksem suurus.",
+    "increaseContextModelMax": "{{tokens}} · mudeli maksimum",
+    "increaseContextHedge": "Uuesti laadimine võtab mõni sekund. Vestlusest ei kao midagi.",
+    "increaseContextAdvanced": "Täpsem",
+    "increaseContextAdvancedBody": "Selle vestluse konteksti suurus: {{from}} → {{to}} tokenit (mudeli maksimum {{max}}). Seadme piir on hinnanguline ja tõuseb, mida rohkem suuri kontekste edukalt laaditakse.",
+    "increaseContextSliderA11yLabel": "Konteksti suurus",
+    "increaseContextSliderA11yValue": "{{tokens}} tokenit",
+    "increaseContextConfirmSize": "Määra {{size}}",
+    "increaseContextReloadingShort": "Laadin uuesti…",
+    "increaseContextNoFitBody": "See seade ei saa selle mudeli jaoks suuremat konteksti mahutada. Jätkamiseks alusta uut vestlust.",
+    "increaseContextCancel": "Mitte praegu",
+    "increaseContextReloading": "Laadin mudelit suurema kontekstiga uuesti…",
+    "increaseContextSuccess": "Kontekst suurendati {{target}} tokenini.",
+    "increaseContextFailure": "Konteksti suurust ei saanud suurendada. Sinu eelmine seade taastati.",
+    "assistantLoadHint": "See abiline vajab tavaliselt rohkem ruumi, kui praegune konteksti suurus lubab.",
+    "generatingPreview": "Genereerin eelvaadet… ({{tokens}} tokenit)",
+    "generatingPreviewPending": "Genereerin eelvaadet…",
+    "toolUsedChip": "kasutas {{name}}",
+    "toolErrorBlock": "{{name}} ebaõnnestus",
+    "webSearch": {
+      "searched": "Otsisin: {{query}}",
+      "noResults": "Tulemusi pole",
+      "noResultsFor": "Päringule {{query}} ei leitud tulemusi",
+      "resultsCount": "{{count}} tulemust",
+      "resultsCountOne": "1 tulemus",
+      "searchResultsTitle": "Otsingutulemused",
+      "showResultsAccessibilityLabel": "Näita päringu {{query}} veebiotsingu tulemusi",
+      "openLinkError": "Seda linki ei õnnestunud avada."
+    }
+  },
+  "htmlPreview": {
+    "defaultTitle": "Eelvaade",
+    "showPreview": "Näita kujundatud eelvaadet",
+    "showCode": "Näita HTML-i koodi",
+    "copyHtml": "Kopeeri HTML",
+    "closePreview": "Sulge eelvaade",
+    "openFullscreen": "Ava täisekraanil: {{title}}"
+  },
+  "benchmark": {
+    "title": "Jõudlustest",
+    "modelSelector": {
+      "prompt": "Vali mudel",
+      "noModels": "Mudeleid pole allalaaditud"
+    },
+    "buttons": {
+      "advancedSettings": "Lisaseaded",
+      "startTest": "Alusta testi",
+      "runningTest": "Käitan testi...",
+      "clearAll": "Tühjenda kõik",
+      "done": "Valmis",
+      "cancel": "Tühista",
+      "delete": "Kustuta",
+      "share": "Jaga",
+      "sharing": "Jagan...",
+      "viewRawData": "Vaata toorandmeid",
+      "hideRawData": "Peida toorandmed"
+    },
+    "messages": {
+      "pleaseSelectModel": "Palun vali ja lähtesta kõigepealt mudel",
+      "testWarning": "Märkus: suuremate mudelite puhul võib test kesta kuni 2–5 minutit ja alustatud testi ei saa katkestada.",
+      "keepScreenOpen": "Palun hoia see ekraan avatuna.",
+      "initializingModel": "Lähtestan mudelit...",
+      "modelMaxValue": "(maksimaalne: {{maxValue}})"
+    },
+    "dialogs": {
+      "advancedSettings": {
+        "title": "Lisaseaded",
+        "testProfile": "Testiprofiil",
+        "customParameters": "Kohandatud parameetrid",
+        "description": "Häälesta jõudlustesti parameetreid konkreetsete teststsenaariumite jaoks."
+      },
+      "deleteResult": {
+        "title": "Kustuta tulemus",
+        "message": "Kas oled kindel, et soovid selle jõudlustesti tulemuse kustutada?"
+      },
+      "clearAllResults": {
+        "title": "Tühjenda kõik tulemused",
+        "message": "Kas oled kindel, et soovid kustutada kõik jõudlustesti tulemused?"
+      },
+      "shareResults": {
+        "title": "Jaga jõudlustesti tulemusi",
+        "sharedDataTitle": "Jagatud andmete hulka kuuluvad:",
+        "deviceAndModelInfo": "• Seadme omadused ja mudeli teave",
+        "performanceMetrics": "• Jõudlusmõõdikud",
+        "dontShowAgain": "Ära seda sõnumit enam näita"
+      }
+    },
+    "sections": {
+      "testResults": "Testi tulemused"
+    },
+    "benchmarkResultCard": {
+      "modelMeta": {
+        "params": "parameetrit"
+      },
+      "config": {
+        "title": "Jõudlustesti seadistus",
+        "format": "PP: {{pp}} • TG: {{tg}} • PL: {{pl}} • Kordus: {{nr}}"
+      },
+      "modelSettings": {
+        "title": "Mudeli seaded",
+        "context": "Kontekst: {{context}}",
+        "batch": "Partii: {{batch}}",
+        "ubatch": "UBatch: {{ubatch}}",
+        "cpuThreads": "CPU lõimed: {{threads}}",
+        "gpuLayers": "GPU kihid: {{layers}}",
+        "device": "Seade: {{device}}",
+        "flashAttentionEnabled": "Flash Attention lubatud",
+        "flashAttentionDisabled": "Flash Attention keelatud",
+        "cacheTypes": "Vahemälu tüübid: {{cacheK}}/{{cacheV}}"
+      },
+      "results": {
+        "promptProcessing": "Promptide töötlemine",
+        "tokenGeneration": "Tokenite genereerimine",
+        "totalTime": "Koguaeg",
+        "peakMemory": "Mälu tippkasutus",
+        "tokensPerSecond": "t/s"
+      },
+      "actions": {
+        "deleteButton": " ",
+        "submittedText": "✓ Jagatud:",
+        "leaderboardLink": "AI Phone'i edetabel ↗",
+        "cannotShare": "Jagada ei saa",
+        "cannotShareTooltip": "Kohalike mudelite tulemusi ei saa jagada",
+        "submitButton": "Saada edetabelisse",
+        "viewLeaderboard": "Vaata edetabelit ↗"
+      },
+      "errors": {
+        "networkRetry": "Kontrolli ühendust ja proovi uuesti",
+        "appCheckRetry": "Proovi saatmist uuesti",
+        "serverRetry": "Proovi hiljem uuesti",
+        "genericRetry": "Proovi uuesti",
+        "failedToSubmit": "Jõudlustesti saatmine ebaõnnestus"
+      }
+    },
+    "deviceInfoCard": {
+      "title": "Seadme teave",
+      "deviceSummary": "{{brand}} {{model}} • {{systemName}} {{systemVersion}}",
+      "coreSummary": "{{cores}} tuuma • {{memory}}",
+      "sections": {
+        "basicInfo": "Põhiteave",
+        "cpuDetails": "CPU üksikasjad",
+        "gpuDetails": "GPU üksikasjad",
+        "hexagonDetails": "Hexagon DSP",
+        "appInfo": "Rakenduse teave"
+      },
+      "fields": {
+        "architecture": "Arhitektuur",
+        "totalMemory": "Kogumälu",
+        "deviceId": "Seadme ID",
+        "cpuCores": "CPU tuumad",
+        "cpuModel": "CPU mudel",
+        "chipset": "Kiibistik",
+        "instructions": "Käsustik",
+        "version": "Versioon",
+        "gpuType": "GPU tüüp",
+        "gpuRenderer": "Renderdaja",
+        "gpuVendor": "Tootja",
+        "metalSupport": "Metali tugi",
+        "openclSupport": "OpenCL-i tugi",
+        "openclRequirement": "Vajab i8mm ja dotprod"
+      },
+      "instructions": {
+        "format": "FP16: {{fp16}}, DotProd: {{dotProd}}, SVE: {{sve}}, I8MM: {{i8mm}}",
+        "yes": "✓",
+        "no": "✗"
+      },
+      "versionFormat": "{{version}} ({{buildNumber}})"
+    },
+    "presetDefault": "Vaikeväärtus",
+    "presetFast": "Kiire",
+    "presetCustom": "Kohandatud",
+    "params": {
+      "pp": "Promptide töötlemise tokenite arv (maksimaalne: füüsiline partii suurus)",
+      "tg": "Tekstigenereerimise tokenite arv",
+      "pl": "Toru paralleelsuse suurus",
+      "nr": "Korduste arv"
+    }
+  },
+  "errors": {
+    "unexpectedError": "Ilmnes ootamatu viga",
+    "hfAuthenticationError": "Hugging Face'i autentimise viga: token puudub või on vigane",
+    "hfAuthenticationErrorSearch": "Hugging Face'i autentimise viga: vigane token",
+    "authenticationError": "Autentimise viga: token puudub või on vigane",
+    "hfAuthorizationError": "Hugging Face'i autoriseerimise viga: puudub õigus sellele ressursile juurdepääsuks",
+    "authorizationError": "Autoriseerimise viga: puudub õigus sellele ressursile juurdepääsuks",
+    "hfServerError": "Hugging Face'i serveri viga: API-serveri probleem",
+    "serverError": "Serveri viga: API-serveri probleem",
+    "hfNetworkTimeout": "Võrgu ajalõpp: Hugging Face'i päring kestis liiga kaua",
+    "networkTimeout": "Võrgu ajalõpp: päring kestis liiga kaua",
+    "hfNetworkError": "Võrgu viga: Hugging Face'i API-ga ei saa ühendust",
+    "networkError": "Võrgu viga: API-ga ei saa ühendust",
+    "downloadSetupFailedTitle": "Allalaadimise ettevalmistamine ebaõnnestus",
+    "downloadSetupFailedMessage": "Mudeli ettevalmistamine allalaadimiseks ebaõnnestus: {{message}}",
+    "cameraErrorTitle": "Kaamera viga",
+    "cameraErrorMessage": "Foto tegemine ebaõnnestus",
+    "galleryErrorTitle": "Galerii viga",
+    "galleryErrorMessage": "Piltide valimine ebaõnnestus"
+  },
+  "simulator": {
+    "cameraNotAvailable": "Kaamera pole emulaatoris saadaval. Palun kasuta füüsilist seadet."
+  },
+  "voiceAndSpeech": {
+    "sectionTitle": "Hääl ja kõne",
+    "voiceRowTitle": "Hääl",
+    "notSet": "Määramata",
+    "previewButton": "Kuula",
+    "stopPreviewButton": "Peata kuulamine",
+    "voicesTitle": "Hääled",
+    "voicesEmptyHint": "Puuduta mis tahes häält, et see paigaldada ja kasutada. Või vali süsteemi hääl – need on alati saadaval.",
+    "supertonicStepsLabel": "Kvaliteet (difusiooni sammud)",
+    "supertonicLanguageLabel": "Keel",
+    "supertonicLanguageAuto": "Auto",
+    "supertonicLanguageSheetTitle": "Keel",
+    "supertonicLanguageSearchPlaceholder": "Otsi keeli",
+    "supertonicLanguageNames": {
+      "ar": "Araabia",
+      "bg": "Bulgaaria",
+      "hr": "Horvaadia",
+      "cs": "Tšehhi",
+      "da": "Taani",
+      "nl": "Hollandi",
+      "en": "Inglise",
+      "et": "Eesti",
+      "fi": "Soome",
+      "fr": "Prantsuse",
+      "de": "Saksa",
+      "el": "Kreeka",
+      "hi": "Hindi",
+      "hu": "Ungari",
+      "id": "Indoneesia",
+      "it": "Itaalia",
+      "ja": "Jaapani",
+      "ko": "Korea",
+      "lv": "Läti",
+      "lt": "Leedu",
+      "pl": "Poola",
+      "pt": "Portugali",
+      "ro": "Rumeenia",
+      "ru": "Vene",
+      "sk": "Slovaki",
+      "sl": "Sloveeni",
+      "es": "Hispaania",
+      "sv": "Rootsi",
+      "tr": "Türgi",
+      "uk": "Ukraina",
+      "vi": "Vietnami"
+    },
+    "toggleAutoSpeakLabel": "Automaatse ettelugemise lülitus",
+    "openSettingsLabel": "TTS-i seaded",
+    "playMessageLabel": "Esita sõnum",
+    "stopMessageLabel": "Peata sõnum",
+    "autoSpeakLabel": "Loe vastused automaatselt ette",
+    "autoSpeakDescription": "Loe uued vastused valjusti ette, kohe kui need saabuvad.",
+    "engineChipKitten": "Kitten",
+    "engineChipKokoro": "Kokoro",
+    "engineChipSupertonic": "Supertonic",
+    "engineChipSystem": "Süsteem",
+    "stepsCount": "{{steps}} sammu",
+    "engineKittenTagline": "Väikseim maht. Usaldusväärne. Parim vanemates seadmetes.",
+    "engineKokoroTagline": "Parim kvaliteet. Aeglasem käivitus. Mõned hääled ei pruugi kõigis seadmetes töötada.",
+    "engineSupertonicTagline": "Kiireim käivitus. Kasutab rohkem RAM-i. Võib aeg-ajalt sõnu välja jätta.",
+    "engineSystemTagline": "Opsüsteemi sisseehitatud hääled. Alati saadaval, paigaldust ei vaja.",
+    "engineSystemTitleIos": "iOS-i hääled",
+    "engineSystemTitleAndroid": "Androidi hääled",
+    "engineSystemTier": "alati saadaval",
+    "engineTierLightest": "kergeim",
+    "engineTierBestQuality": "parim kvaliteet",
+    "engineTierFastestStart": "kiireim käivitus",
+    "engineSpecsLine": "{{voices}} häält  ·  {{sizeMb}} MB  ·  ~{{ramMb}} MB RAM",
+    "engineSystemSpecsLine": "{{voices}} häält",
+    "engineRemoveTitle": "Eemaldada {{engineTitle}}?",
+    "engineRemoveBody": "Vabastab selles seadmes ~{{sizeMb}} MB.",
+    "engineRemoveCancel": "Tühista",
+    "engineRemoveConfirm": "Eemalda",
+    "engineInstallCta": "Paigalda · {{sizeMb}} MB",
+    "engineDownloadingLabel": "Laadin alla…  {{pct}}%  ·  {{mbDone}} / {{sizeMb}} MB",
+    "engineRetryCta": "Proovi uuesti",
+    "voicesEmptyState": "Hääli ei leitud.",
+    "kokoroDeviceNote": "Mõned hääled ei pruugi kõigis seadmetes töötada.",
+    "insufficientStorage": "Ruumi ei ole piisavalt – vabasta {{requiredMb}} MB, et see mootor paigaldada (saadaval on {{freeMb}} MB)."
+  },
+  "onboarding": {
+    "back": "Tagasi",
+    "skip": "Jäta vahele",
+    "skipForNow": "Jäta praegu vahele",
+    "splash": {
+      "brand": "DRS AI",
+      "tagline": "Sinu privaatne AI, sinu seadmes"
+    },
+    "screen1": {
+      "title": "Tutvu oma abilistega.",
+      "titleAccent": "abilistega.",
+      "body": "Nutikad sõbrakesed, kes elavad sinu telefoni sees.\nSätame sind üles – see võtab ainult minuti.",
+      "cta": "Näita ringi",
+      "eyebrow": "Tere tulemast DRS AI juurde"
+    },
+    "screen2": {
+      "title": "Igal ajal,\nigal pool.",
+      "body": "Sinu abilised elavad sinu telefoni sees.\nEi internetti, ei sidet – nad töötavad lennukitel, võrgust väljas, kauges külas.",
+      "highlight": "Ei internetti, ei sidet",
+      "cta": "Edasi",
+      "eyebrow": "Mõte",
+      "titleAccent": "Igal ajal,"
+    },
+    "screen3": {
+      "title": "Väiksem,\naga sinu oma.",
+      "titleAccent": "Väiksem,",
+      "body": "Abilised sinu telefonis on kiired ja privatsed – aga kergemad kui pilve AI. Mõtle taskukaaslasele, mitte kõigiteadvale oraaklile.",
+      "highlight": "kiired ja privatsed",
+      "cta": "Sain aru",
+      "eyebrow": "Väike hoiatus"
+    },
+    "screen4": {
+      "title": "Sinu telefonist ei lahku midagi.",
+      "titleAccent": "lahku",
+      "body": "Ühtegi kontot pole. Pilve pole. Jälgimist pole. Sinu vestlused jäävad sinule.",
+      "highlight": "Ühtegi kontot pole. Pilve pole. Jälgimist pole.",
+      "cta": "Alusta",
+      "eyebrow": "Privaatsuse lubadus"
+    },
+    "screen5": {
+      "title": "Milleks sinu abiline on?",
+      "body": "Vali, millest soovid rääkida – me leiame sinu telefonile sobiva abilise.",
+      "topic": {
+        "smartchat": "Nutikas vestlus",
+        "coding": "Koodikirjutamine",
+        "education": "Haridus",
+        "roleplay": "Rollimäng",
+        "creative_writing": "Loovkirjutamine",
+        "else": "Otsid midagi muud?"
+      },
+      "topicDescription": {
+        "smartchat": "Sõbralik igapäevakaaslane",
+        "coding": "Kood, silumine, selgitused",
+        "education": "Õpi, selgita, testi",
+        "roleplay": "Tegelased, stsenaariumid",
+        "creative_writing": "Jutud, ideed, mustandid",
+        "else": "Sirvi kõiki abilisi hiljem rakenduses"
+      }
+    },
+    "screen6": {
+      "cta": "Laadi {{name}} alla",
+      "ctaTemplate": "Laadi alla {{name}} ({{size}})",
+      "useTemplate": "Kasuta {{name}}",
+      "deviceRamSuffix": "GB RAM",
+      "deviceFreeSuffix": "GB vaba",
+      "recommended": "Soovitatud",
+      "downloaded": "Allalaaditud",
+      "modelTier": {
+        "quick": "Kiire",
+        "balanced": "Tasakaalustatud",
+        "best": "Parim"
+      },
+      "subtitleTemplate": "{{name}} mõtleb sinu telefonis asuva väikese AI-mudeliga – vali endale sobiv.",
+      "assistant": {
+        "pip": {
+          "body": "Leidsime sinule ideaalse abilise – sõbraliku igapäevakaaslase. Piisavalt nutik enamus asjade jaoks, piisavalt kerge igale telefonile."
+        },
+        "codie": {
+          "body": "Tutvu Codiega – sinu kohalik koodikaaslane. Loeb koodi, kirjutab koodi ja selgitab keerukaid kohti, ilma et peaks telefonist lahkuma."
+        },
+        "sage": {
+          "body": "Sage on kannatlik ja uudishimulik ning viib sind ideede juures samm-sammult edasi. Õppekaaslane, kelle hoiad taskus."
+        },
+        "echo": {
+          "body": "Echo on mitmekülgne rollimängukaaslane – püsib rollis, maalib stseene ja järgib sinu lugu kuhu iganes see viib."
+        },
+        "muse": {
+          "body": "Muse aitab sul kirjutada. Pakub sõnastust, leiab rütmi ja hoiab sinu tooni puutumata."
+        }
+      }
+    }
+  },
+  "downloadBanner": {
+    "titleByAssistant": "{{name}} laaditakse alla",
+    "titleByModel": "{{name}} laaditakse alla",
+    "extraInProgress": "+{{count}} veel käimas"
   }
 }

@@ -1,4 +1,5 @@
 import * as RNFS from '@dr.pogodin/react-native-fs';
+import {logger} from '../utils/logger';
 
 /**
  * Utility functions for downloading and managing assistant thumbnail images
@@ -56,7 +57,7 @@ const ensureAssistantImagesDirectory = async (): Promise<void> => {
     const exists = await RNFS.exists(PAL_IMAGES_DIR);
     if (!exists) {
       await RNFS.mkdir(PAL_IMAGES_DIR);
-      console.log('Created assistant images directory:', PAL_IMAGES_DIR);
+      logger.debug('Created assistant images directory:', PAL_IMAGES_DIR);
     }
   } catch (error) {
     console.error('Failed to create assistant images directory:', error);
@@ -118,11 +119,11 @@ export const downloadAssistantThumbnail = async (
     // Check if file already exists
     const exists = await RNFS.exists(absolutePath);
     if (exists) {
-      console.log('Thumbnail already exists locally:', absolutePath);
+      logger.debug('Thumbnail already exists locally:', absolutePath);
       return filename; // Return filename for storage
     }
 
-    console.log('Downloading thumbnail:', imageUrl, 'to:', absolutePath);
+    logger.debug('Downloading thumbnail:', imageUrl, 'to:', absolutePath);
 
     // Download the image
     const downloadResult = await RNFS.downloadFile({
@@ -134,7 +135,7 @@ export const downloadAssistantThumbnail = async (
     }).promise;
 
     if (downloadResult.statusCode === 200) {
-      console.log('Successfully downloaded thumbnail:', absolutePath);
+      logger.debug('Successfully downloaded thumbnail:', absolutePath);
       return filename; // Return filename for storage
     } else {
       throw new Error(
@@ -161,7 +162,7 @@ export const deleteAssistantThumbnail = async (
     const exists = await RNFS.exists(absolutePath);
     if (exists) {
       await RNFS.unlink(absolutePath);
-      console.log('Deleted local thumbnail:', absolutePath);
+      logger.debug('Deleted local thumbnail:', absolutePath);
     }
   } catch (error) {
     console.error('Failed to delete local thumbnail:', error);
@@ -229,7 +230,7 @@ export const cleanupOrphanedThumbnails = async (
         const assistantId = file.name.split('_thumbnail.')[0];
 
         if (!activeIdSet.has(assistantId)) {
-          console.log('Cleaning up orphaned thumbnail:', file.path);
+          logger.debug('Cleaning up orphaned thumbnail:', file.path);
           await RNFS.unlink(file.path);
         }
       }

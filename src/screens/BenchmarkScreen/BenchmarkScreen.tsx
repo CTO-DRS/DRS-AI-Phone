@@ -25,6 +25,7 @@ import {modelStore, benchmarkStore, uiStore} from '../../store';
 
 import type {DeviceInfo, Model} from '../../utils/types';
 import {BenchmarkConfig, BenchmarkResult, ModelOrigin} from '../../utils/types';
+import {logger} from '../../utils/logger';
 
 const DEFAULT_CONFIGS: BenchmarkConfig[] = [
   {pp: 512, tg: 128, pl: 1, nr: 3, label: 'Default'},
@@ -261,7 +262,7 @@ export const BenchmarkScreen: React.FC = observer(() => {
     }
     try {
       const response = await submitBenchmark(deviceInfo, result);
-      console.log('Benchmark submitted successfully:', response);
+      logger.debug('Benchmark submitted successfully:', response);
       benchmarkStore.markAsSubmitted(result.uuid);
     } catch (error) {
       console.error('Failed to submit benchmark:', error);

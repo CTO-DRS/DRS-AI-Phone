@@ -217,7 +217,7 @@
     "remoteIndicator": "عن بُعد",
     "serverUrlRequired": "رابط الخادم مطلوب",
     "serverUrlInvalid": "تنسيق الرابط غير صالح",
-    "serverUrlHttpWarning": "يتطلب iOS بروتوكول HTTPS للخوادم غير المحلية. استخدم https:// أو عنوان شبكة محلية.",
+    "serverUrlHttpWarning": "الاتصال غير المشفر HTTP مسموح فقط لعناوين الشبكة المحلية. استخدم https:// للخوادم العامة.",
     "addRemoteModel": "إضافة نموذج بعيد",
     "yourServers": "خوادمك",
     "orConnectNewServer": "أو اتصل بخادم جديد",

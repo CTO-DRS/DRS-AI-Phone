@@ -17,6 +17,7 @@ import {
   defaultCompletionParams,
   migrateCompletionSettings,
 } from '../utils/completionSettingsVersions';
+import {logger} from '../utils/logger';
 
 // Default completion settings without prompt and stop
 const defaultCompletionSettings = {...defaultCompletionParams};
@@ -32,7 +33,7 @@ class ChatSessionRepository {
       const migrationComplete = await RNFS.exists(migrationFlagPath);
 
       if (migrationComplete) {
-        console.log('Database migration already completed');
+        logger.debug('Database migration already completed');
         return false;
       }
 
@@ -46,7 +47,7 @@ class ChatSessionRepository {
         return false;
       }
 
-      console.log('Starting migration from JSON to WatermelonDB...');
+      logger.debug('Starting migration from JSON to WatermelonDB...');
 
       // Read old data
       const jsonData = await RNFS.readFile(oldDataPath);
@@ -158,7 +159,9 @@ class ChatSessionRepository {
 
       // Mark migration as complete
       await RNFS.writeFile(migrationFlagPath, 'true');
-      console.log('Migration from JSON to WatermelonDB completed successfully');
+      logger.debug(
+        'Migration from JSON to WatermelonDB completed successfully',
+      );
 
       return true;
     } catch (error) {
@@ -713,9 +716,9 @@ class ChatSessionRepository {
       const migrationFlagPath = `${RNFS.DocumentDirectoryPath}/db-migration-complete.flag`;
       if (await RNFS.exists(migrationFlagPath)) {
         await RNFS.unlink(migrationFlagPath);
-        console.log('Migration flag reset successfully');
+        logger.debug('Migration flag reset successfully');
       } else {
-        console.log('Migration flag does not exist');
+        logger.debug('Migration flag does not exist');
       }
 
       // Clear the database for a clean migration test
@@ -741,7 +744,7 @@ class ChatSessionRepository {
         }
       });
 
-      console.log('Database cleared for migration test');
+      logger.debug('Database cleared for migration test');
     } catch (error) {
       console.error('Failed to reset migration:', error);
     }
@@ -753,7 +756,7 @@ class ChatSessionRepository {
    */
   async migrateAllSettings(): Promise<void> {
     try {
-      console.log('Checking for settings that need migration...');
+      logger.debug('Checking for settings that need migration...');
 
       // Get all completion settings
       const completionSettings = (await database.collections
@@ -798,7 +801,7 @@ class ChatSessionRepository {
         }
       });
 
-      console.log(
+      logger.debug(
         `Found ${settingsToMigrate.length} session settings and ${globalSettingsToMigrate.length} global settings that need migration`,
       );
 
@@ -814,7 +817,7 @@ class ChatSessionRepository {
               record.settings = JSON.stringify(migratedSettings);
             });
 
-            console.log(
+            logger.debug(
               `Migrated settings for session ${setting.sessionId} from version ${parsedSettings.version} to ${migratedSettings.version}`,
             );
           }
@@ -828,15 +831,15 @@ class ChatSessionRepository {
               record.value = JSON.stringify(migratedSettings);
             });
 
-            console.log(
+            logger.debug(
               `Migrated global settings for key ${setting.key} from version ${parsedSettings.version} to ${migratedSettings.version}`,
             );
           }
         });
 
-        console.log('Settings migration completed successfully');
+        logger.debug('Settings migration completed successfully');
       } else {
-        console.log('No settings need migration');
+        logger.debug('No settings need migration');
       }
     } catch (error) {
       console.error('Error migrating settings:', error);

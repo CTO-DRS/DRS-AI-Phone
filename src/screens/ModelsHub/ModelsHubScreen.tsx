@@ -84,6 +84,7 @@ import {
   sortHfModels,
 } from './components/HubSearchResults';
 import {CategoryBrowse} from './components/CategoryBrowse';
+import {logger} from '../../utils/logger';
 
 const SORT_OPTIONS: HubSortOption[] = [
   'recommended',
@@ -419,7 +420,7 @@ export const ModelsHubScreen: React.FC = observer(() => {
                 break;
               }
               case 'cancel':
-                console.log('File copy cancelled by user');
+                logger.debug('File copy cancelled by user');
                 return;
             }
           }
@@ -438,7 +439,7 @@ export const ModelsHubScreen: React.FC = observer(() => {
           }
         }
       })
-      .catch(e => console.log('No file picked, error: ', e.message));
+      .catch(e => logger.debug('No file picked, error: ', e.message));
   };
 
   // ── catalog interactions ──

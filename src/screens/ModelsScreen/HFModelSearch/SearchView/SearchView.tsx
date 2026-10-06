@@ -27,6 +27,7 @@ import {
   L10nContext,
   isVisionRepo,
 } from '../../../../utils';
+import {logger} from '../../../../utils/logger';
 
 interface SearchViewProps {
   testID?: string;
@@ -62,12 +63,12 @@ export const SearchView = observer(
 
       // Debounce onEndReached calls to prevent rapid successive calls
       if (timeSinceLastCall < 1000) {
-        console.log('🔵 Debouncing onEndReached call');
+        logger.debug('🔵 Debouncing onEndReached call');
         return;
       }
 
       lastOnEndReachedCall.current = now;
-      console.log('onEndReached called');
+      logger.debug('onEndReached called');
       hfStore.fetchMoreModels();
     }, []);
 
@@ -137,7 +138,7 @@ export const SearchView = observer(
     // Renders the appropriate empty state based on loading, error or no results
     const renderEmptyState = observer(() => {
       if (hfStore.isLoading) {
-        console.log('renderEmptyState Loading');
+        logger.debug('renderEmptyState Loading');
         return null;
       }
 
