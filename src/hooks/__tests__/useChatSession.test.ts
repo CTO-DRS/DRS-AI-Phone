@@ -290,7 +290,7 @@ describe('useChatSession', () => {
 
   it('should render parametrized system prompt when assistant has parameters', async () => {
     // Create a mock assistant with parametrized system prompt
-    const mockAssistant = {
+    const parametrizedAssistant = {
       id: 'test-assistant-id',
       type: 'local' as const,
       name: 'Test Assistant',
@@ -316,7 +316,7 @@ describe('useChatSession', () => {
     };
 
     // Mock assistantStore to return our test assistant
-    assistantStore.assistants = [mockAssistant];
+    assistantStore.assistants = [parametrizedAssistant];
 
     // Create a mock session with the assistant
     const mockSession = {
@@ -436,7 +436,7 @@ describe('useChatSession', () => {
 
   it('should use system prompt as-is when assistant has no parameters', async () => {
     // Create a mock assistant without parameters
-    const mockAssistant = {
+    const plainAssistant = {
       id: 'test-assistant-id-no-params',
       type: 'local' as const,
       name: 'Test Assistant No Params',
@@ -449,7 +449,7 @@ describe('useChatSession', () => {
     };
 
     // Mock assistantStore to return our test assistant
-    assistantStore.assistants = [mockAssistant];
+    assistantStore.assistants = [plainAssistant];
 
     // Create a mock session with the assistant
     const mockSession = {
@@ -506,7 +506,7 @@ describe('useChatSession', () => {
     };
 
     const useSessionWithAssistant = (systemPrompt: string) => {
-      const assistant = {
+      const searchAssistant = {
         id: 'search-assistant-id',
         type: 'local' as const,
         name: 'Search Assistant',
@@ -517,11 +517,11 @@ describe('useChatSession', () => {
         useAIPrompt: false,
         source: 'local' as const,
       };
-      assistantStore.assistants = [assistant];
+      assistantStore.assistants = [searchAssistant];
       chatSessionStore.sessions = [
         {
           id: 'search-session-id',
-          activeAssistantId: assistant.id,
+          activeAssistantId: searchAssistant.id,
           title: 'Search Session',
           date: new Date().toISOString().split('T')[0],
           messages: [],
@@ -530,7 +530,7 @@ describe('useChatSession', () => {
         },
       ];
       chatSessionStore.activeSessionId = 'search-session-id';
-      return assistant;
+      return searchAssistant;
     };
 
     const captureMessages = () => {
@@ -558,7 +558,7 @@ describe('useChatSession', () => {
     // Strict templates reject a second system message ("must be at the
     // beginning"), so grounding folds into the assistant's system message.
     it('sends exactly one system message carrying both the assistant prompt and the grounding', async () => {
-      const assistant = useSessionWithAssistant(
+      const researchAssistant = useSessionWithAssistant(
         'You are a research assistant.',
       );
       await activateSearchTools();
@@ -579,7 +579,9 @@ describe('useChatSession', () => {
       expect(systemMessages[0].content).toContain('web_search');
 
       // Composition happens at assembly time only.
-      expect(assistant.systemPrompt).toBe('You are a research assistant.');
+      expect(researchAssistant.systemPrompt).toBe(
+        'You are a research assistant.',
+      );
     });
 
     it('sends the grounding as the sole system message when the assistant has no system prompt', async () => {

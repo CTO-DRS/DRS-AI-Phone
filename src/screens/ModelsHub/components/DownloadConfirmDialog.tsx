@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useMemo, useState} from 'react';
-import {View, Text, Pressable, ScrollView} from 'react-native';
+import {View, Text, Pressable, ScrollView, StyleSheet} from 'react-native';
 import {observer} from 'mobx-react-lite';
 import LinearGradient from 'react-native-linear-gradient';
 
@@ -25,25 +25,21 @@ const FactRow: React.FC<{label: string; value: string; theme: any}> = ({
   label,
   value,
   theme,
-}) => (
-  <View
-    style={{flexDirection: 'row', justifyContent: 'space-between', gap: 12}}>
-    <Text
-      style={{...theme.typography.bodyS, color: theme.colors.onSurfaceVariant}}>
-      {label}
-    </Text>
-    <Text
-      style={{
-        ...theme.typography.bodyS,
-        fontWeight: '600',
-        color: theme.colors.onSurface,
-        flexShrink: 1,
-      }}
-      numberOfLines={1}>
-      {value}
-    </Text>
-  </View>
-);
+}) => {
+  // Theme-derived text fragments (static fragments live in `styles` below).
+  const labelText = {color: theme.colors.onSurfaceVariant};
+  const valueText = {color: theme.colors.onSurface};
+  return (
+    <View style={styles.factRow}>
+      <Text style={[theme.typography.bodyS, labelText]}>{label}</Text>
+      <Text
+        style={[theme.typography.bodyS, valueText, styles.factValue]}
+        numberOfLines={1}>
+        {value}
+      </Text>
+    </View>
+  );
+};
 
 interface DownloadConfirmDialogProps {
   visible: boolean;
@@ -163,6 +159,36 @@ export const DownloadConfirmDialog: React.FC<DownloadConfirmDialogProps> =
 
     const deficit = freeBytes != null ? totalRequired * 1.1 - freeBytes : 0;
 
+    // Theme- and state-derived style fragments (static fragments live in
+    // `styles` at the bottom of the file); referenced by the style arrays
+    // in the JSX below so no object literals sit inline on style props.
+    const onSurfaceText = {color: theme.colors.onSurface};
+    const mutedText = {color: theme.colors.onSurfaceVariant};
+    const errorText = {color: theme.colors.error};
+    const onErrorContainerText = {color: theme.colors.onErrorContainer};
+    const surfaceVariantBg = {backgroundColor: theme.colors.surfaceVariant};
+    const errorContainerBg = {backgroundColor: theme.colors.errorContainer};
+    const storageCardTint = {
+      borderColor:
+        storageStatus === 'insufficient'
+          ? theme.colors.error
+          : theme.colors.outlineVariant,
+      backgroundColor:
+        storageStatus === 'insufficient'
+          ? theme.colors.errorContainer
+          : theme.colors.surface,
+    };
+    const storageTitleTint = {
+      color:
+        storageStatus === 'insufficient'
+          ? theme.colors.error
+          : theme.colors.onSurface,
+    };
+    const confirmOpacity = {
+      opacity:
+        storageStatus === 'checking' || engineBlocked || starting ? 0.5 : 1,
+    };
+
     return (
       <Sheet
         isVisible={visible}
@@ -171,39 +197,28 @@ export const DownloadConfirmDialog: React.FC<DownloadConfirmDialogProps> =
         enablePanDownToClose
         onClose={onClose}
         showCloseButton>
-        <ScrollView
-          contentContainerStyle={{paddingHorizontal: 20, paddingBottom: 32}}>
+        <ScrollView contentContainerStyle={styles.scrollContent}>
           {/* Header */}
-          <View style={{flexDirection: 'row', alignItems: 'center', gap: 12}}>
+          <View style={styles.headerRow}>
             <LinearGradient
               colors={gradient}
               start={{x: 0, y: 0}}
               end={{x: 1, y: 1}}
-              style={{
-                width: 52,
-                height: 52,
-                borderRadius: 14,
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
+              style={styles.headerIcon}>
               <Icon width={26} height={26} stroke="#FFFFFF" fill="none" />
             </LinearGradient>
-            <View style={{flex: 1}}>
+            <View style={styles.flex1}>
               <Text
-                style={{
-                  ...theme.typography.titleM,
-                  color: theme.colors.onSurface,
-                  fontWeight: '700',
-                }}
+                style={[
+                  theme.typography.titleM,
+                  onSurfaceText,
+                  styles.weight700,
+                ]}
                 numberOfLines={2}>
                 {hfModel.id.split('/').pop() ?? hfModel.id}
               </Text>
               <Text
-                style={{
-                  ...theme.typography.captionM,
-                  color: theme.colors.onSurfaceVariant,
-                  marginTop: 2,
-                }}
+                style={[theme.typography.captionM, mutedText, styles.mt2]}
                 numberOfLines={1}>
                 {hfModel.author ?? hfModel.id.split('/')[0]}
                 {quant ? `  ·  ${quant}` : ''}
@@ -213,22 +228,12 @@ export const DownloadConfirmDialog: React.FC<DownloadConfirmDialogProps> =
           </View>
 
           {/* What is this model */}
-          <View style={{marginTop: 18}}>
+          <View style={styles.aboutSection}>
             <Text
-              style={{
-                ...theme.typography.uiM,
-                color: theme.colors.onSurface,
-                fontWeight: '700',
-              }}>
+              style={[theme.typography.uiM, onSurfaceText, styles.weight700]}>
               {(l10n as any).modelsHub?.dialog?.aboutTitle}
             </Text>
-            <Text
-              style={{
-                ...theme.typography.bodyS,
-                color: theme.colors.onSurfaceVariant,
-                marginTop: 6,
-                lineHeight: 20,
-              }}>
+            <Text style={[theme.typography.bodyS, mutedText, styles.aboutBody]}>
               {(l10n as any).modelsHub?.dialog?.aboutTemplate
                 ?.replace(
                   '{family}',
@@ -244,14 +249,7 @@ export const DownloadConfirmDialog: React.FC<DownloadConfirmDialogProps> =
           </View>
 
           {/* Facts grid */}
-          <View
-            style={{
-              marginTop: 16,
-              borderRadius: 14,
-              backgroundColor: theme.colors.surfaceVariant,
-              padding: 14,
-              gap: 8,
-            }}>
+          <View style={[styles.factsCard, surfaceVariantBg]}>
             <FactRow
               label={(l10n as any).modelsHub?.dialog?.file ?? ''}
               value={modelFile.rfilename}
@@ -297,89 +295,49 @@ export const DownloadConfirmDialog: React.FC<DownloadConfirmDialogProps> =
           </View>
 
           {/* Storage check */}
-          <View
-            style={{
-              marginTop: 14,
-              borderRadius: 14,
-              padding: 14,
-              borderWidth: 1,
-              borderColor:
-                storageStatus === 'insufficient'
-                  ? theme.colors.error
-                  : theme.colors.outlineVariant,
-              backgroundColor:
-                storageStatus === 'insufficient'
-                  ? theme.colors.errorContainer
-                  : theme.colors.surface,
-            }}>
+          <View style={[styles.storageCard, storageCardTint]}>
             <Text
-              style={{
-                ...theme.typography.uiM,
-                fontWeight: '700',
-                color:
-                  storageStatus === 'insufficient'
-                    ? theme.colors.error
-                    : theme.colors.onSurface,
-              }}>
+              style={[
+                theme.typography.uiM,
+                storageTitleTint,
+                styles.weight700,
+              ]}>
               {storageStatus === 'checking'
                 ? (l10n as any).modelsHub?.storage?.checking
                 : storageStatus === 'ok'
                   ? (l10n as any).modelsHub?.storage?.enough
                   : (l10n as any).modelsHub?.storage?.notEnough}
             </Text>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                marginTop: 8,
-              }}>
-              <Text
-                style={{
-                  ...theme.typography.bodyS,
-                  color: theme.colors.onSurfaceVariant,
-                }}>
+            <View style={[styles.rowBetween, styles.mt8]}>
+              <Text style={[theme.typography.bodyS, mutedText]}>
                 {(l10n as any).modelsHub?.storage?.required}
               </Text>
               <Text
-                style={{
-                  ...theme.typography.bodyS,
-                  fontWeight: '600',
-                  color: theme.colors.onSurface,
-                }}>
+                style={[
+                  theme.typography.bodyS,
+                  onSurfaceText,
+                  styles.weight600,
+                ]}>
                 {formatBytes(totalRequired * 1.1)}
               </Text>
             </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                marginTop: 4,
-              }}>
-              <Text
-                style={{
-                  ...theme.typography.bodyS,
-                  color: theme.colors.onSurfaceVariant,
-                }}>
+            <View style={[styles.rowBetween, styles.mt4]}>
+              <Text style={[theme.typography.bodyS, mutedText]}>
                 {(l10n as any).modelsHub?.storage?.available}
               </Text>
               <Text
-                style={{
-                  ...theme.typography.bodyS,
-                  fontWeight: '600',
-                  color: theme.colors.onSurface,
-                }}>
+                style={[
+                  theme.typography.bodyS,
+                  onSurfaceText,
+                  styles.weight600,
+                ]}>
                 {freeBytes != null
                   ? formatBytes(freeBytes)
                   : ((l10n as any).modelsHub?.notAvailable ?? '')}
               </Text>
             </View>
             {storageStatus === 'insufficient' && (
-              <Text
-                style={{
-                  ...theme.typography.bodyS,
-                  color: theme.colors.error,
-                  marginTop: 8,
-                }}>
+              <Text style={[theme.typography.bodyS, errorText, styles.mt8]}>
                 {(l10n as any).modelsHub?.storage?.deficit?.replace(
                   '{amount}',
                   formatBytes(deficit),
@@ -390,22 +348,8 @@ export const DownloadConfirmDialog: React.FC<DownloadConfirmDialogProps> =
 
           {/* Wi-Fi only preference note */}
           {modelHubStore.wifiOnlyDownloads && (
-            <View
-              style={{
-                marginTop: 10,
-                flexDirection: 'row',
-                alignItems: 'center',
-                gap: 8,
-                borderRadius: 12,
-                padding: 12,
-                backgroundColor: theme.colors.surfaceVariant,
-              }}>
-              <Text
-                style={{
-                  ...theme.typography.bodyS,
-                  color: theme.colors.onSurfaceVariant,
-                  flex: 1,
-                }}>
+            <View style={[styles.wifiNote, surfaceVariantBg]}>
+              <Text style={[theme.typography.bodyS, mutedText, styles.flex1]}>
                 {(l10n as any).modelsHub?.dialog?.wifiOnlyWaiting}
               </Text>
             </View>
@@ -413,47 +357,21 @@ export const DownloadConfirmDialog: React.FC<DownloadConfirmDialogProps> =
 
           {/* Engine unsupported notice */}
           {engineBlocked && (
-            <View
-              style={{
-                marginTop: 10,
-                borderRadius: 12,
-                padding: 12,
-                backgroundColor: theme.colors.errorContainer,
-              }}>
-              <Text
-                style={{
-                  ...theme.typography.bodyS,
-                  color: theme.colors.onErrorContainer,
-                }}>
+            <View style={[styles.engineNotice, errorContainerBg]}>
+              <Text style={[theme.typography.bodyS, onErrorContainerText]}>
                 {(l10n as any).modelsHub?.dialog?.engineUnsupported}
               </Text>
             </View>
           )}
 
           {/* Actions */}
-          <View
-            style={{
-              flexDirection: 'row',
-              gap: 12,
-              marginTop: 20,
-            }}>
+          <View style={styles.actionsRow}>
             <Pressable
               onPress={onClose}
               accessibilityRole="button"
-              style={{
-                flex: 1,
-                height: 48,
-                borderRadius: 14,
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: theme.colors.surfaceVariant,
-              }}>
+              style={[styles.cancelButton, surfaceVariantBg]}>
               <Text
-                style={{
-                  ...theme.typography.uiM,
-                  fontWeight: '600',
-                  color: theme.colors.onSurface,
-                }}>
+                style={[theme.typography.uiM, onSurfaceText, styles.weight600]}>
                 {l10n.common.cancel}
               </Text>
             </Pressable>
@@ -463,27 +381,13 @@ export const DownloadConfirmDialog: React.FC<DownloadConfirmDialogProps> =
                 storageStatus === 'checking' || engineBlocked || starting
               }
               accessibilityRole="button"
-              style={{flex: 2}}>
+              style={styles.confirmPressable}>
               <LinearGradient
                 colors={BRAND_COLORS}
                 start={{x: 0, y: 0}}
                 end={{x: 1, y: 0}}
-                style={{
-                  height: 48,
-                  borderRadius: 14,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  opacity:
-                    storageStatus === 'checking' || engineBlocked || starting
-                      ? 0.5
-                      : 1,
-                }}>
-                <Text
-                  style={{
-                    ...theme.typography.uiM,
-                    fontWeight: '700',
-                    color: '#FFFFFF',
-                  }}>
+                style={[styles.confirmButton, confirmOpacity]}>
+                <Text style={[theme.typography.uiM, styles.confirmText]}>
                   {starting
                     ? (l10n as any).modelsHub?.dialog?.starting
                     : (l10n as any).modelsHub?.dialog?.confirmDownload}
@@ -495,3 +399,58 @@ export const DownloadConfirmDialog: React.FC<DownloadConfirmDialogProps> =
       </Sheet>
     );
   });
+
+const styles = StyleSheet.create({
+  // Shared static fragments
+  flex1: {flex: 1},
+  weight700: {fontWeight: '700'},
+  weight600: {fontWeight: '600'},
+  mt2: {marginTop: 2},
+  mt4: {marginTop: 4},
+  mt8: {marginTop: 8},
+  rowBetween: {flexDirection: 'row', justifyContent: 'space-between'},
+
+  // DownloadConfirmDialog sheet
+  scrollContent: {paddingHorizontal: 20, paddingBottom: 32},
+  headerRow: {flexDirection: 'row', alignItems: 'center', gap: 12},
+  headerIcon: {
+    width: 52,
+    height: 52,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  aboutSection: {marginTop: 18},
+  aboutBody: {marginTop: 6, lineHeight: 20},
+  factsCard: {marginTop: 16, borderRadius: 14, padding: 14, gap: 8},
+  storageCard: {marginTop: 14, borderRadius: 14, padding: 14, borderWidth: 1},
+  wifiNote: {
+    marginTop: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    borderRadius: 12,
+    padding: 12,
+  },
+  engineNotice: {marginTop: 10, borderRadius: 12, padding: 12},
+  actionsRow: {flexDirection: 'row', gap: 12, marginTop: 20},
+  cancelButton: {
+    flex: 1,
+    height: 48,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  confirmPressable: {flex: 2},
+  confirmButton: {
+    height: 48,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  confirmText: {fontWeight: '700', color: '#FFFFFF'},
+
+  // FactRow
+  factRow: {flexDirection: 'row', justifyContent: 'space-between', gap: 12},
+  factValue: {fontWeight: '600', flexShrink: 1},
+});

@@ -1,4 +1,5 @@
 import React from 'react';
+import {ViewStyle} from 'react-native';
 import Svg, {Rect} from 'react-native-svg';
 
 import {ShieldGlyph} from '../../../assets/onboarding/illustrations';
@@ -24,6 +25,13 @@ export const PhoneWithShield: React.FC<PhoneWithShieldProps> = ({
   const viewBoxH = 143;
   const height = (width * viewBoxH) / viewBoxW;
   const shieldSize = (41 / viewBoxW) * width;
+  // Absolute shield placement is proportional to the computed phone
+  // size, so it cannot live in a static StyleSheet entry.
+  const shieldPosition: ViewStyle = {
+    position: 'absolute',
+    top: (49.8 / viewBoxH) * height,
+    left: (width - shieldSize) / 2,
+  };
   return (
     <>
       <Svg
@@ -56,11 +64,7 @@ export const PhoneWithShield: React.FC<PhoneWithShieldProps> = ({
       <ShieldGlyph
         width={shieldSize}
         height={shieldSize}
-        style={{
-          position: 'absolute',
-          top: (49.8 / viewBoxH) * height,
-          left: (width - shieldSize) / 2,
-        }}
+        style={shieldPosition}
       />
     </>
   );

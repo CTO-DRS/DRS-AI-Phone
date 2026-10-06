@@ -358,8 +358,10 @@ describe('SettingsScreen', () => {
   describe('speculative draft model picker', () => {
     // Menus open from a ref.measure() callback. The test renderer's shared
     // measure mock is a no-op; make it invoke the callback so the menu opens.
+    /* eslint-disable @react-native/no-deep-imports -- official RN-provided jest helper; no public path exists */
     const mockNativeMethods =
       require('react-native/jest/MockNativeMethods').default;
+    /* eslint-enable @react-native/no-deep-imports */
     beforeEach(() => {
       mockNativeMethods.measure.mockImplementation((cb: any) =>
         cb(0, 0, 10, 10, 0, 0),

@@ -1,3 +1,6 @@
+/* eslint-disable no-bitwise -- Byte-accurate GGUF wire-format encoding for
+ * test fixtures: assembling little-endian values requires bitwise operators
+ * by definition of the binary spec under test. */
 /**
  * Builds real GGUF header bytes for reader tests, and a Range-aware fetch
  * mock that serves them the way a CDN would. Kept byte-accurate to the GGUF

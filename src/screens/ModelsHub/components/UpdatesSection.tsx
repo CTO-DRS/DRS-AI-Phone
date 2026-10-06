@@ -1,5 +1,5 @@
 import React, {useContext, useState} from 'react';
-import {Text, View, Pressable} from 'react-native';
+import {StyleSheet, Text, View, Pressable} from 'react-native';
 import {observer} from 'mobx-react-lite';
 
 import {useTheme} from '../../../hooks';
@@ -92,23 +92,32 @@ export const UpdatesSection: React.FC<UpdatesSectionProps> = observer(
 
     const hasUpdates = candidates.length > 0;
 
+    const headerTitleStyle = {
+      ...theme.typography.titleM,
+      color: theme.colors.onSurface,
+    };
+    const checkLabelStyle = {
+      ...theme.typography.captionM,
+      color: checking ? theme.colors.onSurfaceVariant : '#2563EB',
+    };
+    const upToDateStyle = {
+      ...theme.typography.captionM,
+      color: theme.colors.onSurfaceVariant,
+    };
+    const candidateNameStyle = {
+      ...theme.typography.uiS,
+      color: theme.colors.onSurface,
+    };
+    const candidateMetaStyle = {
+      ...theme.typography.captionM,
+      color: theme.colors.onSurfaceVariant,
+    };
+    const surfaceVariantBg = {backgroundColor: theme.colors.surfaceVariant};
+
     return (
       <View>
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            paddingHorizontal: 20,
-            marginTop: 20,
-            marginBottom: 8,
-          }}>
-          <Text
-            style={{
-              ...theme.typography.titleM,
-              fontWeight: '700',
-              color: theme.colors.onSurface,
-            }}>
+        <View style={styles.headerRow}>
+          <Text style={[headerTitleStyle, styles.textBold]}>
             {t.updates?.title}
             {hasUpdates ? ` (${candidates.length})` : ''}
           </Text>
@@ -116,18 +125,8 @@ export const UpdatesSection: React.FC<UpdatesSectionProps> = observer(
             onPress={runCheck}
             disabled={checking}
             accessibilityRole="button"
-            style={{
-              paddingHorizontal: 12,
-              paddingVertical: 7,
-              borderRadius: 10,
-              backgroundColor: theme.colors.surfaceVariant,
-            }}>
-            <Text
-              style={{
-                ...theme.typography.captionM,
-                fontWeight: '700',
-                color: checking ? theme.colors.onSurfaceVariant : '#2563EB',
-              }}>
+            style={[styles.checkButton, surfaceVariantBg]}>
+            <Text style={[checkLabelStyle, styles.textBold]}>
               {checking
                 ? t.updates?.checking
                 : checked
@@ -138,12 +137,7 @@ export const UpdatesSection: React.FC<UpdatesSectionProps> = observer(
         </View>
 
         {checked && !hasUpdates && (
-          <Text
-            style={{
-              ...theme.typography.captionM,
-              color: theme.colors.onSurfaceVariant,
-              paddingHorizontal: 20,
-            }}>
+          <Text style={[upToDateStyle, styles.upToDateInset]}>
             {t.updates?.upToDate}
           </Text>
         )}
@@ -151,34 +145,16 @@ export const UpdatesSection: React.FC<UpdatesSectionProps> = observer(
         {candidates.map(candidate => (
           <View
             key={candidate.model.id}
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              marginHorizontal: 16,
-              marginBottom: 8,
-              padding: 12,
-              borderRadius: 14,
-              backgroundColor: theme.colors.surfaceVariant,
-              gap: 10,
-            }}>
-            <View style={{flex: 1}}>
+            style={[styles.candidateRow, surfaceVariantBg]}>
+            <View style={styles.flex1}>
               <Text
-                style={{
-                  ...theme.typography.uiS,
-                  fontWeight: '700',
-                  color: theme.colors.onSurface,
-                }}
+                style={[candidateNameStyle, styles.textBold]}
                 numberOfLines={1}>
                 {extractFamilyLabel(
                   candidate.model.repo ?? candidate.model.name,
                 )}
               </Text>
-              <Text
-                style={{
-                  ...theme.typography.captionM,
-                  color: theme.colors.onSurfaceVariant,
-                  marginTop: 2,
-                }}>
+              <Text style={[candidateMetaStyle, styles.metaGap]}>
                 {candidate.model.filename}
                 {candidate.latestSize != null
                   ? `  ·  ${formatBytes(candidate.latestSize)}`
@@ -188,18 +164,8 @@ export const UpdatesSection: React.FC<UpdatesSectionProps> = observer(
             <Pressable
               onPress={() => onUpdate(candidate)}
               accessibilityRole="button"
-              style={{
-                paddingHorizontal: 14,
-                paddingVertical: 8,
-                borderRadius: 10,
-                backgroundColor: '#7C3AED',
-              }}>
-              <Text
-                style={{
-                  ...theme.typography.captionM,
-                  fontWeight: '700',
-                  color: '#FFFFFF',
-                }}>
+              style={styles.updateButton}>
+              <Text style={[theme.typography.captionM, styles.updateLabel]}>
                 {t.updates?.update}
               </Text>
             </Pressable>
@@ -209,3 +175,35 @@ export const UpdatesSection: React.FC<UpdatesSectionProps> = observer(
     );
   },
 );
+
+const styles = StyleSheet.create({
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    marginTop: 20,
+    marginBottom: 8,
+  },
+  checkButton: {paddingHorizontal: 12, paddingVertical: 7, borderRadius: 10},
+  candidateRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: 16,
+    marginBottom: 8,
+    padding: 12,
+    borderRadius: 14,
+    gap: 10,
+  },
+  flex1: {flex: 1},
+  updateButton: {
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 10,
+    backgroundColor: '#7C3AED',
+  },
+  upToDateInset: {paddingHorizontal: 20},
+  metaGap: {marginTop: 2},
+  textBold: {fontWeight: '700'},
+  updateLabel: {fontWeight: '700', color: '#FFFFFF'},
+});

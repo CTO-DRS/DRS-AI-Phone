@@ -280,4 +280,106 @@ export const createStyles = (theme: Theme) =>
       fontWeight: '700',
       marginTop: 2,
     } as TextStyle,
+    summaryStatValueGpuOk: {
+      color: '#059669',
+    } as TextStyle,
+    summaryStatValueGpuNo: {
+      color: theme.colors.onSurface,
+    } as TextStyle,
+
+    // ── Horizontal catalog rows ───────────────────────────
+    skeletonRow: {
+      flexDirection: 'row',
+      paddingHorizontal: 16,
+    } as ViewStyle,
+    hRowContent: {
+      paddingHorizontal: 16,
+    } as ViewStyle,
+
+    // ── Sort menu chips ───────────────────────────────────
+    sortMenu: {
+      marginHorizontal: 16,
+      marginBottom: 8,
+      borderRadius: 14,
+      backgroundColor: theme.colors.surfaceVariant,
+      padding: 8,
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 6,
+    } as ViewStyle,
+    sortChip: {
+      paddingHorizontal: 12,
+      paddingVertical: 7,
+      borderRadius: 10,
+    } as ViewStyle,
+    sortChipActive: {
+      backgroundColor: theme.colors.surface,
+    } as ViewStyle,
+    sortChipInactive: {
+      backgroundColor: 'transparent',
+    } as ViewStyle,
+    sortChipTextActive: {
+      ...theme.typography.captionM,
+      fontWeight: '700',
+      color: theme.colors.onSurface,
+    } as TextStyle,
+    sortChipTextInactive: {
+      ...theme.typography.captionM,
+      fontWeight: '400',
+      color: theme.colors.onSurfaceVariant,
+    } as TextStyle,
+
+    // ── Wi-Fi-only preference chip ────────────────────────
+    wifiChip: {
+      paddingHorizontal: 12,
+      paddingVertical: 7,
+      borderRadius: 10,
+    } as ViewStyle,
+    wifiChipActive: {
+      backgroundColor: '#2563EB22',
+    } as ViewStyle,
+    wifiChipInactive: {
+      backgroundColor: 'transparent',
+    } as ViewStyle,
+    wifiChipTextActive: {
+      ...theme.typography.captionM,
+      fontWeight: '700',
+      color: '#2563EB',
+    } as TextStyle,
+    wifiChipTextInactive: {
+      ...theme.typography.captionM,
+      fontWeight: '400',
+      color: theme.colors.onSurfaceVariant,
+    } as TextStyle,
+
+    // ── Favorites list ────────────────────────────────────
+    favoritesList: {
+      paddingHorizontal: 16,
+      gap: 2,
+    } as ViewStyle,
+    favoriteModelRow: {
+      ...theme.typography.bodyS,
+      color: theme.colors.onSurfaceVariant,
+      paddingVertical: 4,
+    } as TextStyle,
+
+    // ── Storage entry card ────────────────────────────────
+    storageEntry: {
+      marginTop: 20,
+    } as ViewStyle,
+    storageEntryRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    } as ViewStyle,
+    storageEntryTitle: {
+      ...theme.typography.uiM,
+      fontWeight: '700',
+      color: theme.colors.onSurface,
+    } as TextStyle,
+    storageEntryHint: {
+      ...theme.typography.captionM,
+      color: theme.colors.onSurfaceVariant,
+      marginTop: 2,
+    } as TextStyle,
   });

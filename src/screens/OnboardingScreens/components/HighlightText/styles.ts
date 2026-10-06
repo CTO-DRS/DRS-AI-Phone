@@ -18,4 +18,7 @@ export const createStyles = (theme: Theme, align: 'left' | 'center') =>
       backgroundColor: theme.colors.accent.peach,
       color: theme.colors.text,
     },
+    fillWidth: {
+      width: '100%',
+    },
   });

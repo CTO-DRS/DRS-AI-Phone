@@ -539,7 +539,7 @@ export const ModelsHubScreen: React.FC = observer(() => {
   ) => {
     if (loading) {
       return (
-        <View style={{flexDirection: 'row', paddingHorizontal: 16}}>
+        <View style={styles.skeletonRow}>
           <HubSkeletonCard />
           <HubSkeletonCard />
         </View>
@@ -558,7 +558,7 @@ export const ModelsHubScreen: React.FC = observer(() => {
         showsHorizontalScrollIndicator={false}
         data={models}
         keyExtractor={m => m.id}
-        contentContainerStyle={{paddingHorizontal: 16}}
+        contentContainerStyle={styles.hRowContent}
         renderItem={({item}) => (
           <HubCatalogCard
             hfModel={item}
@@ -768,37 +768,23 @@ export const ModelsHubScreen: React.FC = observer(() => {
         </View>
 
         {sortMenuVisible && (
-          <View
-            style={{
-              marginHorizontal: 16,
-              marginBottom: 8,
-              borderRadius: 14,
-              backgroundColor: theme.colors.surfaceVariant,
-              padding: 8,
-              flexDirection: 'row',
-              flexWrap: 'wrap',
-              gap: 6,
-            }}>
+          <View style={styles.sortMenu}>
             {SORT_OPTIONS.map(option => (
               <Pressable
                 key={option}
                 onPress={() => uiStore.setValue('modelsHub', 'sort', option)}
-                style={{
-                  paddingHorizontal: 12,
-                  paddingVertical: 7,
-                  borderRadius: 10,
-                  backgroundColor:
-                    sort === option ? theme.colors.surface : 'transparent',
-                }}>
+                style={[
+                  styles.sortChip,
+                  sort === option
+                    ? styles.sortChipActive
+                    : styles.sortChipInactive,
+                ]}>
                 <Text
-                  style={{
-                    ...theme.typography.captionM,
-                    fontWeight: sort === option ? '700' : '400',
-                    color:
-                      sort === option
-                        ? theme.colors.onSurface
-                        : theme.colors.onSurfaceVariant,
-                  }}>
+                  style={
+                    sort === option
+                      ? styles.sortChipTextActive
+                      : styles.sortChipTextInactive
+                  }>
                   {t.sort?.[option] ?? option}
                 </Text>
               </Pressable>
@@ -808,22 +794,18 @@ export const ModelsHubScreen: React.FC = observer(() => {
               onPress={() =>
                 modelHubStore.setWifiOnly(!modelHubStore.wifiOnlyDownloads)
               }
-              style={{
-                paddingHorizontal: 12,
-                paddingVertical: 7,
-                borderRadius: 10,
-                backgroundColor: modelHubStore.wifiOnlyDownloads
-                  ? '#2563EB22'
-                  : 'transparent',
-              }}>
+              style={[
+                styles.wifiChip,
+                modelHubStore.wifiOnlyDownloads
+                  ? styles.wifiChipActive
+                  : styles.wifiChipInactive,
+              ]}>
               <Text
-                style={{
-                  ...theme.typography.captionM,
-                  fontWeight: modelHubStore.wifiOnlyDownloads ? '700' : '400',
-                  color: modelHubStore.wifiOnlyDownloads
-                    ? '#2563EB'
-                    : theme.colors.onSurfaceVariant,
-                }}>
+                style={
+                  modelHubStore.wifiOnlyDownloads
+                    ? styles.wifiChipTextActive
+                    : styles.wifiChipTextInactive
+                }>
                 {t.wifiOnly}
               </Text>
             </Pressable>
@@ -865,11 +847,9 @@ export const ModelsHubScreen: React.FC = observer(() => {
                 <Text
                   style={[
                     styles.summaryStatValue,
-                    {
-                      color: device.gpuSupported
-                        ? '#059669'
-                        : theme.colors.onSurface,
-                    },
+                    device.gpuSupported
+                      ? styles.summaryStatValueGpuOk
+                      : styles.summaryStatValueGpuNo,
                   ]}>
                   {device.gpuSupported == null
                     ? t.notAvailable
@@ -934,15 +914,11 @@ export const ModelsHubScreen: React.FC = observer(() => {
         {/* Favorites */}
         {favoriteModels.length > 0 && renderSectionHeader(t.favoritesTitle)}
         {favoriteModels.length > 0 && (
-          <View style={{paddingHorizontal: 16, gap: 2}}>
+          <View style={styles.favoritesList}>
             {favoriteModels.map(model => (
               <Text
                 key={model.id}
-                style={{
-                  ...theme.typography.bodyS,
-                  color: theme.colors.onSurfaceVariant,
-                  paddingVertical: 4,
-                }}
+                style={styles.favoriteModelRow}
                 numberOfLines={1}>
                 ♥ {model.author ? `${model.author}/` : ''}
                 {model.repo ?? model.name}
@@ -983,30 +959,13 @@ export const ModelsHubScreen: React.FC = observer(() => {
         <Pressable
           testID="hub-storage-entry"
           onPress={() => setStorageVisible(true)}
-          style={[styles.card, {marginTop: 20}]}
+          style={[styles.card, styles.storageEntry]}
           accessibilityRole="button"
           accessibilityLabel={t.storage?.title}>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}>
+          <View style={styles.storageEntryRow}>
             <View>
-              <Text
-                style={{
-                  ...theme.typography.uiM,
-                  fontWeight: '700',
-                  color: theme.colors.onSurface,
-                }}>
-                {t.storage?.title}
-              </Text>
-              <Text
-                style={{
-                  ...theme.typography.captionM,
-                  color: theme.colors.onSurfaceVariant,
-                  marginTop: 2,
-                }}>
+              <Text style={styles.storageEntryTitle}>{t.storage?.title}</Text>
+              <Text style={styles.storageEntryHint}>
                 {t.storage?.entryHint}
               </Text>
             </View>

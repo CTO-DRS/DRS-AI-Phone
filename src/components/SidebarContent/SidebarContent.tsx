@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useCallback, useContext, useEffect, useState} from 'react';
 import {TouchableOpacity, View, Alert, SectionList} from 'react-native';
 import {observer} from 'mobx-react';
 import {Divider, Drawer, Text} from 'react-native-paper';
@@ -91,6 +91,41 @@ const SessionItem = React.memo<SessionItemProps>(
       }
     };
 
+    // Paper's Drawer.Item/Menu.Item invoke these render-prop functions when
+    // rendering; stable identities (useCallback) keep the icon trees from
+    // remounting and satisfy react/no-unstable-nested-components.
+    const renderPinnedIndicator = useCallback(
+      () => <StarIcon width={14} height={14} fill={theme.colors.primary} />,
+      [theme],
+    );
+    const renderPinIcon = useCallback(
+      () => (
+        <StarIcon
+          width={20}
+          height={20}
+          // star.svg is stroke-only and .svgrrc binds that stroke to the
+          // fill prop, so fill='none' paints nothing. Omitting fill is
+          // what yields an outline; no test can catch this (svg is mocked).
+          {...(isPinned
+            ? {fill: theme.colors.primary}
+            : {stroke: theme.colors.primary})}
+        />
+      ),
+      [isPinned, theme],
+    );
+    const renderRenameIcon = useCallback(
+      () => <EditIcon stroke={theme.colors.primary} />,
+      [theme],
+    );
+    const renderExportIcon = useCallback(
+      () => <ShareIcon stroke={theme.colors.primary} />,
+      [theme],
+    );
+    const renderDeleteIcon = useCallback(
+      () => <TrashIcon stroke={theme.colors.error} />,
+      [theme],
+    );
+
     return (
       <View style={styles.sessionItemContainer}>
         {isSelectionMode && (
@@ -110,17 +145,7 @@ const SessionItem = React.memo<SessionItemProps>(
             active={isActive}
             label={session.title}
             style={styles.sessionDrawerItem}
-            right={
-              isPinned
-                ? () => (
-                    <StarIcon
-                      width={14}
-                      height={14}
-                      fill={theme.colors.primary}
-                    />
-                  )
-                : undefined
-            }
+            right={isPinned ? renderPinnedIndicator : undefined}
           />
         </TouchableOpacity>
         {!isSelectionMode && (
@@ -142,18 +167,7 @@ const SessionItem = React.memo<SessionItemProps>(
                   ? l10n.components.sidebarContent.unpin
                   : l10n.components.sidebarContent.pin
               }
-              leadingIcon={() => (
-                <StarIcon
-                  width={20}
-                  height={20}
-                  // star.svg is stroke-only and .svgrrc binds that stroke to the
-                  // fill prop, so fill='none' paints nothing. Omitting fill is
-                  // what yields an outline; no test can catch this (svg is mocked).
-                  {...(isPinned
-                    ? {fill: theme.colors.primary}
-                    : {stroke: theme.colors.primary})}
-                />
-              )}
+              leadingIcon={renderPinIcon}
             />
             <Divider style={styles.menuDivider} />
             <Menu.Item
@@ -162,7 +176,7 @@ const SessionItem = React.memo<SessionItemProps>(
                 onMenuDismiss();
               }}
               label={l10n.common.rename}
-              leadingIcon={() => <EditIcon stroke={theme.colors.primary} />}
+              leadingIcon={renderRenameIcon}
             />
             <Menu.Item
               onPress={() => {
@@ -170,7 +184,7 @@ const SessionItem = React.memo<SessionItemProps>(
                 onMenuDismiss();
               }}
               label={l10n.common.export}
-              leadingIcon={() => <ShareIcon stroke={theme.colors.primary} />}
+              leadingIcon={renderExportIcon}
             />
             <Menu.Item
               onPress={() => {
@@ -179,7 +193,7 @@ const SessionItem = React.memo<SessionItemProps>(
               }}
               label={l10n.common.delete}
               labelStyle={{color: theme.colors.error}}
-              leadingIcon={() => <TrashIcon stroke={theme.colors.error} />}
+              leadingIcon={renderDeleteIcon}
             />
             <Divider style={styles.menuDivider} />
             <Menu.Item

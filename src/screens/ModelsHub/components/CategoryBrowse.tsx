@@ -1,11 +1,19 @@
 import React, {useContext, useEffect, useMemo} from 'react';
-import {FlatList, Text, View, RefreshControl} from 'react-native';
+import {
+  FlatList,
+  StyleSheet,
+  Text,
+  View,
+  RefreshControl,
+  TextStyle,
+  ViewStyle,
+} from 'react-native';
 import {observer} from 'mobx-react-lite';
 
 import {useTheme} from '../../../hooks';
 import {L10nContext} from '../../../utils';
 import {modelStore} from '../../../store';
-import {HuggingFaceModel, Model} from '../../../utils/types';
+import {HuggingFaceModel, Model, Theme} from '../../../utils/types';
 import {
   ModelCategory,
   classifyHfModel,
@@ -53,6 +61,7 @@ export const CategoryBrowse: React.FC<CategoryBrowseProps> = observer(
   ({category, sort, onSelect, onDownload}) => {
     const l10n = useContext(L10nContext);
     const theme = useTheme();
+    const styles = createStyles(theme);
     const t = (l10n as any).modelsHub ?? {};
     const {profile: device} = useDeviceProfile();
     const catalog = useHfCatalog();
@@ -109,7 +118,7 @@ export const CategoryBrowse: React.FC<CategoryBrowseProps> = observer(
         data={remote}
         keyExtractor={item => item.id}
         renderItem={({item}) => (
-          <View style={{marginBottom: 10, marginHorizontal: 16}}>
+          <View style={styles.resultCardWrapper}>
             <HubCatalogCard
               hfModel={item}
               categories={classifyHfModel(item)}
@@ -134,46 +143,22 @@ export const CategoryBrowse: React.FC<CategoryBrowseProps> = observer(
         ListHeaderComponent={
           <View>
             {engineBlocked && (
-              <View
-                style={{
-                  marginHorizontal: 16,
-                  marginBottom: 10,
-                  borderRadius: 12,
-                  padding: 12,
-                  backgroundColor: theme.colors.surfaceVariant,
-                }}>
-                <Text
-                  style={{
-                    ...theme.typography.bodyS,
-                    color: theme.colors.onSurfaceVariant,
-                    lineHeight: 19,
-                  }}>
+              <View style={styles.engineNotice}>
+                <Text style={styles.engineNoticeText}>
                   {t.categoryEngineNotice}
                 </Text>
               </View>
             )}
 
             {installedOfCategory.length > 0 && (
-              <View style={{marginBottom: 12}}>
-                <Text
-                  style={{
-                    ...theme.typography.uiM,
-                    fontWeight: '700',
-                    color: theme.colors.onSurface,
-                    paddingHorizontal: 20,
-                    marginBottom: 6,
-                  }}>
+              <View style={styles.installedSection}>
+                <Text style={styles.installedSectionTitle}>
                   {t.categoryInstalledSection}
                 </Text>
                 {installedOfCategory.map((m: Model) => (
                   <Text
                     key={m.id}
-                    style={{
-                      ...theme.typography.bodyS,
-                      color: theme.colors.onSurfaceVariant,
-                      paddingHorizontal: 20,
-                      paddingVertical: 4,
-                    }}
+                    style={styles.installedModelRow}
                     numberOfLines={1}>
                     {m.isDownloaded ? '✓ ' : '· '}
                     {m.author ? `${m.author}/` : ''}
@@ -183,15 +168,7 @@ export const CategoryBrowse: React.FC<CategoryBrowseProps> = observer(
               </View>
             )}
 
-            <Text
-              style={{
-                ...theme.typography.uiM,
-                fontWeight: '700',
-                color: theme.colors.onSurface,
-                paddingHorizontal: 20,
-                marginTop: 4,
-                marginBottom: 10,
-              }}>
+            <Text style={styles.remoteSectionTitle}>
               {t.categoryRemoteSection}
             </Text>
 
@@ -214,7 +191,7 @@ export const CategoryBrowse: React.FC<CategoryBrowseProps> = observer(
             )}
           </View>
         }
-        contentContainerStyle={{paddingBottom: 120}}
+        contentContainerStyle={styles.listContent}
       />
     );
   },
@@ -226,4 +203,51 @@ const classifyModelSafe = (m: Model) =>
     id: `${m.author ?? ''}/${m.repo ?? m.name ?? ''}`,
     tags: m.hfModel?.tags,
     specs: m.hfModel?.specs,
+  });
+
+const createStyles = (theme: Theme) =>
+  StyleSheet.create({
+    resultCardWrapper: {
+      marginBottom: 10,
+      marginHorizontal: 16,
+    } as ViewStyle,
+    engineNotice: {
+      marginHorizontal: 16,
+      marginBottom: 10,
+      borderRadius: 12,
+      padding: 12,
+      backgroundColor: theme.colors.surfaceVariant,
+    } as ViewStyle,
+    engineNoticeText: {
+      ...theme.typography.bodyS,
+      color: theme.colors.onSurfaceVariant,
+      lineHeight: 19,
+    } as TextStyle,
+    installedSection: {
+      marginBottom: 12,
+    } as ViewStyle,
+    installedSectionTitle: {
+      ...theme.typography.uiM,
+      fontWeight: '700',
+      color: theme.colors.onSurface,
+      paddingHorizontal: 20,
+      marginBottom: 6,
+    } as TextStyle,
+    installedModelRow: {
+      ...theme.typography.bodyS,
+      color: theme.colors.onSurfaceVariant,
+      paddingHorizontal: 20,
+      paddingVertical: 4,
+    } as TextStyle,
+    remoteSectionTitle: {
+      ...theme.typography.uiM,
+      fontWeight: '700',
+      color: theme.colors.onSurface,
+      paddingHorizontal: 20,
+      marginTop: 4,
+      marginBottom: 10,
+    } as TextStyle,
+    listContent: {
+      paddingBottom: 120,
+    } as ViewStyle,
   });

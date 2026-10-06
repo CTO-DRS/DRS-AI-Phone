@@ -1,5 +1,11 @@
 import React, {memo, useContext} from 'react';
-import {View, Text, ActivityIndicator, Pressable} from 'react-native';
+import {
+  View,
+  Text,
+  ActivityIndicator,
+  StyleSheet,
+  Pressable,
+} from 'react-native';
 import {LinearGradient} from 'react-native-linear-gradient';
 import {observer} from 'mobx-react';
 
@@ -158,6 +164,13 @@ export const HubCatalogCard: React.FC<CatalogCardProps> = memo(
     const engineBlocked =
       categories.length > 0 && categories.every(isUnavailableOnDeviceEngine);
 
+    const compatDotStyle = {
+      backgroundColor: compatibility ? COMPAT_COLORS[compatibility] : '#94A3B8',
+    };
+    const compatTextStyle = {
+      color: compatibility ? COMPAT_COLORS[compatibility] : '#94A3B8',
+    };
+
     // i18n: modelsHub.compat.<level>
     const compatLabel =
       compatibility != null
@@ -170,12 +183,7 @@ export const HubCatalogCard: React.FC<CatalogCardProps> = memo(
         onPress={onPress}
         android_ripple={{color: theme.colors.outlineVariant}}
         style={({pressed}) => [styles.hCard, pressed && {opacity: 0.9}]}>
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}>
+        <View style={primitiveStyles.cardHeaderRow}>
           <LinearGradient
             colors={[from, to]}
             start={{x: 0, y: 0}}
@@ -220,26 +228,10 @@ export const HubCatalogCard: React.FC<CatalogCardProps> = memo(
 
         <View style={styles.hCardRow}>
           {compatLabel ? (
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              <View
-                style={[
-                  styles.compatDot,
-                  {
-                    backgroundColor: compatibility
-                      ? COMPAT_COLORS[compatibility]
-                      : '#94A3B8',
-                  },
-                ]}
-              />
+            <View style={primitiveStyles.compatRow}>
+              <View style={[styles.compatDot, compatDotStyle]} />
               <Text
-                style={[
-                  styles.compatText,
-                  {
-                    color: compatibility
-                      ? COMPAT_COLORS[compatibility]
-                      : '#94A3B8',
-                  },
-                ]}
+                style={[styles.compatText, compatTextStyle]}
                 numberOfLines={1}>
                 {compatLabel}
               </Text>
@@ -280,31 +272,19 @@ export const HubCatalogCard: React.FC<CatalogCardProps> = memo(
 export const HubSkeletonCard: React.FC<{width?: number}> = ({width = 220}) => {
   const theme = useTheme();
   const styles = createStyles(theme);
+  const skeletonWidthStyle = {width};
   return (
     <View
-      style={[styles.hCard, {width, opacity: 0.6}]}
+      style={[
+        styles.hCard,
+        skeletonWidthStyle,
+        primitiveStyles.skeletonCardDim,
+      ]}
       testID="hub-skeleton-card">
-      <View
-        style={[
-          styles.skeletonBlock,
-          {width: 40, height: 40, borderRadius: 12},
-        ]}
-      />
-      <View
-        style={[
-          styles.skeletonBlock,
-          {height: 14, marginTop: 12, width: '80%'},
-        ]}
-      />
-      <View
-        style={[styles.skeletonBlock, {height: 10, marginTop: 8, width: '50%'}]}
-      />
-      <View
-        style={[
-          styles.skeletonBlock,
-          {height: 10, marginTop: 10, width: '65%'},
-        ]}
-      />
+      <View style={[styles.skeletonBlock, primitiveStyles.skeletonAvatar]} />
+      <View style={[styles.skeletonBlock, primitiveStyles.skeletonTitle]} />
+      <View style={[styles.skeletonBlock, primitiveStyles.skeletonLineShort]} />
+      <View style={[styles.skeletonBlock, primitiveStyles.skeletonLineLong]} />
     </View>
   );
 };
@@ -330,6 +310,8 @@ export const HubEmptyState: React.FC<EmptyStateProps> = ({
 }) => {
   const theme = useTheme();
   const styles = createStyles(theme);
+  const emptyActionBg = {backgroundColor: theme.colors.primary};
+  const emptyActionText = {color: theme.colors.onPrimary};
   return (
     <View style={styles.emptyState} testID={testID}>
       {Icon && (
@@ -346,15 +328,9 @@ export const HubEmptyState: React.FC<EmptyStateProps> = ({
         <Pressable
           onPress={onAction}
           android_ripple={{color: theme.colors.outlineVariant}}
-          style={{
-            marginTop: 16,
-            paddingHorizontal: 20,
-            paddingVertical: 10,
-            borderRadius: 12,
-            backgroundColor: theme.colors.primary,
-          }}
+          style={[primitiveStyles.emptyAction, emptyActionBg]}
           accessibilityRole="button">
-          <Text style={{color: theme.colors.onPrimary, fontWeight: '600'}}>
+          <Text style={[emptyActionText, primitiveStyles.textSemibold]}>
             {actionLabel}
           </Text>
         </Pressable>
@@ -374,20 +350,24 @@ export const HubInlineStatus: React.FC<{
   const theme = useTheme();
   const l10n = useContext(L10nContext);
   const styles = createStyles(theme);
+  const retryTextStyle = {color: theme.colors.primary};
   if (loading) {
     return (
-      <View style={{paddingVertical: 24, alignItems: 'center'}}>
+      <View style={primitiveStyles.statusLoadingWrap}>
         <ActivityIndicator color={theme.colors.primary} />
       </View>
     );
   }
   if (error) {
     return (
-      <View style={{paddingVertical: 16, alignItems: 'center'}}>
+      <View style={primitiveStyles.statusErrorWrap}>
         <Text style={styles.emptyStateHint}>{error}</Text>
         {onRetry && (
-          <Pressable onPress={onRetry} hitSlop={8} style={{marginTop: 8}}>
-            <Text style={{color: theme.colors.primary, fontWeight: '600'}}>
+          <Pressable
+            onPress={onRetry}
+            hitSlop={8}
+            style={primitiveStyles.retryGap}>
+            <Text style={[retryTextStyle, primitiveStyles.textSemibold]}>
               {retryLabel ?? (l10n as any).modelsHub?.retry ?? 'Retry'}
             </Text>
           </Pressable>
@@ -455,3 +435,27 @@ export const InstalledBadge: React.FC<{label: string}> = ({label}) => {
     </View>
   );
 };
+
+const primitiveStyles = StyleSheet.create({
+  cardHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  compatRow: {flexDirection: 'row', alignItems: 'center'},
+  skeletonCardDim: {opacity: 0.6},
+  skeletonAvatar: {width: 40, height: 40, borderRadius: 12},
+  skeletonTitle: {height: 14, marginTop: 12, width: '80%'},
+  skeletonLineShort: {height: 10, marginTop: 8, width: '50%'},
+  skeletonLineLong: {height: 10, marginTop: 10, width: '65%'},
+  emptyAction: {
+    marginTop: 16,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 12,
+  },
+  textSemibold: {fontWeight: '600'},
+  statusLoadingWrap: {paddingVertical: 24, alignItems: 'center'},
+  statusErrorWrap: {paddingVertical: 16, alignItems: 'center'},
+  retryGap: {marginTop: 8},
+});

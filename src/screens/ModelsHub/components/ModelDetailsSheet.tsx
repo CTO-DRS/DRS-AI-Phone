@@ -1,12 +1,20 @@
 import React, {useContext, useEffect, useMemo, useState} from 'react';
-import {ScrollView, Text, View, Pressable} from 'react-native';
+import {
+  ScrollView,
+  Text,
+  View,
+  Pressable,
+  StyleSheet,
+  TextStyle,
+  ViewStyle,
+} from 'react-native';
 import {observer} from 'mobx-react-lite';
 import LinearGradient from 'react-native-linear-gradient';
 
 import {useTheme} from '../../../hooks';
 import {L10nContext} from '../../../utils';
 import {modelStore, modelHubStore, hfStore} from '../../../store';
-import {HuggingFaceModel, ModelFile} from '../../../utils/types';
+import {HuggingFaceModel, ModelFile, Theme} from '../../../utils/types';
 import {
   classifyHfModel,
   isUnavailableOnDeviceEngine,
@@ -17,10 +25,13 @@ import {
 import {
   computeModelCompatibility,
   CompatibilityCheck,
+  CompatibilityLevel,
+  CompatibilityReason,
 } from '../../../utils/compatibility';
 import {formatBytes} from '../../../utils';
 import {getModelMemoryRequirement} from '../../../utils/memoryEstimator';
 import {getLLMFiles, getMmprojFiles} from '../../../utils/multimodalHelpers';
+import {BRAND_PURPLE} from '../../../theme/tokens/brand';
 
 import {Sheet} from '../../../components';
 import {useDeviceProfile} from '../hooks/useDeviceProfile';
@@ -49,6 +60,7 @@ export const ModelDetailsSheet: React.FC<ModelDetailsSheetProps> = observer(
   ({visible, hfModel, onClose}) => {
     const l10n = useContext(L10nContext);
     const theme = useTheme();
+    const styles = createStyles(theme);
     const {profile: device} = useDeviceProfile();
 
     const [tab, setTab] = useState<TabKey>('overview');
@@ -157,49 +169,25 @@ export const ModelDetailsSheet: React.FC<ModelDetailsSheetProps> = observer(
           onClose={onClose}
           showCloseButton>
           <ScrollView
-            contentContainerStyle={{paddingBottom: 48}}
+            contentContainerStyle={styles.scrollContent}
             keyboardShouldPersistTaps="handled">
             {/* ── Header ── */}
-            <View
-              style={{paddingHorizontal: 20, flexDirection: 'row', gap: 14}}>
+            <View style={styles.headerRow}>
               <LinearGradient
                 colors={gradient}
                 start={{x: 0, y: 0}}
                 end={{x: 1, y: 1}}
-                style={{
-                  width: 60,
-                  height: 60,
-                  borderRadius: 16,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}>
+                style={styles.categoryBadge}>
                 <Icon width={30} height={30} stroke="#FFFFFF" fill="none" />
               </LinearGradient>
-              <View style={{flex: 1}}>
-                <Text
-                  style={{
-                    ...theme.typography.titleM,
-                    color: theme.colors.onSurface,
-                    fontWeight: '800',
-                  }}>
+              <View style={styles.flex1}>
+                <Text style={styles.familyTitle}>
                   {extractFamilyLabel(model.id)}
                 </Text>
-                <Text
-                  style={{
-                    ...theme.typography.captionM,
-                    color: theme.colors.onSurfaceVariant,
-                    marginTop: 2,
-                  }}
-                  numberOfLines={1}>
+                <Text style={styles.mutedCaptionTight} numberOfLines={1}>
                   {model.id}
                 </Text>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    gap: 6,
-                    marginTop: 6,
-                    flexWrap: 'wrap',
-                  }}>
+                <View style={styles.chipRow}>
                   <Chip label={t.categories?.[category] ?? category} brand />
                   {model.sha && (
                     <Chip
@@ -216,79 +204,43 @@ export const ModelDetailsSheet: React.FC<ModelDetailsSheetProps> = observer(
                 accessibilityRole="button"
                 accessibilityLabel={t.favorite ?? 'favorite'}
                 onPress={() => modelHubStore.toggleFavorite(model.id)}
-                style={{
-                  width: 40,
-                  height: 40,
-                  borderRadius: 12,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: theme.colors.surfaceVariant,
-                }}>
+                style={styles.favoriteButton}>
                 <HeartGlyph active={isFavorite} />
               </Pressable>
             </View>
 
             {/* ── Compatibility banner ── */}
             {compatibility && (
-              <View
-                style={{
-                  marginHorizontal: 20,
-                  marginTop: 16,
-                  borderRadius: 14,
-                  padding: 14,
-                  backgroundColor: theme.colors.surfaceVariant,
-                }}>
-                <View
-                  style={{flexDirection: 'row', alignItems: 'center', gap: 8}}>
+              <View style={styles.compatBanner}>
+                <View style={styles.rowCentered}>
                   <View
-                    style={{
-                      width: 10,
-                      height: 10,
-                      borderRadius: 5,
-                      backgroundColor: COMPAT_COLORS[compatibility.level],
-                    }}
+                    style={[
+                      styles.compatDot,
+                      compatAccentBgStyle(compatibility.level),
+                    ]}
                   />
                   <Text
-                    style={{
-                      ...theme.typography.uiM,
-                      fontWeight: '700',
-                      color: COMPAT_COLORS[compatibility.level],
-                    }}>
+                    style={[
+                      styles.compatLevelText,
+                      compatAccentColorStyle(compatibility.level),
+                    ]}>
                     {t.compat?.[compatibility.level] ?? compatibility.level}
                   </Text>
-                  <Text
-                    style={{
-                      ...theme.typography.captionM,
-                      color: theme.colors.onSurfaceVariant,
-                    }}>
+                  <Text style={styles.mutedCaption}>
                     {t.fitScore?.replace(
                       '{score}',
                       String(compatibility.score),
                     ) ?? `${compatibility.score}/100`}
                   </Text>
                 </View>
-                <View style={{marginTop: 10, gap: 6}}>
+                <View style={styles.reasonList}>
                   {compatibility.reasons.map(reason => (
-                    <View
-                      key={reason.id}
-                      style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        gap: 8,
-                      }}>
+                    <View key={reason.id} style={styles.rowCentered}>
                       <Text
-                        style={{
-                          fontSize: 13,
-                          color:
-                            reason.severity === 'error'
-                              ? theme.colors.error
-                              : reason.severity === 'warning'
-                                ? '#F59E0B'
-                                : reason.severity === 'ok'
-                                  ? '#059669'
-                                  : theme.colors.onSurfaceVariant,
-                          fontWeight: '700',
-                        }}>
+                        style={[
+                          styles.reasonMarkText,
+                          reasonMarkColorStyle(theme, reason.severity),
+                        ]}>
                         {reason.severity === 'error'
                           ? '✕'
                           : reason.severity === 'warning'
@@ -297,12 +249,7 @@ export const ModelDetailsSheet: React.FC<ModelDetailsSheetProps> = observer(
                               ? '✓'
                               : '·'}
                       </Text>
-                      <Text
-                        style={{
-                          ...theme.typography.bodyS,
-                          color: theme.colors.onSurfaceVariant,
-                          flex: 1,
-                        }}>
+                      <Text style={styles.reasonDetailText}>
                         {t.reasons?.[reason.detail ?? reason.id] ??
                           reason.detail ??
                           reason.id}
@@ -314,37 +261,22 @@ export const ModelDetailsSheet: React.FC<ModelDetailsSheetProps> = observer(
             )}
 
             {/* ── Tabs ── */}
-            <View
-              style={{
-                flexDirection: 'row',
-                marginHorizontal: 20,
-                marginTop: 16,
-                borderRadius: 12,
-                backgroundColor: theme.colors.surfaceVariant,
-                padding: 4,
-              }}>
+            <View style={styles.tabsContainer}>
               {(['overview', 'technical', 'files'] as TabKey[]).map(key => (
                 <Pressable
                   key={key}
                   onPress={() => setTab(key)}
-                  style={{
-                    flex: 1,
-                    paddingVertical: 8,
-                    borderRadius: 9,
-                    alignItems: 'center',
-                    backgroundColor:
-                      tab === key ? theme.colors.surface : 'transparent',
-                  }}
+                  style={[
+                    styles.tabItem,
+                    tab === key ? styles.tabItemActive : styles.tabItemInactive,
+                  ]}
                   accessibilityRole="tab">
                   <Text
-                    style={{
-                      ...theme.typography.uiS,
-                      fontWeight: '600',
-                      color:
-                        tab === key
-                          ? theme.colors.onSurface
-                          : theme.colors.onSurfaceVariant,
-                    }}>
+                    style={
+                      tab === key
+                        ? styles.tabLabelActive
+                        : styles.tabLabelInactive
+                    }>
                     {t.tabs?.[key] ?? key}
                   </Text>
                 </Pressable>
@@ -353,60 +285,25 @@ export const ModelDetailsSheet: React.FC<ModelDetailsSheetProps> = observer(
 
             {/* ── Overview ── */}
             {tab === 'overview' && (
-              <View style={{paddingHorizontal: 20, marginTop: 16, gap: 14}}>
-                <Text
-                  style={{
-                    ...theme.typography.bodyS,
-                    color: theme.colors.onSurfaceVariant,
-                    lineHeight: 21,
-                  }}>
+              <View style={styles.overviewSection}>
+                <Text style={styles.overviewText}>
                   {buildOverview(model, categories, t)}
                 </Text>
 
                 <View>
-                  <Text
-                    style={{
-                      ...theme.typography.uiM,
-                      fontWeight: '700',
-                      color: theme.colors.onSurface,
-                    }}>
-                    {t.capabilitiesTitle}
-                  </Text>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      flexWrap: 'wrap',
-                      gap: 8,
-                      marginTop: 8,
-                    }}>
+                  <Text style={styles.sectionTitle}>{t.capabilitiesTitle}</Text>
+                  <View style={styles.capabilitiesWrap}>
                     {capabilitiesFor(model, categories, engineBlocked, t).map(
                       cap => (
-                        <View
-                          key={cap.label}
-                          style={{
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            gap: 6,
-                            paddingHorizontal: 10,
-                            paddingVertical: 6,
-                            borderRadius: 10,
-                            backgroundColor: theme.colors.surfaceVariant,
-                          }}>
+                        <View key={cap.label} style={styles.capChip}>
                           <Text
-                            style={{
-                              fontSize: 12,
-                              color: cap.ok ? '#059669' : '#F59E0B',
-                              fontWeight: '700',
-                            }}>
+                            style={[
+                              styles.capMarkText,
+                              cap.ok ? styles.capMarkOk : styles.capMarkWarn,
+                            ]}>
                             {cap.ok ? '✓' : '·'}
                           </Text>
-                          <Text
-                            style={{
-                              ...theme.typography.captionM,
-                              color: theme.colors.onSurface,
-                            }}>
-                            {cap.label}
-                          </Text>
+                          <Text style={styles.capLabel}>{cap.label}</Text>
                         </View>
                       ),
                     )}
@@ -414,28 +311,12 @@ export const ModelDetailsSheet: React.FC<ModelDetailsSheetProps> = observer(
                 </View>
 
                 {installedModels.length > 0 && (
-                  <View
-                    style={{
-                      borderRadius: 12,
-                      padding: 12,
-                      backgroundColor: theme.colors.surfaceVariant,
-                    }}>
-                    <Text
-                      style={{
-                        ...theme.typography.uiS,
-                        fontWeight: '700',
-                        color: theme.colors.onSurface,
-                      }}>
+                  <View style={styles.installedCard}>
+                    <Text style={styles.installedCardTitle}>
                       {t.installedFromRepo}
                     </Text>
                     {installedModels.map(m => (
-                      <Text
-                        key={m.id}
-                        style={{
-                          ...theme.typography.captionM,
-                          color: theme.colors.onSurfaceVariant,
-                          marginTop: 4,
-                        }}>
+                      <Text key={m.id} style={styles.mutedCaptionSpaced}>
                         {m.filename}
                       </Text>
                     ))}
@@ -444,21 +325,15 @@ export const ModelDetailsSheet: React.FC<ModelDetailsSheetProps> = observer(
 
                 <Pressable
                   onPress={() => modelHubStore.recordView(model.id)}
-                  style={{display: 'none'}}
+                  style={styles.hiddenPressable}
                 />
               </View>
             )}
 
             {/* ── Technical ── */}
             {tab === 'technical' && (
-              <View style={{paddingHorizontal: 20, marginTop: 16}}>
-                <View
-                  style={{
-                    borderRadius: 14,
-                    backgroundColor: theme.colors.surfaceVariant,
-                    padding: 14,
-                    gap: 10,
-                  }}>
+              <View style={styles.tabSection}>
+                <View style={styles.techCard}>
                   <TechRow
                     theme={theme}
                     label={t.tech?.architecture}
@@ -538,15 +413,9 @@ export const ModelDetailsSheet: React.FC<ModelDetailsSheetProps> = observer(
 
             {/* ── Files ── */}
             {tab === 'files' && (
-              <View style={{paddingHorizontal: 20, marginTop: 16}}>
+              <View style={styles.tabSection}>
                 {files.length === 0 && (
-                  <Text
-                    style={{
-                      ...theme.typography.bodyS,
-                      color: theme.colors.onSurfaceVariant,
-                    }}>
-                    {t.noFiles}
-                  </Text>
+                  <Text style={styles.mutedBody}>{t.noFiles}</Text>
                 )}
                 {files.map((file: ModelFile) => {
                   const size = file.lfs?.size ?? file.size ?? 0;
@@ -555,32 +424,12 @@ export const ModelDetailsSheet: React.FC<ModelDetailsSheetProps> = observer(
                     m => m.filename === file.rfilename,
                   );
                   return (
-                    <View
-                      key={file.rfilename}
-                      style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        paddingVertical: 12,
-                        borderBottomWidth: 1,
-                        borderBottomColor: theme.colors.outlineVariant,
-                        gap: 10,
-                      }}>
-                      <View style={{flex: 1}}>
-                        <Text
-                          style={{
-                            ...theme.typography.uiS,
-                            fontWeight: '600',
-                            color: theme.colors.onSurface,
-                          }}
-                          numberOfLines={1}>
+                    <View key={file.rfilename} style={styles.fileRow}>
+                      <View style={styles.flex1}>
+                        <Text style={styles.fileName} numberOfLines={1}>
                           {file.rfilename}
                         </Text>
-                        <Text
-                          style={{
-                            ...theme.typography.captionM,
-                            color: theme.colors.onSurfaceVariant,
-                            marginTop: 2,
-                          }}>
+                        <Text style={styles.mutedCaptionTight}>
                           {[
                             size > 0 ? formatBytes(size) : null,
                             quant ?? null,
@@ -591,28 +440,13 @@ export const ModelDetailsSheet: React.FC<ModelDetailsSheetProps> = observer(
                         </Text>
                       </View>
                       {isInstalled ? (
-                        <View
-                          style={{
-                            paddingHorizontal: 12,
-                            paddingVertical: 7,
-                            borderRadius: 10,
-                            backgroundColor: theme.colors.surfaceVariant,
-                          }}>
-                          <Text
-                            style={{
-                              ...theme.typography.captionM,
-                              color: theme.colors.onSurfaceVariant,
-                              fontWeight: '700',
-                            }}>
+                        <View style={styles.installedBadge}>
+                          <Text style={styles.installedBadgeText}>
                             {t.installedBadge}
                           </Text>
                         </View>
                       ) : engineBlocked ? (
-                        <Text
-                          style={{
-                            ...theme.typography.captionM,
-                            color: theme.colors.onSurfaceVariant,
-                          }}>
+                        <Text style={styles.mutedCaption}>
                           {t.engineNo ?? '—'}
                         </Text>
                       ) : (
@@ -620,18 +454,8 @@ export const ModelDetailsSheet: React.FC<ModelDetailsSheetProps> = observer(
                           onPress={() => setConfirmFile(file)}
                           accessibilityRole="button"
                           accessibilityLabel={t.downloadFile}
-                          style={{
-                            paddingHorizontal: 14,
-                            paddingVertical: 8,
-                            borderRadius: 10,
-                            backgroundColor: '#7C3AED',
-                          }}>
-                          <Text
-                            style={{
-                              ...theme.typography.captionM,
-                              color: '#FFFFFF',
-                              fontWeight: '700',
-                            }}>
+                          style={styles.downloadButton}>
+                          <Text style={styles.downloadButtonLabel}>
                             {t.downloadShort ?? '↓'}
                           </Text>
                         </Pressable>
@@ -641,31 +465,17 @@ export const ModelDetailsSheet: React.FC<ModelDetailsSheetProps> = observer(
                 })}
 
                 {mmprojFiles.length > 0 && (
-                  <View style={{marginTop: 16}}>
-                    <Text
-                      style={{
-                        ...theme.typography.uiM,
-                        fontWeight: '700',
-                        color: theme.colors.onSurface,
-                      }}>
+                  <View style={styles.visionFilesSection}>
+                    <Text style={styles.sectionTitle}>
                       {t.visionFilesTitle}
                     </Text>
-                    <Text
-                      style={{
-                        ...theme.typography.captionM,
-                        color: theme.colors.onSurfaceVariant,
-                        marginTop: 4,
-                      }}>
+                    <Text style={styles.mutedCaptionSpaced}>
                       {t.visionFilesHint}
                     </Text>
                     {mmprojFiles.map((file: ModelFile) => (
                       <Text
                         key={file.rfilename}
-                        style={{
-                          ...theme.typography.captionM,
-                          color: theme.colors.onSurfaceVariant,
-                          marginTop: 4,
-                        }}>
+                        style={styles.mutedCaptionSpaced}>
                         {file.rfilename}
                         {file.lfs?.size
                           ? `  ·  ${formatBytes(file.lfs.size)}`
@@ -694,20 +504,10 @@ export const ModelDetailsSheet: React.FC<ModelDetailsSheetProps> = observer(
 
 const Chip: React.FC<{label: string; brand?: boolean}> = ({label, brand}) => {
   const theme = useTheme();
+  const styles = createStyles(theme);
   return (
-    <View
-      style={{
-        paddingHorizontal: 8,
-        paddingVertical: 3,
-        borderRadius: 999,
-        backgroundColor: brand ? '#7C3AED1F' : theme.colors.surfaceVariant,
-      }}>
-      <Text
-        style={{
-          ...theme.typography.captionM,
-          fontWeight: '700',
-          color: brand ? '#7C3AED' : theme.colors.onSurfaceVariant,
-        }}>
+    <View style={[styles.chip, brand ? styles.chipBrand : null]}>
+      <Text style={[styles.chipText, brand ? styles.chipBrandText : null]}>
         {label}
       </Text>
     </View>
@@ -715,7 +515,8 @@ const Chip: React.FC<{label: string; brand?: boolean}> = ({label, brand}) => {
 };
 
 const HeartGlyph: React.FC<{active: boolean}> = ({active}) => (
-  <Text style={{fontSize: 18, color: active ? '#EC4899' : '#94A3B8'}}>
+  <Text
+    style={[heartStyles.glyph, active ? heartStyles.active : heartStyles.idle]}>
     {active ? '♥' : '♡'}
   </Text>
 );
@@ -724,25 +525,17 @@ const TechRow: React.FC<{label?: string; value: string; theme: any}> = ({
   label,
   value,
   theme,
-}) => (
-  <View
-    style={{flexDirection: 'row', justifyContent: 'space-between', gap: 12}}>
-    <Text
-      style={{...theme.typography.bodyS, color: theme.colors.onSurfaceVariant}}>
-      {label ?? ''}
-    </Text>
-    <Text
-      style={{
-        ...theme.typography.bodyS,
-        fontWeight: '600',
-        color: theme.colors.onSurface,
-        flexShrink: 1,
-      }}
-      numberOfLines={2}>
-      {value}
-    </Text>
-  </View>
-);
+}) => {
+  const styles = createStyles(theme);
+  return (
+    <View style={styles.techRow}>
+      <Text style={styles.mutedBody}>{label ?? ''}</Text>
+      <Text style={styles.techRowValue} numberOfLines={2}>
+        {value}
+      </Text>
+    </View>
+  );
+};
 
 /**
  * Real memory estimate for a specific GGUF file, using the app's own memory
@@ -833,3 +626,309 @@ const buildOverview = (
   }
   return parts.filter(Boolean).join('\n\n');
 };
+
+// ── styles ──────────────────────────────────────────────────────────────────
+
+/** Data-driven accent for the compatibility level (level heading color). */
+const compatAccentColorStyle = (
+  level: CompatibilityLevel,
+): {color: string} => ({color: COMPAT_COLORS[level]});
+
+/** Data-driven accent for the compatibility level (status dot fill). */
+const compatAccentBgStyle = (
+  level: CompatibilityLevel,
+): {backgroundColor: string} => ({backgroundColor: COMPAT_COLORS[level]});
+
+/** Severity tint for compatibility reason marks (theme-aware). */
+const reasonMarkColorStyle = (
+  theme: Theme,
+  severity: CompatibilityReason['severity'],
+): {color: string} => ({
+  color:
+    severity === 'error'
+      ? theme.colors.error
+      : severity === 'warning'
+        ? '#F59E0B'
+        : severity === 'ok'
+          ? '#059669'
+          : theme.colors.onSurfaceVariant,
+});
+
+/** Favorite-glyph styles (theme-independent, so a plain static sheet). */
+const heartStyles = StyleSheet.create({
+  glyph: {fontSize: 18} as TextStyle,
+  active: {color: '#EC4899'} as TextStyle,
+  idle: {color: '#94A3B8'} as TextStyle,
+});
+
+/**
+ * Sheet styles, rebuilt per theme like the rest of the Hub (see
+ * src/screens/ModelsHub/styles.ts) so no style object is written inline
+ * in the JSX.
+ */
+const createStyles = (theme: Theme) =>
+  StyleSheet.create({
+    // ── Header ────────────────────────────────────────────
+    scrollContent: {
+      paddingBottom: 48,
+    } as ViewStyle,
+    headerRow: {
+      paddingHorizontal: 20,
+      flexDirection: 'row',
+      gap: 14,
+    } as ViewStyle,
+    categoryBadge: {
+      width: 60,
+      height: 60,
+      borderRadius: 16,
+      alignItems: 'center',
+      justifyContent: 'center',
+    } as ViewStyle,
+    flex1: {
+      flex: 1,
+    } as ViewStyle,
+    familyTitle: {
+      ...theme.typography.titleM,
+      color: theme.colors.onSurface,
+      fontWeight: '800',
+    } as TextStyle,
+    mutedCaptionTight: {
+      ...theme.typography.captionM,
+      color: theme.colors.onSurfaceVariant,
+      marginTop: 2,
+    } as TextStyle,
+    chipRow: {
+      flexDirection: 'row',
+      gap: 6,
+      marginTop: 6,
+      flexWrap: 'wrap',
+    } as ViewStyle,
+    favoriteButton: {
+      width: 40,
+      height: 40,
+      borderRadius: 12,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: theme.colors.surfaceVariant,
+    } as ViewStyle,
+
+    // ── Compatibility banner ──────────────────────────────
+    compatBanner: {
+      marginHorizontal: 20,
+      marginTop: 16,
+      borderRadius: 14,
+      padding: 14,
+      backgroundColor: theme.colors.surfaceVariant,
+    } as ViewStyle,
+    rowCentered: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+    } as ViewStyle,
+    compatDot: {
+      width: 10,
+      height: 10,
+      borderRadius: 5,
+    } as ViewStyle,
+    compatLevelText: {
+      ...theme.typography.uiM,
+      fontWeight: '700',
+    } as TextStyle,
+    reasonList: {
+      marginTop: 10,
+      gap: 6,
+    } as ViewStyle,
+    reasonMarkText: {
+      fontSize: 13,
+      fontWeight: '700',
+    } as TextStyle,
+    reasonDetailText: {
+      ...theme.typography.bodyS,
+      color: theme.colors.onSurfaceVariant,
+      flex: 1,
+    } as TextStyle,
+
+    // ── Tabs ──────────────────────────────────────────────
+    tabsContainer: {
+      flexDirection: 'row',
+      marginHorizontal: 20,
+      marginTop: 16,
+      borderRadius: 12,
+      backgroundColor: theme.colors.surfaceVariant,
+      padding: 4,
+    } as ViewStyle,
+    tabItem: {
+      flex: 1,
+      paddingVertical: 8,
+      borderRadius: 9,
+      alignItems: 'center',
+    } as ViewStyle,
+    tabItemActive: {
+      backgroundColor: theme.colors.surface,
+    } as ViewStyle,
+    tabItemInactive: {
+      backgroundColor: 'transparent',
+    } as ViewStyle,
+    tabLabelActive: {
+      ...theme.typography.uiS,
+      fontWeight: '600',
+      color: theme.colors.onSurface,
+    } as TextStyle,
+    tabLabelInactive: {
+      ...theme.typography.uiS,
+      fontWeight: '600',
+      color: theme.colors.onSurfaceVariant,
+    } as TextStyle,
+
+    // ── Overview ──────────────────────────────────────────
+    overviewSection: {
+      paddingHorizontal: 20,
+      marginTop: 16,
+      gap: 14,
+    } as ViewStyle,
+    overviewText: {
+      ...theme.typography.bodyS,
+      color: theme.colors.onSurfaceVariant,
+      lineHeight: 21,
+    } as TextStyle,
+    sectionTitle: {
+      ...theme.typography.uiM,
+      fontWeight: '700',
+      color: theme.colors.onSurface,
+    } as TextStyle,
+    capabilitiesWrap: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 8,
+      marginTop: 8,
+    } as ViewStyle,
+    capChip: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 6,
+      paddingHorizontal: 10,
+      paddingVertical: 6,
+      borderRadius: 10,
+      backgroundColor: theme.colors.surfaceVariant,
+    } as ViewStyle,
+    capMarkText: {
+      fontSize: 12,
+      fontWeight: '700',
+    } as TextStyle,
+    capMarkOk: {
+      color: '#059669',
+    } as TextStyle,
+    capMarkWarn: {
+      color: '#F59E0B',
+    } as TextStyle,
+    capLabel: {
+      ...theme.typography.captionM,
+      color: theme.colors.onSurface,
+    } as TextStyle,
+    installedCard: {
+      borderRadius: 12,
+      padding: 12,
+      backgroundColor: theme.colors.surfaceVariant,
+    } as ViewStyle,
+    installedCardTitle: {
+      ...theme.typography.uiS,
+      fontWeight: '700',
+      color: theme.colors.onSurface,
+    } as TextStyle,
+    mutedCaptionSpaced: {
+      ...theme.typography.captionM,
+      color: theme.colors.onSurfaceVariant,
+      marginTop: 4,
+    } as TextStyle,
+    hiddenPressable: {
+      display: 'none',
+    } as ViewStyle,
+
+    // ── Technical / Files ─────────────────────────────────
+    tabSection: {
+      paddingHorizontal: 20,
+      marginTop: 16,
+    } as ViewStyle,
+    techCard: {
+      borderRadius: 14,
+      backgroundColor: theme.colors.surfaceVariant,
+      padding: 14,
+      gap: 10,
+    } as ViewStyle,
+    mutedBody: {
+      ...theme.typography.bodyS,
+      color: theme.colors.onSurfaceVariant,
+    } as TextStyle,
+    fileRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: 12,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.outlineVariant,
+      gap: 10,
+    } as ViewStyle,
+    fileName: {
+      ...theme.typography.uiS,
+      fontWeight: '600',
+      color: theme.colors.onSurface,
+    } as TextStyle,
+    mutedCaption: {
+      ...theme.typography.captionM,
+      color: theme.colors.onSurfaceVariant,
+    } as TextStyle,
+    installedBadge: {
+      paddingHorizontal: 12,
+      paddingVertical: 7,
+      borderRadius: 10,
+      backgroundColor: theme.colors.surfaceVariant,
+    } as ViewStyle,
+    installedBadgeText: {
+      ...theme.typography.captionM,
+      color: theme.colors.onSurfaceVariant,
+      fontWeight: '700',
+    } as TextStyle,
+    downloadButton: {
+      paddingHorizontal: 14,
+      paddingVertical: 8,
+      borderRadius: 10,
+      backgroundColor: BRAND_PURPLE,
+    } as ViewStyle,
+    downloadButtonLabel: {
+      ...theme.typography.captionM,
+      color: '#FFFFFF',
+      fontWeight: '700',
+    } as TextStyle,
+    visionFilesSection: {
+      marginTop: 16,
+    } as ViewStyle,
+
+    // ── Chip / TechRow ────────────────────────────────────
+    chip: {
+      paddingHorizontal: 8,
+      paddingVertical: 3,
+      borderRadius: 999,
+      backgroundColor: theme.colors.surfaceVariant,
+    } as ViewStyle,
+    chipBrand: {
+      backgroundColor: BRAND_PURPLE + '1F',
+    } as ViewStyle,
+    chipText: {
+      ...theme.typography.captionM,
+      fontWeight: '700',
+      color: theme.colors.onSurfaceVariant,
+    } as TextStyle,
+    chipBrandText: {
+      color: BRAND_PURPLE,
+    } as TextStyle,
+    techRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      gap: 12,
+    } as ViewStyle,
+    techRowValue: {
+      ...theme.typography.bodyS,
+      fontWeight: '600',
+      color: theme.colors.onSurface,
+      flexShrink: 1,
+    } as TextStyle,
+  });
