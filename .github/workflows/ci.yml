@@ -60,7 +60,7 @@ jobs:
 
       # Cache node_modules
       - name: Cache node_modules
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: node_modules
           key: ${{ runner.os }}-node-${{ hashFiles('yarn.lock') }}
@@ -131,7 +131,7 @@ jobs:
 
       # Cache node_modules
       - name: Cache node_modules
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: node_modules
           key: ${{ runner.os }}-node-${{ hashFiles('yarn.lock') }}
@@ -152,7 +152,7 @@ jobs:
       # Keyed on the manifest as well as yarn.lock: the manifest decides the
       # variant set, so changing it must invalidate the configured build tree.
       - name: Cache llama.rn native build tree
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: node_modules/llama.rn/android/.cxx
           key: ${{ runner.os }}-cxx-${{ hashFiles('yarn.lock', 'scripts/android-payload-manifest.json') }}
@@ -350,7 +350,7 @@ jobs:
 
       # Cache node_modules
       - name: Cache node_modules
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: node_modules
           key: ${{ runner.os }}-node-${{ hashFiles('yarn.lock') }}
