@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
 
 import {ROUTES} from '../../utils/navigationConstants';
@@ -26,8 +26,9 @@ const Stack = createStackNavigator();
  */
 export const OnboardingStack: React.FC = () => {
   const [chromeStep, setChromeStep] = useState<OnboardingChromeStep>('splash');
+
   return (
-    <View style={{flex: 1}}>
+    <View style={styles.navigatorRoot}>
       <Stack.Navigator
         screenOptions={{headerShown: false, gestureEnabled: false}}
         initialRouteName={ROUTES.ONBOARDING.SPLASH}
@@ -76,3 +77,7 @@ export const OnboardingStack: React.FC = () => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  navigatorRoot: {flex: 1},
+});

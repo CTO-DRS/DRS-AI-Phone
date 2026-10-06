@@ -1,12 +1,19 @@
 import React, {useContext, useEffect, useMemo} from 'react';
-import {FlatList, Text, View} from 'react-native';
+import {
+  FlatList,
+  StyleSheet,
+  Text,
+  View,
+  TextStyle,
+  ViewStyle,
+} from 'react-native';
 import {observer} from 'mobx-react-lite';
 import debounce from 'lodash/debounce';
 
 import {useTheme} from '../../../hooks';
 import {L10nContext} from '../../../utils';
 import {hfStore, modelStore} from '../../../store';
-import {HuggingFaceModel} from '../../../utils/types';
+import {HuggingFaceModel, Theme} from '../../../utils/types';
 import {classifyHfModel} from '../../../utils/modelTaxonomy';
 import {
   AlertTriangleSmIcon,
@@ -75,6 +82,7 @@ export const HubSearchResults: React.FC<HubSearchResultsProps> = observer(
   ({query, sort, onSelect, onDownload}) => {
     const l10n = useContext(L10nContext);
     const theme = useTheme();
+    const styles = createStyles(theme);
     const t = (l10n as any).modelsHub ?? {};
 
     // Debounced HF search through the shared store session.
@@ -122,25 +130,14 @@ export const HubSearchResults: React.FC<HubSearchResultsProps> = observer(
         ListHeaderComponent={
           <View>
             {localMatches.length > 0 && (
-              <View style={{marginTop: 8}}>
-                <Text
-                  style={{
-                    ...theme.typography.uiM,
-                    fontWeight: '700',
-                    color: theme.colors.onSurface,
-                    paddingHorizontal: 20,
-                  }}>
+              <View style={styles.localMatchesSection}>
+                <Text style={styles.localSectionTitle}>
                   {t.search?.installedSection}
                 </Text>
                 {localMatches.map(m => (
                   <Text
                     key={m.id}
-                    style={{
-                      ...theme.typography.bodyS,
-                      color: theme.colors.onSurfaceVariant,
-                      paddingHorizontal: 20,
-                      paddingVertical: 6,
-                    }}
+                    style={styles.localMatchRow}
                     numberOfLines={1}>
                     {m.isDownloaded ? '✓ ' : '· '}
                     {m.author ? `${m.author}/` : ''}
@@ -149,17 +146,7 @@ export const HubSearchResults: React.FC<HubSearchResultsProps> = observer(
                 ))}
               </View>
             )}
-            <Text
-              style={{
-                ...theme.typography.uiM,
-                fontWeight: '700',
-                color: theme.colors.onSurface,
-                paddingHorizontal: 20,
-                marginTop: 10,
-                marginBottom: 8,
-              }}>
-              {t.search?.hfSection}
-            </Text>
+            <Text style={styles.hfSectionTitle}>{t.search?.hfSection}</Text>
             {hfStore.isLoading &&
               [1, 2, 3].map(i => <HubSkeletonCard key={i} />)}
           </View>
@@ -183,8 +170,38 @@ export const HubSearchResults: React.FC<HubSearchResultsProps> = observer(
           ) : null
         }
         keyboardShouldPersistTaps="handled"
-        contentContainerStyle={{paddingBottom: 120}}
+        contentContainerStyle={styles.listContent}
       />
     );
   },
 );
+
+const createStyles = (theme: Theme) =>
+  StyleSheet.create({
+    localMatchesSection: {
+      marginTop: 8,
+    } as ViewStyle,
+    localSectionTitle: {
+      ...theme.typography.uiM,
+      fontWeight: '700',
+      color: theme.colors.onSurface,
+      paddingHorizontal: 20,
+    } as TextStyle,
+    localMatchRow: {
+      ...theme.typography.bodyS,
+      color: theme.colors.onSurfaceVariant,
+      paddingHorizontal: 20,
+      paddingVertical: 6,
+    } as TextStyle,
+    hfSectionTitle: {
+      ...theme.typography.uiM,
+      fontWeight: '700',
+      color: theme.colors.onSurface,
+      paddingHorizontal: 20,
+      marginTop: 10,
+      marginBottom: 8,
+    } as TextStyle,
+    listContent: {
+      paddingBottom: 120,
+    } as ViewStyle,
+  });

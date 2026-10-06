@@ -48,9 +48,6 @@ import type {OnboardingAssistantModelEntry} from './onboarding/onboardingAssista
 
 import {downloadManager, DownloadCancelledError} from '../services/downloads';
 import {classify, ClassifyPlatform} from '../services/deviceRules/classify';
-import {deriveUrl, parseDeviceRules} from '../services/deviceRules/parse';
-import {fetchRules} from '../services/deviceRules/rules';
-import {readDeviceSignals} from '../services/deviceRules/signals';
 import {
   DeviceRules,
   DeviceSignals,
@@ -58,9 +55,6 @@ import {
   RuleDraft,
   Tier,
 } from '../services/deviceRules/types';
-
-import androidRulesRaw from './bundledDeviceRules/rules.android.json';
-import iosRulesRaw from './bundledDeviceRules/rules.ios.json';
 
 // Bump when the migration logic that re-merges the persisted model list
 // changes. Crossing this version runs the one-time prune-and-reconcile.
@@ -108,6 +102,7 @@ import {getModelMemoryRequirement} from '../utils/memoryEstimator';
 import {loadLlamaModelInfo} from 'llama.rn';
 import {logger} from '../utils/logger';
 import {ProjectionModelManager} from './model/ProjectionModelManager';
+import {DraftRulesManager} from './model/DraftRulesManager';
 
 /**
  * Factory function to create a Model object for a remote model from an OpenAI-compatible server.
@@ -843,54 +838,26 @@ export class ModelStore {
   // is set here; HF-derivable data (oid/lfs/templates) resolves at download. A
   // multimodal candidate's explicit mmproj is synthesized into a sibling so
   // vision detection pairs the projector and its size enters the fit check.
-  private candidateToPair = (
-    candidate: RuleCandidate,
-  ): {hfModel: HuggingFaceModel; modelFile: ModelFile} => {
-    const modelFile: ModelFile = {
-      rfilename: candidate.hfFilename,
-      url: deriveUrl(candidate.hfRepo, candidate.hfFilename),
-      size: candidate.sizeBytes,
-    };
-    const siblings: ModelFile[] | undefined = candidate.mmproj
-      ? [
-          {rfilename: candidate.hfFilename, size: candidate.sizeBytes},
-          {
-            rfilename: candidate.mmproj.hfFilename,
-            url: deriveUrl(
-              candidate.mmproj.hfRepo,
-              candidate.mmproj.hfFilename,
-            ),
-            size: candidate.mmproj.sizeBytes,
-          },
-        ]
-      : undefined;
-    const hfModel = {
-      id: candidate.hfRepo,
-      author: candidate.hfRepo.split('/')[0],
-      url: `https://huggingface.co/${candidate.hfRepo}`,
-      specs: {gguf: {total: candidate.params ?? 0}},
-      siblings,
-    } as unknown as HuggingFaceModel;
-    return {hfModel, modelFile};
-  };
+  // Draft/device-rules resolution lives in DraftRulesManager (audit F-12
+  // continuation, mirroring src/store/model/ProjectionModelManager.ts).
+  // Delegating members preserve the store's internal interface, so call
+  // sites and tests are untouched.
+  private readonly draftRulesManager = new DraftRulesManager(this);
+
+  private resolvePresets = (): Promise<Model[]> =>
+    this.draftRulesManager.resolvePresets();
+
+  private upgradeToFetchedRules = (): Promise<void> =>
+    this.draftRulesManager.upgradeToFetchedRules();
+
+  private candidateToPair = (candidate: RuleCandidate) =>
+    this.draftRulesManager.candidateToPair(candidate);
+
+  private draftToStub = (draft: RuleDraft): Model =>
+    this.draftRulesManager.draftToStub(draft);
 
   // A draft usually lives in a repo other than its target's, so unlike mmproj it
   // cannot be an hfAsModel sibling and needs its own {hfModel, modelFile} pair.
-  private draftToStub = (draft: RuleDraft): Model => {
-    const modelFile: ModelFile = {
-      rfilename: draft.hfFilename,
-      url: deriveUrl(draft.hfRepo, draft.hfFilename),
-      size: draft.sizeBytes,
-    };
-    const hfModel = {
-      id: draft.hfRepo,
-      author: draft.hfRepo.split('/')[0],
-      url: `https://huggingface.co/${draft.hfRepo}`,
-      specs: {gguf: {total: 0}},
-      siblings: undefined,
-    } as unknown as HuggingFaceModel;
-    return {...hfAsModel(hfModel, modelFile), modelType: ModelType.DRAFT};
-  };
 
   // Materialize the device-tier preset list from rules. Each thin candidate is
   // turned into the minimal pair hfAsModel reads (candidateToPair), so the
@@ -948,52 +915,11 @@ export class ModelStore {
   // populates the model list immediately on first launch so a slow or hanging
   // rules fetch can never leave the list empty. The fetched online override is
   // applied afterwards by upgradeToFetchedRules (fire-and-forget).
-  private resolvePresets = async (): Promise<Model[]> => {
-    try {
-      const signals = await readDeviceSignals();
-      const bundledRaw = Platform.OS === 'ios' ? iosRulesRaw : androidRulesRaw;
-      const rules = parseDeviceRules(bundledRaw, DeviceInfo.getVersion());
-      const tier = classify(
-        signals,
-        rules.classifier,
-        Platform.OS as ClassifyPlatform,
-      );
-      runInAction(() => {
-        this.deviceTier = tier;
-        this.rulesVersion = rules.rulesVersion;
-      });
-      return this.resolvePresetModels(rules, signals);
-    } catch (error) {
-      console.warn('[ModelStore] preset resolution failed:', error);
-      return [];
-    }
-  };
 
   // Fetch the online rules override and, if it parses to a usable rule set,
   // re-classify and reconcile so the list upgrades past the bundled floor. Runs
   // off the first-population path (fire-and-forget); any failure leaves the
   // already-applied bundled presets in place.
-  private upgradeToFetchedRules = async (): Promise<void> => {
-    try {
-      const fetched = await fetchRules(DeviceInfo.getVersion());
-      if (!fetched) {
-        return;
-      }
-      const signals = await readDeviceSignals();
-      const tier = classify(
-        signals,
-        fetched.classifier,
-        Platform.OS as ClassifyPlatform,
-      );
-      runInAction(() => {
-        this.deviceTier = tier;
-        this.rulesVersion = fetched.rulesVersion;
-      });
-      this.reconcilePresets(this.resolvePresetModels(fetched, signals));
-    } catch (error) {
-      console.warn('[ModelStore] fetched-rules upgrade failed:', error);
-    }
-  };
 
   // Reconcile the freshly-resolved rule presets into the model list. Keyed on the
   // full model id (author/repo/filename), which spans origins: a downloaded

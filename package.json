@@ -1,6 +1,6 @@
 {
   "name": "drs-ai-phone",
-  "version": "1.27.2",
+  "version": "1.27.3",
   "private": true,
   "scripts": {
     "prepare": "husky",

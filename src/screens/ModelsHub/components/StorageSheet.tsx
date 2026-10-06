@@ -1,5 +1,13 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {ScrollView, Text, View, Pressable, Alert} from 'react-native';
+import {
+  ScrollView,
+  Text,
+  View,
+  Pressable,
+  Alert,
+  StyleSheet,
+  ViewStyle,
+} from 'react-native';
 import {observer} from 'mobx-react-lite';
 import * as RNFS from '@dr.pogodin/react-native-fs';
 
@@ -181,6 +189,16 @@ export const StorageSheet: React.FC<StorageSheetProps> = observer(
     const freeLabel =
       stats.freeBytes != null ? formatBytes(stats.freeBytes) : t.notAvailable;
 
+    // Theme-derived style fragments (static fragments live in `styles` at
+    // the bottom of the file); referenced by the style arrays in the JSX
+    // below so no object literals sit inline on style props.
+    const onSurfaceText = {color: theme.colors.onSurface};
+    const mutedText = {color: theme.colors.onSurfaceVariant};
+    const errorText = {color: theme.colors.error};
+    const surfaceVariantBg = {backgroundColor: theme.colors.surfaceVariant};
+    const errorContainerBg = {backgroundColor: theme.colors.errorContainer};
+    const rowDivider = {borderBottomColor: theme.colors.outlineVariant};
+
     return (
       <Sheet
         isVisible={visible}
@@ -189,50 +207,27 @@ export const StorageSheet: React.FC<StorageSheetProps> = observer(
         enablePanDownToClose
         onClose={onClose}
         showCloseButton>
-        <ScrollView
-          contentContainerStyle={{paddingHorizontal: 20, paddingBottom: 40}}>
+        <ScrollView contentContainerStyle={styles.scrollContent}>
           {/* Totals */}
-          <View
-            style={{
-              flexDirection: 'row',
-              borderRadius: 16,
-              backgroundColor: theme.colors.surfaceVariant,
-              padding: 16,
-              gap: 12,
-            }}>
-            <View style={{flex: 1}}>
-              <Text
-                style={{
-                  ...theme.typography.captionM,
-                  color: theme.colors.onSurfaceVariant,
-                }}>
+          <View style={[styles.totalsCard, surfaceVariantBg]}>
+            <View style={styles.flex1}>
+              <Text style={[theme.typography.captionM, mutedText]}>
                 {t.storage?.used}
               </Text>
               <Text
-                style={{
-                  ...theme.typography.titleM,
-                  fontWeight: '800',
-                  color: theme.colors.onSurface,
-                  marginTop: 2,
-                }}>
+                style={[
+                  theme.typography.titleM,
+                  onSurfaceText,
+                  styles.statValue,
+                ]}>
                 {stats.loading ? '…' : usedLabel}
               </Text>
             </View>
-            <View style={{flex: 1}}>
-              <Text
-                style={{
-                  ...theme.typography.captionM,
-                  color: theme.colors.onSurfaceVariant,
-                }}>
+            <View style={styles.flex1}>
+              <Text style={[theme.typography.captionM, mutedText]}>
                 {t.storage?.available}
               </Text>
-              <Text
-                style={{
-                  ...theme.typography.titleM,
-                  fontWeight: '800',
-                  color: '#059669',
-                  marginTop: 2,
-                }}>
+              <Text style={[theme.typography.titleM, styles.freeValue]}>
                 {stats.loading ? '…' : freeLabel}
               </Text>
             </View>
@@ -240,16 +235,12 @@ export const StorageSheet: React.FC<StorageSheetProps> = observer(
 
           {/* Per-category distribution */}
           {categoryEntries.length > 0 && (
-            <View style={{marginTop: 18}}>
+            <View style={styles.distributionSection}>
               <Text
-                style={{
-                  ...theme.typography.uiM,
-                  fontWeight: '700',
-                  color: theme.colors.onSurface,
-                }}>
+                style={[theme.typography.uiM, onSurfaceText, styles.weight700]}>
                 {t.storage?.distribution}
               </Text>
-              <View style={{marginTop: 10, gap: 8}}>
+              <View style={styles.categoryList}>
                 {categoryEntries.map(([cat, bytes]) => {
                   const ratio =
                     stats.totalUsedBytes > 0 ? bytes / stats.totalUsedBytes : 0;
@@ -257,45 +248,27 @@ export const StorageSheet: React.FC<StorageSheetProps> = observer(
                     CATEGORY_GRADIENTS[
                       cat as keyof typeof CATEGORY_GRADIENTS
                     ] ?? CATEGORY_GRADIENTS.general;
+                  const barFillStyle: ViewStyle = {
+                    width: `${Math.max(2, ratio * 100)}%`,
+                    backgroundColor: gradient[0],
+                  };
                   return (
                     <View key={cat}>
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          justifyContent: 'space-between',
-                        }}>
-                        <Text
-                          style={{
-                            ...theme.typography.captionM,
-                            color: theme.colors.onSurfaceVariant,
-                          }}>
+                      <View style={styles.rowBetween}>
+                        <Text style={[theme.typography.captionM, mutedText]}>
                           {t.categories?.[cat] ?? cat}
                         </Text>
                         <Text
-                          style={{
-                            ...theme.typography.captionM,
-                            fontWeight: '700',
-                            color: theme.colors.onSurface,
-                          }}>
+                          style={[
+                            theme.typography.captionM,
+                            onSurfaceText,
+                            styles.weight700,
+                          ]}>
                           {formatBytes(bytes)}
                         </Text>
                       </View>
-                      <View
-                        style={{
-                          height: 6,
-                          borderRadius: 3,
-                          backgroundColor: theme.colors.surfaceVariant,
-                          marginTop: 4,
-                          overflow: 'hidden',
-                        }}>
-                        <View
-                          style={{
-                            width: `${Math.max(2, ratio * 100)}%`,
-                            height: '100%',
-                            borderRadius: 3,
-                            backgroundColor: gradient[0],
-                          }}
-                        />
+                      <View style={[styles.barTrack, surfaceVariantBg]}>
+                        <View style={[barFillStyle, styles.barFill]} />
                       </View>
                     </View>
                   );
@@ -306,43 +279,30 @@ export const StorageSheet: React.FC<StorageSheetProps> = observer(
 
           {/* Largest models */}
           {stats.largest.length > 0 && (
-            <View style={{marginTop: 20}}>
+            <View style={styles.section}>
               <Text
-                style={{
-                  ...theme.typography.uiM,
-                  fontWeight: '700',
-                  color: theme.colors.onSurface,
-                }}>
+                style={[theme.typography.uiM, onSurfaceText, styles.weight700]}>
                 {t.storage?.largest}
               </Text>
-              <View style={{marginTop: 8}}>
+              <View style={styles.mt8}>
                 {stats.largest.map(({model, bytes}) => (
-                  <View
-                    key={model.id}
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      paddingVertical: 10,
-                      borderBottomWidth: 1,
-                      borderBottomColor: theme.colors.outlineVariant,
-                      gap: 10,
-                    }}>
-                    <View style={{flex: 1}}>
+                  <View key={model.id} style={[styles.modelRow, rowDivider]}>
+                    <View style={styles.flex1}>
                       <Text
-                        style={{
-                          ...theme.typography.uiS,
-                          fontWeight: '600',
-                          color: theme.colors.onSurface,
-                        }}
+                        style={[
+                          theme.typography.uiS,
+                          onSurfaceText,
+                          styles.weight600,
+                        ]}
                         numberOfLines={1}>
                         {extractFamilyLabel(model.repo ?? model.name)}
                       </Text>
                       <Text
-                        style={{
-                          ...theme.typography.captionM,
-                          color: theme.colors.onSurfaceVariant,
-                          marginTop: 2,
-                        }}>
+                        style={[
+                          theme.typography.captionM,
+                          mutedText,
+                          styles.mt2,
+                        ]}>
                         {model.filename} · {formatBytes(bytes)}
                       </Text>
                     </View>
@@ -350,18 +310,13 @@ export const StorageSheet: React.FC<StorageSheetProps> = observer(
                       onPress={() => deleteModel(model)}
                       accessibilityRole="button"
                       accessibilityLabel={l10n.common.delete}
-                      style={{
-                        paddingHorizontal: 12,
-                        paddingVertical: 7,
-                        borderRadius: 10,
-                        backgroundColor: theme.colors.errorContainer,
-                      }}>
+                      style={[styles.chipButton, errorContainerBg]}>
                       <Text
-                        style={{
-                          ...theme.typography.captionM,
-                          fontWeight: '700',
-                          color: theme.colors.error,
-                        }}>
+                        style={[
+                          theme.typography.captionM,
+                          errorText,
+                          styles.weight700,
+                        ]}>
                         {l10n.common.delete}
                       </Text>
                     </Pressable>
@@ -372,48 +327,29 @@ export const StorageSheet: React.FC<StorageSheetProps> = observer(
           )}
 
           {/* Orphan cleanup */}
-          <View style={{marginTop: 20}}>
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }}>
+          <View style={styles.section}>
+            <View style={styles.rowBetweenCenter}>
               <Text
-                style={{
-                  ...theme.typography.uiM,
-                  fontWeight: '700',
-                  color: theme.colors.onSurface,
-                }}>
+                style={[theme.typography.uiM, onSurfaceText, styles.weight700]}>
                 {t.storage?.orphans}
               </Text>
               {stats.orphans.length > 0 && (
                 <Pressable
                   onPress={cleanOrphans}
                   accessibilityRole="button"
-                  style={{
-                    paddingHorizontal: 12,
-                    paddingVertical: 7,
-                    borderRadius: 10,
-                    backgroundColor: theme.colors.surfaceVariant,
-                  }}>
+                  style={[styles.chipButton, surfaceVariantBg]}>
                   <Text
-                    style={{
-                      ...theme.typography.captionM,
-                      fontWeight: '700',
-                      color: theme.colors.onSurface,
-                    }}>
+                    style={[
+                      theme.typography.captionM,
+                      onSurfaceText,
+                      styles.weight700,
+                    ]}>
                     {t.storage?.cleanNow}
                   </Text>
                 </Pressable>
               )}
             </View>
-            <Text
-              style={{
-                ...theme.typography.captionM,
-                color: theme.colors.onSurfaceVariant,
-                marginTop: 4,
-              }}>
+            <Text style={[theme.typography.captionM, mutedText, styles.mt4]}>
               {stats.orphans.length > 0
                 ? t.storage?.orphansFound
                     ?.replace('{count}', String(stats.orphans.length))
@@ -431,3 +367,38 @@ export const StorageSheet: React.FC<StorageSheetProps> = observer(
     );
   },
 );
+
+const styles = StyleSheet.create({
+  // Shared static fragments
+  flex1: {flex: 1},
+  weight700: {fontWeight: '700'},
+  weight600: {fontWeight: '600'},
+  mt2: {marginTop: 2},
+  mt4: {marginTop: 4},
+  mt8: {marginTop: 8},
+  rowBetween: {flexDirection: 'row', justifyContent: 'space-between'},
+
+  // StorageSheet
+  scrollContent: {paddingHorizontal: 20, paddingBottom: 40},
+  totalsCard: {flexDirection: 'row', borderRadius: 16, padding: 16, gap: 12},
+  statValue: {fontWeight: '800', marginTop: 2},
+  freeValue: {fontWeight: '800', color: '#059669', marginTop: 2},
+  distributionSection: {marginTop: 18},
+  categoryList: {marginTop: 10, gap: 8},
+  barTrack: {height: 6, borderRadius: 3, marginTop: 4, overflow: 'hidden'},
+  barFill: {height: '100%', borderRadius: 3},
+  section: {marginTop: 20},
+  modelRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    gap: 10,
+  },
+  chipButton: {paddingHorizontal: 12, paddingVertical: 7, borderRadius: 10},
+  rowBetweenCenter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+});

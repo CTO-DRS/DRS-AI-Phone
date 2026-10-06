@@ -1,3 +1,6 @@
+/* eslint-disable no-bitwise -- Binary GGUF parsing: reading little-endian
+ * width-encoded ints and metadata flag masks requires explicit bitwise
+ * operators; there is no higher-level substitute at the wire-format layer. */
 /**
  * Minimal GGUF header reader for the remote MTP capability probe.
  *

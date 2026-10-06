@@ -5,7 +5,6 @@ import _ from 'lodash';
 import dayjs from 'dayjs';
 import {MD3Theme} from 'react-native-paper';
 import DeviceInfo from 'react-native-device-info';
-import Blob from 'react-native/Libraries/Blob/Blob';
 import * as RNFS from '@dr.pogodin/react-native-fs';
 
 import {l10n} from '../locales';
@@ -36,8 +35,30 @@ export const L10nContext = React.createContext<
 >(l10n.en);
 export const UserContext = React.createContext<User | undefined>(undefined);
 
-/** Returns size in bytes of the provided text */
-export const getTextSizeInBytes = (text: string) => new Blob([text]).size;
+/** Returns size in bytes of the provided text when encoded as UTF-8. */
+export const getTextSizeInBytes = (text: string) => {
+  // UTF-8 byte length computed from code points. Replaces the previous
+  // implementation that constructed an RN Blob via the deep import
+  // 'react-native/Libraries/Blob/Blob' — deep imports into RN internals
+  // are fragile across RN upgrades (audit finding: @react-native/
+  // no-deep-imports) and offer no advantage for a pure length probe.
+  let bytes = 0;
+  for (let i = 0; i < text.length; i++) {
+    const codePoint = text.codePointAt(i) as number;
+    if (codePoint > 0xffff) {
+      // Surrogate pair: skip the trailing surrogate of this code point.
+      i++;
+      bytes += 4;
+    } else if (codePoint > 0x7ff) {
+      bytes += 3;
+    } else if (codePoint > 0x7f) {
+      bytes += 2;
+    } else {
+      bytes += 1;
+    }
+  }
+  return bytes;
+};
 
 /** Returns theme colors as ColorValue array */
 export const getThemeColorsAsArray = (theme: MD3Theme): ColorValue[] => {
