@@ -109,7 +109,7 @@ describe('useStructuredOutput', () => {
 
     const {result} = renderHook(() => useStructuredOutput());
 
-    let error;
+    let error: unknown;
     await act(async () => {
       try {
         await result.current.generate('test', {});
@@ -119,7 +119,7 @@ describe('useStructuredOutput', () => {
     });
 
     expect(error).toBeInstanceOf(Error);
-    expect(error.message).toBe('Model context not initialized');
+    expect((error as Error).message).toBe('Model context not initialized');
     expect(result.current.isGenerating).toBe(false);
   });
 
@@ -131,7 +131,7 @@ describe('useStructuredOutput', () => {
 
     const {result} = renderHook(() => useStructuredOutput());
 
-    let error;
+    let error: unknown;
     await act(async () => {
       try {
         await result.current.generate('test', {});
@@ -141,7 +141,7 @@ describe('useStructuredOutput', () => {
     });
 
     expect(error).toBeDefined();
-    expect(error.message).toBe(errorMessage);
+    expect((error as Error).message).toBe(errorMessage);
     expect(result.current.isGenerating).toBe(false);
     expect(result.current.error).toBe(errorMessage);
   });

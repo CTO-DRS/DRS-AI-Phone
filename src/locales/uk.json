@@ -6,6 +6,7 @@
     "rename": "Перейменувати",
     "reset": "Скинути",
     "save": "Зберегти",
+    "stop": "Зупинити",
     "update": "Оновлення",
     "error": "Помилка",
     "export": "Експорт",
@@ -31,8 +32,10 @@
     "close": "Закрити",
     "clear": "Очистити все",
     "gallery": "Галерея",
-    "stop": "Зупинити",
-    "noResults": "Нічого не знайдено"
+    "noResults": "Нічого не знайдено",
+    "openDrawer": "Відкрити бічну панель",
+    "openMenu": "Відкрити меню",
+    "closeMenu": "Закрити меню"
   },
   "settings": {
     "modelInitializationSettings": "Налаштування ініціалізації моделі",
@@ -89,6 +92,23 @@
     "useMmapFalseDescription": "Якщо увімкнено перепакування ваги, рекомендується вимкнути цю опцію, щоб уникнути подвоєння обсягу пам’яті",
     "weightRepacking": "Увімкнути перерозподіл ваги",
     "weightRepackingDescription": "Швидша обробка запитів із мінімальним навантаженням на пам'ять, коли функція відображення пам'яті вимкнена. Це не впливає на генерацію токенів.",
+    "speculativeDecoding": "Спекулятивне декодування",
+    "speculativeDecodingDescription": "Використовуйте невелику модель-чернетку (або вбудовану модель MTP) для передбачення токенів і прискорення генерації. Експериментальна функція.",
+    "speculativeNotMTPCapable": "Активна модель не підтримує спекулятивне декодування, і сумісної моделі-чернетки не додано, тож для неї воно лишається вимкненим і не діє. До моделей із підтримкою воно застосовується автоматично.",
+    "speculativeDraftModel": "Модель-чернетка",
+    "speculativeDraftModelDescription": "Створює чернетки токенів для активної моделі.",
+    "speculativeDraftModelNone": "Немає (вбудована MTP)",
+    "speculativeDraftModelIgnoredOverridden": "Активна модель має власну модель-чернетку, тож цей вибір ігнорується.",
+    "speculativeDraftModelIgnoredIncompatible": "Ця чернетка несумісна з активною моделлю, тож вона ігнорується.",
+    "speculativeDraftModelIgnoredNotCapable": "Ця модель не містить шарів-чернеток, тож її не можна використати як модель-чернетку.",
+    "speculativeDraftKeyCacheType": "Тип кешу ключів чернетки",
+    "speculativeDraftValueCacheType": "Тип кешу значень чернетки",
+    "speculativeDraftNGpuLayers": "Шари GPU для чернетки",
+    "speculativeDraftNGpuLayersDescription": "Кількість шарів моделі-чернетки, які буде вивантажено на GPU.",
+    "speculativeDraftCacheTypeInactiveDescription": "Застосовується, щойно запрацює спекулятивне декодування.",
+    "ttsAvailability": "Перетворення тексту в мову",
+    "ttsAvailabilityDescription": "Прочитайте відповіді помічника вголос.",
+    "ttsAvailabilityLowMemoryWarning": "У вашому пристрої мало пам'яті — програма може працювати нестабільно.",
     "modelLoadingSettings": "Налаштування завантаження моделі",
     "autoOffloadLoad": "Автоматичне вивантаження/завантаження",
     "autoOffloadLoadDescription": "Звільнити модель, коли додаток працює у фоновому режимі.",
@@ -96,6 +116,12 @@
     "autoNavigateToChatDescription": "Перейти до чату, коли почнеться завантаження.",
     "appSettings": "Налаштування програми",
     "language": "Мова",
+    "languageSheetTitle": "Мова",
+    "languageSearchPlaceholder": "Пошук мов",
+    "languageRestartTitle": "Потрібен перезапуск",
+    "languageRestartMessage": "Для цієї мови змінився напрям відображення. Перезапустіть додаток, щоб застосувати зміни повністю.",
+    "languageRestartNow": "Перезапустити зараз",
+    "languageRestartLater": "Пізніше",
     "darkMode": "Темний режим",
     "displayMemoryUsage": "Відобразити використання пам'яті",
     "displayMemoryUsageDescription": "Відображати використання пам'яті на сторінці чату.",
@@ -108,6 +134,31 @@
     "importButton": "Імпорт",
     "importSuccess": "Успішно імпортовано {{count}} сеансів чату.",
     "importError": "Не вдалося імпортувати сесії чату. Перевірте формат файлу.",
+    "internetSearch": {
+      "title": "Пошук в інтернеті",
+      "description": "Дозвольте Асистентs шукати в інтернеті за допомогою власних інструментів. Використовуйте власний ключ API — DRS AI ніколи не зберігає ваші ключі й не маршрутизує ваші запити.",
+      "providerLabel": "Постачальник пошуку",
+      "providerGated": "Незабаром",
+      "keyLabel": "Ключ API",
+      "keyIsSet": "Ключ для {{provider}} встановлено.",
+      "keyNotSet": "Для {{provider}} не встановлено ключ.",
+      "setKeyButton": "Встановити ключ",
+      "updateKeyButton": "Оновити ключ",
+      "clearKeyButton": "Очистити ключ",
+      "keyInputPlaceholder": "Вставте свій ключ API для {{provider}}",
+      "keyUpdateError": "Не вдалося оновити ключ. Спробуйте ще раз.",
+      "showKeyAccessibilityLabel": "Показати ключ API",
+      "hideKeyAccessibilityLabel": "Сховати ключ API",
+      "resultCountLabel": "Результатів на пошук",
+      "resultCountDescription": "Менша кількість результатів залишає більше місця в контексті моделі.",
+      "consentTitle": "Пошукові запити залишають ваш пристрій",
+      "consentDescription": "Коли Асистент шукає в інтернеті, ваш запит надсилається вибраному постачальнику через інтернет. Коли Асистент читає сторінку, URL-адреса та вміст сторінки можуть натомість надсилатися до стандартного сервісу читання (r.jina.ai), якщо у вибраного постачальника немає власного засобу читання. Ключі та запити ніколи не надсилаються до DRS AI.",
+      "consentAccept": "Зрозуміло",
+      "consentRequired": "Прийміть застереження вище, щоб встановити ключ і ввімкнути пошук.",
+      "consentGivenTitle": "Пошук в інтернеті ввімкнено",
+      "consentGivenDescription": "Запити та читання сторінок можуть залишати ваш пристрій, як описано вище.",
+      "consentRevoke": "Відкликати"
+    },
     "apiSettingsTitle": "Налаштування API",
     "huggingFaceTokenLabel": "Токен Hugging Face",
     "tokenIsSetDescription": "Токен встановлено. Необхідний для доступу до моделей із обмеженим доступом.",
@@ -127,6 +178,11 @@
     "serverName": "Ім'я сервера",
     "serverUrl": "URL-адреса сервера",
     "serverUrlPlaceholder": "наприклад, http://192.168.1.100:1234",
+    "requestTimeout": "Тайм-аут запиту (секунди)",
+    "requestTimeoutPlaceholder": "Необов’язкове — залиште порожнім, щоб використовувати значення за замовчуванням",
+    "requestTimeoutHelp": "Максимальний час очікування відповіді від повільного сервера. Залиште поле порожнім, щоб використовувати значення за замовчуванням.",
+    "serverType": "Тип сервера",
+    "serverTypeHelp": "Визначається автоматично; змініть, якщо неправильно.",
     "apiKey": "Ключ API",
     "apiKeyPlaceholder": "Необов'язково — потрібно для OpenAI/Groq",
     "apiKeyDescription": "Надійно зберігається на пристрої.",
@@ -157,55 +213,7 @@
     "retryConnection": "Спробувати ще раз",
     "enterUrlManually": "Введіть URL-адресу вручну",
     "manageServers": "Управління серверами",
-    "ttsAvailability": "Перетворення тексту в мову",
-    "ttsAvailabilityDescription": "Прочитайте відповіді помічника вголос.",
-    "ttsAvailabilityLowMemoryWarning": "У вашому пристрої мало пам'яті — програма може працювати нестабільно.",
-    "requestTimeout": "Тайм-аут запиту (секунди)",
-    "requestTimeoutHelp": "Максимальний час очікування відповіді від повільного сервера. Залиште поле порожнім, щоб використовувати значення за замовчуванням.",
-    "requestTimeoutPlaceholder": "Необов’язкове — залиште порожнім, щоб використовувати значення за замовчуванням",
-    "serverType": "Тип сервера",
-    "serverTypeHelp": "Визначається автоматично; змініть, якщо неправильно.",
-    "internetSearch": {
-      "title": "Пошук в інтернеті",
-      "description": "Дозвольте Асистентs шукати в інтернеті за допомогою власних інструментів. Використовуйте власний ключ API — DRS AI ніколи не зберігає ваші ключі й не маршрутизує ваші запити.",
-      "providerLabel": "Постачальник пошуку",
-      "providerGated": "Незабаром",
-      "keyLabel": "Ключ API",
-      "keyIsSet": "Ключ для {{provider}} встановлено.",
-      "keyNotSet": "Для {{provider}} не встановлено ключ.",
-      "setKeyButton": "Встановити ключ",
-      "updateKeyButton": "Оновити ключ",
-      "clearKeyButton": "Очистити ключ",
-      "keyInputPlaceholder": "Вставте свій ключ API для {{provider}}",
-      "keyUpdateError": "Не вдалося оновити ключ. Спробуйте ще раз.",
-      "showKeyAccessibilityLabel": "Показати ключ API",
-      "hideKeyAccessibilityLabel": "Сховати ключ API",
-      "resultCountLabel": "Результатів на пошук",
-      "resultCountDescription": "Менша кількість результатів залишає більше місця в контексті моделі.",
-      "consentTitle": "Пошукові запити залишають ваш пристрій",
-      "consentDescription": "Коли Асистент шукає в інтернеті, ваш запит надсилається вибраному постачальнику через інтернет. Коли Асистент читає сторінку, URL-адреса та вміст сторінки можуть натомість надсилатися до стандартного сервісу читання (r.jina.ai), якщо у вибраного постачальника немає власного засобу читання. Ключі та запити ніколи не надсилаються до DRS AI.",
-      "consentAccept": "Зрозуміло",
-      "consentRequired": "Прийміть застереження вище, щоб встановити ключ і ввімкнути пошук.",
-      "consentGivenTitle": "Пошук в інтернеті ввімкнено",
-      "consentGivenDescription": "Запити та читання сторінок можуть залишати ваш пристрій, як описано вище.",
-      "consentRevoke": "Відкликати"
-    },
-    "languageSheetTitle": "Мова",
-    "languageSearchPlaceholder": "Пошук мов",
-    "speculativeDecoding": "Спекулятивне декодування",
-    "speculativeDecodingDescription": "Використовуйте невелику модель-чернетку (або вбудовану модель MTP) для передбачення токенів і прискорення генерації. Експериментальна функція.",
-    "speculativeNotMTPCapable": "Активна модель не підтримує спекулятивне декодування, і сумісної моделі-чернетки не додано, тож для неї воно лишається вимкненим і не діє. До моделей із підтримкою воно застосовується автоматично.",
-    "speculativeDraftModel": "Модель-чернетка",
-    "speculativeDraftModelDescription": "Створює чернетки токенів для активної моделі.",
-    "speculativeDraftModelNone": "Немає (вбудована MTP)",
-    "speculativeDraftModelIgnoredOverridden": "Активна модель має власну модель-чернетку, тож цей вибір ігнорується.",
-    "speculativeDraftModelIgnoredIncompatible": "Ця чернетка несумісна з активною моделлю, тож вона ігнорується.",
-    "speculativeDraftModelIgnoredNotCapable": "Ця модель не містить шарів-чернеток, тож її не можна використати як модель-чернетку.",
-    "speculativeDraftKeyCacheType": "Тип кешу ключів чернетки",
-    "speculativeDraftValueCacheType": "Тип кешу значень чернетки",
-    "speculativeDraftNGpuLayers": "Шари GPU для чернетки",
-    "speculativeDraftNGpuLayersDescription": "Кількість шарів моделі-чернетки, які буде вивантажено на GPU.",
-    "speculativeDraftCacheTypeInactiveDescription": "Застосовується, щойно запрацює спекулятивне декодування."
+    "exportLegacyError": "Не вдалося експортувати застарілі сеанси чату. Можливо, файл не існує."
   },
   "memory": {
     "shortWarning": "Попередження про пам'ять",
@@ -244,8 +252,8 @@
     },
     "labels": {
       "localModel": "Локальний",
-      "unknownGroup": "Невідомо",
       "hfModel": "HF",
+      "unknownGroup": "Невідомо",
       "availableToUse": "Готовий до використання",
       "availableToDownload": "Доступно для завантаження",
       "useAddButtonForMore": "Натисніть кнопку «+», щоб переглянути інші моделі"
@@ -368,6 +376,15 @@
         "sortLikes": "Найпопулярніша"
       }
     },
+    "hubRun": {
+      "title": "Завантажити Модель",
+      "resolving": "Завантаження деталей моделі…",
+      "cancel": "Скасувати",
+      "retry": "Спробувати ще раз",
+      "invalidLinkTitle": "Недійсне посилання",
+      "invalidLinkMessage": "Це посилання на Hugging Face відсутнє або містить недійсну модель чи файл.",
+      "resolveError": "Не вдалося завантажити деталі моделі. Перевірте з'єднання та спробуйте ще раз."
+    },
     "modelCard": {
       "alerts": {
         "deleteTitle": "Видалити Модель",
@@ -385,6 +402,9 @@
       "labels": {
         "skills": "Навички: ",
         "vision": "Бачення",
+        "visionSupported": "Підтримується",
+        "visionNotSupported": "Не підтримується",
+        "visionUnknown": "Невідомо",
         "capabilities": "можливості.",
         "modelName": "Назва моделі",
         "contextLength": "Довжина контексту",
@@ -393,9 +413,6 @@
         "requiresProjectionModel": "Потрібна модель проекції",
         "downloadProjectionModel": "Завантажити модель прогнозування",
         "viewModelCardOnHuggingFace": "Переглянути картку моделі на Hugging Face",
-        "visionSupported": "Підтримується",
-        "visionNotSupported": "Не підтримується",
-        "visionUnknown": "Невідомо",
         "draftOnlyReason": "Модель лише для чернеток. Виберіть її в розділі «Налаштування» → «Спекулятивне декодування»."
       },
       "accessibility": {
@@ -432,9 +449,9 @@
         "placeholder": "Додати нове слово-стоп"
       },
       "tokenSettings": {
-        "addGenerationPrompt": "Додати підказку щодо покоління",
         "bos": "BOS",
         "eos": "EOS",
+        "addGenerationPrompt": "Додати підказку щодо покоління",
         "bosTokenPlaceholder": "Токен BOS",
         "eosTokenPlaceholder": "Токен EOS",
         "systemPrompt": "Системне повідомлення"
@@ -461,14 +478,195 @@
       "mtp": "Спекулятивна (MTP)",
       "mtpDraft": "Спекулятивна чернетка"
     },
-    "hubRun": {
-      "title": "Завантажити Модель",
-      "resolving": "Завантаження деталей моделі…",
-      "cancel": "Скасувати",
-      "retry": "Спробувати ще раз",
-      "invalidLinkTitle": "Недійсне посилання",
-      "invalidLinkMessage": "Це посилання на Hugging Face відсутнє або містить недійсну модель чи файл.",
-      "resolveError": "Не вдалося завантажити деталі моделі. Перевірте з'єднання та спробуйте ще раз."
+    "emptyTitle": "Моделей ще немає",
+    "emptyHint": "Натисніть «+», щоб завантажити модель з Hugging Face, додати локальну модель або під'єднатися до віддаленого сервера."
+  },
+  "modelsHub": {
+    "title": "Моделі",
+    "subtitle": "Шукайте, завантажуйте та керуйте кожною моделлю, яку може запустити ваш додаток.",
+    "searchPlaceholder": "Пошук моделей, видавців, завдань…",
+    "retry": "Спробувати ще раз",
+    "notAvailable": "Недоступно",
+    "noDownloadableFile": "У цьому репозиторії немає файлу GGUF для завантаження",
+    "downloadStarted": "Завантаження почалося",
+    "seeAll": "Показати всі",
+    "exploreAction": "Огляд моделей",
+    "emptyTitle": "Моделі ще не встановлено",
+    "emptyHint": "Перегляньте хаб і завантажте модель, яка пасуватиме вашому пристрою та вашій роботі.",
+    "fitScore": "{score}/100 відповідність",
+    "installedFromRepo": "Встановлено з цього репозиторію",
+    "installedBadge": "Встановлено",
+    "noFiles": "У цьому репозиторії не опубліковано жодного файлу GGUF.",
+    "visionFilesTitle": "Файли проекції зору (mmproj)",
+    "visionFilesHint": "Ці невеликі файли додають розуміння зображень до відповідної текстової моделі; вони завантажуються автоматично разом із моделями бачення.",
+    "downloadFile": "Завантажити файл",
+    "downloadShort": "Отримати",
+    "version": "Версія",
+    "engineUnsupportedShort": "Не запускається локально",
+    "engineYes": "GGUF — працює локально (llama.cpp)",
+    "engineNo": "Не підтримується локальним рушієм",
+    "capabilitiesTitle": "Можливості",
+    "categoryEngineNotice": "У цій категорії перелічено справжні репозиторії, але локальний рушій GGUF поки не може виконувати такі моделі, тому завантаження тут вимкнено. Нічого не імітується — коли рушій отримає підтримку, ці моделі можна буде завантажити.",
+    "categoryInstalledSection": "Ваші моделі в цій категорії",
+    "categoryRemoteSection": "Знайти на HuggingFace",
+    "featuredTitle": "Вибрані моделі",
+    "recommendedTitle": "Рекомендовано для вашого пристрою",
+    "recentTitle": "Нещодавно додані",
+    "favoritesTitle": "Улюблені",
+    "installedTitle": "Встановлені",
+    "wifiOnly": "Лише Wi-Fi",
+    "categoriesTitle": "Категорії",
+    "installedCount": "Встановлено: {count}",
+    "discover": "Каталог",
+    "device": {
+      "ram": "RAM",
+      "storage": "Вільне місце",
+      "cpu": "CPU",
+      "gpu": "GPU",
+      "gpuOk": "Прискорення",
+      "gpuNo": "Лише CPU"
+    },
+    "compat": {
+      "excellent": "Відмінна сумісність",
+      "good": "Добра сумісність",
+      "limited": "Обмежена сумісність",
+      "notRecommended": "Не рекомендується",
+      "unknown": "Сумісність невідома"
+    },
+    "reasons": {
+      "engineUnsupported": "Цей тип моделі не може працювати на локальному рушії GGUF",
+      "engineSupported": "Працює на локальному рушії GGUF",
+      "memoryComfortable": "Використання пам'яті буде комфортним",
+      "memoryOk": "Використання пам'яті прийнятне",
+      "memoryTight": "Пам'яті буде замало — очікуйте повільнішої роботи",
+      "memoryInsufficient": "ОЗП цього пристрою недостатньо для його завантаження",
+      "memoryUnknown": "Не вдалося оцінити потребу в пам'яті за даними репозиторію",
+      "storagePlenty": "Багато вільного місця",
+      "storageTight": "Після встановлення місця залишиться небагато",
+      "storageInsufficient": "Недостатньо вільного місця",
+      "storageUnknown": "Не вдалося визначити обсяг вільного місця",
+      "cpuGood": "CPU має достатньо ядер для швидкого інференсу",
+      "cpuOk": "CPU впорається, помірно швидко",
+      "cpuLimited": "Мало ядер CPU — інференс буде повільним",
+      "cpuUnknown": "Не вдалося визначити кількість ядер CPU",
+      "gpuSupported": "Доступне прискорення GPU",
+      "gpuUnsupported": "Немає прискорення GPU — працює на CPU",
+      "gpuUnknown": "Не вдалося визначити підтримку GPU"
+    },
+    "overviewTemplate": "Модель {categories}, опублікована автором {author}, містить близько {params} параметрів і поширюється у вигляді файлів GGUF для локального офлайн-інференсу на цьому пристрої.",
+    "overviewBlocked": "Це справжній репозиторій, але цей тип моделі не може виконуватися локальним рушієм, тому завантажити його тут не вдасться.",
+    "statsTemplate": "На HuggingFace: {downloads} завантажень · {likes} лайків.",
+    "tech": {
+      "architecture": "Архітектура",
+      "parameters": "Параметри",
+      "contextLength": "Довжина контексту",
+      "formats": "Формати",
+      "quantization": "Квантування",
+      "fileCount": "Файли GGUF",
+      "version": "Ревізія (sha)",
+      "lastModified": "Останнє оновлення",
+      "license": "Ліцензія",
+      "engine": "Рушій"
+    },
+    "capabilities": {
+      "offline": "Офлайн",
+      "context": "Контекст",
+      "arabic": "Підтримка арабської",
+      "multilingual": "Багатомовний"
+    },
+    "tabs": {
+      "overview": "Огляд",
+      "technical": "Технічні",
+      "files": "Файли"
+    },
+    "categories": {
+      "text": "Текст",
+      "vision": "Бачення",
+      "reasoning": "Міркування",
+      "coding": "Програмування",
+      "multimodal": "Мультимодальні",
+      "embedding": "Вбудовування",
+      "translation": "Переклад",
+      "audio": "Аудіо",
+      "image": "Зображення",
+      "video": "Відео",
+      "general": "Загальні"
+    },
+    "dialog": {
+      "aboutTitle": "Про цю модель",
+      "aboutTemplate": "Модель GGUF {family} від {author}. Після завантаження працює повністю офлайн на цьому пристрої. Наведений нижче розмір — це точний розмір файлу за даними HuggingFace.",
+      "familyUnknown": "GGUF",
+      "file": "Файл",
+      "downloadSize": "Розмір завантаження",
+      "extraVisionFiles": "Додаткові файли зору (mmproj)",
+      "storageAfter": "Місце після встановлення",
+      "offline": "Працює офлайн",
+      "offlineYes": "Так — повністю на пристрої",
+      "context": "Довжина контексту",
+      "wifiOnlyWaiting": "Увімкнено завантаження лише через Wi-Fi. У мобільній мережі це завантаження чекатиме в черзі, доки не повернеться Wi-Fi.",
+      "engineUnsupported": "Цей тип моделі (генерація зображень/відео/аудіо) не може бути виконаний локальним рушієм GGUF, тому завантаження вимкнено. Тут нічого не підроблено — список справжній, просто рушій не вміє його запускати.",
+      "confirmDownload": "Завантажити модель",
+      "starting": "Запуск…"
+    },
+    "storage": {
+      "title": "Сховище моделей",
+      "entryHint": "Розподіл використання, найбільші моделі, очищення",
+      "used": "Зайнято моделями",
+      "available": "Доступно",
+      "distribution": "За категоріями",
+      "largest": "Найбільші моделі",
+      "orphans": "Незавершені та зайві файли",
+      "orphansFound": "{count} файлів · можна звільнити {size}",
+      "orphansNone": "Чистити нічого — сховище в порядку.",
+      "cleanNow": "Очистити",
+      "cleanTitle": "Видалити зайві файли?",
+      "cleanMessage": "{count} незавершених або зайвих файлів буде видалено назавжди.",
+      "cleanConfirm": "Видалити",
+      "checking": "Перевірка сховища…",
+      "enough": "Достатньо вільного місця",
+      "notEnough": "Недостатньо вільного місця",
+      "required": "Потрібно",
+      "availableLabel": "Доступно",
+      "deficit": "Бракує {amount}"
+    },
+    "downloads": {
+      "title": "Завантаження",
+      "emptyTitle": "Немає завантажень",
+      "emptyHint": "Завантажені моделі з'являються тут із прогресом у реальному часі та залишаються доступними офлайн.",
+      "active": "Завантаження",
+      "paused": "Призупинено",
+      "pausedHint": "Призупинено — відновлення з тієї самої позиції",
+      "verifying": "Перевірка",
+      "verifyingHint": "Перевірка цілісності файлу (розмір + контрольна сума) перед встановленням",
+      "completed": "Завершено",
+      "remaining": "≈",
+      "pause": "Пауза",
+      "resume": "Продовжити",
+      "cancel": "Скасувати"
+    },
+    "updates": {
+      "title": "Оновлення",
+      "check": "Перевірити оновлення",
+      "checking": "Перевірка…",
+      "recheck": "Перевірити ще раз",
+      "upToDate": "Усі встановлені моделі відповідають своїм вихідним ревізіям.",
+      "update": "Оновити"
+    },
+    "sort": {
+      "title": "Сортування",
+      "recommended": "Найкраща відповідність",
+      "downloads": "Найбільше завантажень",
+      "newest": "Найновіші",
+      "name": "Назва",
+      "sizeAsc": "Спочатку менші",
+      "sizeDesc": "Спочатку більші"
+    },
+    "search": {
+      "installedSection": "Ваші моделі",
+      "hfSection": "Результати HuggingFace",
+      "noResults": "Моделей не знайдено",
+      "noResultsHint": "Спробуйте іншу назву, видавця чи завдання.",
+      "errorTitle": "Помилка пошуку"
     }
   },
   "completionParams": {
@@ -510,11 +708,13 @@
     "orBy": "або за допомогою",
     "versionCopiedTitle": "Скопійовано версію",
     "versionCopiedDescription": "Інформація про версію скопійована в буфер обміну",
-    "privacyPolicy": "Політика конфіденційності",
-    "termsOfService": "Умови надання послуг",
     "tour": "Огляд",
     "tourDescription": "Перегляньте вітальні екрани ще раз, щоб дізнатися, що пропонує DRS AI.",
-    "showIntroButton": "Показати вступ знову"
+    "showIntroButton": "Показати вступ знову",
+    "privacyPolicy": "Політика конфіденційності",
+    "termsOfService": "Умови надання послуг",
+    "versionFormat": "Версія {{version}} ({{build}})",
+    "successTitle": "Успіх"
   },
   "feedback": {
     "title": "Надіслати Відгук",
@@ -562,9 +762,9 @@
       "msPerToken": "{{value}} мс/токен",
       "tokensPerSec": "{{value}} токенів/сек",
       "ttft": "{{value}} мс TTFT",
+      "draftAccepted": "чернетка: {{accepted}}/{{total}} ({{pct}}%)",
       "interrupted": "Перервано",
-      "truncated": "Перервано — ймовірно, контекст вичерпано",
-      "draftAccepted": "чернетка: {{accepted}}/{{total}} ({{pct}}%)"
+      "truncated": "Перервано — ймовірно, контекст вичерпано"
     },
     "exportUtils": {
       "fileSaved": "Файл збережено",
@@ -588,6 +788,17 @@
     },
     "thinkingBubble": {
       "reasoning": "Аргументація"
+    },
+    "pendingIndicator": {
+      "preparingTool": "Підготовка інструмента",
+      "buildingPage": "Створення сторінки",
+      "calculating": "Обчислення",
+      "lookingUpTime": "Пошук часу",
+      "stopping": "Зупинення…"
+    },
+    "toolMetrics": {
+      "tokens": "{{count}} токен",
+      "elapsed": "{{seconds}} сек"
     },
     "chatEmptyPlaceholder": {
       "noModelsTitle": "Моделей немає",
@@ -729,17 +940,17 @@
       "forbiddenTitle": "Доступ заборонено",
       "forbiddenMessage": "У вас немає дозволу на доступ до цієї моделі. Переконайтеся, що:",
       "forbiddenSteps": [
-        "Ваш токен має право на «читання»",
-        "Ви подали запит на доступ до цієї моделі, і вам його надали",
-        "Власник моделі схвалив ваш запит на доступ"
+        "Your token has \"read\" permission",
+        "You requested and were granted access to this model",
+        "The model owner approved your access request"
       ],
       "getTokenTitle": "Отримати токен Hugging Face",
       "getTokenMessage": "Для завантаження цієї моделі потрібен токен Hugging Face.",
       "getTokenSteps": [
-        "Перейдіть на сайт huggingface.co та увійдіть у систему",
-        "Перейдіть до розділу «Налаштування» > «Токени доступу»",
-        "Створити новий токен із правом доступу «читати»",
-        "Скопіюйте токен і вставте його в поле для токена"
+        "Go to huggingface.co and sign in",
+        "Navigate to Settings > Access Tokens",
+        "Create a new token with \"read\" access",
+        "Copy the token and paste it in the token field"
       ],
       "tokenDisabledTitle": "Токен вимкнено",
       "tokenDisabledMessage": "У вас є набір токенів Hugging Face, але наразі він вимкнений. Для завантаження цієї моделі потрібен токен. Увімкніть свій токен, щоб продовжити.",
@@ -757,10 +968,15 @@
       "makeChatTemporary": "Зробити чат тимчасовим",
       "export": "Експорт/Імпорт",
       "exportCurrentSession": "Експортувати поточну сесію",
+      "exportCurrentSessionMarkdown": "Експортувати як Markdown",
       "exportAllSessions": "Експортувати всі сесії",
       "exportChatSession": "Експортувати сеанс чату",
       "importSessions": "Імпортувати сесії",
-      "exportCurrentSessionMarkdown": "Експортувати як Markdown"
+      "exportErrorTitle": "Помилка експорту",
+      "exportCurrentSessionError": "Не вдалося експортувати поточну сесію.",
+      "exportAllError": "Не вдалося експортувати всі сесії.",
+      "importSuccessTitle": "Успішний імпорт",
+      "importErrorTitle": "Помилка імпорту"
     },
     "hfTokenSheet": {
       "title": "Токен Hugging Face",
@@ -773,10 +989,10 @@
       "resetSuccess": "Токен успішно вилучено",
       "instructions": "Як отримати токен:",
       "instructionsSteps": [
-        "Перейдіть на сайт huggingface.co та увійдіть у систему",
-        "Перейдіть до розділу «Налаштування» > «Токени доступу»",
-        "Створити новий токен із правом доступу «читати»",
-        "Скопіюйте токен і вставте його нижче"
+        "Go to huggingface.co and sign in",
+        "Navigate to Settings > Access Tokens",
+        "Create a new token with \"read\" access",
+        "Copy the token and paste it below"
       ],
       "getTokenLink": "Отримати токен на сайті huggingface.co ↗",
       "error": {
@@ -980,7 +1196,10 @@
       "bulkDeleteError": "Не вдалося видалити сесії чату. Спробуйте ще раз.",
       "exportError": "Не вдалося експортувати сеанс чату. Спробуйте ще раз.",
       "bulkExportError": "Не вдалося експортувати сеанси чату. Спробуйте ще раз.",
+      "pin": "Закріпити",
+      "unpin": "Відкріпити",
       "dateGroups": {
+        "pinned": "Закріплені",
         "today": "Сьогодні",
         "yesterday": "Вчора",
         "thisWeek": "Цього тижня",
@@ -989,11 +1208,10 @@
         "threeWeeksAgo": "3 тижні тому",
         "fourWeeksAgo": "4 тижні тому",
         "lastMonth": "Минулого місяця",
-        "older": "Старші",
-        "pinned": "Закріплені"
+        "older": "Старші"
       },
-      "pin": "Закріпити",
-      "unpin": "Відкріпити"
+      "emptySessionsTitle": "Ще немає чатів",
+      "emptySessionsHint": "Почніть нову розмову на екрані чату"
     },
     "usageStats": {
       "tooltip": {
@@ -1003,10 +1221,10 @@
         "usage": "Спосіб застосування: "
       },
       "byteSizes": [
-        "Байти",
-        "КБ",
-        "МБ",
-        "ГБ"
+        "Bytes",
+        "KB",
+        "MB",
+        "GB"
       ]
     },
     "chatView": {
@@ -1022,18 +1240,60 @@
       "exportAllAssistants": "Експортувати всіх асистентів",
       "importAssistants": "Імпортувати асистентів",
       "importSuccess": "Успішно імпортовано {{count}} асистент.",
-      "importError": "Не вдалося імпортувати контакти. Перевірте формат файлу."
+      "importError": "Не вдалося імпортувати контакти. Перевірте формат файлу.",
+      "exportErrorTitle": "Помилка експорту",
+      "exportAllError": "Не вдалося експортувати всіх асистентів.",
+      "importSuccessTitle": "Успішний імпорт",
+      "importErrorTitle": "Помилка імпорту"
     },
-    "pendingIndicator": {
-      "preparingTool": "Підготовка інструмента",
-      "buildingPage": "Створення сторінки",
-      "calculating": "Обчислення",
-      "lookingUpTime": "Пошук часу",
-      "stopping": "Зупинення…"
+    "brandHeader": {
+      "tagline": "Ваш приватний ШІ на пристрої"
     },
-    "toolMetrics": {
-      "tokens": "{{count}} токен",
-      "elapsed": "{{seconds}} сек"
+    "authSheet": {
+      "signInTitle": "Вхід",
+      "signUpTitle": "Створити акаунт",
+      "fullNameLabel": "Повне ім'я",
+      "emailLabel": "Електронна пошта",
+      "passwordLabel": "Пароль",
+      "signInButton": "Увійти",
+      "signUpButton": "Створити акаунт",
+      "forgotPassword": "Забули пароль?",
+      "or": "або",
+      "continueWithGoogle": "Продовжити з Google",
+      "haveAccount": "Вже маєте акаунт? ",
+      "noAccount": "Не маєте акаунта? ",
+      "signUpLink": "Реєстрація",
+      "signInLink": "Увійти",
+      "signingIn": "Виконується вхід...",
+      "fillRequiredFields": "Будь ласка, заповніть усі обов'язкові поля.",
+      "enterFullName": "Будь ласка, введіть повне ім'я.",
+      "enterEmailFirst": "Спочатку введіть адресу електронної пошти.",
+      "accountCreatedTitle": "Акаунт створено",
+      "accountCreatedMessage": "Перевірте свою пошту, щоб підтвердити акаунт.",
+      "welcomeBackTitle": "З поверненням!",
+      "welcomeBackMessage": "Ви успішно увійшли.",
+      "googleErrorTitle": "Помилка входу через Google",
+      "passwordResetTitle": "Скидання пароля",
+      "passwordResetMessage": "Перевірте свою пошту — там інструкції зі скидання пароля.",
+      "authErrorTitle": "Помилка автентифікації"
+    },
+    "squareAssistantCard": {
+      "videoAssistant": "Відео-асистент ШІ",
+      "advancedAssistant": "Розширений асистент ШІ",
+      "assistant": "Асистент ШІ",
+      "byCreator": "від {{creator}}",
+      "downloadAssistantTitle": "Завантажити Асистента",
+      "downloadAssistantMessage": "Завантажити \"{{assistantName}}\", щоб почати спілкування?",
+      "download": "Завантажити",
+      "downloadErrorTitle": "Помилка завантаження",
+      "downloadErrorMessage": "Не вдалося завантажити асистента. Спробуйте ще раз.",
+      "startChatErrorMessage": "Не вдалося почати чат. Спробуйте ще раз.",
+      "switchModelTitle": "Змінити модель?",
+      "switchModelMessage": "Переключитися на \"{{modelName}}\" для цього асистента?",
+      "keepCurrent": "Залишити поточну",
+      "switch": "Змінити",
+      "shareErrorTitle": "Помилка поширення",
+      "shareErrorMessage": "Не вдалося поділитися асистентом. Спробуйте ще раз."
     }
   },
   "assistantsScreen": {
@@ -1121,7 +1381,9 @@
       "signInAgain": "Увійти знову",
       "assistantNotAvailable": "Цей асистент наразі недоступний для покупки.",
       "checkoutFailed": "Щось пішло не так. Спробуйте ще раз."
-    }
+    },
+    "emptyLocal": "Ще немає Асистентів.\nСтворіть першого Асистента за допомогою кнопки +!",
+    "emptyFiltered": "Асистентів не знайдено.\nСпробуйте змінити фільтри або пошуковий запит."
   },
   "validation": {
     "nameRequired": "Ім'я вводити обов'язково",
@@ -1171,7 +1433,11 @@
       "step2": "• Натисніть кнопку камери, щоб розпочати аналіз відео в режимі реального часу",
       "step3": "• Налаштувати частоту створення знімків, коли камера увімкнена",
       "step4": "• Перейдіть до іншого друга, щоб вести звичайний текстовий чат"
-    }
+    },
+    "defaultPrompt": "Що ви бачите?",
+    "multimodalTitle": "Мультимодальність не ввімкнено",
+    "multimodalMessage": "Ця модель не підтримує аналіз зображень. Завантажте мультимодальну модель.",
+    "checkSupportError": "Не вдалося перевірити, чи підтримує модель зображення."
   },
   "screenTitles": {
     "chat": "Чпт",
@@ -1186,6 +1452,8 @@
     "conversationReset": "Розмова перезапущена!",
     "modelNotLoaded": "Модель не завантажено. Будь ласка, ініціалізуйте модель.",
     "completionFailed": "Помилка під час виконання: ",
+    "toolCallTruncated": "Виклик інструмента перервано — ймовірно, моделі бракує місця в контексті. Спробуйте збільшити контекст або скоротити запит.",
+    "speculativeInitFailed": "Цьому пристрою не вдалося запустити спекулятивне декодування для цієї моделі — найімовірніше, бракує пам'яті для контексту чернетки. Вимкніть спекулятивне декодування в розділі «Налаштування» → «Розширені налаштування» та спробуйте ще раз.",
     "loadingModel": "Завантаження моделі...",
     "typeYourMessage": "Напишіть своє повідомлення тут",
     "load": "'Завантажити",
@@ -1194,16 +1462,12 @@
     "pleaseLoadModel": "Завантажте модель для чату.",
     "multimodalNotEnabled": "Для цієї моделі функція «Мультимодальність» не увімкнена. Зображення будуть відображатися, але штучний інтелект їх не оброблятиме.",
     "cannotSendWithoutModel": "Спочатку завантажте модель",
-    "toolCallTruncated": "Виклик інструмента перервано — ймовірно, моделі бракує місця в контексті. Спробуйте збільшити контекст або скоротити запит.",
     "toolCompatWarning": "Ця модель може не підтримувати виклики інструментів. Результати можуть бути ненадійними.",
     "softCapWarning": "Почніть новий чат для кращої продуктивності.",
-    "generatingPreview": "Створення попереднього перегляду… ({{tokens}} ток.)",
-    "generatingPreviewPending": "Створення попереднього перегляду…",
-    "toolUsedChip": "використав {{name}}",
-    "toolErrorBlock": "{{name}} завершилося з помилкою",
     "contextWarning": "Ця розмова затягується і незабаром може не вистачити місця.",
     "contextRemoteHedged": "Ця відповідь, можливо, була обрізана. Спробуйте надіслати запит ще раз або скоротити його.",
     "contextFull": "Місця для розмови не вистачило. Створіть новий чат або збільште обсяг контексту.",
+    "contextFullRemote": "У розмові закінчилося місце. Почніть новий чат.",
     "contextFullEscalated": "Місця все ще не вистачає. Створіть новий чат або збільште розмір контексту, щоб продовжити спілкування.",
     "contextFullHeavyTalent": "Місця для розмови не вистачило — {{talent}} зазвичай потребує більше. Створіть новий чат або збільште обсяг контексту.",
     "contextBannerDismiss": "Відхилити",
@@ -1235,6 +1499,10 @@
     "increaseContextSuccess": "Контекст збільшено до {{target}} токенів.",
     "increaseContextFailure": "Не вдалося збільшити розмір контексту. Було відновлено попереднє значення.",
     "assistantLoadHint": "Цей асистент зазвичай потребує більше місця, ніж дозволяє поточний розмір контексту.",
+    "generatingPreview": "Створення попереднього перегляду… ({{tokens}} ток.)",
+    "generatingPreviewPending": "Створення попереднього перегляду…",
+    "toolUsedChip": "використав {{name}}",
+    "toolErrorBlock": "{{name}} завершилося з помилкою",
     "webSearch": {
       "searched": "Виконано пошук: {{query}}",
       "noResults": "Немає результатів",
@@ -1244,9 +1512,15 @@
       "searchResultsTitle": "Результати пошуку",
       "showResultsAccessibilityLabel": "Показати результати веб-пошуку для {{query}}",
       "openLinkError": "Не вдалося відкрити це посилання."
-    },
-    "contextFullRemote": "У розмові закінчилося місце. Почніть новий чат.",
-    "speculativeInitFailed": "Цьому пристрою не вдалося запустити спекулятивне декодування для цієї моделі — найімовірніше, бракує пам'яті для контексту чернетки. Вимкніть спекулятивне декодування в розділі «Налаштування» → «Розширені налаштування» та спробуйте ще раз."
+    }
+  },
+  "htmlPreview": {
+    "defaultTitle": "Попередній перегляд",
+    "showPreview": "Показати попередній перегляд",
+    "showCode": "Показати HTML-код",
+    "copyHtml": "Копіювати HTML",
+    "closePreview": "Закрити попередній перегляд",
+    "openFullscreen": "Відкрити на весь екран: {{title}}"
   },
   "benchmark": {
     "title": "Бенчмарк",
@@ -1372,11 +1646,20 @@
         "openclRequirement": "Потрібні i8mm та dotprod"
       },
       "instructions": {
+        "format": "FP16: {{fp16}}, DotProd: {{dotProd}}, `SVE: {{sve}}, I8MM: {{i8mm}}",
         "yes": "✓",
-        "no": "✗",
-        "format": "FP16: {{fp16}}, DotProd: {{dotProd}}, `SVE: {{sve}}, I8MM: {{i8mm}}"
+        "no": "✗"
       },
       "versionFormat": "{{version}} ({{buildNumber}})"
+    },
+    "presetDefault": "За замовчуванням",
+    "presetFast": "Швидкий",
+    "presetCustom": "Користувацький",
+    "params": {
+      "pp": "Кількість токенів обробки підказки (макс.: фізичний розмір батчу)",
+      "tg": "Кількість токенів генерації тексту",
+      "pl": "Розмір конвеєрного паралелізму",
+      "nr": "Кількість повторень"
     }
   },
   "errors": {
@@ -1411,39 +1694,6 @@
     "voicesTitle": "Голоси",
     "voicesEmptyHint": "Натисніть на будь-який голос, щоб встановити його та почати користуватися. Або виберіть системний голос — вони завжди доступні.",
     "supertonicStepsLabel": "Якість (дифузійні кроки)",
-    "toggleAutoSpeakLabel": "Увімкнути/вимкнути автоматичне читання",
-    "openSettingsLabel": "Налаштування TTS",
-    "playMessageLabel": "Відтворити повідомлення",
-    "stopMessageLabel": "Зупинити повідомлення",
-    "autoSpeakLabel": "Автоматично озвучувати відповіді",
-    "autoSpeakDescription": "Читайте нові відповіді вголос, коли вони прибувають.",
-    "engineChipKitten": "Кошеня",
-    "engineChipKokoro": "Кокоро",
-    "engineChipSupertonic": "Супертонік",
-    "engineChipSystem": "Система",
-    "stepsCount": "{{steps}} кроки",
-    "engineKittenTagline": "Найменший слід. Надійно. Найкраще на старих пристроях.",
-    "engineKokoroTagline": "Найвища якість. Повільніше починати. Деякі голоси можуть працювати не на всіх пристроях.",
-    "engineSupertonicTagline": "Найшвидше починати. Використовує більше оперативної пам'яті. Може час від часу відкидати слова.",
-    "engineSystemTagline": "Вбудовані голоси ОС. Завжди в наявності, нуль установки.",
-    "engineSystemTitleIos": "Голоси iOS",
-    "engineSystemTitleAndroid": "Голоси Android",
-    "engineSystemTier": "завжди доступний",
-    "engineTierLightest": "найлегший",
-    "engineTierBestQuality": "найкраща якість",
-    "engineTierFastestStart": "найшвидший старт",
-    "engineSpecsLine": "{{voices}} голосів  ·  {{sizeMb}} МБ  ·  ~{{ramMb}} МБ оперативної пам'яті",
-    "engineSystemSpecsLine": "{{voices}} голоси",
-    "engineRemoveTitle": "Вилучити {{engineTitle}}?",
-    "engineRemoveBody": "Звільняє ~{{sizeMb}} МБ на цьому пристрої.",
-    "engineRemoveCancel": "Скасувати",
-    "engineRemoveConfirm": "Вилучити",
-    "engineInstallCta": "Встановити · {{sizeMb}} MB",
-    "engineDownloadingLabel": "Завантаження…  {{pct}}%  ·  {{mbDone}} / {{sizeMb}} MB",
-    "engineRetryCta": "Спробуйте ще раз",
-    "voicesEmptyState": "Голосів не знайдено.",
-    "kokoroDeviceNote": "Деякі голоси можуть працювати не на всіх пристроях.",
-    "insufficientStorage": "Недостатньо місця — для встановлення цього движка потрібно звільнити {{requiredMb}} МБ (доступно {{freeMb}} МБ).",
     "supertonicLanguageLabel": "Мова",
     "supertonicLanguageAuto": "Авто",
     "supertonicLanguageSheetTitle": "Мова",
@@ -1480,22 +1730,48 @@
       "tr": "Турецька",
       "uk": "Українська",
       "vi": "В’єтнамська"
-    }
-  },
-  "htmlPreview": {
-    "defaultTitle": "Попередній перегляд",
-    "showPreview": "Показати попередній перегляд",
-    "showCode": "Показати HTML-код",
-    "copyHtml": "Копіювати HTML",
-    "closePreview": "Закрити попередній перегляд",
-    "openFullscreen": "Відкрити на весь екран: {{title}}"
+    },
+    "toggleAutoSpeakLabel": "Увімкнути/вимкнути автоматичне читання",
+    "openSettingsLabel": "Налаштування TTS",
+    "playMessageLabel": "Відтворити повідомлення",
+    "stopMessageLabel": "Зупинити повідомлення",
+    "autoSpeakLabel": "Автоматично озвучувати відповіді",
+    "autoSpeakDescription": "Читайте нові відповіді вголос, коли вони прибувають.",
+    "engineChipKitten": "Кошеня",
+    "engineChipKokoro": "Кокоро",
+    "engineChipSupertonic": "Супертонік",
+    "engineChipSystem": "Система",
+    "stepsCount": "{{steps}} кроки",
+    "engineKittenTagline": "Найменший слід. Надійно. Найкраще на старих пристроях.",
+    "engineKokoroTagline": "Найвища якість. Повільніше починати. Деякі голоси можуть працювати не на всіх пристроях.",
+    "engineSupertonicTagline": "Найшвидше починати. Використовує більше оперативної пам'яті. Може час від часу відкидати слова.",
+    "engineSystemTagline": "Вбудовані голоси ОС. Завжди в наявності, нуль установки.",
+    "engineSystemTitleIos": "Голоси iOS",
+    "engineSystemTitleAndroid": "Голоси Android",
+    "engineSystemTier": "завжди доступний",
+    "engineTierLightest": "найлегший",
+    "engineTierBestQuality": "найкраща якість",
+    "engineTierFastestStart": "найшвидший старт",
+    "engineSpecsLine": "{{voices}} голосів  ·  {{sizeMb}} МБ  ·  ~{{ramMb}} МБ оперативної пам'яті",
+    "engineSystemSpecsLine": "{{voices}} голоси",
+    "engineRemoveTitle": "Вилучити {{engineTitle}}?",
+    "engineRemoveBody": "Звільняє ~{{sizeMb}} МБ на цьому пристрої.",
+    "engineRemoveCancel": "Скасувати",
+    "engineRemoveConfirm": "Вилучити",
+    "engineInstallCta": "Встановити · {{sizeMb}} MB",
+    "engineDownloadingLabel": "Завантаження…  {{pct}}%  ·  {{mbDone}} / {{sizeMb}} MB",
+    "engineRetryCta": "Спробуйте ще раз",
+    "voicesEmptyState": "Голосів не знайдено.",
+    "kokoroDeviceNote": "Деякі голоси можуть працювати не на всіх пристроях.",
+    "insufficientStorage": "Недостатньо місця — для встановлення цього движка потрібно звільнити {{requiredMb}} МБ (доступно {{freeMb}} МБ)."
   },
   "onboarding": {
     "back": "Назад",
     "skip": "Пропустити",
     "skipForNow": "Пропустити поки що",
     "splash": {
-      "brand": "DRS AI"
+      "brand": "DRS AI",
+      "tagline": "Ваш приватний ШІ, на вашому пристрої"
     },
     "screen1": {
       "title": "Знайомтеся з приятелями.",

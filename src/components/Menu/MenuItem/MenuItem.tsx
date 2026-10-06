@@ -31,6 +31,14 @@ export interface MenuItemProps
   submenuProps?: Omit<PaperMenuProps, 'theme'>;
 }
 
+// Props Paper passes to leadingIcon/trailingIcon render functions
+// (see react-native-paper IconSource function variant).
+type PaperIconFnProps = {
+  size: number;
+  allowFontScaling?: boolean;
+  color: string;
+};
+
 export const MenuItem: React.FC<MenuItemProps> = ({
   label,
   danger,
@@ -65,7 +73,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({
 
   const styles = createStyles(theme);
 
-  const renderLeadingIcon = props => {
+  const renderLeadingIcon = (props: PaperIconFnProps) => {
     return (
       <View
         style={[
@@ -83,7 +91,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({
     );
   };
 
-  const renderTrailingIcon = props => (
+  const renderTrailingIcon = (props: PaperIconFnProps) => (
     <View
       style={[
         styles.trailingContainer,

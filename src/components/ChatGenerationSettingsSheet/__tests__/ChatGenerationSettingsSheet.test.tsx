@@ -22,7 +22,11 @@ jest.spyOn(Alert, 'alert');
 jest.mock('../../CompletionSettings', () => {
   const {View, TouchableOpacity} = require('react-native');
   return {
-    CompletionSettings: ({onChange}) => (
+    CompletionSettings: ({
+      onChange,
+    }: {
+      onChange: (name: string, value: string) => void;
+    }) => (
       <View testID="completion-settings">
         <TouchableOpacity
           testID="mock-settings-update"
@@ -36,7 +40,17 @@ jest.mock('../../CompletionSettings', () => {
 // Mock Sheet component
 jest.mock('../../Sheet/Sheet', () => {
   const {View, Button} = require('react-native');
-  const MockSheet = ({children, isVisible, onClose, title}) => {
+  const MockSheet = ({
+    children,
+    isVisible,
+    onClose,
+    title,
+  }: {
+    children?: React.ReactNode;
+    isVisible?: boolean;
+    onClose?: () => void;
+    title?: string;
+  }) => {
     if (!isVisible) {
       return null;
     }
@@ -48,10 +62,10 @@ jest.mock('../../Sheet/Sheet', () => {
       </View>
     );
   };
-  MockSheet.ScrollView = ({children}) => (
+  MockSheet.ScrollView = ({children}: {children?: React.ReactNode}) => (
     <View testID="sheet-scroll-view">{children}</View>
   );
-  MockSheet.Actions = ({children}) => (
+  MockSheet.Actions = ({children}: {children?: React.ReactNode}) => (
     <View testID="sheet-actions">{children}</View>
   );
   return {Sheet: MockSheet};

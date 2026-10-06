@@ -177,7 +177,11 @@ export const validateCompletionSettings = (
 
   Object.entries(COMPLETION_PARAMS_METADATA).forEach(([key, metadata]) => {
     if (key in settings && metadata) {
-      const result = validateNumericField(settings[key], metadata.validation);
+      const paramKey = key as keyof CompletionParams;
+      const result = validateNumericField(
+        settings[paramKey] as string | number,
+        metadata.validation,
+      );
       if (!result.isValid && result.errorMessage) {
         errors[key] = result.errorMessage;
       }

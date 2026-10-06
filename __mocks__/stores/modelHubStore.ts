@@ -2,7 +2,24 @@
  * Mock of ModelHubStore for component tests — mirrors the real store's
  * observable surface with plain fields + jest.fn actions.
  */
-export const mockModelHubStore = {
+type MockModelHubStore = {
+  favorites: string[];
+  recentlyViewed: Array<{id: string; viewedAt: number}>;
+  wifiOnlyDownloads: boolean;
+  autoUpdateIds: string[];
+  version: number;
+  isFavorite: jest.Mock;
+  toggleFavorite: jest.Mock;
+  recordView: jest.Mock;
+  clearRecentlyViewed: jest.Mock;
+  setWifiOnly: jest.Mock;
+  isAutoUpdate: jest.Mock;
+  toggleAutoUpdate: jest.Mock;
+};
+
+// Explicit annotation breaks the self-reference cycle (the actions read and
+// write mockModelHubStore fields), which would otherwise make TS infer `any`.
+export const mockModelHubStore: MockModelHubStore = {
   favorites: [] as string[],
   recentlyViewed: [] as Array<{id: string; viewedAt: number}>,
   wifiOnlyDownloads: false,

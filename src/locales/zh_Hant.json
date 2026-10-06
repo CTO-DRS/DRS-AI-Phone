@@ -1,216 +1,4 @@
 {
-  "about": {
-    "screenTitle": "應用程式資訊",
-    "description": "一個能把語言模型直接帶到你手機上的應用程式，基於 llama.cpp 與 llama.rn 構建。",
-    "supportProject": "支援此專案",
-    "supportProjectDescription": "如果您喜歡使用 DRS AI，請考慮透過以下方式支援此專案：",
-    "githubButton": "在 GitHub 上點讚",
-    "orBy": "或通過",
-    "versionCopiedTitle": "版本已複製",
-    "versionCopiedDescription": "版本資訊已複製至剪貼板",
-    "privacyPolicy": "隱私權政策",
-    "termsOfService": "服務條款",
-    "tourDescription": "重播歡迎畫面，以查看 DRS AI 提供的功能。",
-    "showIntroButton": "再次顯示介紹",
-    "tour": "導覽"
-  },
-  "benchmark": {
-    "title": "基準",
-    "modelSelector": {
-      "prompt": "選擇模型",
-      "noModels": "尚未下載任何模型"
-    },
-    "buttons": {
-      "advancedSettings": "進階設定",
-      "startTest": "開始測試",
-      "runningTest": "正在執行測試…",
-      "clearAll": "全部清除",
-      "done": "已完成",
-      "cancel": "取消",
-      "delete": "刪除",
-      "share": "分享",
-      "sharing": "正在分享…",
-      "viewRawData": "查看原始資料",
-      "hideRawData": "隱藏原始資料"
-    },
-    "messages": {
-      "pleaseSelectModel": "請先選擇並初始化模型",
-      "testWarning": "注意：測試對於較大的模型可能需要 2–5 分鐘，且一旦啟動後無法中斷。",
-      "keepScreenOpen": "請保持此畫面開啟。",
-      "initializingModel": "正在初始化模型…",
-      "modelMaxValue": "(最大值：{{maxValue}})"
-    },
-    "dialogs": {
-      "advancedSettings": {
-        "title": "進階設定",
-        "testProfile": "測試配置檔案",
-        "customParameters": "自訂參數",
-        "description": "為特定測試場景微調基準參數。"
-      },
-      "clearAllResults": {
-        "title": "清除所有結果",
-        "message": "您確定要刪除所有基準測試結果嗎？"
-      },
-      "deleteResult": {
-        "title": "刪除結果",
-        "message": "您確定要刪除此基準測試結果嗎？"
-      },
-      "shareResults": {
-        "title": "分享基準測試結果",
-        "sharedDataTitle": "共享資料包含：",
-        "deviceAndModelInfo": "• 裝置規格與模型資訊",
-        "performanceMetrics": "• 測量值",
-        "dontShowAgain": "不要再顯示此訊息"
-      }
-    },
-    "sections": {
-      "testResults": "測試結果"
-    },
-    "benchmarkResultCard": {
-      "modelMeta": {
-        "params": "參數"
-      },
-      "config": {
-        "title": "基準測試配置",
-        "format": "PP: {{pp}} • TG: {{tg}} • PL: {{pl}} • Rep: {{nr}}"
-      },
-      "modelSettings": {
-        "title": "模型設定",
-        "context": "上下文：{{context}}",
-        "batch": "批次：{{batch}}",
-        "ubatch": "U 批次：{{ubatch}}",
-        "cpuThreads": "CPU 執行緒：{{threads}}",
-        "gpuLayers": "GPU 層數：{{layers}}",
-        "flashAttentionEnabled": "已啟用 Flash Attention",
-        "flashAttentionDisabled": "已停用 Flash Attention",
-        "cacheTypes": "快取類型：{{cacheK}} / {{cacheV}}",
-        "device": "設備：{{device}}"
-      },
-      "results": {
-        "promptProcessing": "提示詞處理",
-        "tokenGeneration": "詞元生成",
-        "totalTime": "總耗時",
-        "peakMemory": "峰值記憶體",
-        "tokensPerSecond": "t/s"
-      },
-      "actions": {
-        "submittedText": "✓ 已共享至",
-        "leaderboardLink": "AI 手機排行榜 ↗",
-        "cannotShare": "無法共享",
-        "cannotShareTooltip": "本地模型結果無法共享",
-        "submitButton": "提交至排行榜",
-        "viewLeaderboard": "查看排行榜 ↗",
-        "deleteButton": " "
-      },
-      "errors": {
-        "networkRetry": "檢查連線並重試",
-        "appCheckRetry": "重試提交",
-        "serverRetry": "稍後再試",
-        "genericRetry": "重試",
-        "failedToSubmit": "提交基準測試失敗"
-      }
-    },
-    "deviceInfoCard": {
-      "title": "裝置資訊",
-      "deviceSummary": "{{brand}} {{model}} • {{systemName}} {{systemVersion}}",
-      "coreSummary": "{{cores}} 核心 • {{memory}}",
-      "sections": {
-        "basicInfo": "基本資訊",
-        "cpuDetails": "CPU 詳情",
-        "appInfo": "應用程式資訊",
-        "gpuDetails": "GPU 詳情",
-        "hexagonDetails": "Hexagon DSP"
-      },
-      "fields": {
-        "architecture": "架構",
-        "totalMemory": "總記憶體",
-        "deviceId": "裝置 ID",
-        "cpuCores": "CPU 核心",
-        "cpuModel": "CPU 型號",
-        "chipset": "晶片組",
-        "instructions": "指令集",
-        "version": "版本",
-        "gpuType": "GPU 型號",
-        "gpuRenderer": "渲染器",
-        "gpuVendor": "製造商",
-        "metalSupport": "Metal 支援",
-        "openclSupport": "OpenCL 支援",
-        "openclRequirement": "需要 i8mm 和 dotprod"
-      },
-      "instructions": {
-        "format": "FP16: {{fp16}}, DotProd: {{dotProd}}, SVE: {{sve}}, I8MM: {{i8mm}}",
-        "yes": "✓",
-        "no": "✗"
-      },
-      "versionFormat": "{{version}} ({{buildNumber}})"
-    }
-  },
-  "chat": {
-    "conversationReset": "對話已重置！",
-    "modelNotLoaded": "模型尚未載入。請先初始化模型。",
-    "completionFailed": "完成失敗： ",
-    "loadingModel": "正在載入模型…",
-    "typeYourMessage": "在此輸入您的訊息",
-    "load": "載入",
-    "goToModels": "前往模型",
-    "readyToChat": "準備聊天？載入上一次使用的模型。",
-    "pleaseLoadModel": "載入模型以聊天。",
-    "multimodalNotEnabled": "此模型未啟用多模態功能。圖片將會顯示，但不會被 AI 處理。",
-    "cannotSendWithoutModel": "請先載入模型",
-    "toolCallTruncated": "工具呼叫中斷 — 模型可能已達到空間限制。請嘗試使用更大的上下文或更小的請求。",
-    "toolCompatWarning": "本模型可能不支援工具呼叫。結果可能不可靠。",
-    "softCapWarning": "為獲得最佳表現，請開始一個新的聊天室。",
-    "generatingPreview": "正在生成預覽... ({{tokens}} 個詞元)",
-    "generatingPreviewPending": "正在生成預覽…",
-    "toolUsedChip": "使用了 {{name}}",
-    "toolErrorBlock": "{{name}} 失敗",
-    "contextWarning": "此對話內容過長，可能很快就會達到上限。",
-    "contextRemoteHedged": "此回覆可能被截斷。請嘗試重新發送或縮短請求。",
-    "contextFull": "對話內容已達上限。請開始新對話或增加內容長度。",
-    "contextFullEscalated": "內容仍已達上限。請開始新對話，或增加內容長度以繼續進行。",
-    "contextFullHeavyTalent": "對話內容已達上限 — {{talent}} 傾向於需要更多內容。請開始新對話或增加內容長度。",
-    "contextBannerDismiss": "略過",
-    "contextNewChat": "新對話",
-    "contextIncrease": "增加內容長度",
-    "contextMoreRoom": "更多空間",
-    "increaseContextTitle": "給此對話更多空間",
-    "increaseContextBody": "空間是模型的運作記憶 — 指它一次能記住此對話的內容量。更多的空間代表在回覆被截斷前可以進行更長的對話。",
-    "increaseContextTokensUnit": "Token",
-    "increaseContextWordsRam": "約 {{words}} 字 · 約 {{ram}} RAM",
-    "increaseContextFitsChip": "符合要求",
-    "increaseContextTightChip": "空間不足",
-    "increaseContextWontFitChip": "無法容納",
-    "increaseContextFitsStatus": "此裝置運行順暢。",
-    "increaseContextFitsUnconstrainedStatus": "充足的 RAM — 僅受限於模型。",
-    "increaseContextTightStatus": "超過 ~{{tokens}} 後，此裝置可能會記憶不足並變慢。系統仍可嘗試執行。",
-    "increaseContextWontFitStatus": "約 {{tokens}} 可能無法容納於此裝置的記憶體中。請選擇較小的尺寸。",
-    "increaseContextModelMax": "{{tokens}} · 模型最大值",
-    "increaseContextHedge": "重新載入需要幾秒鐘。您的對話內容不會遺失。",
-    "increaseContextAdvanced": "進階",
-    "increaseContextAdvancedBody": "此對話的內容長度：{{from}} → {{to}} tokens（模型最大值 {{max}}）。裝置限制僅為預估值，且隨著較大的內容成功載入時會增加。",
-    "increaseContextSliderA11yLabel": "內容長度",
-    "increaseContextSliderA11yValue": "{{tokens}} 詞元",
-    "increaseContextConfirmSize": "設為 {{size}}",
-    "increaseContextReloadingShort": "重新載入中…",
-    "increaseContextNoFitBody": "此裝置無法容納該模型的較大內容長度。請開始新對話以繼續。",
-    "increaseContextCancel": "現在不用",
-    "increaseContextReloading": "正在以較大的內容長度重新載入模型…",
-    "increaseContextSuccess": "內容長度已增加至 {{target}} 詞元。",
-    "increaseContextFailure": "無法增加內容長度。您的先前設定已恢復。",
-    "assistantLoadHint": "此夥伴傾向於需要超過目前內容長度所允許的空間。",
-    "webSearch": {
-      "searched": "已搜尋：{{query}}",
-      "noResults": "沒有結果",
-      "noResultsFor": "找不到 {{query}} 的結果",
-      "resultsCount": "{{count}} 筆結果",
-      "resultsCountOne": "1 筆結果",
-      "searchResultsTitle": "搜尋結果",
-      "showResultsAccessibilityLabel": "顯示 {{query}} 的網路搜尋結果",
-      "openLinkError": "無法開啟此連結。"
-    },
-    "contextFullRemote": "對話空間不足。請開始新對話。",
-    "speculativeInitFailed": "此裝置無法為此模型啟動推測解碼，很可能是草稿內容的記憶體不足。請在「設定 → 進階設定」中關閉推測解碼後再試一次。"
-  },
   "common": {
     "cancel": "取消",
     "delete": "刪除",
@@ -218,8 +6,13 @@
     "rename": "重新命名",
     "reset": "重置",
     "save": "儲存",
+    "stop": "停止",
+    "update": "更新",
+    "error": "錯誤",
+    "export": "匯出",
     "networkError": "網路錯誤，請重試。",
     "downloadETA": "估計完成時間",
+    "calculating": "計算中…",
     "second": "秒",
     "seconds": "秒",
     "year": "年",
@@ -235,570 +28,192 @@
     "minute": "分鐘",
     "minutes": "分鐘",
     "justNow": "剛剛",
-    "calculating": "計算中…",
-    "update": "更新",
-    "error": "錯誤",
-    "export": "匯出",
     "ok": "確定",
     "close": "關閉",
     "clear": "全部清除",
     "gallery": "圖庫",
-    "stop": "停止",
-    "noResults": "沒有結果"
+    "noResults": "沒有結果",
+    "openDrawer": "開啟側邊選單",
+    "openMenu": "開啟選單",
+    "closeMenu": "關閉選單"
   },
-  "completionParams": {
-    "grammar": "如何在生成文字本時強制執行特定語法規則（快速指南）",
-    "stop": "定義將停止文字生成的特定短語",
-    "n_predict": "最大生成詞元數。設定為「無限制」則無上限，或選擇「自訂」以指定特定數值。",
-    "n_probs": "顯示替代詞彙的機率分數。",
-    "top_k": "透過將可選單詞限制為最可能的前 K 個, 來控制創造性。較低的值會使回覆更聚焦",
-    "top_p": "平衡創造力與連貫性。較高的值 (接近1.0) 允許更具創意但可能不那麼聚焦的回覆",
-    "min_p": "設定詞元的最低機率，以過濾掉不太可能出現的詞語，從而減少無意義或與上下文不符的回應",
-    "temperature": "控制創造力與可預測性。數值越高，回覆越有創意，但針對性越差",
-    "penalty_last_n": "檢查重複時的回溯距離。較大的值能有效防止長期重複",
-    "penalty_repeat": "抑制單詞重複。較高的值會讓回覆使用更為多樣化的語言",
-    "penalty_freq": "懲罰過度使用的單詞。較高的值鼓勵使用更廣泛的詞彙",
-    "penalty_present": "減少主題和概念的重複。較高的值會鼓勵產出更具多樣性的內容",
-    "mirostat": "啟用進階控制功能, 以調節回覆的創造力。將值設為 1 或 2 (較平滑) 即可在即時進行隨機性與連貫性的智能調整。",
-    "mirostat_tau": "設定 Mirostat 的目標創造力等級。較高的值可產生更為多樣化、富有想像力的回覆, 較低的值則能確保輸出更加聚焦。",
-    "mirostat_eta": "Mirostat 的創造力調整速度。數值越高，表示調整越快",
-    "dry_multiplier": "DRY (不要重複自己) 功能的強度。數值越高，越能嚴格防止重複",
-    "dry_base": "DRY 模式下的基礎重複懲罰。數值越高，防止重複的力度就越大",
-    "dry_allowed_length": "在 DRY 懲罰生效前，允許重複多少個單詞",
-    "dry_penalty_last_n": "DRY 模式下檢查重複的回溯範圍是多少",
-    "dry_sequence_breakers": "在 DRY 模式下重置重複檢查器的符號",
-    "ignore_eos": "即使模型想停止，也繼續生成。這對於強制產生更長回覆很有用",
-    "typical_p": "使用參數 p 啟用本機典型抽樣，p=1.0 是停用",
-    "logit_bias": "影響特定單詞在回覆中出現的可能性",
-    "seed": "設置隨機數生成器種子。對於可重現結果非常有用",
-    "xtc_probability": "設定透過 XTC 採樣器移除詞元的機率。 0 表示已停用",
-    "xtc_threshold": "設定 XTC 刪除詞元所需的最低機率。(超過 0.5 表示停用 XTC)",
-    "include_thinking_in_context": "在傳送給模型的情境中包含 AI 思考/推理部分。停用此功能可以節省情境空間。這可能會影響效能。",
-    "jinja": "啟用聊天格式化用的 Jinja 範本。啟用時，使用基於 Jinja 的聊天範本處理，以提高與現代模型相容性。"
-  },
-  "components": {
-    "attachmentButton": {
-      "attachmentButtonAccessibilityLabel": "發送媒體"
+  "settings": {
+    "modelInitializationSettings": "模型初始化設定",
+    "metal": "Metal",
+    "metalDescription": "蘋果的硬體加速 API。",
+    "metalRequiresNewerIOS": "Metal 加速需要 iOS 18 或更高版本。請升級您的裝置以使用此功能。",
+    "openCL": "OpenCL（實驗性）",
+    "openCLDescription": "針對 Adreno GPU 的加速功能。能加快提示詞處理速度，但生成過程不一定總是更快。",
+    "openCLNotAvailable": "此設備上沒有啟用 OpenCL。需要具有 i8mm 和 dotprod CPU 功能的 Adreno GPU。",
+    "openCLMissingCPUFeatures": "OpenCL 需要 i8mm 和 dotprod CPU 功能，而此設備上沒有這些功能。",
+    "openCLQuantizationNote": "注意：使用純量化的 Q4_0 模型時，效果最佳的為啟用 OpenCL。",
+    "openCLDocsLink": "請參閱 llama.cpp 的 OpenCL 文件以了解詳細資訊。",
+    "layersOnGPU": "GPU 上層數：{{gpuLayers}}",
+    "deviceSelection": "設備選擇",
+    "deviceSelectionIOS": "設備（Metal）",
+    "deviceSelectionIOSDescription": "選擇 Metal GPU 或僅使用 CPU 模式",
+    "deviceSelectionAndroidDescription": "選擇運算設備（CPU、GPU 或 Hexagon NPU）",
+    "cpuOnlyNoAccelerators": "僅限 CPU – 未偵測到任何加速硬體",
+    "contextSize": "上下文大小",
+    "contextSizePlaceholder": "輸入上下文大小 (至少 {{minContextSize}})",
+    "invalidContextSizeError": "請輸入有效數字 (至少 {{minContextSize}})",
+    "modelReloadNotice": "需要重新載入模型以使更改生效。",
+    "advancedSettings": "進階設定",
+    "batchSize": "批次大小",
+    "batchSizeDescription": "批次大小：{{batchSize}}{{effectiveBatch}}",
+    "effectiveLabel": "有效",
+    "physicalBatchSize": "實體批次大小",
+    "physicalBatchSizeDescription": "實體批次大小：{{physicalBatchSize}}{{effectivePhysicalBatch}}",
+    "cpuThreads": "CPU 執行緒",
+    "cpuThreadsDescription": "使用 {{threads}} 個可用線程中的 {{maxThreads}}",
+    "imageMaxTokens": "圖片最大詞元數",
+    "imageMaxTokensDescription": "圖片處理的最大詞元數：{{tokens}}{{effectiveTokens}}（數值越小，速度越快，細節越少）",
+    "flashAttention": "Flash Attention（閃電注意）",
+    "flashAttentionDescription": "啟用 Flash Attention 以加速處理",
+    "flashAttentionIOSDescription": "採用省記憶體注意力機制（在 Metal 上自動啟用）",
+    "flashAttentionAndroidDescription": "必須停用才能進行 OpenCL 狀態儲存/載入",
+    "flashAttentionAuto": "自動",
+    "flashAttentionOn": "開",
+    "flashAttentionOff": "關",
+    "keyCacheType": "鍵快取類型",
+    "keyCacheTypeDescription": "選擇鍵計算所使用的快取類型",
+    "keyCacheTypeDisabledDescription": "啟用 Flash Attention 以更改快取類型",
+    "valueCacheType": "值快取類型",
+    "valueCacheTypeDescription": "選擇值計算所使用的快取類型",
+    "valueCacheTypeDisabledDescription": "啟用 Flash Attention 以更改快取類型",
+    "memorySettings": "記憶體設定",
+    "useMlock": "使用記憶體鎖定",
+    "useMlockDescription": "強制系統將模型保存在 RAM 中，而不是進行交換或壓縮",
+    "useMmap": "記憶體映射",
+    "useMmapDescription": "使用記憶體映射檔案以加快模型載入速度",
+    "useMmapTrue": "已啟用",
+    "useMmapFalse": "已停用",
+    "useMmapTrueDescription": "總是使用記憶體映射以加快載入速度",
+    "useMmapFalseDescription": "當權重重新包裝啟用時，建議停用此功能以避免記憶體使用量加倍",
+    "weightRepacking": "啟用權重重新包裝",
+    "weightRepackingDescription": "當停用記憶體映射時，提示詞處理速度更快且記憶體使用量更低。 詞元生成不受影響。",
+    "speculativeDecoding": "推測解碼",
+    "speculativeDecodingDescription": "使用小型草稿模型（或內嵌的 MTP 模型）預測 token，加速生成。實驗性功能。",
+    "speculativeNotMTPCapable": "目前使用的模型不支援推測解碼，也未搭配相容的草稿模型，因此此設定對它無效並維持關閉。對支援的模型會自動套用。",
+    "speculativeDraftModel": "草稿模型",
+    "speculativeDraftModelDescription": "為目前使用的模型草擬 token。",
+    "speculativeDraftModelNone": "無（內嵌 MTP）",
+    "speculativeDraftModelIgnoredOverridden": "目前使用的模型自帶草稿模型，因此會忽略此選擇。",
+    "speculativeDraftModelIgnoredIncompatible": "此草稿模型與目前使用的模型不相容，因此會被忽略。",
+    "speculativeDraftModelIgnoredNotCapable": "此模型不含草稿層，因此無法用作草稿模型。",
+    "speculativeDraftKeyCacheType": "草稿鍵快取類型",
+    "speculativeDraftValueCacheType": "草稿值快取類型",
+    "speculativeDraftNGpuLayers": "草稿 GPU 層數",
+    "speculativeDraftNGpuLayersDescription": "要卸載到 GPU 的草稿模型層數。",
+    "speculativeDraftCacheTypeInactiveDescription": "推測解碼啟動後即會套用。",
+    "ttsAvailability": "文字轉語音",
+    "ttsAvailabilityDescription": "朗讀助理回覆。",
+    "ttsAvailabilityLowMemoryWarning": "您的裝置記憶體不足 — 這可能會影響功能運作的穩定性。",
+    "modelLoadingSettings": "模型載入設定",
+    "autoOffloadLoad": "自動卸載 / 載入",
+    "autoOffloadLoadDescription": "應用程式進入背景時卸載模型。",
+    "autoNavigateToChat": "自動導向聊天",
+    "autoNavigateToChatDescription": "開始載入即跳轉到聊天。",
+    "appSettings": "應用程式設定",
+    "language": "語系",
+    "languageSheetTitle": "語言",
+    "languageSearchPlaceholder": "搜尋語言",
+    "languageRestartTitle": "需要重新啟動",
+    "languageRestartMessage": "此語言的介面方向已變更。請重新啟動應用程式以完全套用。",
+    "languageRestartNow": "立即重新啟動",
+    "languageRestartLater": "稍後",
+    "darkMode": "深色模式",
+    "displayMemoryUsage": "顯示記憶體使用量",
+    "displayMemoryUsageDescription": "在聊天頁面顯示記憶體使用量。",
+    "exportOptions": "匯出選項",
+    "exportLegacyChats": "匯出舊版聊天記錄",
+    "exportLegacyChatsDescription": "如果遷移失敗或您需要恢復舊的聊天會話，請使用此選項。",
+    "exportButton": "匯出",
+    "importChats": "匯入聊天會話",
+    "importChatsDescription": "從（匯出的）JSON 檔案中匯入聊天會話。",
+    "importButton": "匯入",
+    "importSuccess": "成功匯入了 {{count}} 個聊天會話。",
+    "importError": "匯入聊天會話失敗。請檢查檔案格式。",
+    "internetSearch": {
+      "title": "網路搜尋",
+      "description": "讓 助手 用自己的工具搜尋網路。請自備 API 金鑰 — DRS AI 絕不會保存你的金鑰，也不會轉送你的查詢。",
+      "providerLabel": "搜尋服務供應商",
+      "providerGated": "即將推出",
+      "keyLabel": "API 金鑰",
+      "keyIsSet": "已為 {{provider}} 設定金鑰。",
+      "keyNotSet": "尚未為 {{provider}} 設定金鑰。",
+      "setKeyButton": "設定金鑰",
+      "updateKeyButton": "更新金鑰",
+      "clearKeyButton": "清除金鑰",
+      "keyInputPlaceholder": "貼上你的 {{provider}} API 金鑰",
+      "keyUpdateError": "無法更新金鑰。請再試一次。",
+      "showKeyAccessibilityLabel": "顯示 API 金鑰",
+      "hideKeyAccessibilityLabel": "隱藏 API 金鑰",
+      "resultCountLabel": "每次搜尋的結果數",
+      "resultCountDescription": "結果越少，模型的上下文就能保留更多空間。",
+      "consentTitle": "搜尋會離開你的裝置",
+      "consentDescription": "當 助手 搜尋網路時，你的查詢會透過網際網路傳送給所選的供應商。當 助手 讀取網頁時，若所選供應商沒有內建的閱讀器，網址與頁面內容可能會改為傳送給預設的閱讀器服務（r.jina.ai）。金鑰與查詢絕不會傳送給 DRS AI。",
+      "consentAccept": "我了解",
+      "consentRequired": "請接受上方的說明，以設定金鑰並啟用搜尋。",
+      "consentGivenTitle": "網路搜尋已啟用",
+      "consentGivenDescription": "如上所述，查詢與網頁讀取可能會離開你的裝置。",
+      "consentRevoke": "撤銷"
     },
-    "chatEmptyPlaceholder": {
-      "noModelsTitle": "無可用模型",
-      "noModelsDescription": "下載模型後即可開始使用 DRS AI 進行聊天",
-      "noModelsButton": "下載模型",
-      "activateModelTitle": "啟動模型以開始",
-      "activateModelDescription": "請先選擇模型並下載。下載完成後，點擊模型右側的「載入」按鈕即可開始對話。",
-      "activateModelButton": "選擇模型",
-      "loading": "正在載入...",
-      "gettingReadyTitle": "{{name}} 正在準備中",
-      "gettingReadyDescription": "我們會在您的夥伴可以開始聊天時立即通知您。點擊上方的橫幅可查看目前的進度。"
-    },
-    "chatInput": {
-      "inputPlaceholder": "訊息",
-      "thinkingToggle": {
-        "enableThinking": "啟用思考模式",
-        "disableThinking": "停用思考模式",
-        "thinkingEnabled": "思考模式已啟用",
-        "thinkingDisabled": "思考模式已停用",
-        "thinkText": "思考",
-        "cycleEffort": "推理強度：{{level}}。連按兩次可切換強度層級"
-      }
-    },
-    "chatGenerationSettingsSheet": {
-      "invalidValues": "無效值",
-      "invalidNumericValuesMessage": "必須是有效數字",
-      "pleaseCorrect": "請糾正以下內容：",
-      "ok": "確定",
-      "saveChanges": "儲存更改",
-      "saveAsPreset": "儲存為預設",
-      "title_session": "聊天生成設定（會話）",
-      "title_preset": "聊天生成設定（預設）",
-      "resetToSystemDefaults": "重設為系統預設",
-      "resetToPreset": "重設為預設",
-      "applytoPresetAlert": {
-        "title": "成功",
-        "message": "這些設定將應用於所有未來會話"
-      },
-      "assistantSettings": "助手 設定",
-      "settingsSource": "設定來源"
-    },
-    "modelsHeaderRight": {
-      "menuTitleHf": "Hugging Face 模型",
-      "menuTitleDownloaded": "已下載模型",
-      "menuTitleGrouped": "按模型類型分組",
-      "menuTitleReset": "重置模型列表"
-    },
-    "modelsResetDialog": {
-      "proceedWithReset": "繼續重置",
-      "confirmReset": "確認重置"
-    },
-    "usageStats": {
-      "byteSizes": [
-        "位元組",
-        "KB",
-        "MB",
-        "GB"
-      ],
-      "tooltip": {
-        "usage": "使用率： ",
-        "total": "總計： ",
-        "used": "已使用： ",
-        "title": "記憶體使用量"
-      }
-    },
-    "fileMessage": {
-      "fileButtonAccessibilityLabel": "檔案"
-    },
-    "chatHeaderTitle": {
-      "defaultTitle": "聊天"
-    },
-    "sidebarContent": {
-      "dateGroups": {
-        "older": "較舊",
-        "lastMonth": "上個月",
-        "fourWeeksAgo": "四週前",
-        "threeWeeksAgo": "三週前",
-        "twoWeeksAgo": "二週前",
-        "lastWeek": "上週",
-        "thisWeek": "本週",
-        "yesterday": "昨天",
-        "today": "今天",
-        "pinned": "已釘選"
-      },
-      "deleteChatMessage": "您確定要刪除此聊天嗎？",
-      "deleteChatTitle": "刪除聊天",
-      "menuItems": {
-        "testCompletion": "測試完成",
-        "appInfo": "應用程式資訊",
-        "settings": "設定",
-        "benchmark": "基準測試",
-        "assistants": "助手",
-        "models": "模型",
-        "chat": "聊天"
-      },
-      "select": "選擇",
-      "nSelected": "已選取 {{count}}",
-      "selectAll": "全選",
-      "deselectAll": "取消選擇所有",
-      "exportCount": "匯出 ({{count}})",
-      "deleteCount": "刪除 ({{count}})",
-      "bulkDeleteTitle": "刪除聊天會話",
-      "bulkDeleteMessage": "刪除 {{count}} 個聊天會話？此操作無法復原。",
-      "bulkDeleteError": "刪除聊天會話失敗。請再試一次。",
-      "exportError": "匯出聊天會話失敗。請再試一次。",
-      "bulkExportError": "匯出聊天會話失敗。請再試一次。",
-      "pin": "釘選",
-      "unpin": "取消釘選"
-    },
-    "systemPromptSection": {
-      "warnings": {
-        "promptChanged": "系統提示詞已手動更改"
-      },
-      "systemPrompt": {
-        "placeholder": "你是一個實用的助手",
-        "label": "系統提示詞",
-        "sublabel": "請隨意編輯和嘗試，以找到最適合您情境的提示詞"
-      },
-      "buttons": {
-        "generatePrompt": "生成系統提示詞",
-        "stopGenerating": "停止生成",
-        "loadingModel": "正在載入模型...",
-        "resetParameters": "重設參數",
-        "resetTemplate": "重設範本"
-      },
-      "sectionTitle": "系統提示詞",
-      "useAIPrompt": "使用 AI 生成系統提示詞",
-      "modelSelector": {
-        "label": "選擇生成模型*",
-        "sublabel": "推薦：Llama 3.2 3B 或 Qwen2.5 3B。",
-        "placeholder": "選擇模型"
-      },
-      "generatingPrompt": {
-        "label": "目的與情境",
-        "placeholder": "請描述這個 助手 的角色、目的或情境…"
-      }
-    },
-    "chatAssistantModelPickerSheet": {
-      "assistantsTab": "助手",
-      "modelsTab": "模型",
-      "noAssistant": "沒 助手",
-      "disableAssistant": "停用活躍 assistant",
-      "noDescription": "未提供描述",
-      "assistantType": "助手",
-      "roleplayType": "角色扮演",
-      "confirmationTitle": "確認",
-      "modelSwitchMessage": "此 assistant 的預設模型不同 ({{modelName}})。您是否想切換到 助手 的預設模型？",
-      "keepButton": "保持",
-      "switchButton": "切換",
-      "videoType": "影片"
-    },
-    "headerRight": {
-      "deleteChatTitle": "刪除聊天",
-      "deleteChatMessage": "您確定要刪除此聊天嗎？",
-      "generationSettings": "生成設定",
-      "model": "模型",
-      "duplicateChatHistory": "重複聊天紀錄",
-      "makeChatTemporary": "把聊天暫存",
-      "exportChatSession": "匯出聊天會話",
-      "export": "匯出 / 匯入",
-      "exportCurrentSession": "匯出目前會話",
-      "exportAllSessions": "匯出所有會話",
-      "importSessions": "匯入會話",
-      "exportCurrentSessionMarkdown": "匯出為 Markdown 格式"
-    },
-    "modelSettingsSheet": {
-      "modelSettings": "模型設定",
-      "saveChanges": "儲存更改",
-      "reasoningSection": "推理",
-      "isReasoningModel": "推理模型",
-      "effortLevels": {
-        "minimal": "最小",
-        "low": "低",
-        "medium": "中",
-        "high": "高",
-        "xhigh": "超高",
-        "max": "最高"
-      },
-      "isReasoningModelHelp": "顯示此模型的思考控制，即使未自動偵測到。",
-      "supportsEffort": "支援漸進式強度",
-      "effortValues": "此模型支援的強度層級"
-    },
-    "assistantPersonaSheet": {
-      "title": {
-        "create": "新建助理 助手",
-        "edit": "編輯助理 助手"
-      },
-      "assistantName": "助手 名稱",
-      "assistantNamePlaceholder": "名稱",
-      "defaultModel": "預設模型",
-      "defaultModelPlaceholder": "選擇模型",
-      "validation": {
-        "generatingPromptRequired": "需要生成提示詞",
-        "promptModelRequired": "必須指定提示詞生成模型"
-      },
-      "create": "新建"
-    },
-    "modelNotAvailable": {
-      "noModelsDownloaded": "您尚未下載任何模型。請先下載一個模型。",
-      "downloadAModel": "下載模型",
-      "defaultModelNotDownloaded": "此 assistant 推薦一個需要下載的特定模型，或者您可以選擇不同的模型。",
-      "cancelDownload": "取消下載",
-      "download": "下載",
-      "modelNotDownloadedShort": "模型未下載",
-      "recommendedModel": "推薦模型"
-    },
-    "roleplayPersonaSheet": {
-      "title": {
-        "create": "新建角色扮演 助手",
-        "edit": "編輯角色扮演 助手"
-      },
-      "assistantName": "助手 名稱",
-      "assistantNamePlaceholder": "名稱",
-      "defaultModel": "預設模型",
-      "defaultModelPlaceholder": "選擇模型",
-      "descriptionSection": "描述",
-      "world": "世界",
-      "worldPlaceholder": "幻想",
-      "location": "位置",
-      "locationPlaceholder": "魔法森林",
-      "locationSublabel": "這個故事的背景是什麼？",
-      "aiRole": "AI 的角色",
-      "aiRolePlaceholder": "埃爾達拉，森林中的調皮小精靈",
-      "aiRoleSublabel": "為角色設定職責",
-      "userRole": "使用者角色",
-      "userRolePlaceholder": "伊蘭多爵士，一位勇敢的騎士",
-      "userRoleSublabel": "你是誰？",
-      "situation": "情況",
-      "situationPlaceholder": "拯救行動，破解謎案",
-      "toneStyle": "語氣 / 文風",
-      "toneStylePlaceholder": "嚴肅",
-      "validation": {
-        "promptModelRequired": "需要提示詞生成模型"
-      },
-      "create": "新建"
-    },
-    "sendButton": {
-      "accessibilityLabel": "發送"
-    },
-    "exportUtils": {
-      "ok": "確定",
-      "cancel": "取消",
-      "saveOptions": "儲存選項",
-      "fileSaved": "檔案已儲存",
-      "fileSavedMessage": "此檔案已儲存到您的下載資料夾，檔案名稱為 {{filename}}",
-      "share": "分享",
-      "shareError": "分享錯誤",
-      "shareErrorMessage": "無法分享該檔案。請再試一次。",
-      "saveError": "儲存至下載資料夾時發生錯誤",
-      "saveOptionsMessage": "無法直接儲存至下載資料夾。您想分享該檔案嗎？",
-      "shareContentErrorMessage": "無法分享內容。請再試一次。",
-      "exportError": "匯出錯誤",
-      "exportErrorMessage": "匯出檔案時發生錯誤。請再試一次。",
-      "permissionRequired": "需要儲存權限",
-      "permissionMessage": "我們需要儲存到下載資料夾的授權。",
-      "permissionDenied": "授權被拒絕",
-      "permissionDeniedMessage": "沒有儲存權限，匯出功能將會被停用。",
-      "continue": "繼續"
-    },
-    "modelErrorReportSheet": {
-      "memoryInfo": "記憶體",
-      "cpuArchitecture": "CPU",
-      "modelSource": "來源",
-      "modelName": "名稱",
-      "modelInfo": "模型資訊",
-      "modelSize": "大小",
-      "errorMessage": "錯誤訊息",
-      "title": "報告模型載入問題",
-      "privacyNote": "請分享有關此錯誤的細節，以幫助我們改進 DRS AI。以下列出將會分享的內容 - 您可以選擇不包含任何您不希望包含的項目。",
-      "contextParams": "上下文參數",
-      "deviceInfo": "裝置資訊",
-      "deviceModel": "裝置",
-      "osVersion": "OS",
-      "isEmulator": "模擬器",
-      "additionalInfoLabel": "額外上下文（可選）",
-      "additionalInfoPlaceholder": "任何可能幫助我們理解問題的額外細節...",
-      "submit": "提交報告",
-      "success": {
-        "title": "報告已提交",
-        "message": "感謝您協助我們改進 DRS AI。您的報告將有助於我們解決此問題。"
-      },
-      "error": {
-        "title": "報告失敗",
-        "message": "傳送報告失敗。請稍後再試。"
-      }
-    },
-    "assistantGenerationSettingsSheet": {
-      "ok": "確定",
-      "error": "錯誤",
-      "clearAssistantSettings": "清除 助手 設定",
-      "title": "生成設定 - {{assistantName}}",
-      "invalidValues": "無效值",
-      "invalidNumericValuesMessage": "必須是有效數字",
-      "pleaseCorrect": "請更正以下內容：",
-      "failedToSave": "儲存 assistant 設定失敗",
-      "resetToGlobal": "還原為一般預設值",
-      "resetToSystem": "還原為系統預設值",
-      "customSettingsFor": "{{assistantName}} 的自訂設定",
-      "inheritedSettingsFor": "{{assistantName}} 的繼承設定"
-    },
-    "downloadErrorDialog": {
-      "downloadFailedTitle": "無法下載",
-      "downloadFailedMessage": "無法下載模型：{{message}}",
-      "unauthorizedTitle": "驗證失敗",
-      "unauthorizedMessage": "您的 Hugging Face Token 看起來無效或已過期。請在設定中更新您的 Token。",
-      "forbiddenTitle": "無權限存取",
-      "forbiddenMessage": "您沒有權限存取此模型。請確保：",
-      "forbiddenSteps": [
-        "您的 token 具有「讀取」權限",
-        "您請求並獲得了訪問此模型的權限",
-        "模型所有者已批准您的存取請求"
-      ],
-      "getTokenTitle": "取得 Hugging Face Token",
-      "getTokenMessage": "下載此模型需要一個 Hugging Face token。",
-      "getTokenSteps": [
-        "前往 huggingface.co 並登入",
-        "前往設定 > 存取 Token",
-        "新建一個具有「讀取」權限的新 token",
-        "複製 token 並將其貼到 token 欄位中"
-      ],
-      "tokenDisabledTitle": "Token 已停用",
-      "tokenDisabledMessage": "您設定了 Hugging Face token，但目前已停用。此模型需要一個 token 才能下載。請啟用您的 token 以繼續。",
-      "enableAndRetry": "啟用並重試",
-      "goToSettings": "前往設定",
-      "tryAgain": "再試一次",
-      "viewOnHuggingFace": "在 HF 上查看模型 ↗"
-    },
-    "hfTokenSheet": {
-      "save": "儲存 Token",
-      "reset": "重設 Token",
-      "title": "Hugging Face Token",
-      "description": "需要存取受保護模型的權限",
-      "inputLabel": "個人存取 Token",
-      "inputPlaceholder": "在此貼上您的 token",
-      "saved": "Token 已成功儲存",
-      "resetSuccess": "Token 已成功移除",
-      "instructions": "如何取得 token：",
-      "instructionsSteps": [
-        "前往 huggingface.co 並登入",
-        "前往設定 > 存取 Token",
-        "新建一個具有「讀取」權限的新 token",
-        "複製 token 並將其貼到下方"
-      ],
-      "getTokenLink": "從 huggingface.co 取得 token ↗",
-      "error": {
-        "saving": "儲存 token 時發生錯誤",
-        "missing": "需要 Hugging Face token",
-        "invalid": "無效或已過期的 token",
-        "gatedModelAccess": "無法存取此受保護模型"
-      },
-      "gatedModelIndicator": "需要 Token",
-      "tokenRequired": "此模型需要一個 Hugging Face 存取 token",
-      "searchErrorHint": "您的 Hugging Face API token 無效或已過期。若要繼續搜尋，請移除 token 或在設定中停用 token 驗證。",
-      "disableAndRetry": "停用 Token 並重試"
-    },
-    "assistantSheet": {
-      "title": {
-        "edit": "編輯 助手",
-        "newAssistant": "新建 助手",
-        "newVideoAssistant": "新建影片 助手"
-      },
-      "description": "描述",
-      "descriptionPlaceholder": "輸入您 assistant 的簡短描述",
-      "parameters": "參數",
-      "generationSettings": "生成設定",
-      "configureGenerationSettings": "配置生成設定",
-      "validation": {
-        "nameRequired": "名稱是必要的",
-        "generatingPromptRequired": "使用 AI 提示詞時需要生成提示詞",
-        "promptModelRequired": "使用 AI 提示詞時需要提示詞生成模型"
-      },
-      "talents": "技能",
-      "talentNames": {
-        "render_html": "HTML 預覽",
-        "calculate": "數學算式",
-        "datetime": "日期與時間",
-        "web_search": "網路搜尋",
-        "read_url": "讀取網頁"
-      },
-      "talentDescriptions": {
-        "render_html": "在聊天室內行內渲染 HTML 文件",
-        "calculate": "評估數學表達式",
-        "datetime": "取得目前的日期與時間",
-        "web_search": "搜尋網路上的最新資訊（需在設定中提供 API 金鑰）",
-        "read_url": "讀取網頁的完整內容（需在設定中提供 API 金鑰）"
-      },
-      "greeting": {
-        "sectionLabel": "問候語",
-        "textLabel": "問候訊息",
-        "textPlaceholder": "此 assistant 在空聊天室中該說什麼？",
-        "suggestedPromptsLabel": "建議提示詞",
-        "addPromptButton": "新增提示詞",
-        "promptPlaceholder": "針對此建議指令（Chip）編寫簡短提示詞",
-        "removePromptLabel": "移除提示詞"
-      }
-    },
-    "chatView": {
-      "menuItems": {
-        "edit": "編輯",
-        "copy": "複製",
-        "regenerate": "重新生成",
-        "regenerateWith": "使用...重新生成",
-        "reportContent": "報告內容"
-      }
-    },
-    "lookiePersonaSheet": {
-      "assistantName": "助手 名稱",
-      "visionModel": "視覺模型",
-      "visionModelPlaceholder": "選擇視覺模型",
-      "title": {
-        "create": "新建 Lookie 助手",
-        "edit": "編輯 Lookie 助手"
-      },
-      "assistantNamePlaceholder": "輸入您 Lookie 助手 的名稱",
-      "requiredModelsSection": "所需模型",
-      "captureInterval": "捕捉間隔",
-      "captureIntervalHelper": "自動捕捉之間的時間（毫秒）",
-      "create": "新建"
-    },
-    "bubble": {
-      "msPerToken": "{{value}}毫秒/詞元",
-      "tokensPerSec": "{{value}} 詞元/秒",
-      "ttft": "{{value}}毫秒 TTFT",
-      "interrupted": "被打斷",
-      "truncated": "已截斷 — 可能是上下文已滿",
-      "draftAccepted": "草稿：{{accepted}}/{{total}}（{{pct}}%）"
-    },
-    "thinkingBubble": {
-      "reasoning": "推理"
-    },
-    "contentReportSheet": {
-      "title": "檢舉內容",
-      "privacyNote": "我們不會傳送任何訊息內容或對話細節。請描述您遇到的具體問題。",
-      "categoryLabel": "檢舉類別",
-      "selectCategory": "選擇一個類別",
-      "categories": {
-        "hate": "仇恨言論",
-        "sexual": "色情內容",
-        "selfHarm": "自殘",
-        "violence": "暴力",
-        "other": "其他"
-      },
-      "descriptionLabel": "描述",
-      "descriptionPlaceholder": "請描述此內容的問題...",
-      "includeModelInfo": "包含模型資訊",
-      "includeModelInfoDescription": "包含模型名稱和識別碼，以便我們協助調查",
-      "noActiveModelNote": "目前沒有啟用模型",
-      "submit": "提交報告",
-      "validation": {
-        "title": "缺少資訊",
-        "message": "請選擇一個類別並提供描述。"
-      },
-      "success": {
-        "title": "報告已提交",
-        "message": "感謝您的報告。我們將審核並採取適當行動。"
-      },
-      "error": {
-        "title": "報告失敗",
-        "message": "傳送報告失敗。請再試一次。"
-      }
-    },
-    "assistantHeaderRight": {
-      "exportAllAssistants": "匯出所有 助手",
-      "importAssistants": "匯入 assistant",
-      "importSuccess": "已成功匯入 {{count}} 個 assistant。",
-      "importError": "匯入 assistant 失敗。請檢查檔案格式。"
-    },
-    "pendingIndicator": {
-      "preparingTool": "正在準備工具",
-      "buildingPage": "建置頁面",
-      "calculating": "計算中",
-      "lookingUpTime": "檢索時間",
-      "stopping": "停止…"
-    },
-    "toolMetrics": {
-      "tokens": "{{count}} 個詞元",
-      "elapsed": "{{seconds}} 秒"
-    }
-  },
-  "feedback": {
-    "title": "送出反饋",
-    "description": "請讓我們聽見您的心聲！告訴我們 DRS AI 對您的幫助，以及我們該如何進一步提升實用性。",
-    "shareThoughtsButton": "分享您的想法",
-    "useCase": {
-      "label": "您正在使用 DRS AI 做什麼？",
-      "placeholder": "例如：摘要、角色扮演等。"
-    },
-    "featureRequests": {
-      "label": "功能需求",
-      "placeholder": "您希望看到哪些功能?"
-    },
-    "generalFeedback": {
-      "label": "整體回饋",
-      "placeholder": "分享您可能有的其他想法。"
-    },
-    "usageFrequency": {
-      "label": "您多久使用一次 DRS AI？（可選）",
-      "options": {
-        "daily": "每日",
-        "weekly": "每週",
-        "monthly": "每月",
-        "rarely": "很少使用"
-      }
-    },
-    "email": {
-      "label": "聯絡電子郵件（可選）",
-      "placeholder": "您的電子郵件地址"
-    },
-    "submit": "提交回饋",
-    "validation": {
-      "required": "請至少提供一些回饋"
-    },
-    "success": "感謝您的回饋！",
-    "error": {
-      "general": "發送回饋時出錯。請重試。"
-    }
-  },
-  "generation": {
-    "modelNotInitialized": "模型上下文尚未初始化",
-    "failedToGenerate": "生成輸出失敗"
+    "apiSettingsTitle": "API 設定",
+    "huggingFaceTokenLabel": "Hugging Face Token",
+    "tokenIsSetDescription": "已設定 Token。此 Token 是存取受限模型所必需的。",
+    "setTokenDescription": "請設定一個 Token 以存取來自 Hugging Face 的受限模型。",
+    "setTokenButton": "設定 Token",
+    "useHfTokenLabel": "使用 HF Token",
+    "useHfTokenDescription": "請啟用此 Token 以用於 API 請求。如果該 Token 引發了身份驗證問題，則應停用它。",
+    "cacheStorageTitle": "快取與儲存",
+    "clearAssistantCaches": "清除捷徑快取",
+    "clearAssistantCachesDescription": "清除用來加速捷徑的快取資料。這不會影響您的 助手 或聊天記錄。",
+    "clearCachesButton": "清除快取",
+    "clearCachesConfirmTitle": "要清除捷徑快取嗎？",
+    "clearCachesConfirmMessage": "這將清除所有快取會話資料（{{fileCount}} 個檔案，大小為 {{size}}）。清除後第一次使用捷徑可能會變慢。這不會影響您的 助手 或聊天記錄。",
+    "clearCachesSuccess": "成功清除 {{count}} 個快取檔案。",
+    "clearCachesError": "清除快取失敗。請再試一次。",
+    "noCachesToClear": "沒有需要清除的快取。",
+    "serverName": "伺服器名稱",
+    "serverUrl": "伺服器網址",
+    "serverUrlPlaceholder": "例如：http://192.168.1.100:1234",
+    "requestTimeout": "請求逾時（秒）",
+    "requestTimeoutPlaceholder": "可選 – 留空則使用預設值",
+    "requestTimeoutHelp": "等待較慢的伺服器回應的最長時間。留空則使用預設值。",
+    "serverType": "伺服器類型",
+    "serverTypeHelp": "自動偵測；若有誤請修改。",
+    "apiKey": "API 金鑰",
+    "apiKeyPlaceholder": "可選 – 對於 OpenAI/Groq 是必需的",
+    "apiKeyDescription": "安全地儲存在設備上。",
+    "remoteModel": "遠端",
+    "remotePrivacyNotice": "發送到遠端伺服器的訊息會離開您的設備。僅連接您信任的伺服器。",
+    "remoteIndicator": "遠端",
+    "serverUrlRequired": "需要提供伺服器網址",
+    "serverUrlInvalid": "無效的網址格式",
+    "serverUrlHttpWarning": "iOS 需要使用 HTTPS 才能連接非本機伺服器。請使用 https:// 或本機網路地址。",
+    "addRemoteModel": "新增遠端模型",
+    "yourServers": "您的伺服器",
+    "orConnectNewServer": "或者連接新的伺服器",
+    "selectModel": "選擇模型",
+    "addModel": "新增模型",
+    "connected": "已連接",
+    "connectionFailed": "連接失敗：{{error}}",
+    "connecting": "正在連線…",
+    "noModelsAvailable": "此伺服器上沒有可用模型。",
+    "alreadyAdded": "已新增",
+    "connectedServers": "已連接的伺服器",
+    "modelsCount": "{{count}} 個模型",
+    "serverDetails": "伺服器資訊",
+    "modelsUsingServer": "使用此伺服器的模型：",
+    "saveChanges": "儲存變更",
+    "removeServer": "移除伺服器",
+    "removeServerMessage": "要移除 {{serverName}} 以及其 {{count}} 個模型嗎？",
+    "removeRemoteModel": "移除 {{modelName}} ({{serverName}})？",
+    "retryConnection": "重試",
+    "enterUrlManually": "手動輸入網址",
+    "manageServers": "管理伺服器",
+    "exportLegacyError": "匯出舊版聊天記錄失敗。檔案可能不存在。"
   },
   "memory": {
     "shortWarning": "記憶體警告",
@@ -818,6 +233,14 @@
       "continue": "繼續"
     }
   },
+  "storage": {
+    "checkFailed": "無法檢查存儲",
+    "lowStorage": "儲存空間不足！模型 {{modelSize}} 佔用的容量大於剩餘空間 {{freeSpace}}"
+  },
+  "generation": {
+    "modelNotInitialized": "模型上下文尚未初始化",
+    "failedToGenerate": "生成輸出失敗"
+  },
   "models": {
     "fileManagement": {
       "fileAlreadyExists": "檔案已存在",
@@ -834,6 +257,47 @@
       "availableToUse": "準備使用",
       "availableToDownload": "可用下載",
       "useAddButtonForMore": "點擊「+」按鈕即可搜尋更多模型"
+    },
+    "vision": "視覺",
+    "mmproj": "投影機",
+    "multimodal": {
+      "settings": "多模態設定",
+      "projectionModels": "投影模型",
+      "noCompatibleModels": "未找到相容的投影模型",
+      "noProjectionModels": "沒有可用的投影模型",
+      "selected": "已選取",
+      "select": "選擇",
+      "download": "下載",
+      "projectionNeededTitle": "需要投影模型",
+      "projectionNeededMessage": "這個模型需要一個投影模型來支援多模態功能。",
+      "projectionMissingWarning": "缺少投影模型",
+      "projectionMissingShort": "缺少投影",
+      "reloadModelTitle": "重新載入模型",
+      "reloadModelMessage": "為了套用新的投影模型，需要重新載入模型。您現在要重新載入嗎？",
+      "reload": "重新載入",
+      "deleteProjectionTitle": "刪除投影模型",
+      "deleteProjectionMessage": "您確定要刪除這個投影模型嗎？",
+      "cannotDeleteTitle": "無法刪除",
+      "visionControls": {
+        "enableVision": "啟用視覺功能",
+        "disableVision": "停用視覺功能",
+        "visionEnabled": "視覺已啟用",
+        "visionDisabled": "視覺已停用",
+        "textOnlyMode": "僅限文字",
+        "visionMode": "視覺已啟用",
+        "downloadWithVision": "視覺下載",
+        "downloadTextOnly": "僅限文字下載",
+        "visionToggleDescription": "啟用圖片處理功能",
+        "projectionModelSize": "+{{size}} 投影模型",
+        "visionModeDescription": "處理圖像與文字",
+        "textOnlyModeDescription": "僅處理文字",
+        "includesVisionCapability": "包含視覺能力",
+        "requiresProjectionModel": "先下載相容的投影模型"
+      },
+      "cannotDeleteActive": "此投影模型目前正在啟用。",
+      "cannotDeleteInUse": "此投影模型用於下載的 LLM 模型：",
+      "dependentModels": "依賴模型：",
+      "visionWillBeDisabled": "這些模型的視覺能力將被停用。"
     },
     "buttons": {
       "addFromHuggingFace": "從 Hugging Face 新增",
@@ -858,10 +322,10 @@
     },
     "modelFile": {
       "alerts": {
-        "removeTitle": "移除模型",
-        "modelPreset": "模型已預設。",
         "cannotRemoveTitle": "無法移除",
+        "modelPreset": "模型已預設。",
         "downloadedFirst": "模型已下載。請先刪除該檔案。",
+        "removeTitle": "移除模型",
         "removeMessage": "您確定要從列表中移除此模型嗎？",
         "removeError": "無法移除模型。",
         "alreadyDownloadedTitle": "模型已下載",
@@ -912,6 +376,15 @@
         "sortLikes": "最受歡迎"
       }
     },
+    "hubRun": {
+      "title": "下載模型",
+      "resolving": "載入模型詳情…",
+      "cancel": "取消",
+      "retry": "重試",
+      "invalidLinkTitle": "無效的連結",
+      "invalidLinkMessage": "此 Hugging Face 連結缺失，或模型/檔案無效。",
+      "resolveError": "無法載入模型詳情。請檢查您的網路連線並重試。"
+    },
     "modelCard": {
       "alerts": {
         "deleteTitle": "刪除模型",
@@ -929,6 +402,9 @@
       "labels": {
         "skills": "技能： ",
         "vision": "視覺",
+        "visionSupported": "支援",
+        "visionNotSupported": "不支援",
+        "visionUnknown": "未知",
         "capabilities": "能力。",
         "modelName": "模型名稱",
         "contextLength": "上下文長度",
@@ -937,24 +413,21 @@
         "requiresProjectionModel": "需要投影模型",
         "downloadProjectionModel": "下載投影模型",
         "viewModelCardOnHuggingFace": "在 Hugging Face 觀看模型卡",
-        "visionSupported": "支援",
-        "visionNotSupported": "不支援",
-        "visionUnknown": "未知",
         "draftOnlyReason": "僅供草稿使用的模型。請在「設定 → 推測解碼」中選擇。"
       },
       "accessibility": {
-        "loadingIndicator": "正在載入",
-        "loadButton": "載入模型",
-        "settingsButton": "摸型設定",
-        "deleteButton": "刪除模型",
-        "removeButton": "移除摸型",
-        "downloadButton": "下載摸型",
         "expandDetails": "展開細節",
         "collapseDetails": "收起細節",
         "memoryWarning": "記憶體警告",
         "integrityWarning": "完整性警告",
         "downloadProgress": "下載進度",
+        "loadingIndicator": "正在載入",
+        "loadButton": "載入模型",
         "offloadButton": "卸載模型",
+        "downloadButton": "下載摸型",
+        "settingsButton": "摸型設定",
+        "deleteButton": "刪除模型",
+        "removeButton": "移除摸型",
         "expandDetailsButton": "展開模型細節",
         "memoryWarningButton": "顯示記憶體警告細節",
         "integrityWarningButton": "顯示完整性警告細節",
@@ -1005,361 +478,831 @@
       "mtp": "推測（MTP）",
       "mtpDraft": "推測草稿"
     },
-    "vision": "視覺",
-    "mmproj": "投影機",
-    "multimodal": {
-      "settings": "多模態設定",
-      "projectionModels": "投影模型",
-      "noCompatibleModels": "未找到相容的投影模型",
-      "noProjectionModels": "沒有可用的投影模型",
-      "selected": "已選取",
-      "select": "選擇",
-      "download": "下載",
-      "projectionNeededTitle": "需要投影模型",
-      "projectionNeededMessage": "這個模型需要一個投影模型來支援多模態功能。",
-      "projectionMissingWarning": "缺少投影模型",
-      "projectionMissingShort": "缺少投影",
-      "reloadModelTitle": "重新載入模型",
-      "reloadModelMessage": "為了套用新的投影模型，需要重新載入模型。您現在要重新載入嗎？",
-      "reload": "重新載入",
-      "deleteProjectionTitle": "刪除投影模型",
-      "deleteProjectionMessage": "您確定要刪除這個投影模型嗎？",
-      "cannotDeleteTitle": "無法刪除",
-      "visionControls": {
-        "enableVision": "啟用視覺功能",
-        "disableVision": "停用視覺功能",
-        "visionEnabled": "視覺已啟用",
-        "visionDisabled": "視覺已停用",
-        "textOnlyMode": "僅限文字",
-        "visionMode": "視覺已啟用",
-        "downloadWithVision": "視覺下載",
-        "downloadTextOnly": "僅限文字下載",
-        "visionToggleDescription": "啟用圖片處理功能",
-        "projectionModelSize": "+{{size}} 投影模型",
-        "visionModeDescription": "處理圖像與文字",
-        "textOnlyModeDescription": "僅處理文字",
-        "includesVisionCapability": "包含視覺能力",
-        "requiresProjectionModel": "先下載相容的投影模型"
-      },
-      "cannotDeleteActive": "此投影模型目前正在啟用。",
-      "cannotDeleteInUse": "此投影模型用於下載的 LLM 模型：",
-      "dependentModels": "依賴模型：",
-      "visionWillBeDisabled": "這些模型的視覺能力將被停用。"
+    "emptyTitle": "尚無模型",
+    "emptyHint": "點擊 + 從 Hugging Face 下載、新增本地模型或連線遠端伺服器。"
+  },
+  "modelsHub": {
+    "title": "模型",
+    "subtitle": "探索、下載並管理您的應用程式可執行的所有模型。",
+    "searchPlaceholder": "搜尋模型、發布者、任務…",
+    "retry": "重試",
+    "notAvailable": "不可用",
+    "noDownloadableFile": "此儲存庫中沒有可下載的 GGUF 檔案",
+    "downloadStarted": "下載已開始",
+    "seeAll": "查看全部",
+    "exploreAction": "探索模型",
+    "emptyTitle": "尚未安裝任何模型",
+    "emptyHint": "瀏覽模型中心，下載適合您裝置與需求的模型。",
+    "fitScore": "{score}/100 適配度",
+    "installedFromRepo": "已從此儲存庫安裝",
+    "installedBadge": "已安裝",
+    "noFiles": "此儲存庫未發布任何 GGUF 檔案。",
+    "visionFilesTitle": "視覺投影檔案（mmproj）",
+    "visionFilesHint": "這些小型檔案可為對應的文字模型加入圖像理解能力；下載視覺模型時會自動一併下載。",
+    "downloadFile": "下載檔案",
+    "downloadShort": "取得",
+    "version": "版本",
+    "engineUnsupportedShort": "無法在本機執行",
+    "engineYes": "GGUF — 可在本機執行（llama.cpp）",
+    "engineNo": "本機引擎不支援",
+    "capabilitiesTitle": "能力",
+    "categoryEngineNotice": "此分類列出的是真實儲存庫，但本機 GGUF 引擎目前尚無法執行這類模型，因此此處已停用下載。沒有任何模擬 — 待引擎支援後，這些模型即可下載。",
+    "categoryInstalledSection": "您在此分類中的模型",
+    "categoryRemoteSection": "在 HuggingFace 上探索",
+    "featuredTitle": "精選模型",
+    "recommendedTitle": "為您的裝置推薦",
+    "recentTitle": "最近新增",
+    "favoritesTitle": "收藏",
+    "installedTitle": "已安裝",
+    "wifiOnly": "僅限 Wi-Fi",
+    "categoriesTitle": "分類",
+    "installedCount": "已安裝 {count} 個",
+    "discover": "探索",
+    "device": {
+      "ram": "RAM",
+      "storage": "可用儲存空間",
+      "cpu": "CPU",
+      "gpu": "GPU",
+      "gpuOk": "已加速",
+      "gpuNo": "僅 CPU"
     },
-    "hubRun": {
-      "title": "下載模型",
-      "resolving": "載入模型詳情…",
+    "compat": {
+      "excellent": "相容性極佳",
+      "good": "相容性良好",
+      "limited": "相容性有限",
+      "notRecommended": "不建議",
+      "unknown": "相容性未知"
+    },
+    "reasons": {
+      "engineUnsupported": "此類模型無法在本機 GGUF 引擎上執行",
+      "engineSupported": "可在本機 GGUF 引擎上執行",
+      "memoryComfortable": "記憶體佔用將很充裕",
+      "memoryOk": "記憶體佔用可以接受",
+      "memoryTight": "記憶體將會吃緊 — 預期執行速度較慢",
+      "memoryInsufficient": "此裝置的 RAM 不足以載入該模型",
+      "memoryUnknown": "無法根據儲存庫資料估算記憶體需求",
+      "storagePlenty": "可用儲存空間充足",
+      "storageTight": "安裝後儲存空間將相當吃緊",
+      "storageInsufficient": "可用儲存空間不足",
+      "storageUnknown": "無法讀取可用儲存空間",
+      "cpuGood": "CPU 核心數充足，可快速推論",
+      "cpuOk": "CPU 可以執行，速度尚可",
+      "cpuLimited": "CPU 核心較少 — 推論速度會較慢",
+      "cpuUnknown": "無法讀取 CPU 核心數",
+      "gpuSupported": "支援 GPU 加速",
+      "gpuUnsupported": "無 GPU 加速 — 將在 CPU 上執行",
+      "gpuUnknown": "無法確定 GPU 支援情況"
+    },
+    "overviewTemplate": "一款由 {author} 發布的{categories}模型，參數量約 {params}，以 GGUF 檔案形式發布，可在此裝置上進行本機離線推論。",
+    "overviewBlocked": "這是真實存在的儲存庫，但其模型類型無法由本機引擎執行，因此無法在此下載。",
+    "statsTemplate": "HuggingFace 上：{downloads} 次下載 · {likes} 個讚。",
+    "tech": {
+      "architecture": "架構",
+      "parameters": "參數",
+      "contextLength": "上下文長度",
+      "formats": "格式",
+      "quantization": "量化",
+      "fileCount": "GGUF 檔案",
+      "version": "修訂版本（sha）",
+      "lastModified": "最近更新",
+      "license": "授權條款",
+      "engine": "引擎"
+    },
+    "capabilities": {
+      "offline": "離線",
+      "context": "上下文",
+      "arabic": "支援阿拉伯文",
+      "multilingual": "多語言"
+    },
+    "tabs": {
+      "overview": "總覽",
+      "technical": "技術",
+      "files": "檔案"
+    },
+    "categories": {
+      "text": "文字",
+      "vision": "視覺",
+      "reasoning": "推理",
+      "coding": "程式開發",
+      "multimodal": "多模態",
+      "embedding": "嵌入",
+      "translation": "翻譯",
+      "audio": "音訊",
+      "image": "圖像",
+      "video": "影片",
+      "general": "通用"
+    },
+    "dialog": {
+      "aboutTitle": "關於此模型",
+      "aboutTemplate": "一款由 {author} 開發的 {family} GGUF 模型。下載後即可在此裝置上完全離線執行。下方的大小為 HuggingFace 回報的確切檔案大小。",
+      "familyUnknown": "GGUF",
+      "file": "檔案",
+      "downloadSize": "下載大小",
+      "extraVisionFiles": "額外的視覺投影檔案（mmproj）",
+      "storageAfter": "安裝後使用的儲存空間",
+      "offline": "支援離線",
+      "offlineYes": "是 — 完全在裝置端執行",
+      "context": "上下文長度",
+      "wifiOnlyWaiting": "已開啟僅 Wi-Fi 下載。使用行動數據時，此下載會在佇列中等待，直到 Wi-Fi 恢復。",
+      "engineUnsupported": "此類模型（圖像/影片/音訊生成）無法由本機 GGUF 引擎執行，因此已停用下載。這裡沒有任何虛假內容 — 列表是真實的，只是引擎無法執行它。",
+      "confirmDownload": "下載模型",
+      "starting": "正在啟動…"
+    },
+    "storage": {
+      "title": "模型儲存空間",
+      "entryHint": "用量明細、最大模型與清理",
+      "used": "模型已使用空間",
+      "available": "可用",
+      "distribution": "按分類",
+      "largest": "最大的模型",
+      "orphans": "未完成與殘留檔案",
+      "orphansFound": "{count} 個檔案 · 可釋放 {size}",
+      "orphansNone": "沒有需要清理的內容 — 儲存空間很整潔。",
+      "cleanNow": "清理",
+      "cleanTitle": "刪除殘留檔案？",
+      "cleanMessage": "{count} 個未完成或孤立的檔案將被永久刪除。",
+      "cleanConfirm": "刪除",
+      "checking": "正在檢查儲存空間…",
+      "enough": "剩餘空間充足",
+      "notEnough": "剩餘空間不足",
+      "required": "所需空間",
+      "availableLabel": "可用",
+      "deficit": "尚缺 {amount}"
+    },
+    "downloads": {
+      "title": "下載",
+      "emptyTitle": "尚無下載",
+      "emptyHint": "您下載的模型會顯示在這裡，進度即時更新，並可離線管理。",
+      "active": "下載中",
+      "paused": "已暫停",
+      "pausedHint": "已暫停 — 將從相同的位元組位置繼續",
+      "verifying": "驗證中",
+      "verifyingHint": "安裝前檢查檔案完整性（大小 + 檢查碼）",
+      "completed": "已完成",
+      "remaining": "≈",
+      "pause": "暫停",
+      "resume": "繼續",
+      "cancel": "取消"
+    },
+    "updates": {
+      "title": "更新",
+      "check": "檢查更新",
+      "checking": "檢查中…",
+      "recheck": "再次檢查",
+      "upToDate": "所有已安裝的模型均與上游修訂版本一致。",
+      "update": "更新"
+    },
+    "sort": {
+      "title": "排序",
+      "recommended": "最適合",
+      "downloads": "下載次數最多",
+      "newest": "最新",
+      "name": "名稱",
+      "sizeAsc": "由小到大",
+      "sizeDesc": "由大到小"
+    },
+    "search": {
+      "installedSection": "您的模型",
+      "hfSection": "HuggingFace 結果",
+      "noResults": "未找到模型",
+      "noResultsHint": "請嘗試其他名稱、發布者或任務。",
+      "errorTitle": "搜尋失敗"
+    }
+  },
+  "completionParams": {
+    "include_thinking_in_context": "在傳送給模型的情境中包含 AI 思考/推理部分。停用此功能可以節省情境空間。這可能會影響效能。",
+    "jinja": "啟用聊天格式化用的 Jinja 範本。啟用時，使用基於 Jinja 的聊天範本處理，以提高與現代模型相容性。",
+    "grammar": "如何在生成文字本時強制執行特定語法規則（快速指南）",
+    "stop": "定義將停止文字生成的特定短語",
+    "n_predict": "最大生成詞元數。設定為「無限制」則無上限，或選擇「自訂」以指定特定數值。",
+    "n_probs": "顯示替代詞彙的機率分數。",
+    "top_k": "透過將可選單詞限制為最可能的前 K 個, 來控制創造性。較低的值會使回覆更聚焦",
+    "top_p": "平衡創造力與連貫性。較高的值 (接近1.0) 允許更具創意但可能不那麼聚焦的回覆",
+    "min_p": "設定詞元的最低機率，以過濾掉不太可能出現的詞語，從而減少無意義或與上下文不符的回應",
+    "temperature": "控制創造力與可預測性。數值越高，回覆越有創意，但針對性越差",
+    "penalty_last_n": "檢查重複時的回溯距離。較大的值能有效防止長期重複",
+    "penalty_repeat": "抑制單詞重複。較高的值會讓回覆使用更為多樣化的語言",
+    "penalty_freq": "懲罰過度使用的單詞。較高的值鼓勵使用更廣泛的詞彙",
+    "penalty_present": "減少主題和概念的重複。較高的值會鼓勵產出更具多樣性的內容",
+    "mirostat": "啟用進階控制功能, 以調節回覆的創造力。將值設為 1 或 2 (較平滑) 即可在即時進行隨機性與連貫性的智能調整。",
+    "mirostat_tau": "設定 Mirostat 的目標創造力等級。較高的值可產生更為多樣化、富有想像力的回覆, 較低的值則能確保輸出更加聚焦。",
+    "mirostat_eta": "Mirostat 的創造力調整速度。數值越高，表示調整越快",
+    "dry_multiplier": "DRY (不要重複自己) 功能的強度。數值越高，越能嚴格防止重複",
+    "dry_base": "DRY 模式下的基礎重複懲罰。數值越高，防止重複的力度就越大",
+    "dry_allowed_length": "在 DRY 懲罰生效前，允許重複多少個單詞",
+    "dry_penalty_last_n": "DRY 模式下檢查重複的回溯範圍是多少",
+    "dry_sequence_breakers": "在 DRY 模式下重置重複檢查器的符號",
+    "ignore_eos": "即使模型想停止，也繼續生成。這對於強制產生更長回覆很有用",
+    "logit_bias": "影響特定單詞在回覆中出現的可能性",
+    "seed": "設置隨機數生成器種子。對於可重現結果非常有用",
+    "xtc_probability": "設定透過 XTC 採樣器移除詞元的機率。 0 表示已停用",
+    "xtc_threshold": "設定 XTC 刪除詞元所需的最低機率。(超過 0.5 表示停用 XTC)",
+    "typical_p": "使用參數 p 啟用本機典型抽樣，p=1.0 是停用"
+  },
+  "about": {
+    "screenTitle": "應用程式資訊",
+    "description": "一個能把語言模型直接帶到你手機上的應用程式，基於 llama.cpp 與 llama.rn 構建。",
+    "supportProject": "支援此專案",
+    "supportProjectDescription": "如果您喜歡使用 DRS AI，請考慮透過以下方式支援此專案：",
+    "githubButton": "在 GitHub 上點讚",
+    "orBy": "或通過",
+    "versionCopiedTitle": "版本已複製",
+    "versionCopiedDescription": "版本資訊已複製至剪貼板",
+    "tour": "導覽",
+    "tourDescription": "重播歡迎畫面，以查看 DRS AI 提供的功能。",
+    "showIntroButton": "再次顯示介紹",
+    "privacyPolicy": "隱私權政策",
+    "termsOfService": "服務條款",
+    "versionFormat": "版本 {{version}}（{{build}}）",
+    "successTitle": "成功"
+  },
+  "feedback": {
+    "title": "送出反饋",
+    "description": "請讓我們聽見您的心聲！告訴我們 DRS AI 對您的幫助，以及我們該如何進一步提升實用性。",
+    "shareThoughtsButton": "分享您的想法",
+    "useCase": {
+      "label": "您正在使用 DRS AI 做什麼？",
+      "placeholder": "例如：摘要、角色扮演等。"
+    },
+    "featureRequests": {
+      "label": "功能需求",
+      "placeholder": "您希望看到哪些功能?"
+    },
+    "generalFeedback": {
+      "label": "整體回饋",
+      "placeholder": "分享您可能有的其他想法。"
+    },
+    "usageFrequency": {
+      "label": "您多久使用一次 DRS AI？（可選）",
+      "options": {
+        "daily": "每日",
+        "weekly": "每週",
+        "monthly": "每月",
+        "rarely": "很少使用"
+      }
+    },
+    "email": {
+      "label": "聯絡電子郵件（可選）",
+      "placeholder": "您的電子郵件地址"
+    },
+    "submit": "提交回饋",
+    "validation": {
+      "required": "請至少提供一些回饋"
+    },
+    "success": "感謝您的回饋！",
+    "error": {
+      "general": "發送回饋時出錯。請重試。"
+    }
+  },
+  "components": {
+    "attachmentButton": {
+      "attachmentButtonAccessibilityLabel": "發送媒體"
+    },
+    "bubble": {
+      "msPerToken": "{{value}}毫秒/詞元",
+      "tokensPerSec": "{{value}} 詞元/秒",
+      "ttft": "{{value}}毫秒 TTFT",
+      "draftAccepted": "草稿：{{accepted}}/{{total}}（{{pct}}%）",
+      "interrupted": "被打斷",
+      "truncated": "已截斷 — 可能是上下文已滿"
+    },
+    "exportUtils": {
+      "fileSaved": "檔案已儲存",
+      "fileSavedMessage": "此檔案已儲存到您的下載資料夾，檔案名稱為 {{filename}}",
+      "share": "分享",
+      "ok": "確定",
+      "shareError": "分享錯誤",
+      "shareErrorMessage": "無法分享該檔案。請再試一次。",
+      "saveError": "儲存至下載資料夾時發生錯誤",
+      "saveOptions": "儲存選項",
+      "saveOptionsMessage": "無法直接儲存至下載資料夾。您想分享該檔案嗎？",
       "cancel": "取消",
-      "retry": "重試",
-      "invalidLinkTitle": "無效的連結",
-      "invalidLinkMessage": "此 Hugging Face 連結缺失，或模型/檔案無效。",
-      "resolveError": "無法載入模型詳情。請檢查您的網路連線並重試。"
-    }
-  },
-  "screenTitles": {
-    "chat": "聊天",
-    "models": "模型",
-    "assistants": "助手 (實驗)",
-    "benchmark": "基準測試",
-    "settings": "設定",
-    "appInfo": "應用程式資訊",
-    "testCompletion": "測試完成"
-  },
-  "settings": {
-    "modelInitializationSettings": "模型初始化設定",
-    "metal": "Metal",
-    "metalDescription": "蘋果的硬體加速 API。",
-    "metalRequiresNewerIOS": "Metal 加速需要 iOS 18 或更高版本。請升級您的裝置以使用此功能。",
-    "layersOnGPU": "GPU 上層數：{{gpuLayers}}",
-    "contextSize": "上下文大小",
-    "contextSizePlaceholder": "輸入上下文大小 (至少 {{minContextSize}})",
-    "invalidContextSizeError": "請輸入有效數字 (至少 {{minContextSize}})",
-    "modelReloadNotice": "需要重新載入模型以使更改生效。",
-    "advancedSettings": "進階設定",
-    "batchSize": "批次大小",
-    "batchSizeDescription": "批次大小：{{batchSize}}{{effectiveBatch}}",
-    "effectiveLabel": "有效",
-    "physicalBatchSize": "實體批次大小",
-    "physicalBatchSizeDescription": "實體批次大小：{{physicalBatchSize}}{{effectivePhysicalBatch}}",
-    "cpuThreads": "CPU 執行緒",
-    "cpuThreadsDescription": "使用 {{threads}} 個可用線程中的 {{maxThreads}}",
-    "flashAttention": "Flash Attention（閃電注意）",
-    "flashAttentionDescription": "啟用 Flash Attention 以加速處理",
-    "keyCacheType": "鍵快取類型",
-    "keyCacheTypeDescription": "選擇鍵計算所使用的快取類型",
-    "valueCacheTypeDisabledDescription": "啟用 Flash Attention 以更改快取類型",
-    "valueCacheType": "值快取類型",
-    "keyCacheTypeDisabledDescription": "啟用 Flash Attention 以更改快取類型",
-    "valueCacheTypeDescription": "選擇值計算所使用的快取類型",
-    "modelLoadingSettings": "模型載入設定",
-    "autoOffloadLoad": "自動卸載 / 載入",
-    "autoOffloadLoadDescription": "應用程式進入背景時卸載模型。",
-    "autoNavigateToChat": "自動導向聊天",
-    "autoNavigateToChatDescription": "開始載入即跳轉到聊天。",
-    "appSettings": "應用程式設定",
-    "language": "語系",
-    "darkMode": "深色模式",
-    "displayMemoryUsage": "顯示記憶體使用量",
-    "displayMemoryUsageDescription": "在聊天頁面顯示記憶體使用量。",
-    "openCL": "OpenCL（實驗性）",
-    "deviceSelection": "設備選擇",
-    "deviceSelectionIOS": "設備（Metal）",
-    "deviceSelectionIOSDescription": "選擇 Metal GPU 或僅使用 CPU 模式",
-    "openCLDescription": "針對 Adreno GPU 的加速功能。能加快提示詞處理速度，但生成過程不一定總是更快。",
-    "openCLNotAvailable": "此設備上沒有啟用 OpenCL。需要具有 i8mm 和 dotprod CPU 功能的 Adreno GPU。",
-    "openCLMissingCPUFeatures": "OpenCL 需要 i8mm 和 dotprod CPU 功能，而此設備上沒有這些功能。",
-    "openCLQuantizationNote": "注意：使用純量化的 Q4_0 模型時，效果最佳的為啟用 OpenCL。",
-    "openCLDocsLink": "請參閱 llama.cpp 的 OpenCL 文件以了解詳細資訊。",
-    "deviceSelectionAndroidDescription": "選擇運算設備（CPU、GPU 或 Hexagon NPU）",
-    "cpuOnlyNoAccelerators": "僅限 CPU – 未偵測到任何加速硬體",
-    "imageMaxTokens": "圖片最大詞元數",
-    "imageMaxTokensDescription": "圖片處理的最大詞元數：{{tokens}}{{effectiveTokens}}（數值越小，速度越快，細節越少）",
-    "flashAttentionIOSDescription": "採用省記憶體注意力機制（在 Metal 上自動啟用）",
-    "flashAttentionAndroidDescription": "必須停用才能進行 OpenCL 狀態儲存/載入",
-    "flashAttentionAuto": "自動",
-    "flashAttentionOn": "開",
-    "flashAttentionOff": "關",
-    "memorySettings": "記憶體設定",
-    "useMlock": "使用記憶體鎖定",
-    "useMlockDescription": "強制系統將模型保存在 RAM 中，而不是進行交換或壓縮",
-    "useMmap": "記憶體映射",
-    "useMmapDescription": "使用記憶體映射檔案以加快模型載入速度",
-    "useMmapTrue": "已啟用",
-    "useMmapFalse": "已停用",
-    "useMmapTrueDescription": "總是使用記憶體映射以加快載入速度",
-    "useMmapFalseDescription": "當權重重新包裝啟用時，建議停用此功能以避免記憶體使用量加倍",
-    "weightRepacking": "啟用權重重新包裝",
-    "weightRepackingDescription": "當停用記憶體映射時，提示詞處理速度更快且記憶體使用量更低。 詞元生成不受影響。",
-    "exportOptions": "匯出選項",
-    "exportLegacyChats": "匯出舊版聊天記錄",
-    "exportLegacyChatsDescription": "如果遷移失敗或您需要恢復舊的聊天會話，請使用此選項。",
-    "exportButton": "匯出",
-    "importChats": "匯入聊天會話",
-    "importChatsDescription": "從（匯出的）JSON 檔案中匯入聊天會話。",
-    "importButton": "匯入",
-    "importSuccess": "成功匯入了 {{count}} 個聊天會話。",
-    "importError": "匯入聊天會話失敗。請檢查檔案格式。",
-    "apiSettingsTitle": "API 設定",
-    "huggingFaceTokenLabel": "Hugging Face Token",
-    "tokenIsSetDescription": "已設定 Token。此 Token 是存取受限模型所必需的。",
-    "setTokenDescription": "請設定一個 Token 以存取來自 Hugging Face 的受限模型。",
-    "setTokenButton": "設定 Token",
-    "useHfTokenLabel": "使用 HF Token",
-    "useHfTokenDescription": "請啟用此 Token 以用於 API 請求。如果該 Token 引發了身份驗證問題，則應停用它。",
-    "cacheStorageTitle": "快取與儲存",
-    "clearAssistantCaches": "清除捷徑快取",
-    "clearAssistantCachesDescription": "清除用來加速捷徑的快取資料。這不會影響您的 助手 或聊天記錄。",
-    "clearCachesButton": "清除快取",
-    "clearCachesConfirmTitle": "要清除捷徑快取嗎？",
-    "clearCachesConfirmMessage": "這將清除所有快取會話資料（{{fileCount}} 個檔案，大小為 {{size}}）。清除後第一次使用捷徑可能會變慢。這不會影響您的 助手 或聊天記錄。",
-    "clearCachesSuccess": "成功清除 {{count}} 個快取檔案。",
-    "clearCachesError": "清除快取失敗。請再試一次。",
-    "noCachesToClear": "沒有需要清除的快取。",
-    "serverName": "伺服器名稱",
-    "serverUrl": "伺服器網址",
-    "serverUrlPlaceholder": "例如：http://192.168.1.100:1234",
-    "apiKey": "API 金鑰",
-    "apiKeyPlaceholder": "可選 – 對於 OpenAI/Groq 是必需的",
-    "apiKeyDescription": "安全地儲存在設備上。",
-    "remoteModel": "遠端",
-    "remotePrivacyNotice": "發送到遠端伺服器的訊息會離開您的設備。僅連接您信任的伺服器。",
-    "remoteIndicator": "遠端",
-    "serverUrlRequired": "需要提供伺服器網址",
-    "serverUrlInvalid": "無效的網址格式",
-    "serverUrlHttpWarning": "iOS 需要使用 HTTPS 才能連接非本機伺服器。請使用 https:// 或本機網路地址。",
-    "addRemoteModel": "新增遠端模型",
-    "yourServers": "您的伺服器",
-    "orConnectNewServer": "或者連接新的伺服器",
-    "selectModel": "選擇模型",
-    "addModel": "新增模型",
-    "connected": "已連接",
-    "connectionFailed": "連接失敗：{{error}}",
-    "connecting": "正在連線…",
-    "noModelsAvailable": "此伺服器上沒有可用模型。",
-    "alreadyAdded": "已新增",
-    "connectedServers": "已連接的伺服器",
-    "modelsCount": "{{count}} 個模型",
-    "serverDetails": "伺服器資訊",
-    "modelsUsingServer": "使用此伺服器的模型：",
-    "saveChanges": "儲存變更",
-    "removeServer": "移除伺服器",
-    "removeServerMessage": "要移除 {{serverName}} 以及其 {{count}} 個模型嗎？",
-    "removeRemoteModel": "移除 {{modelName}} ({{serverName}})？",
-    "retryConnection": "重試",
-    "enterUrlManually": "手動輸入網址",
-    "manageServers": "管理伺服器",
-    "ttsAvailability": "文字轉語音",
-    "ttsAvailabilityDescription": "朗讀助理回覆。",
-    "ttsAvailabilityLowMemoryWarning": "您的裝置記憶體不足 — 這可能會影響功能運作的穩定性。",
-    "requestTimeout": "請求逾時（秒）",
-    "requestTimeoutHelp": "等待較慢的伺服器回應的最長時間。留空則使用預設值。",
-    "requestTimeoutPlaceholder": "可選 – 留空則使用預設值",
-    "serverType": "伺服器類型",
-    "serverTypeHelp": "自動偵測；若有誤請修改。",
-    "internetSearch": {
-      "title": "網路搜尋",
-      "description": "讓 助手 用自己的工具搜尋網路。請自備 API 金鑰 — DRS AI 絕不會保存你的金鑰，也不會轉送你的查詢。",
-      "providerLabel": "搜尋服務供應商",
-      "providerGated": "即將推出",
-      "keyLabel": "API 金鑰",
-      "keyIsSet": "已為 {{provider}} 設定金鑰。",
-      "keyNotSet": "尚未為 {{provider}} 設定金鑰。",
-      "setKeyButton": "設定金鑰",
-      "updateKeyButton": "更新金鑰",
-      "clearKeyButton": "清除金鑰",
-      "keyInputPlaceholder": "貼上你的 {{provider}} API 金鑰",
-      "keyUpdateError": "無法更新金鑰。請再試一次。",
-      "showKeyAccessibilityLabel": "顯示 API 金鑰",
-      "hideKeyAccessibilityLabel": "隱藏 API 金鑰",
-      "resultCountLabel": "每次搜尋的結果數",
-      "resultCountDescription": "結果越少，模型的上下文就能保留更多空間。",
-      "consentTitle": "搜尋會離開你的裝置",
-      "consentDescription": "當 助手 搜尋網路時，你的查詢會透過網際網路傳送給所選的供應商。當 助手 讀取網頁時，若所選供應商沒有內建的閱讀器，網址與頁面內容可能會改為傳送給預設的閱讀器服務（r.jina.ai）。金鑰與查詢絕不會傳送給 DRS AI。",
-      "consentAccept": "我了解",
-      "consentRequired": "請接受上方的說明，以設定金鑰並啟用搜尋。",
-      "consentGivenTitle": "網路搜尋已啟用",
-      "consentGivenDescription": "如上所述，查詢與網頁讀取可能會離開你的裝置。",
-      "consentRevoke": "撤銷"
+      "shareContentErrorMessage": "無法分享內容。請再試一次。",
+      "exportError": "匯出錯誤",
+      "exportErrorMessage": "匯出檔案時發生錯誤。請再試一次。",
+      "permissionRequired": "需要儲存權限",
+      "permissionMessage": "我們需要儲存到下載資料夾的授權。",
+      "permissionDenied": "授權被拒絕",
+      "permissionDeniedMessage": "沒有儲存權限，匯出功能將會被停用。",
+      "continue": "繼續"
     },
-    "languageSheetTitle": "語言",
-    "languageSearchPlaceholder": "搜尋語言",
-    "speculativeDecoding": "推測解碼",
-    "speculativeDecodingDescription": "使用小型草稿模型（或內嵌的 MTP 模型）預測 token，加速生成。實驗性功能。",
-    "speculativeNotMTPCapable": "目前使用的模型不支援推測解碼，也未搭配相容的草稿模型，因此此設定對它無效並維持關閉。對支援的模型會自動套用。",
-    "speculativeDraftModel": "草稿模型",
-    "speculativeDraftModelDescription": "為目前使用的模型草擬 token。",
-    "speculativeDraftModelNone": "無（內嵌 MTP）",
-    "speculativeDraftModelIgnoredOverridden": "目前使用的模型自帶草稿模型，因此會忽略此選擇。",
-    "speculativeDraftModelIgnoredIncompatible": "此草稿模型與目前使用的模型不相容，因此會被忽略。",
-    "speculativeDraftModelIgnoredNotCapable": "此模型不含草稿層，因此無法用作草稿模型。",
-    "speculativeDraftKeyCacheType": "草稿鍵快取類型",
-    "speculativeDraftValueCacheType": "草稿值快取類型",
-    "speculativeDraftNGpuLayers": "草稿 GPU 層數",
-    "speculativeDraftNGpuLayersDescription": "要卸載到 GPU 的草稿模型層數。",
-    "speculativeDraftCacheTypeInactiveDescription": "推測解碼啟動後即會套用。"
-  },
-  "storage": {
-    "checkFailed": "無法檢查存儲",
-    "lowStorage": "儲存空間不足！模型 {{modelSize}} 佔用的容量大於剩餘空間 {{freeSpace}}"
-  },
-  "validation": {
-    "nameRequired": "名稱為必填",
-    "systemPromptRequired": "系統提示詞是必須的",
-    "worldRequired": "世界為必填",
-    "locationRequired": "位置為必填",
-    "aiRoleRequired": "AI 的角色為必填",
-    "userRoleRequired": "使用者角色為必填",
-    "situationRequired": "情境為必填",
-    "toneStyleRequired": "語氣／風格為必填"
-  },
-  "errors": {
-    "serverError": "伺服器錯誤：API 伺服器問題",
-    "hfNetworkTimeout": "網路逾時：向 Hugging Face 發出的請求完成時間過長",
-    "networkTimeout": "網路逾時：請求完成時間過長",
-    "hfNetworkError": "網路錯誤：無法連接到 Hugging Face API",
-    "networkError": "網路錯誤：無法連接到 API",
-    "downloadSetupFailedTitle": "下載設定失敗",
-    "downloadSetupFailedMessage": "準備模型下載失敗：{{message}}",
-    "cameraErrorTitle": "相機錯誤",
-    "cameraErrorMessage": "拍照失敗",
-    "galleryErrorTitle": "圖庫錯誤",
-    "galleryErrorMessage": "選擇圖片失敗",
-    "unexpectedError": "發生了意外錯誤",
-    "hfAuthenticationError": "Hugging Face 驗證錯誤：Token 遺失或無效",
-    "hfAuthenticationErrorSearch": "Hugging Face 驗證錯誤：token 無效",
-    "authenticationError": "驗證錯誤：Token 遺失或無效",
-    "hfAuthorizationError": "抱歉，Hugging Face 授權錯誤：沒有存取此資源的權限",
-    "authorizationError": "授權錯誤：沒有存取此資源的權限",
-    "hfServerError": "Hugging Face 伺服器錯誤：API 伺服器問題"
-  },
-  "simulator": {
-    "cameraNotAvailable": "模擬器中沒有相機可用。請使用實體設備。"
-  },
-  "video": {
-    "startCamera": "啟動相機",
-    "stopCamera": "停止相機",
-    "errorTitle": "相機錯誤",
-    "permissionTitle": "需要相機權限",
-    "permissionMessage": "DRS AI 需要使用相機，以便進行影片分析",
-    "requestingPermission": "請求相機權限中...",
-    "noDevice": "未偵測到相機裝置",
-    "errorMessage": "相機發生錯誤",
-    "flip": "翻轉",
-    "analyzing": "正在分析影片...",
-    "promptPlaceholder": "你想知道這部影片的什麼內容？",
-    "captureInterval": "捕捉間隔",
-    "captureIntervalUnit": "毫秒",
-    "liveCommentary": "即時解說",
-    "emptyPlaceholder": {
-      "title": "歡迎來到 Lookie",
-      "subtitle": "私密本地即時影片分析",
-      "experimentalNotice": "這是一個實驗性功能。準確度取決於所選模型，速度取決於您的設備規格，並且某些模型可能無法正常運作。",
-      "howToUse": "如何使用：",
-      "step1": "• 可選：編輯提示詞以引導分析",
-      "step2": "• 點擊相機按鈕開始即時影片分析",
-      "step3": "• 調整相機運作時的快照頻率",
-      "step4": "• 切換到其他 assistant 以進行正常文字聊天"
+    "thinkingBubble": {
+      "reasoning": "推理"
+    },
+    "pendingIndicator": {
+      "preparingTool": "正在準備工具",
+      "buildingPage": "建置頁面",
+      "calculating": "計算中",
+      "lookingUpTime": "檢索時間",
+      "stopping": "停止…"
+    },
+    "toolMetrics": {
+      "tokens": "{{count}} 個詞元",
+      "elapsed": "{{seconds}} 秒"
+    },
+    "chatEmptyPlaceholder": {
+      "noModelsTitle": "無可用模型",
+      "noModelsDescription": "下載模型後即可開始使用 DRS AI 進行聊天",
+      "noModelsButton": "下載模型",
+      "activateModelTitle": "啟動模型以開始",
+      "activateModelDescription": "請先選擇模型並下載。下載完成後，點擊模型右側的「載入」按鈕即可開始對話。",
+      "activateModelButton": "選擇模型",
+      "loading": "正在載入...",
+      "gettingReadyTitle": "{{name}} 正在準備中",
+      "gettingReadyDescription": "我們會在您的夥伴可以開始聊天時立即通知您。點擊上方的橫幅可查看目前的進度。"
+    },
+    "chatInput": {
+      "inputPlaceholder": "訊息",
+      "thinkingToggle": {
+        "enableThinking": "啟用思考模式",
+        "disableThinking": "停用思考模式",
+        "thinkingEnabled": "思考模式已啟用",
+        "thinkingDisabled": "思考模式已停用",
+        "thinkText": "思考",
+        "cycleEffort": "推理強度：{{level}}。連按兩次可切換強度層級"
+      }
+    },
+    "contentReportSheet": {
+      "title": "檢舉內容",
+      "privacyNote": "我們不會傳送任何訊息內容或對話細節。請描述您遇到的具體問題。",
+      "categoryLabel": "檢舉類別",
+      "selectCategory": "選擇一個類別",
+      "categories": {
+        "hate": "仇恨言論",
+        "sexual": "色情內容",
+        "selfHarm": "自殘",
+        "violence": "暴力",
+        "other": "其他"
+      },
+      "descriptionLabel": "描述",
+      "descriptionPlaceholder": "請描述此內容的問題...",
+      "includeModelInfo": "包含模型資訊",
+      "includeModelInfoDescription": "包含模型名稱和識別碼，以便我們協助調查",
+      "noActiveModelNote": "目前沒有啟用模型",
+      "submit": "提交報告",
+      "validation": {
+        "title": "缺少資訊",
+        "message": "請選擇一個類別並提供描述。"
+      },
+      "success": {
+        "title": "報告已提交",
+        "message": "感謝您的報告。我們將審核並採取適當行動。"
+      },
+      "error": {
+        "title": "報告失敗",
+        "message": "傳送報告失敗。請再試一次。"
+      }
+    },
+    "modelErrorReportSheet": {
+      "title": "報告模型載入問題",
+      "privacyNote": "請分享有關此錯誤的細節，以幫助我們改進 DRS AI。以下列出將會分享的內容 - 您可以選擇不包含任何您不希望包含的項目。",
+      "errorMessage": "錯誤訊息",
+      "modelInfo": "模型資訊",
+      "modelName": "名稱",
+      "modelSource": "來源",
+      "modelSize": "大小",
+      "contextParams": "上下文參數",
+      "deviceInfo": "裝置資訊",
+      "deviceModel": "裝置",
+      "osVersion": "OS",
+      "memoryInfo": "記憶體",
+      "cpuArchitecture": "CPU",
+      "isEmulator": "模擬器",
+      "additionalInfoLabel": "額外上下文（可選）",
+      "additionalInfoPlaceholder": "任何可能幫助我們理解問題的額外細節...",
+      "submit": "提交報告",
+      "success": {
+        "title": "報告已提交",
+        "message": "感謝您協助我們改進 DRS AI。您的報告將有助於我們解決此問題。"
+      },
+      "error": {
+        "title": "報告失敗",
+        "message": "傳送報告失敗。請稍後再試。"
+      }
+    },
+    "chatGenerationSettingsSheet": {
+      "invalidValues": "無效值",
+      "invalidNumericValuesMessage": "必須是有效數字",
+      "pleaseCorrect": "請糾正以下內容：",
+      "ok": "確定",
+      "saveChanges": "儲存更改",
+      "saveAsPreset": "儲存為預設",
+      "title_session": "聊天生成設定（會話）",
+      "title_preset": "聊天生成設定（預設）",
+      "resetToSystemDefaults": "重設為系統預設",
+      "resetToPreset": "重設為預設",
+      "applytoPresetAlert": {
+        "title": "成功",
+        "message": "這些設定將應用於所有未來會話"
+      },
+      "assistantSettings": "助手 設定",
+      "settingsSource": "設定來源"
+    },
+    "assistantGenerationSettingsSheet": {
+      "title": "生成設定 - {{assistantName}}",
+      "invalidValues": "無效值",
+      "invalidNumericValuesMessage": "必須是有效數字",
+      "pleaseCorrect": "請更正以下內容：",
+      "ok": "確定",
+      "error": "錯誤",
+      "failedToSave": "儲存 assistant 設定失敗",
+      "resetToGlobal": "還原為一般預設值",
+      "resetToSystem": "還原為系統預設值",
+      "clearAssistantSettings": "清除 助手 設定",
+      "customSettingsFor": "{{assistantName}} 的自訂設定",
+      "inheritedSettingsFor": "{{assistantName}} 的繼承設定"
+    },
+    "chatHeaderTitle": {
+      "defaultTitle": "聊天"
+    },
+    "fileMessage": {
+      "fileButtonAccessibilityLabel": "檔案"
+    },
+    "chatAssistantModelPickerSheet": {
+      "modelsTab": "模型",
+      "assistantsTab": "助手",
+      "noAssistant": "沒 助手",
+      "disableAssistant": "停用活躍 assistant",
+      "noDescription": "未提供描述",
+      "assistantType": "助手",
+      "roleplayType": "角色扮演",
+      "videoType": "影片",
+      "confirmationTitle": "確認",
+      "modelSwitchMessage": "此 assistant 的預設模型不同 ({{modelName}})。您是否想切換到 助手 的預設模型？",
+      "keepButton": "保持",
+      "switchButton": "切換"
+    },
+    "downloadErrorDialog": {
+      "downloadFailedTitle": "無法下載",
+      "downloadFailedMessage": "無法下載模型：{{message}}",
+      "unauthorizedTitle": "驗證失敗",
+      "unauthorizedMessage": "您的 Hugging Face Token 看起來無效或已過期。請在設定中更新您的 Token。",
+      "forbiddenTitle": "無權限存取",
+      "forbiddenMessage": "您沒有權限存取此模型。請確保：",
+      "forbiddenSteps": [
+        "Your token has \"read\" permission",
+        "You requested and were granted access to this model",
+        "The model owner approved your access request"
+      ],
+      "getTokenTitle": "取得 Hugging Face Token",
+      "getTokenMessage": "下載此模型需要一個 Hugging Face token。",
+      "getTokenSteps": [
+        "Go to huggingface.co and sign in",
+        "Navigate to Settings > Access Tokens",
+        "Create a new token with \"read\" access",
+        "Copy the token and paste it in the token field"
+      ],
+      "tokenDisabledTitle": "Token 已停用",
+      "tokenDisabledMessage": "您設定了 Hugging Face token，但目前已停用。此模型需要一個 token 才能下載。請啟用您的 token 以繼續。",
+      "enableAndRetry": "啟用並重試",
+      "goToSettings": "前往設定",
+      "tryAgain": "再試一次",
+      "viewOnHuggingFace": "在 HF 上查看模型 ↗"
+    },
+    "headerRight": {
+      "deleteChatTitle": "刪除聊天",
+      "deleteChatMessage": "您確定要刪除此聊天嗎？",
+      "generationSettings": "生成設定",
+      "model": "模型",
+      "duplicateChatHistory": "重複聊天紀錄",
+      "makeChatTemporary": "把聊天暫存",
+      "export": "匯出 / 匯入",
+      "exportCurrentSession": "匯出目前會話",
+      "exportCurrentSessionMarkdown": "匯出為 Markdown 格式",
+      "exportAllSessions": "匯出所有會話",
+      "exportChatSession": "匯出聊天會話",
+      "importSessions": "匯入會話",
+      "exportErrorTitle": "匯出錯誤",
+      "exportCurrentSessionError": "匯出目前會話失敗。",
+      "exportAllError": "匯出所有會話失敗。",
+      "importSuccessTitle": "匯入成功",
+      "importErrorTitle": "匯入錯誤"
+    },
+    "hfTokenSheet": {
+      "title": "Hugging Face Token",
+      "description": "需要存取受保護模型的權限",
+      "inputLabel": "個人存取 Token",
+      "inputPlaceholder": "在此貼上您的 token",
+      "save": "儲存 Token",
+      "saved": "Token 已成功儲存",
+      "reset": "重設 Token",
+      "resetSuccess": "Token 已成功移除",
+      "instructions": "如何取得 token：",
+      "instructionsSteps": [
+        "Go to huggingface.co and sign in",
+        "Navigate to Settings > Access Tokens",
+        "Create a new token with \"read\" access",
+        "Copy the token and paste it below"
+      ],
+      "getTokenLink": "從 huggingface.co 取得 token ↗",
+      "error": {
+        "saving": "儲存 token 時發生錯誤",
+        "missing": "需要 Hugging Face token",
+        "invalid": "無效或已過期的 token",
+        "gatedModelAccess": "無法存取此受保護模型"
+      },
+      "gatedModelIndicator": "需要 Token",
+      "tokenRequired": "此模型需要一個 Hugging Face 存取 token",
+      "searchErrorHint": "您的 Hugging Face API token 無效或已過期。若要繼續搜尋，請移除 token 或在設定中停用 token 驗證。",
+      "disableAndRetry": "停用 Token 並重試"
+    },
+    "modelSettingsSheet": {
+      "modelSettings": "模型設定",
+      "saveChanges": "儲存更改",
+      "reasoningSection": "推理",
+      "isReasoningModel": "推理模型",
+      "isReasoningModelHelp": "顯示此模型的思考控制，即使未自動偵測到。",
+      "supportsEffort": "支援漸進式強度",
+      "effortValues": "此模型支援的強度層級",
+      "effortLevels": {
+        "minimal": "最小",
+        "low": "低",
+        "medium": "中",
+        "high": "高",
+        "xhigh": "超高",
+        "max": "最高"
+      }
+    },
+    "modelsHeaderRight": {
+      "menuTitleHf": "Hugging Face 模型",
+      "menuTitleDownloaded": "已下載模型",
+      "menuTitleGrouped": "按模型類型分組",
+      "menuTitleReset": "重置模型列表"
+    },
+    "modelsResetDialog": {
+      "proceedWithReset": "繼續重置",
+      "confirmReset": "確認重置"
+    },
+    "assistantSheet": {
+      "title": {
+        "edit": "編輯 助手",
+        "newAssistant": "新建 助手",
+        "newVideoAssistant": "新建影片 助手"
+      },
+      "description": "描述",
+      "descriptionPlaceholder": "輸入您 assistant 的簡短描述",
+      "parameters": "參數",
+      "generationSettings": "生成設定",
+      "configureGenerationSettings": "配置生成設定",
+      "validation": {
+        "nameRequired": "名稱是必要的",
+        "generatingPromptRequired": "使用 AI 提示詞時需要生成提示詞",
+        "promptModelRequired": "使用 AI 提示詞時需要提示詞生成模型"
+      },
+      "talents": "技能",
+      "talentNames": {
+        "render_html": "HTML 預覽",
+        "calculate": "數學算式",
+        "datetime": "日期與時間",
+        "web_search": "網路搜尋",
+        "read_url": "讀取網頁"
+      },
+      "talentDescriptions": {
+        "render_html": "在聊天室內行內渲染 HTML 文件",
+        "calculate": "評估數學表達式",
+        "datetime": "取得目前的日期與時間",
+        "web_search": "搜尋網路上的最新資訊（需在設定中提供 API 金鑰）",
+        "read_url": "讀取網頁的完整內容（需在設定中提供 API 金鑰）"
+      },
+      "greeting": {
+        "sectionLabel": "問候語",
+        "textLabel": "問候訊息",
+        "textPlaceholder": "此 assistant 在空聊天室中該說什麼？",
+        "suggestedPromptsLabel": "建議提示詞",
+        "addPromptButton": "新增提示詞",
+        "promptPlaceholder": "針對此建議指令（Chip）編寫簡短提示詞",
+        "removePromptLabel": "移除提示詞"
+      }
+    },
+    "assistantPersonaSheet": {
+      "title": {
+        "create": "新建助理 助手",
+        "edit": "編輯助理 助手"
+      },
+      "assistantName": "助手 名稱",
+      "assistantNamePlaceholder": "名稱",
+      "defaultModel": "預設模型",
+      "defaultModelPlaceholder": "選擇模型",
+      "validation": {
+        "generatingPromptRequired": "需要生成提示詞",
+        "promptModelRequired": "必須指定提示詞生成模型"
+      },
+      "create": "新建"
+    },
+    "modelNotAvailable": {
+      "noModelsDownloaded": "您尚未下載任何模型。請先下載一個模型。",
+      "downloadAModel": "下載模型",
+      "defaultModelNotDownloaded": "此 assistant 推薦一個需要下載的特定模型，或者您可以選擇不同的模型。",
+      "modelNotDownloadedShort": "模型未下載",
+      "recommendedModel": "推薦模型",
+      "cancelDownload": "取消下載",
+      "download": "下載"
+    },
+    "roleplayPersonaSheet": {
+      "title": {
+        "create": "新建角色扮演 助手",
+        "edit": "編輯角色扮演 助手"
+      },
+      "assistantName": "助手 名稱",
+      "assistantNamePlaceholder": "名稱",
+      "defaultModel": "預設模型",
+      "defaultModelPlaceholder": "選擇模型",
+      "descriptionSection": "描述",
+      "world": "世界",
+      "worldPlaceholder": "幻想",
+      "location": "位置",
+      "locationPlaceholder": "魔法森林",
+      "locationSublabel": "這個故事的背景是什麼？",
+      "aiRole": "AI 的角色",
+      "aiRolePlaceholder": "埃爾達拉，森林中的調皮小精靈",
+      "aiRoleSublabel": "為角色設定職責",
+      "userRole": "使用者角色",
+      "userRolePlaceholder": "伊蘭多爵士，一位勇敢的騎士",
+      "userRoleSublabel": "你是誰？",
+      "situation": "情況",
+      "situationPlaceholder": "拯救行動，破解謎案",
+      "toneStyle": "語氣 / 文風",
+      "toneStylePlaceholder": "嚴肅",
+      "validation": {
+        "promptModelRequired": "需要提示詞生成模型"
+      },
+      "create": "新建"
+    },
+    "lookiePersonaSheet": {
+      "title": {
+        "create": "新建 Lookie 助手",
+        "edit": "編輯 Lookie 助手"
+      },
+      "assistantName": "助手 名稱",
+      "assistantNamePlaceholder": "輸入您 Lookie 助手 的名稱",
+      "visionModel": "視覺模型",
+      "visionModelPlaceholder": "選擇視覺模型",
+      "requiredModelsSection": "所需模型",
+      "captureInterval": "捕捉間隔",
+      "captureIntervalHelper": "自動捕捉之間的時間（毫秒）",
+      "create": "新建"
+    },
+    "sendButton": {
+      "accessibilityLabel": "發送"
+    },
+    "systemPromptSection": {
+      "sectionTitle": "系統提示詞",
+      "useAIPrompt": "使用 AI 生成系統提示詞",
+      "modelSelector": {
+        "label": "選擇生成模型*",
+        "sublabel": "推薦：Llama 3.2 3B 或 Qwen2.5 3B。",
+        "placeholder": "選擇模型"
+      },
+      "generatingPrompt": {
+        "label": "目的與情境",
+        "placeholder": "請描述這個 助手 的角色、目的或情境…"
+      },
+      "buttons": {
+        "loadingModel": "正在載入模型...",
+        "stopGenerating": "停止生成",
+        "generatePrompt": "生成系統提示詞",
+        "resetParameters": "重設參數",
+        "resetTemplate": "重設範本"
+      },
+      "systemPrompt": {
+        "label": "系統提示詞",
+        "sublabel": "請隨意編輯和嘗試，以找到最適合您情境的提示詞",
+        "placeholder": "你是一個實用的助手"
+      },
+      "warnings": {
+        "promptChanged": "系統提示詞已手動更改"
+      }
+    },
+    "sidebarContent": {
+      "menuItems": {
+        "chat": "聊天",
+        "models": "模型",
+        "assistants": "助手",
+        "benchmark": "基準測試",
+        "settings": "設定",
+        "appInfo": "應用程式資訊",
+        "testCompletion": "測試完成"
+      },
+      "deleteChatTitle": "刪除聊天",
+      "deleteChatMessage": "您確定要刪除此聊天嗎？",
+      "select": "選擇",
+      "nSelected": "已選取 {{count}}",
+      "selectAll": "全選",
+      "deselectAll": "取消選擇所有",
+      "exportCount": "匯出 ({{count}})",
+      "deleteCount": "刪除 ({{count}})",
+      "bulkDeleteTitle": "刪除聊天會話",
+      "bulkDeleteMessage": "刪除 {{count}} 個聊天會話？此操作無法復原。",
+      "bulkDeleteError": "刪除聊天會話失敗。請再試一次。",
+      "exportError": "匯出聊天會話失敗。請再試一次。",
+      "bulkExportError": "匯出聊天會話失敗。請再試一次。",
+      "pin": "釘選",
+      "unpin": "取消釘選",
+      "dateGroups": {
+        "pinned": "已釘選",
+        "today": "今天",
+        "yesterday": "昨天",
+        "thisWeek": "本週",
+        "lastWeek": "上週",
+        "twoWeeksAgo": "二週前",
+        "threeWeeksAgo": "三週前",
+        "fourWeeksAgo": "四週前",
+        "lastMonth": "上個月",
+        "older": "較舊"
+      },
+      "emptySessionsTitle": "還沒有聊天",
+      "emptySessionsHint": "從聊天頁面開始新的對話"
+    },
+    "usageStats": {
+      "tooltip": {
+        "title": "記憶體使用量",
+        "used": "已使用： ",
+        "total": "總計： ",
+        "usage": "使用率： "
+      },
+      "byteSizes": [
+        "Bytes",
+        "KB",
+        "MB",
+        "GB"
+      ]
+    },
+    "chatView": {
+      "menuItems": {
+        "copy": "複製",
+        "regenerate": "重新生成",
+        "regenerateWith": "使用...重新生成",
+        "edit": "編輯",
+        "reportContent": "報告內容"
+      }
+    },
+    "assistantHeaderRight": {
+      "exportAllAssistants": "匯出所有 助手",
+      "importAssistants": "匯入 assistant",
+      "importSuccess": "已成功匯入 {{count}} 個 assistant。",
+      "importError": "匯入 assistant 失敗。請檢查檔案格式。",
+      "exportErrorTitle": "匯出錯誤",
+      "exportAllError": "匯出所有助手失敗。",
+      "importSuccessTitle": "匯入成功",
+      "importErrorTitle": "匯入錯誤"
+    },
+    "brandHeader": {
+      "tagline": "您的私密裝置端 AI"
+    },
+    "authSheet": {
+      "signInTitle": "登入",
+      "signUpTitle": "建立帳戶",
+      "fullNameLabel": "姓名",
+      "emailLabel": "電子郵件",
+      "passwordLabel": "密碼",
+      "signInButton": "登入",
+      "signUpButton": "建立帳戶",
+      "forgotPassword": "忘記密碼？",
+      "or": "或",
+      "continueWithGoogle": "使用 Google 繼續",
+      "haveAccount": "已經有帳戶了？ ",
+      "noAccount": "還沒有帳戶？ ",
+      "signUpLink": "註冊",
+      "signInLink": "登入",
+      "signingIn": "正在登入...",
+      "fillRequiredFields": "請填寫所有必填欄位。",
+      "enterFullName": "請輸入您的姓名。",
+      "enterEmailFirst": "請先輸入您的電子郵件地址。",
+      "accountCreatedTitle": "帳戶已建立",
+      "accountCreatedMessage": "請檢查您的電子郵件以驗證您的帳戶。",
+      "welcomeBackTitle": "歡迎回來！",
+      "welcomeBackMessage": "您已成功登入。",
+      "googleErrorTitle": "Google 登入錯誤",
+      "passwordResetTitle": "重設密碼",
+      "passwordResetMessage": "請檢查您的電子郵件以取得密碼重設說明。",
+      "authErrorTitle": "驗證錯誤"
+    },
+    "squareAssistantCard": {
+      "videoAssistant": "影片 AI 助手",
+      "advancedAssistant": "進階 AI 助手",
+      "assistant": "AI 助手",
+      "byCreator": "作者：{{creator}}",
+      "downloadAssistantTitle": "下載助手",
+      "downloadAssistantMessage": "下載「{{assistantName}}」開始聊天？",
+      "download": "下載",
+      "downloadErrorTitle": "下載錯誤",
+      "downloadErrorMessage": "下載助手失敗。請再試一次。",
+      "startChatErrorMessage": "開始聊天失敗。請再試一次。",
+      "switchModelTitle": "切換模型？",
+      "switchModelMessage": "要將此助手切換到「{{modelName}}」嗎？",
+      "keepCurrent": "保留目前",
+      "switch": "切換",
+      "shareErrorTitle": "分享錯誤",
+      "shareErrorMessage": "分享助手失敗。請再試一次。"
     }
-  },
-  "camera": {
-    "takePhoto": "相機",
-    "errorTitle": "相機錯誤",
-    "startCamera": "啟動相機",
-    "stopCamera": "停止相機",
-    "permissionTitle": "需要相機權限",
-    "permissionMessage": "DRS AI 需要存取相機，以分析影像",
-    "requestingPermission": "請求相機權限中...",
-    "noDevice": "未偵測到相機裝置",
-    "errorMessage": "拍攝照片時發生錯誤",
-    "flip": "翻轉",
-    "analyzing": "正在分析影像...",
-    "promptPlaceholder": "你想知道這張圖片的什麼內容？"
   },
   "assistantsScreen": {
-    "assistantDetailSheet": {
-      "downloaded": "已下載",
-      "success": "成功",
-      "error": "錯誤",
-      "by": "由",
-      "unknown": "未知",
-      "rating": "評級",
-      "reviews": "評論",
-      "created": "新建",
-      "description": "描述",
-      "noDescriptionAvailable": "暫無描述。",
-      "categories": "類別",
-      "tags": "標籤",
-      "systemPrompt": "系統提示詞",
-      "assistantAddedToCollection": "助手 已新增至您的收藏！",
-      "failedToLoadDetails": "載入 assistant 詳情失敗",
-      "failedToDownload": "下載 assistant 失敗",
-      "premiumAssistantMessage": "這是高級 助手。\n• 如果您已使用您的 Drshub 帳戶解鎖它，只需登入即可存取完整詳細資訊。\n• 還未解鎖？請前往 hub.drsai.app 應用程式了解更多。",
-      "notAvailable": "不適用",
-      "buyOnDrshub": "在 Drshub 上購買",
-      "finalizingPurchase": "正在完成您的購買…",
-      "processingPurchase": "處理中 — 稍後將解鎖。",
-      "checkoutSessionExpired": "您的連線已過期。請重新登入以繼續。",
-      "signInAgain": "重新登入",
-      "assistantNotAvailable": "此 assistant 目前無法購買。",
-      "checkoutFailed": "發生錯誤。請重試。"
-    },
-    "filters": {
-      "myAssistants": "我的 助手",
-      "all": "全部",
-      "video": "影片",
-      "local": "本地",
-      "free": "免費",
-      "premium": "高級"
-    },
-    "video": "影片",
-    "addAssistant": "新增 助手",
-    "systemPrompt": "系統提示詞",
-    "deleteAssistant": "刪除 助手",
     "sectionTitles": {
       "myAssistantsLocal": "我的 助手（本地）",
       "myLibrary": "我的資料庫（hub.drsai.app）",
       "discoverAssistants": "探索 助手（hub.drsai.app）"
     },
+    "systemPrompt": "系統提示詞",
     "videoAnalysis": "影片分析",
     "videoAnalysisDescription": "這是一個基於影片的 AI 助理，可從您裝置相機的影片流中提供即時評論。",
     "captureInterval": "捕捉間隔",
@@ -1371,12 +1314,15 @@
     "prompt": "提示詞",
     "assistant": "助理",
     "roleplay": "角色扮演",
+    "video": "影片",
+    "deleteAssistant": "刪除 助手",
     "deleteAssistantMessage": "您確定要刪除此 assistant 嗎？",
     "missingModel": "缺少模型",
     "missingModelMessage": "此 assistant 的預設模型 \"{{modelName}}\" 無法使用。請在編輯表單中下載它或選擇不同的模型。",
     "search": "搜尋",
     "profile": "個人資料",
     "signIn": "登入",
+    "addAssistant": "新增 助手",
     "signInToAccessLibrary": "登入以從 hub.drsai.app 存取您的資料庫",
     "signOut": "登出",
     "signOutConfirmation": "您確定要登出嗎？",
@@ -1386,6 +1332,14 @@
     "signInDescription": "存取您的資料庫、建立私人 助手 並在裝置間同步",
     "searchAllAssistants": "搜尋所有 助手...",
     "deleteAssistantConfirmation": "您確定要刪除 \"{{assistantName}}\" 嗎？",
+    "filters": {
+      "all": "全部",
+      "myAssistants": "我的 助手",
+      "local": "本地",
+      "video": "影片",
+      "free": "免費",
+      "premium": "高級"
+    },
     "labels": {
       "free": "免費",
       "premium": "高級",
@@ -1400,7 +1354,336 @@
       "oldest": "最舊的",
       "rating": "最高評級",
       "popular": "最受歡迎"
+    },
+    "assistantDetailSheet": {
+      "by": "由",
+      "unknown": "未知",
+      "rating": "評級",
+      "reviews": "評論",
+      "created": "新建",
+      "description": "描述",
+      "noDescriptionAvailable": "暫無描述。",
+      "categories": "類別",
+      "tags": "標籤",
+      "systemPrompt": "系統提示詞",
+      "downloaded": "已下載",
+      "success": "成功",
+      "assistantAddedToCollection": "助手 已新增至您的收藏！",
+      "error": "錯誤",
+      "failedToLoadDetails": "載入 assistant 詳情失敗",
+      "failedToDownload": "下載 assistant 失敗",
+      "premiumAssistantMessage": "這是高級 助手。\n• 如果您已使用您的 Drshub 帳戶解鎖它，只需登入即可存取完整詳細資訊。\n• 還未解鎖？請前往 hub.drsai.app 應用程式了解更多。",
+      "notAvailable": "不適用",
+      "buyOnDrshub": "在 Drshub 上購買",
+      "finalizingPurchase": "正在完成您的購買…",
+      "processingPurchase": "處理中 — 稍後將解鎖。",
+      "checkoutSessionExpired": "您的連線已過期。請重新登入以繼續。",
+      "signInAgain": "重新登入",
+      "assistantNotAvailable": "此 assistant 目前無法購買。",
+      "checkoutFailed": "發生錯誤。請重試。"
+    },
+    "emptyLocal": "還沒有助手。\n使用 + 按鈕建立您的第一個助手！",
+    "emptyFiltered": "找不到助手。\n請嘗試調整篩選條件或搜尋。"
+  },
+  "validation": {
+    "nameRequired": "名稱為必填",
+    "systemPromptRequired": "系統提示詞是必須的",
+    "worldRequired": "世界為必填",
+    "locationRequired": "位置為必填",
+    "aiRoleRequired": "AI 的角色為必填",
+    "userRoleRequired": "使用者角色為必填",
+    "situationRequired": "情境為必填",
+    "toneStyleRequired": "語氣／風格為必填"
+  },
+  "camera": {
+    "permissionTitle": "需要相機權限",
+    "permissionMessage": "DRS AI 需要存取相機，以分析影像",
+    "requestingPermission": "請求相機權限中...",
+    "noDevice": "未偵測到相機裝置",
+    "errorTitle": "相機錯誤",
+    "errorMessage": "拍攝照片時發生錯誤",
+    "flip": "翻轉",
+    "analyzing": "正在分析影像...",
+    "startCamera": "啟動相機",
+    "stopCamera": "停止相機",
+    "promptPlaceholder": "你想知道這張圖片的什麼內容？",
+    "takePhoto": "相機"
+  },
+  "video": {
+    "permissionTitle": "需要相機權限",
+    "permissionMessage": "DRS AI 需要使用相機，以便進行影片分析",
+    "requestingPermission": "請求相機權限中...",
+    "noDevice": "未偵測到相機裝置",
+    "errorTitle": "相機錯誤",
+    "errorMessage": "相機發生錯誤",
+    "flip": "翻轉",
+    "analyzing": "正在分析影片...",
+    "startCamera": "啟動相機",
+    "stopCamera": "停止相機",
+    "promptPlaceholder": "你想知道這部影片的什麼內容？",
+    "captureInterval": "捕捉間隔",
+    "captureIntervalUnit": "毫秒",
+    "liveCommentary": "即時解說",
+    "emptyPlaceholder": {
+      "title": "歡迎來到 Lookie",
+      "subtitle": "私密本地即時影片分析",
+      "experimentalNotice": "這是一個實驗性功能。準確度取決於所選模型，速度取決於您的設備規格，並且某些模型可能無法正常運作。",
+      "howToUse": "如何使用：",
+      "step1": "• 可選：編輯提示詞以引導分析",
+      "step2": "• 點擊相機按鈕開始即時影片分析",
+      "step3": "• 調整相機運作時的快照頻率",
+      "step4": "• 切換到其他 assistant 以進行正常文字聊天"
+    },
+    "defaultPrompt": "你看到了什麼？",
+    "multimodalTitle": "未啟用多模態",
+    "multimodalMessage": "此模型不支援圖像分析。請載入多模態模型。",
+    "checkSupportError": "檢查模型是否支援圖像失敗。"
+  },
+  "screenTitles": {
+    "chat": "聊天",
+    "models": "模型",
+    "assistants": "助手 (實驗)",
+    "benchmark": "基準測試",
+    "settings": "設定",
+    "appInfo": "應用程式資訊",
+    "testCompletion": "測試完成"
+  },
+  "chat": {
+    "conversationReset": "對話已重置！",
+    "modelNotLoaded": "模型尚未載入。請先初始化模型。",
+    "completionFailed": "完成失敗： ",
+    "toolCallTruncated": "工具呼叫中斷 — 模型可能已達到空間限制。請嘗試使用更大的上下文或更小的請求。",
+    "speculativeInitFailed": "此裝置無法為此模型啟動推測解碼，很可能是草稿內容的記憶體不足。請在「設定 → 進階設定」中關閉推測解碼後再試一次。",
+    "loadingModel": "正在載入模型…",
+    "typeYourMessage": "在此輸入您的訊息",
+    "load": "載入",
+    "goToModels": "前往模型",
+    "readyToChat": "準備聊天？載入上一次使用的模型。",
+    "pleaseLoadModel": "載入模型以聊天。",
+    "multimodalNotEnabled": "此模型未啟用多模態功能。圖片將會顯示，但不會被 AI 處理。",
+    "cannotSendWithoutModel": "請先載入模型",
+    "toolCompatWarning": "本模型可能不支援工具呼叫。結果可能不可靠。",
+    "softCapWarning": "為獲得最佳表現，請開始一個新的聊天室。",
+    "contextWarning": "此對話內容過長，可能很快就會達到上限。",
+    "contextRemoteHedged": "此回覆可能被截斷。請嘗試重新發送或縮短請求。",
+    "contextFull": "對話內容已達上限。請開始新對話或增加內容長度。",
+    "contextFullRemote": "對話空間不足。請開始新對話。",
+    "contextFullEscalated": "內容仍已達上限。請開始新對話，或增加內容長度以繼續進行。",
+    "contextFullHeavyTalent": "對話內容已達上限 — {{talent}} 傾向於需要更多內容。請開始新對話或增加內容長度。",
+    "contextBannerDismiss": "略過",
+    "contextNewChat": "新對話",
+    "contextIncrease": "增加內容長度",
+    "contextMoreRoom": "更多空間",
+    "increaseContextTitle": "給此對話更多空間",
+    "increaseContextBody": "空間是模型的運作記憶 — 指它一次能記住此對話的內容量。更多的空間代表在回覆被截斷前可以進行更長的對話。",
+    "increaseContextTokensUnit": "Token",
+    "increaseContextWordsRam": "約 {{words}} 字 · 約 {{ram}} RAM",
+    "increaseContextFitsChip": "符合要求",
+    "increaseContextTightChip": "空間不足",
+    "increaseContextWontFitChip": "無法容納",
+    "increaseContextFitsStatus": "此裝置運行順暢。",
+    "increaseContextFitsUnconstrainedStatus": "充足的 RAM — 僅受限於模型。",
+    "increaseContextTightStatus": "超過 ~{{tokens}} 後，此裝置可能會記憶不足並變慢。系統仍可嘗試執行。",
+    "increaseContextWontFitStatus": "約 {{tokens}} 可能無法容納於此裝置的記憶體中。請選擇較小的尺寸。",
+    "increaseContextModelMax": "{{tokens}} · 模型最大值",
+    "increaseContextHedge": "重新載入需要幾秒鐘。您的對話內容不會遺失。",
+    "increaseContextAdvanced": "進階",
+    "increaseContextAdvancedBody": "此對話的內容長度：{{from}} → {{to}} tokens（模型最大值 {{max}}）。裝置限制僅為預估值，且隨著較大的內容成功載入時會增加。",
+    "increaseContextSliderA11yLabel": "內容長度",
+    "increaseContextSliderA11yValue": "{{tokens}} 詞元",
+    "increaseContextConfirmSize": "設為 {{size}}",
+    "increaseContextReloadingShort": "重新載入中…",
+    "increaseContextNoFitBody": "此裝置無法容納該模型的較大內容長度。請開始新對話以繼續。",
+    "increaseContextCancel": "現在不用",
+    "increaseContextReloading": "正在以較大的內容長度重新載入模型…",
+    "increaseContextSuccess": "內容長度已增加至 {{target}} 詞元。",
+    "increaseContextFailure": "無法增加內容長度。您的先前設定已恢復。",
+    "assistantLoadHint": "此夥伴傾向於需要超過目前內容長度所允許的空間。",
+    "generatingPreview": "正在生成預覽... ({{tokens}} 個詞元)",
+    "generatingPreviewPending": "正在生成預覽…",
+    "toolUsedChip": "使用了 {{name}}",
+    "toolErrorBlock": "{{name}} 失敗",
+    "webSearch": {
+      "searched": "已搜尋：{{query}}",
+      "noResults": "沒有結果",
+      "noResultsFor": "找不到 {{query}} 的結果",
+      "resultsCount": "{{count}} 筆結果",
+      "resultsCountOne": "1 筆結果",
+      "searchResultsTitle": "搜尋結果",
+      "showResultsAccessibilityLabel": "顯示 {{query}} 的網路搜尋結果",
+      "openLinkError": "無法開啟此連結。"
     }
+  },
+  "htmlPreview": {
+    "defaultTitle": "預覽",
+    "showPreview": "顯示渲染的預覽",
+    "showCode": "顯示 HTML 程式碼",
+    "copyHtml": "複製 HTML",
+    "closePreview": "關閉預覽",
+    "openFullscreen": "全螢幕開啟：{{title}}"
+  },
+  "benchmark": {
+    "title": "基準",
+    "modelSelector": {
+      "prompt": "選擇模型",
+      "noModels": "尚未下載任何模型"
+    },
+    "buttons": {
+      "advancedSettings": "進階設定",
+      "startTest": "開始測試",
+      "runningTest": "正在執行測試…",
+      "clearAll": "全部清除",
+      "done": "已完成",
+      "cancel": "取消",
+      "delete": "刪除",
+      "share": "分享",
+      "sharing": "正在分享…",
+      "viewRawData": "查看原始資料",
+      "hideRawData": "隱藏原始資料"
+    },
+    "messages": {
+      "pleaseSelectModel": "請先選擇並初始化模型",
+      "testWarning": "注意：測試對於較大的模型可能需要 2–5 分鐘，且一旦啟動後無法中斷。",
+      "keepScreenOpen": "請保持此畫面開啟。",
+      "initializingModel": "正在初始化模型…",
+      "modelMaxValue": "(最大值：{{maxValue}})"
+    },
+    "dialogs": {
+      "advancedSettings": {
+        "title": "進階設定",
+        "testProfile": "測試配置檔案",
+        "customParameters": "自訂參數",
+        "description": "為特定測試場景微調基準參數。"
+      },
+      "deleteResult": {
+        "title": "刪除結果",
+        "message": "您確定要刪除此基準測試結果嗎？"
+      },
+      "clearAllResults": {
+        "title": "清除所有結果",
+        "message": "您確定要刪除所有基準測試結果嗎？"
+      },
+      "shareResults": {
+        "title": "分享基準測試結果",
+        "sharedDataTitle": "共享資料包含：",
+        "deviceAndModelInfo": "• 裝置規格與模型資訊",
+        "performanceMetrics": "• 測量值",
+        "dontShowAgain": "不要再顯示此訊息"
+      }
+    },
+    "sections": {
+      "testResults": "測試結果"
+    },
+    "benchmarkResultCard": {
+      "modelMeta": {
+        "params": "參數"
+      },
+      "config": {
+        "title": "基準測試配置",
+        "format": "PP: {{pp}} • TG: {{tg}} • PL: {{pl}} • Rep: {{nr}}"
+      },
+      "modelSettings": {
+        "title": "模型設定",
+        "context": "上下文：{{context}}",
+        "batch": "批次：{{batch}}",
+        "ubatch": "U 批次：{{ubatch}}",
+        "cpuThreads": "CPU 執行緒：{{threads}}",
+        "gpuLayers": "GPU 層數：{{layers}}",
+        "device": "設備：{{device}}",
+        "flashAttentionEnabled": "已啟用 Flash Attention",
+        "flashAttentionDisabled": "已停用 Flash Attention",
+        "cacheTypes": "快取類型：{{cacheK}} / {{cacheV}}"
+      },
+      "results": {
+        "promptProcessing": "提示詞處理",
+        "tokenGeneration": "詞元生成",
+        "totalTime": "總耗時",
+        "peakMemory": "峰值記憶體",
+        "tokensPerSecond": "t/s"
+      },
+      "actions": {
+        "deleteButton": " ",
+        "submittedText": "✓ 已共享至",
+        "leaderboardLink": "AI 手機排行榜 ↗",
+        "cannotShare": "無法共享",
+        "cannotShareTooltip": "本地模型結果無法共享",
+        "submitButton": "提交至排行榜",
+        "viewLeaderboard": "查看排行榜 ↗"
+      },
+      "errors": {
+        "networkRetry": "檢查連線並重試",
+        "appCheckRetry": "重試提交",
+        "serverRetry": "稍後再試",
+        "genericRetry": "重試",
+        "failedToSubmit": "提交基準測試失敗"
+      }
+    },
+    "deviceInfoCard": {
+      "title": "裝置資訊",
+      "deviceSummary": "{{brand}} {{model}} • {{systemName}} {{systemVersion}}",
+      "coreSummary": "{{cores}} 核心 • {{memory}}",
+      "sections": {
+        "basicInfo": "基本資訊",
+        "cpuDetails": "CPU 詳情",
+        "gpuDetails": "GPU 詳情",
+        "hexagonDetails": "Hexagon DSP",
+        "appInfo": "應用程式資訊"
+      },
+      "fields": {
+        "architecture": "架構",
+        "totalMemory": "總記憶體",
+        "deviceId": "裝置 ID",
+        "cpuCores": "CPU 核心",
+        "cpuModel": "CPU 型號",
+        "chipset": "晶片組",
+        "instructions": "指令集",
+        "version": "版本",
+        "gpuType": "GPU 型號",
+        "gpuRenderer": "渲染器",
+        "gpuVendor": "製造商",
+        "metalSupport": "Metal 支援",
+        "openclSupport": "OpenCL 支援",
+        "openclRequirement": "需要 i8mm 和 dotprod"
+      },
+      "instructions": {
+        "format": "FP16: {{fp16}}, DotProd: {{dotProd}}, SVE: {{sve}}, I8MM: {{i8mm}}",
+        "yes": "✓",
+        "no": "✗"
+      },
+      "versionFormat": "{{version}} ({{buildNumber}})"
+    },
+    "presetDefault": "預設",
+    "presetFast": "快速",
+    "presetCustom": "自訂",
+    "params": {
+      "pp": "提示詞處理的詞元數量（最大值：實體批次大小）",
+      "tg": "文字生成的詞元數量",
+      "pl": "管線平行大小",
+      "nr": "重複次數"
+    }
+  },
+  "errors": {
+    "unexpectedError": "發生了意外錯誤",
+    "hfAuthenticationError": "Hugging Face 驗證錯誤：Token 遺失或無效",
+    "hfAuthenticationErrorSearch": "Hugging Face 驗證錯誤：token 無效",
+    "authenticationError": "驗證錯誤：Token 遺失或無效",
+    "hfAuthorizationError": "抱歉，Hugging Face 授權錯誤：沒有存取此資源的權限",
+    "authorizationError": "授權錯誤：沒有存取此資源的權限",
+    "hfServerError": "Hugging Face 伺服器錯誤：API 伺服器問題",
+    "serverError": "伺服器錯誤：API 伺服器問題",
+    "hfNetworkTimeout": "網路逾時：向 Hugging Face 發出的請求完成時間過長",
+    "networkTimeout": "網路逾時：請求完成時間過長",
+    "hfNetworkError": "網路錯誤：無法連接到 Hugging Face API",
+    "networkError": "網路錯誤：無法連接到 API",
+    "downloadSetupFailedTitle": "下載設定失敗",
+    "downloadSetupFailedMessage": "準備模型下載失敗：{{message}}",
+    "cameraErrorTitle": "相機錯誤",
+    "cameraErrorMessage": "拍照失敗",
+    "galleryErrorTitle": "圖庫錯誤",
+    "galleryErrorMessage": "選擇圖片失敗"
+  },
+  "simulator": {
+    "cameraNotAvailable": "模擬器中沒有相機可用。請使用實體設備。"
   },
   "voiceAndSpeech": {
     "sectionTitle": "語音與朗讀",
@@ -1411,39 +1694,6 @@
     "voicesTitle": "語音",
     "voicesEmptyHint": "點擊任何語音進行安裝並使用。或者選擇系統內建語音——這些語音將隨時可用。",
     "supertonicStepsLabel": "品質 (擴散步數)",
-    "toggleAutoSpeakLabel": "切換自動朗讀",
-    "openSettingsLabel": "TTS 設定",
-    "playMessageLabel": "播放訊息",
-    "stopMessageLabel": "停止訊息",
-    "autoSpeakLabel": "自動朗讀回應",
-    "autoSpeakDescription": "收到新回覆時，自動朗讀。",
-    "engineChipKitten": "Kitten",
-    "engineChipKokoro": "Kokoro",
-    "engineChipSupertonic": "Supertonic",
-    "engineChipSystem": "系統",
-    "stepsCount": "{{steps}} 步",
-    "engineKittenTagline": "佔用最小。穩定可靠。最適合舊型裝置。",
-    "engineKokoroTagline": "最高品質。啟動較慢。部分語音可能無法在所有裝置上運作。",
-    "engineSupertonicTagline": "最快啟動。消耗更多記憶體 (RAM)。偶爾可能會漏字。",
-    "engineSystemTagline": "內建作業系統語音。隨時可用，無需安裝。",
-    "engineSystemTitleIos": "iOS 語音",
-    "engineSystemTitleAndroid": "Android 語音",
-    "engineSystemTier": "隨時可用",
-    "engineTierLightest": "最輕量",
-    "engineTierBestQuality": "最佳品質",
-    "engineTierFastestStart": "最快啟動",
-    "engineSpecsLine": "{{voices}} 種聲音  ·  {{sizeMb}} MB  ·  約 {{ramMb}} MB RAM",
-    "engineSystemSpecsLine": "{{voices}} 種語音",
-    "engineRemoveTitle": "移除 {{engineTitle}}？",
-    "engineRemoveBody": "可釋放約 {{sizeMb}} MB 的裝置空間。",
-    "engineRemoveCancel": "取消",
-    "engineRemoveConfirm": "移除",
-    "engineInstallCta": "安裝 · {{sizeMb}} MB",
-    "engineDownloadingLabel": "下載中…  {{pct}}%  ·  {{mbDone}} / {{sizeMb}} MB",
-    "engineRetryCta": "再試一次",
-    "voicesEmptyState": "找不到任何語音。",
-    "kokoroDeviceNote": "部分語音可能無法在所有裝置上運作。",
-    "insufficientStorage": "空間不足 — 請釋放 {{requiredMb}} MB 以安裝此引擎（目前剩餘 {{freeMb}} MB）。",
     "supertonicLanguageLabel": "語言",
     "supertonicLanguageAuto": "自動",
     "supertonicLanguageSheetTitle": "語言",
@@ -1480,54 +1730,48 @@
       "tr": "土耳其語",
       "uk": "烏克蘭語",
       "vi": "越南語"
-    }
-  },
-  "htmlPreview": {
-    "defaultTitle": "預覽",
-    "showPreview": "顯示渲染的預覽",
-    "showCode": "顯示 HTML 程式碼",
-    "copyHtml": "複製 HTML",
-    "closePreview": "關閉預覽",
-    "openFullscreen": "全螢幕開啟：{{title}}"
+    },
+    "toggleAutoSpeakLabel": "切換自動朗讀",
+    "openSettingsLabel": "TTS 設定",
+    "playMessageLabel": "播放訊息",
+    "stopMessageLabel": "停止訊息",
+    "autoSpeakLabel": "自動朗讀回應",
+    "autoSpeakDescription": "收到新回覆時，自動朗讀。",
+    "engineChipKitten": "Kitten",
+    "engineChipKokoro": "Kokoro",
+    "engineChipSupertonic": "Supertonic",
+    "engineChipSystem": "系統",
+    "stepsCount": "{{steps}} 步",
+    "engineKittenTagline": "佔用最小。穩定可靠。最適合舊型裝置。",
+    "engineKokoroTagline": "最高品質。啟動較慢。部分語音可能無法在所有裝置上運作。",
+    "engineSupertonicTagline": "最快啟動。消耗更多記憶體 (RAM)。偶爾可能會漏字。",
+    "engineSystemTagline": "內建作業系統語音。隨時可用，無需安裝。",
+    "engineSystemTitleIos": "iOS 語音",
+    "engineSystemTitleAndroid": "Android 語音",
+    "engineSystemTier": "隨時可用",
+    "engineTierLightest": "最輕量",
+    "engineTierBestQuality": "最佳品質",
+    "engineTierFastestStart": "最快啟動",
+    "engineSpecsLine": "{{voices}} 種聲音  ·  {{sizeMb}} MB  ·  約 {{ramMb}} MB RAM",
+    "engineSystemSpecsLine": "{{voices}} 種語音",
+    "engineRemoveTitle": "移除 {{engineTitle}}？",
+    "engineRemoveBody": "可釋放約 {{sizeMb}} MB 的裝置空間。",
+    "engineRemoveCancel": "取消",
+    "engineRemoveConfirm": "移除",
+    "engineInstallCta": "安裝 · {{sizeMb}} MB",
+    "engineDownloadingLabel": "下載中…  {{pct}}%  ·  {{mbDone}} / {{sizeMb}} MB",
+    "engineRetryCta": "再試一次",
+    "voicesEmptyState": "找不到任何語音。",
+    "kokoroDeviceNote": "部分語音可能無法在所有裝置上運作。",
+    "insufficientStorage": "空間不足 — 請釋放 {{requiredMb}} MB 以安裝此引擎（目前剩餘 {{freeMb}} MB）。"
   },
   "onboarding": {
     "back": "返回",
     "skip": "跳過",
     "skipForNow": "暫時跳過",
-    "screen6": {
-      "recommended": "建議",
-      "downloaded": "已下載",
-      "modelTier": {
-        "quick": "快速",
-        "balanced": "平衡",
-        "best": "最佳"
-      },
-      "subtitleTemplate": "{{name}} 透過手機上的小型 AI 模型進行推理——請選擇適合的選項。",
-      "assistant": {
-        "pip": {
-          "body": "我們為您找到了完美的 助手 - 一位親切的日常伴侶。它足夠聰明以應對大多數需求，且運作輕巧，適合任何手機使用。"
-        },
-        "codie": {
-          "body": "認識 Codie — 您的本地配對程式設計師。它能讀取與編寫程式碼，並在不離開手機的情況下解釋各種棘手的細節。"
-        },
-        "sage": {
-          "body": "Sage 很有耐心且充滿好奇心，會引導您逐步實踐想法。它是您隨身攜帶的學習夥伴。"
-        },
-        "echo": {
-          "body": "Echo 是一位多才多藝的角色扮演夥伴 — 它能維持人設、描繪場景，並隨您的故事走向而變幻。"
-        },
-        "muse": {
-          "body": "Muse 協助您進行創作。它能提供措辭建議、掌握節奏，並維持您的語調。"
-        }
-      },
-      "cta": "下載 {{name}}",
-      "ctaTemplate": "下載 {{name}} ({{size}})",
-      "useTemplate": "使用 {{name}}",
-      "deviceRamSuffix": "GB RAM",
-      "deviceFreeSuffix": "GB 剩餘空間"
-    },
     "splash": {
-      "brand": "DRS AI"
+      "brand": "DRS AI",
+      "tagline": "您的私密 AI，就在您的裝置上"
     },
     "screen1": {
       "title": "認識您的 assistant。",
@@ -1578,6 +1822,38 @@
         "roleplay": "角色、場景",
         "creative_writing": "故事、創意、草稿",
         "else": "稍後可在應用程式中瀏覽所有 助手"
+      }
+    },
+    "screen6": {
+      "cta": "下載 {{name}}",
+      "ctaTemplate": "下載 {{name}} ({{size}})",
+      "useTemplate": "使用 {{name}}",
+      "deviceRamSuffix": "GB RAM",
+      "deviceFreeSuffix": "GB 剩餘空間",
+      "recommended": "建議",
+      "downloaded": "已下載",
+      "modelTier": {
+        "quick": "快速",
+        "balanced": "平衡",
+        "best": "最佳"
+      },
+      "subtitleTemplate": "{{name}} 透過手機上的小型 AI 模型進行推理——請選擇適合的選項。",
+      "assistant": {
+        "pip": {
+          "body": "我們為您找到了完美的 助手 - 一位親切的日常伴侶。它足夠聰明以應對大多數需求，且運作輕巧，適合任何手機使用。"
+        },
+        "codie": {
+          "body": "認識 Codie — 您的本地配對程式設計師。它能讀取與編寫程式碼，並在不離開手機的情況下解釋各種棘手的細節。"
+        },
+        "sage": {
+          "body": "Sage 很有耐心且充滿好奇心，會引導您逐步實踐想法。它是您隨身攜帶的學習夥伴。"
+        },
+        "echo": {
+          "body": "Echo 是一位多才多藝的角色扮演夥伴 — 它能維持人設、描繪場景，並隨您的故事走向而變幻。"
+        },
+        "muse": {
+          "body": "Muse 協助您進行創作。它能提供措辭建議、掌握節奏，並維持您的語調。"
+        }
       }
     }
   },

@@ -302,7 +302,7 @@ describe('SystemPromptSection', () => {
   it('includes parameter values in generation prompt', async () => {
     mockGenerate.mockResolvedValueOnce({prompt: 'Generated assistant prompt'});
 
-    const assistantSchema = [];
+    const assistantSchema: ParameterDefinition[] = [];
 
     const {getByText} = render(
       <TestWrapper

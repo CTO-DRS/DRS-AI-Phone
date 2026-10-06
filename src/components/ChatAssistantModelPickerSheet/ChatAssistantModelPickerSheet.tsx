@@ -413,7 +413,7 @@ export const ChatAssistantModelPickerSheet = observer(
           renderItem={renderContent}
           bounces={false}
           showsVerticalScrollIndicator={false}
-          keyExtractor={item => item.id}
+          keyExtractor={(item: (typeof TABS)[0]) => item.id}
           horizontal
           pagingEnabled
           showsHorizontalScrollIndicator={false}

@@ -205,8 +205,8 @@ describe('DownloadManager', () => {
 
     // Get the progress listener directly from the mock
     const progressListener = mockEventEmitter.addListener.mock.calls.find(
-      call => call[0] === 'onDownloadProgress',
-    )[1];
+      (call: unknown[]) => call[0] === 'onDownloadProgress',
+    )![1] as (event: unknown) => void;
 
     // Call the progress listener with a mock event that matches model ID
     progressListener({

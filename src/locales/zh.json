@@ -6,6 +6,7 @@
     "rename": "重命名",
     "reset": "重置",
     "save": "保存",
+    "stop": "停止",
     "update": "更新",
     "error": "错误",
     "export": "导出",
@@ -31,8 +32,10 @@
     "close": "关闭",
     "clear": "全部清除",
     "gallery": "图库",
-    "stop": "停止",
-    "noResults": "没有结果"
+    "noResults": "没有结果",
+    "openDrawer": "打开侧边栏",
+    "openMenu": "打开菜单",
+    "closeMenu": "关闭菜单"
   },
   "settings": {
     "modelInitializationSettings": "模型初始化设置",
@@ -87,6 +90,25 @@
     "useMmapFalse": "禁用",
     "useMmapTrueDescription": "始终使用内存映射以实现更快的加载",
     "useMmapFalseDescription": "当启用权重重新打包时，建议禁用该功能以避免内存使用量翻倍",
+    "weightRepacking": "启用权重重新打包",
+    "weightRepackingDescription": "禁用内存映射时，提示词处理更快，且额外内存开销极小；Token 生成速度不受影响。",
+    "speculativeDecoding": "推测解码",
+    "speculativeDecodingDescription": "使用小型草稿模型（或内置的 MTP 模型）预测 token，加快生成速度。实验性功能。",
+    "speculativeNotMTPCapable": "当前模型不支持推测解码，也没有配对兼容的草稿模型，因此此功能对它保持关闭、不会生效。对于支持的模型，它会自动启用。",
+    "speculativeDraftModel": "草稿模型",
+    "speculativeDraftModelDescription": "为当前模型草拟 token。",
+    "speculativeDraftModelNone": "无（内置 MTP）",
+    "speculativeDraftModelIgnoredOverridden": "当前模型自带草稿模型，因此此选择将被忽略。",
+    "speculativeDraftModelIgnoredIncompatible": "此草稿模型与当前模型不兼容，因此将被忽略。",
+    "speculativeDraftModelIgnoredNotCapable": "此模型不含草稿层，无法用作草稿模型。",
+    "speculativeDraftKeyCacheType": "草稿模型键缓存类型",
+    "speculativeDraftValueCacheType": "草稿模型值缓存类型",
+    "speculativeDraftNGpuLayers": "草稿模型 GPU 层数",
+    "speculativeDraftNGpuLayersDescription": "卸载到 GPU 的草稿模型层数。",
+    "speculativeDraftCacheTypeInactiveDescription": "推测解码运行后即生效。",
+    "ttsAvailability": "文本转语音",
+    "ttsAvailabilityDescription": "朗读助手回复。",
+    "ttsAvailabilityLowMemoryWarning": "您的设备内存不足 — 此功能可能无法稳定运行。",
     "modelLoadingSettings": "模型加载设置",
     "autoOffloadLoad": "自动卸载/加载",
     "autoOffloadLoadDescription": "当 App 在后台时自动卸载模型",
@@ -94,6 +116,12 @@
     "autoNavigateToChatDescription": "开始加载时自动跳转至聊天页面。",
     "appSettings": "App设置",
     "language": "语言",
+    "languageSheetTitle": "语言",
+    "languageSearchPlaceholder": "搜索语言",
+    "languageRestartTitle": "需要重启",
+    "languageRestartMessage": "此语言的界面方向已更改。请重启应用以使其完全生效。",
+    "languageRestartNow": "立即重启",
+    "languageRestartLater": "稍后",
     "darkMode": "深色模式",
     "displayMemoryUsage": "显示内存使用情况",
     "displayMemoryUsageDescription": "在聊天页面中显示内存使用情况。",
@@ -106,6 +134,31 @@
     "importButton": "导入",
     "importSuccess": "成功导入{{count}}个聊天会话。",
     "importError": "导入聊天会话失败，请检查文件格式。",
+    "internetSearch": {
+      "title": "联网搜索",
+      "description": "让 助手 用自己的工具搜索网络。需自备 API 密钥——DRS AI 绝不保存您的密钥，也不会转发您的查询。",
+      "providerLabel": "搜索服务供应商",
+      "providerGated": "即将推出",
+      "keyLabel": "API 密钥",
+      "keyIsSet": "已为 {{provider}} 设置密钥。",
+      "keyNotSet": "尚未为 {{provider}} 设置密钥。",
+      "setKeyButton": "设置密钥",
+      "updateKeyButton": "更新密钥",
+      "clearKeyButton": "清除密钥",
+      "keyInputPlaceholder": "粘贴您的 {{provider}} API 密钥",
+      "keyUpdateError": "无法更新密钥，请重试。",
+      "showKeyAccessibilityLabel": "显示 API 密钥",
+      "hideKeyAccessibilityLabel": "隐藏 API 密钥",
+      "resultCountLabel": "每次搜索的结果数",
+      "resultCountDescription": "结果越少，模型的上下文就能保留更多空间。",
+      "consentTitle": "搜索会离开您的设备",
+      "consentDescription": "当 助手 搜索网络时，您的查询会通过互联网发送给所选服务商。当 助手 读取网页时，如果所选服务商没有自带的阅读器，网址和网页内容可能会改为发送给默认阅读服务（r.jina.ai）。密钥和查询绝不会发送给 DRS AI。",
+      "consentAccept": "我已了解",
+      "consentRequired": "同意以上声明后，可设置密钥并启用搜索。",
+      "consentGivenTitle": "联网搜索已启用",
+      "consentGivenDescription": "如上所述，查询和网页读取可能会离开您的设备。",
+      "consentRevoke": "撤销"
+    },
     "apiSettingsTitle": "API设置",
     "huggingFaceTokenLabel": "Hugging Face令牌",
     "tokenIsSetDescription": "令牌已设置，访问受限模型时需要。",
@@ -122,11 +175,14 @@
     "clearCachesSuccess": "成功清除{{count}}个缓存文件。",
     "clearCachesError": "清除缓存失败，请重试。",
     "noCachesToClear": "没有可清除的缓存。",
-    "weightRepacking": "启用权重重新打包",
-    "weightRepackingDescription": "禁用内存映射时，提示词处理更快，且额外内存开销极小；Token 生成速度不受影响。",
     "serverName": "服务器名称",
     "serverUrl": "服务器URL",
     "serverUrlPlaceholder": "例如：http://192.168.1.100:1234",
+    "requestTimeout": "请求超时（秒）",
+    "requestTimeoutPlaceholder": "可选 - 留空则使用默认值",
+    "requestTimeoutHelp": "等待服务器响应的最长时间，留空则使用默认值。",
+    "serverType": "服务器类型",
+    "serverTypeHelp": "已自动检测；如有误请手动更改。",
     "apiKey": "API 密钥",
     "apiKeyPlaceholder": "可选（使用 OpenAI/Groq 时必填）",
     "apiKeyDescription": "安全存储在设备上。",
@@ -157,55 +213,7 @@
     "retryConnection": "重试",
     "enterUrlManually": "手动输入URL",
     "manageServers": "管理服务器",
-    "ttsAvailability": "文本转语音",
-    "ttsAvailabilityDescription": "朗读助手回复。",
-    "ttsAvailabilityLowMemoryWarning": "您的设备内存不足 — 此功能可能无法稳定运行。",
-    "requestTimeout": "请求超时（秒）",
-    "requestTimeoutHelp": "等待服务器响应的最长时间，留空则使用默认值。",
-    "requestTimeoutPlaceholder": "可选 - 留空则使用默认值",
-    "serverType": "服务器类型",
-    "serverTypeHelp": "已自动检测；如有误请手动更改。",
-    "internetSearch": {
-      "title": "联网搜索",
-      "description": "让 助手 用自己的工具搜索网络。需自备 API 密钥——DRS AI 绝不保存您的密钥，也不会转发您的查询。",
-      "providerLabel": "搜索服务供应商",
-      "providerGated": "即将推出",
-      "keyLabel": "API 密钥",
-      "keyIsSet": "已为 {{provider}} 设置密钥。",
-      "keyNotSet": "尚未为 {{provider}} 设置密钥。",
-      "setKeyButton": "设置密钥",
-      "updateKeyButton": "更新密钥",
-      "clearKeyButton": "清除密钥",
-      "keyInputPlaceholder": "粘贴您的 {{provider}} API 密钥",
-      "keyUpdateError": "无法更新密钥，请重试。",
-      "showKeyAccessibilityLabel": "显示 API 密钥",
-      "hideKeyAccessibilityLabel": "隐藏 API 密钥",
-      "resultCountLabel": "每次搜索的结果数",
-      "resultCountDescription": "结果越少，模型的上下文就能保留更多空间。",
-      "consentTitle": "搜索会离开您的设备",
-      "consentDescription": "当 助手 搜索网络时，您的查询会通过互联网发送给所选服务商。当 助手 读取网页时，如果所选服务商没有自带的阅读器，网址和网页内容可能会改为发送给默认阅读服务（r.jina.ai）。密钥和查询绝不会发送给 DRS AI。",
-      "consentAccept": "我已了解",
-      "consentRequired": "同意以上声明后，可设置密钥并启用搜索。",
-      "consentGivenTitle": "联网搜索已启用",
-      "consentGivenDescription": "如上所述，查询和网页读取可能会离开您的设备。",
-      "consentRevoke": "撤销"
-    },
-    "languageSheetTitle": "语言",
-    "languageSearchPlaceholder": "搜索语言",
-    "speculativeDecoding": "推测解码",
-    "speculativeDecodingDescription": "使用小型草稿模型（或内置的 MTP 模型）预测 token，加快生成速度。实验性功能。",
-    "speculativeNotMTPCapable": "当前模型不支持推测解码，也没有配对兼容的草稿模型，因此此功能对它保持关闭、不会生效。对于支持的模型，它会自动启用。",
-    "speculativeDraftModel": "草稿模型",
-    "speculativeDraftModelDescription": "为当前模型草拟 token。",
-    "speculativeDraftModelNone": "无（内置 MTP）",
-    "speculativeDraftModelIgnoredOverridden": "当前模型自带草稿模型，因此此选择将被忽略。",
-    "speculativeDraftModelIgnoredIncompatible": "此草稿模型与当前模型不兼容，因此将被忽略。",
-    "speculativeDraftModelIgnoredNotCapable": "此模型不含草稿层，无法用作草稿模型。",
-    "speculativeDraftKeyCacheType": "草稿模型键缓存类型",
-    "speculativeDraftValueCacheType": "草稿模型值缓存类型",
-    "speculativeDraftNGpuLayers": "草稿模型 GPU 层数",
-    "speculativeDraftNGpuLayersDescription": "卸载到 GPU 的草稿模型层数。",
-    "speculativeDraftCacheTypeInactiveDescription": "推测解码运行后即生效。"
+    "exportLegacyError": "导出旧版聊天会话失败。文件可能不存在。"
   },
   "memory": {
     "shortWarning": "内存警告",
@@ -368,6 +376,15 @@
         "sortLikes": "点赞数"
       }
     },
+    "hubRun": {
+      "title": "下载模型",
+      "resolving": "正在加载模型详情…",
+      "cancel": "取消",
+      "retry": "重试",
+      "invalidLinkTitle": "无效链接",
+      "invalidLinkMessage": "此 Hugging Face 链接无效，或此模型/文件不存在。",
+      "resolveError": "无法加载模型详情，请检查您的网络连接并重试。"
+    },
     "modelCard": {
       "alerts": {
         "deleteTitle": "删除模型",
@@ -385,6 +402,9 @@
       "labels": {
         "skills": "技能: ",
         "vision": "视觉",
+        "visionSupported": "支持",
+        "visionNotSupported": "不支持",
+        "visionUnknown": "未知",
         "capabilities": "功能。",
         "modelName": "模型名称",
         "contextLength": "上下文长度",
@@ -393,9 +413,6 @@
         "requiresProjectionModel": "需要投影模型",
         "downloadProjectionModel": "下载投影模型",
         "viewModelCardOnHuggingFace": "在 Hugging Face 上查看模型卡片",
-        "visionSupported": "支持",
-        "visionNotSupported": "不支持",
-        "visionUnknown": "未知",
         "draftOnlyReason": "仅草稿模型。请在“设置 → 推测解码”中选择它。"
       },
       "accessibility": {
@@ -461,14 +478,195 @@
       "mtp": "推测解码 (MTP)",
       "mtpDraft": "推测草稿"
     },
-    "hubRun": {
-      "title": "下载模型",
-      "resolving": "正在加载模型详情…",
-      "cancel": "取消",
-      "retry": "重试",
-      "invalidLinkTitle": "无效链接",
-      "invalidLinkMessage": "此 Hugging Face 链接无效，或此模型/文件不存在。",
-      "resolveError": "无法加载模型详情，请检查您的网络连接并重试。"
+    "emptyTitle": "暂无模型",
+    "emptyHint": "点击 + 从 Hugging Face 下载、添加本地模型或连接远程服务器。"
+  },
+  "modelsHub": {
+    "title": "模型",
+    "subtitle": "发现、下载并管理您的应用可运行的所有模型。",
+    "searchPlaceholder": "搜索模型、发布者、任务…",
+    "retry": "重试",
+    "notAvailable": "不可用",
+    "noDownloadableFile": "此仓库中没有可下载的 GGUF 文件",
+    "downloadStarted": "下载已开始",
+    "seeAll": "查看全部",
+    "exploreAction": "探索模型",
+    "emptyTitle": "尚未安装任何模型",
+    "emptyHint": "浏览模型中心，下载适合您设备与需求的模型。",
+    "fitScore": "{score}/100 适配度",
+    "installedFromRepo": "已从此仓库安装",
+    "installedBadge": "已安装",
+    "noFiles": "此仓库未发布任何 GGUF 文件。",
+    "visionFilesTitle": "视觉投影文件（mmproj）",
+    "visionFilesHint": "这些小文件为对应的文本模型添加图像理解能力；下载视觉模型时会自动下载。",
+    "downloadFile": "下载文件",
+    "downloadShort": "获取",
+    "version": "版本",
+    "engineUnsupportedShort": "无法在本地运行",
+    "engineYes": "GGUF — 可在本地运行（llama.cpp）",
+    "engineNo": "本地引擎不支持",
+    "capabilitiesTitle": "能力",
+    "categoryEngineNotice": "该分类列出的是真实仓库，但本地 GGUF 引擎目前尚无法执行这类模型，因此此处已禁用下载。没有任何模拟 — 待引擎支持后，这些模型即可下载。",
+    "categoryInstalledSection": "您在此分类下的模型",
+    "categoryRemoteSection": "在 HuggingFace 上发现",
+    "featuredTitle": "精选模型",
+    "recommendedTitle": "为您设备推荐",
+    "recentTitle": "最近添加",
+    "favoritesTitle": "收藏",
+    "installedTitle": "已安装",
+    "wifiOnly": "仅限 Wi-Fi",
+    "categoriesTitle": "分类",
+    "installedCount": "已安装 {count} 个",
+    "discover": "发现",
+    "device": {
+      "ram": "RAM",
+      "storage": "可用存储空间",
+      "cpu": "CPU",
+      "gpu": "GPU",
+      "gpuOk": "已加速",
+      "gpuNo": "仅 CPU"
+    },
+    "compat": {
+      "excellent": "兼容性极佳",
+      "good": "兼容性良好",
+      "limited": "兼容性有限",
+      "notRecommended": "不推荐",
+      "unknown": "兼容性未知"
+    },
+    "reasons": {
+      "engineUnsupported": "此类模型无法在本地 GGUF 引擎上运行",
+      "engineSupported": "可在本地 GGUF 引擎上运行",
+      "memoryComfortable": "内存占用将很充裕",
+      "memoryOk": "内存占用可以接受",
+      "memoryTight": "内存将比较吃紧 — 预期运行速度较慢",
+      "memoryInsufficient": "此设备的 RAM 不足以加载该模型",
+      "memoryUnknown": "无法根据仓库数据估算内存需求",
+      "storagePlenty": "可用存储空间充足",
+      "storageTight": "安装后存储空间将比较紧张",
+      "storageInsufficient": "可用存储空间不足",
+      "storageUnknown": "无法读取可用存储空间",
+      "cpuGood": "CPU 核心数充足，可快速推理",
+      "cpuOk": "CPU 可以运行，速度尚可",
+      "cpuLimited": "CPU 核心较少 — 推理速度会较慢",
+      "cpuUnknown": "无法读取 CPU 核心数",
+      "gpuSupported": "支持 GPU 加速",
+      "gpuUnsupported": "无 GPU 加速 — 将在 CPU 上运行",
+      "gpuUnknown": "无法确定 GPU 支持情况"
+    },
+    "overviewTemplate": "一款由 {author} 发布的{categories}模型，参数量约 {params}，以 GGUF 文件形式分发，可在此设备上进行本地离线推理。",
+    "overviewBlocked": "这是真实存在的仓库，但其模型类型无法由本地引擎执行，因此无法在此下载。",
+    "statsTemplate": "HuggingFace 上：{downloads} 次下载 · {likes} 个赞。",
+    "tech": {
+      "architecture": "架构",
+      "parameters": "参数",
+      "contextLength": "上下文长度",
+      "formats": "格式",
+      "quantization": "量化",
+      "fileCount": "GGUF 文件",
+      "version": "修订版本（sha）",
+      "lastModified": "最后更新",
+      "license": "许可证",
+      "engine": "引擎"
+    },
+    "capabilities": {
+      "offline": "离线",
+      "context": "上下文",
+      "arabic": "支持阿拉伯语",
+      "multilingual": "多语言"
+    },
+    "tabs": {
+      "overview": "概览",
+      "technical": "技术",
+      "files": "文件"
+    },
+    "categories": {
+      "text": "文本",
+      "vision": "视觉",
+      "reasoning": "推理",
+      "coding": "编程",
+      "multimodal": "多模态",
+      "embedding": "嵌入",
+      "translation": "翻译",
+      "audio": "音频",
+      "image": "图像",
+      "video": "视频",
+      "general": "通用"
+    },
+    "dialog": {
+      "aboutTitle": "关于此模型",
+      "aboutTemplate": "一款由 {author} 开发的 {family} GGUF 模型。下载后即可在此设备上完全离线运行。下方的大小为 HuggingFace 报告的精确文件大小。",
+      "familyUnknown": "GGUF",
+      "file": "文件",
+      "downloadSize": "下载大小",
+      "extraVisionFiles": "额外的视觉投影文件（mmproj）",
+      "storageAfter": "安装后占用的存储空间",
+      "offline": "支持离线",
+      "offlineYes": "是 — 完全在设备端运行",
+      "context": "上下文长度",
+      "wifiOnlyWaiting": "已开启仅 Wi-Fi 下载。使用移动数据时，此下载将在队列中等待，直到 Wi-Fi 恢复。",
+      "engineUnsupported": "此类模型（图像/视频/音频生成）无法由本地 GGUF 引擎执行，因此已禁用下载。这里没有任何虚假内容 — 列表是真实的，只是引擎无法运行它。",
+      "confirmDownload": "下载模型",
+      "starting": "正在启动…"
+    },
+    "storage": {
+      "title": "模型存储空间",
+      "entryHint": "用量明细、最大模型与清理",
+      "used": "模型占用空间",
+      "available": "可用",
+      "distribution": "按分类",
+      "largest": "最大的模型",
+      "orphans": "未完成与残留文件",
+      "orphansFound": "{count} 个文件 · 可释放 {size}",
+      "orphansNone": "没有需要清理的内容 — 存储空间很干净。",
+      "cleanNow": "清理",
+      "cleanTitle": "删除残留文件？",
+      "cleanMessage": "{count} 个未完成或孤立的文件将被永久删除。",
+      "cleanConfirm": "删除",
+      "checking": "正在检查存储空间…",
+      "enough": "剩余空间充足",
+      "notEnough": "剩余空间不足",
+      "required": "所需空间",
+      "availableLabel": "可用",
+      "deficit": "还差 {amount}"
+    },
+    "downloads": {
+      "title": "下载",
+      "emptyTitle": "暂无下载",
+      "emptyHint": "您下载的模型会显示在这里，进度实时更新，并可离线管理。",
+      "active": "下载中",
+      "paused": "已暂停",
+      "pausedHint": "已暂停 — 将从同一字节位置继续",
+      "verifying": "验证中",
+      "verifyingHint": "安装前检查文件完整性（大小 + 校验和）",
+      "completed": "已完成",
+      "remaining": "≈",
+      "pause": "暂停",
+      "resume": "继续",
+      "cancel": "取消"
+    },
+    "updates": {
+      "title": "更新",
+      "check": "检查更新",
+      "checking": "检查中…",
+      "recheck": "重新检查",
+      "upToDate": "所有已安装的模型均与上游修订版本一致。",
+      "update": "更新"
+    },
+    "sort": {
+      "title": "排序",
+      "recommended": "最适合",
+      "downloads": "下载最多",
+      "newest": "最新",
+      "name": "名称",
+      "sizeAsc": "从小到大",
+      "sizeDesc": "从大到小"
+    },
+    "search": {
+      "installedSection": "您的模型",
+      "hfSection": "HuggingFace 结果",
+      "noResults": "未找到模型",
+      "noResultsHint": "请尝试其他名称、发布者或任务。",
+      "errorTitle": "搜索失败"
     }
   },
   "completionParams": {
@@ -510,11 +708,13 @@
     "orBy": "或通过",
     "versionCopiedTitle": "版本已复制",
     "versionCopiedDescription": "版本信息已复制到剪贴板",
-    "privacyPolicy": "隐私政策",
-    "termsOfService": "服务条款",
     "tour": "导览",
     "tourDescription": "重新观看欢迎页面，了解 DRS AI 提供的功能。",
-    "showIntroButton": "再看一次介绍"
+    "showIntroButton": "再看一次介绍",
+    "privacyPolicy": "隐私政策",
+    "termsOfService": "服务条款",
+    "versionFormat": "版本 {{version}}（{{build}}）",
+    "successTitle": "成功"
   },
   "feedback": {
     "title": "发送反馈",
@@ -558,6 +758,14 @@
     "attachmentButton": {
       "attachmentButtonAccessibilityLabel": "发送媒体"
     },
+    "bubble": {
+      "msPerToken": "{{value}}毫秒/token",
+      "tokensPerSec": "{{value}} tokens/秒",
+      "ttft": "{{value}}毫秒 TTFT",
+      "draftAccepted": "草稿：{{accepted}}/{{total}}（{{pct}}%）",
+      "interrupted": "被中断",
+      "truncated": "已截断 — 可能是上下文已满"
+    },
     "exportUtils": {
       "fileSaved": "文件已保存",
       "fileSavedMessage": "文件已保存到您的下载文件夹，文件名为 {{filename}}",
@@ -580,6 +788,17 @@
     },
     "thinkingBubble": {
       "reasoning": "思考"
+    },
+    "pendingIndicator": {
+      "preparingTool": "正在准备工具",
+      "buildingPage": "正在构建页面",
+      "calculating": "正在计算",
+      "lookingUpTime": "正在查询时间",
+      "stopping": "正在停止…"
+    },
+    "toolMetrics": {
+      "tokens": "{{count}} 个 token",
+      "elapsed": "{{seconds}}秒"
     },
     "chatEmptyPlaceholder": {
       "noModelsTitle": "没有可用的模型",
@@ -721,17 +940,17 @@
       "forbiddenTitle": "访问被拒绝",
       "forbiddenMessage": "您没有权限访问此模型，请确保:",
       "forbiddenSteps": [
-        "您的令牌具有\"读取\"权限",
-        "您已请求并获得了此模型的访问权限",
-        "模型所有者已批准您的访问请求"
+        "Your token has \"read\" permission",
+        "You requested and were granted access to this model",
+        "The model owner approved your access request"
       ],
       "getTokenTitle": "获取 Hugging Face 令牌",
       "getTokenMessage": "下载此模型需要 Hugging Face 令牌。",
       "getTokenSteps": [
-        "访问 huggingface.co 并登录",
-        "导航至设置 > 访问令牌",
-        "创建具有\"读取\"权限的新令牌",
-        "复制令牌并粘贴到令牌字段中"
+        "Go to huggingface.co and sign in",
+        "Navigate to Settings > Access Tokens",
+        "Create a new token with \"read\" access",
+        "Copy the token and paste it in the token field"
       ],
       "tokenDisabledTitle": "令牌已禁用",
       "tokenDisabledMessage": "您有一个 Hugging Face 令牌设置，但它目前被禁用；此模型需要令牌才能下载；请启用您的令牌以继续。",
@@ -749,10 +968,15 @@
       "makeChatTemporary": "使聊天临时",
       "export": "导出/导入",
       "exportCurrentSession": "导出当前会话",
+      "exportCurrentSessionMarkdown": "导出为 Markdown",
       "exportAllSessions": "导出所有会话",
       "exportChatSession": "导出聊天会话",
       "importSessions": "导入会话",
-      "exportCurrentSessionMarkdown": "导出为 Markdown"
+      "exportErrorTitle": "导出错误",
+      "exportCurrentSessionError": "导出当前会话失败。",
+      "exportAllError": "导出所有会话失败。",
+      "importSuccessTitle": "导入成功",
+      "importErrorTitle": "导入错误"
     },
     "hfTokenSheet": {
       "title": "Hugging Face 令牌",
@@ -765,10 +989,10 @@
       "resetSuccess": "令牌已成功删除",
       "instructions": "如何获取令牌：",
       "instructionsSteps": [
-        "访问 huggingface.co 并登录",
-        "导航至设置 > 访问令牌",
-        "创建具有\"read\"权限的新令牌",
-        "复制令牌并粘贴在下方"
+        "Go to huggingface.co and sign in",
+        "Navigate to Settings > Access Tokens",
+        "Create a new token with \"read\" access",
+        "Copy the token and paste it below"
       ],
       "getTokenLink": "从 huggingface.co 获取令牌 ↗",
       "error": {
@@ -972,7 +1196,10 @@
       "bulkDeleteError": "删除聊天会话失败，请重试。",
       "exportError": "导出聊天会话失败，请重试。",
       "bulkExportError": "导出聊天会话失败，请重试。",
+      "pin": "置顶",
+      "unpin": "取消置顶",
       "dateGroups": {
+        "pinned": "已置顶",
         "today": "今天",
         "yesterday": "昨天",
         "thisWeek": "这周",
@@ -981,11 +1208,10 @@
         "threeWeeksAgo": "3周前",
         "fourWeeksAgo": "4周前",
         "lastMonth": "上个月",
-        "older": "以前",
-        "pinned": "已置顶"
+        "older": "以前"
       },
-      "pin": "置顶",
-      "unpin": "取消置顶"
+      "emptySessionsTitle": "还没有聊天",
+      "emptySessionsHint": "从聊天页面开始新的对话"
     },
     "usageStats": {
       "tooltip": {
@@ -995,7 +1221,7 @@
         "usage": "使用率: "
       },
       "byteSizes": [
-        "字节",
+        "Bytes",
         "KB",
         "MB",
         "GB"
@@ -1014,26 +1240,60 @@
       "exportAllAssistants": "导出所有 助手",
       "importAssistants": "导入 助手",
       "importSuccess": "成功导入 {{count}} 个 助手。",
-      "importError": "导入 助手 失败，请检查文件格式。"
+      "importError": "导入 助手 失败，请检查文件格式。",
+      "exportErrorTitle": "导出错误",
+      "exportAllError": "导出所有助手失败。",
+      "importSuccessTitle": "导入成功",
+      "importErrorTitle": "导入错误"
     },
-    "bubble": {
-      "msPerToken": "{{value}}毫秒/token",
-      "tokensPerSec": "{{value}} tokens/秒",
-      "ttft": "{{value}}毫秒 TTFT",
-      "interrupted": "被中断",
-      "truncated": "已截断 — 可能是上下文已满",
-      "draftAccepted": "草稿：{{accepted}}/{{total}}（{{pct}}%）"
+    "brandHeader": {
+      "tagline": "您的私密设备端 AI"
     },
-    "pendingIndicator": {
-      "preparingTool": "正在准备工具",
-      "buildingPage": "正在构建页面",
-      "calculating": "正在计算",
-      "lookingUpTime": "正在查询时间",
-      "stopping": "正在停止…"
+    "authSheet": {
+      "signInTitle": "登录",
+      "signUpTitle": "创建账户",
+      "fullNameLabel": "姓名",
+      "emailLabel": "电子邮件",
+      "passwordLabel": "密码",
+      "signInButton": "登录",
+      "signUpButton": "创建账户",
+      "forgotPassword": "忘记密码？",
+      "or": "或",
+      "continueWithGoogle": "使用 Google 继续",
+      "haveAccount": "已经有账户了？ ",
+      "noAccount": "还没有账户？ ",
+      "signUpLink": "注册",
+      "signInLink": "登录",
+      "signingIn": "正在登录...",
+      "fillRequiredFields": "请填写所有必填字段。",
+      "enterFullName": "请输入您的姓名。",
+      "enterEmailFirst": "请先输入您的电子邮件地址。",
+      "accountCreatedTitle": "账户已创建",
+      "accountCreatedMessage": "请查收电子邮件以验证您的账户。",
+      "welcomeBackTitle": "欢迎回来！",
+      "welcomeBackMessage": "您已成功登录。",
+      "googleErrorTitle": "Google 登录错误",
+      "passwordResetTitle": "重置密码",
+      "passwordResetMessage": "请查收电子邮件获取密码重置说明。",
+      "authErrorTitle": "身份验证错误"
     },
-    "toolMetrics": {
-      "tokens": "{{count}} 个 token",
-      "elapsed": "{{seconds}}秒"
+    "squareAssistantCard": {
+      "videoAssistant": "视频 AI 助手",
+      "advancedAssistant": "高级 AI 助手",
+      "assistant": "AI 助手",
+      "byCreator": "作者：{{creator}}",
+      "downloadAssistantTitle": "下载助手",
+      "downloadAssistantMessage": "下载“{{assistantName}}”开始聊天？",
+      "download": "下载",
+      "downloadErrorTitle": "下载错误",
+      "downloadErrorMessage": "下载助手失败。请重试。",
+      "startChatErrorMessage": "启动聊天失败。请重试。",
+      "switchModelTitle": "切换模型？",
+      "switchModelMessage": "将此助手切换到“{{modelName}}”？",
+      "keepCurrent": "保留当前",
+      "switch": "切换",
+      "shareErrorTitle": "分享错误",
+      "shareErrorMessage": "分享助手失败。请重试。"
     }
   },
   "assistantsScreen": {
@@ -1121,7 +1381,9 @@
       "signInAgain": "重新登录",
       "assistantNotAvailable": "此 助手 目前无法购买。",
       "checkoutFailed": "发生错误，请重试。"
-    }
+    },
+    "emptyLocal": "还没有助手。\n使用 + 按钮创建您的第一个助手！",
+    "emptyFiltered": "未找到助手。\n请尝试调整筛选条件或搜索。"
   },
   "validation": {
     "nameRequired": "需要填写名称",
@@ -1171,7 +1433,11 @@
       "step2": "• 点击摄像头按钮开始实时视频分析",
       "step3": "• 在摄像头激活时调整快照频率",
       "step4": "• 切换到其他助手进行正常文本聊天"
-    }
+    },
+    "defaultPrompt": "你看到了什么？",
+    "multimodalTitle": "未启用多模态",
+    "multimodalMessage": "此模型不支持图像分析。请加载多模态模型。",
+    "checkSupportError": "检查模型是否支持图像失败。"
   },
   "screenTitles": {
     "chat": "聊天",
@@ -1186,6 +1452,8 @@
     "conversationReset": "对话已重置！",
     "modelNotLoaded": "模型未加载，请初始化模型。",
     "completionFailed": "生成失败: ",
+    "toolCallTruncated": "工具调用被截断 — 可能是模型空间不足。请尝试增大上下文或精简请求。",
+    "speculativeInitFailed": "此设备无法为该模型启动推测解码 — 很可能是草稿上下文的内存不足。请在“设置 → 高级设置”中关闭推测解码后重试。",
     "loadingModel": "加载模型中...",
     "typeYourMessage": "输入消息",
     "load": "加载",
@@ -1194,12 +1462,12 @@
     "pleaseLoadModel": "加载模型以开始聊天。",
     "multimodalNotEnabled": "此模型未启用多模态功能，图片将显示但不会被 AI 处理。",
     "cannotSendWithoutModel": "请先加载模型",
-    "toolCallTruncated": "工具调用被截断 — 可能是模型空间不足。请尝试增大上下文或精简请求。",
     "toolCompatWarning": "此模型可能不支持工具调用，结果可能不可靠。",
     "softCapWarning": "为获得最佳性能，请新建聊天。",
     "contextWarning": "此对话已经很长，可能很快就会空间不足。",
     "contextRemoteHedged": "此回复可能已被截断，请重新发送或缩短请求。",
     "contextFull": "对话空间已满，请新建聊天或增大上下文长度。",
+    "contextFullRemote": "对话空间已满，请新建聊天。",
     "contextFullEscalated": "空间仍然不足，请新建聊天或增大上下文长度以继续。",
     "contextFullHeavyTalent": "对话空间已满 — {{talent}}通常需要更多空间，请新建聊天或增大上下文长度。",
     "contextBannerDismiss": "关闭",
@@ -1244,9 +1512,15 @@
       "searchResultsTitle": "搜索结果",
       "showResultsAccessibilityLabel": "显示 {{query}} 的网络搜索结果",
       "openLinkError": "无法打开此链接。"
-    },
-    "contextFullRemote": "对话空间已满，请新建聊天。",
-    "speculativeInitFailed": "此设备无法为该模型启动推测解码 — 很可能是草稿上下文的内存不足。请在“设置 → 高级设置”中关闭推测解码后重试。"
+    }
+  },
+  "htmlPreview": {
+    "defaultTitle": "预览",
+    "showPreview": "显示渲染的预览",
+    "showCode": "显示 HTML 代码",
+    "copyHtml": "复制 HTML",
+    "closePreview": "关闭预览",
+    "openFullscreen": "全屏打开：{{title}}"
   },
   "benchmark": {
     "title": "基准测试",
@@ -1377,6 +1651,15 @@
         "no": "✗"
       },
       "versionFormat": "{{version}} ({{buildNumber}})"
+    },
+    "presetDefault": "默认",
+    "presetFast": "快速",
+    "presetCustom": "自定义",
+    "params": {
+      "pp": "提示词处理的 Token 数量（最大值：物理批处理大小）",
+      "tg": "文本生成的 Token 数量",
+      "pl": "流水线并行大小",
+      "nr": "重复次数"
     }
   },
   "errors": {
@@ -1411,39 +1694,6 @@
     "voicesTitle": "语音",
     "voicesEmptyHint": "点击任意语音即可安装并使用，或选择系统语音 — 系统语音始终可用。",
     "supertonicStepsLabel": "质量（扩散步数）",
-    "toggleAutoSpeakLabel": "切换自动朗读",
-    "openSettingsLabel": "TTS设置",
-    "playMessageLabel": "播放消息",
-    "stopMessageLabel": "停止播放",
-    "autoSpeakLabel": "自动朗读回复",
-    "autoSpeakDescription": "收到新回复时自动朗读。",
-    "engineChipKitten": "Kitten",
-    "engineChipKokoro": "Kokoro",
-    "engineChipSupertonic": "Supertonic",
-    "engineChipSystem": "系统",
-    "stepsCount": "{{steps}} 步",
-    "engineKittenTagline": "占用最小、稳定可靠、最适合旧设备。",
-    "engineKokoroTagline": "最高质量、启动较慢、部分语音可能无法在所有设备上运行。",
-    "engineSupertonicTagline": "启动最快、内存占用更高、偶尔可能漏字。",
-    "engineSystemTagline": "系统内置语音，始终可用，无需安装。",
-    "engineSystemTitleIos": "iOS语音",
-    "engineSystemTitleAndroid": "安卓语音",
-    "engineSystemTier": "始终可用",
-    "engineTierLightest": "最轻量",
-    "engineTierBestQuality": "最佳质量",
-    "engineTierFastestStart": "启动最快",
-    "engineSpecsLine": "{{voices}} 个语音  ·  {{sizeMb}} MB  ·  约{{ramMb}} MB 内存",
-    "engineSystemSpecsLine": "{{voices}} 个语音",
-    "engineRemoveTitle": "删除 {{engineTitle}}？",
-    "engineRemoveBody": "可在此设备上释放约 {{sizeMb}} MB 空间。",
-    "engineRemoveCancel": "取消",
-    "engineRemoveConfirm": "删除",
-    "engineInstallCta": "安装 · {{sizeMb}} MB",
-    "engineDownloadingLabel": "下载中…  {{pct}}%  ·  {{mbDone}} / {{sizeMb}} MB",
-    "engineRetryCta": "再试一次",
-    "voicesEmptyState": "未找到语音。",
-    "kokoroDeviceNote": "部分语音可能不兼容所有设备。",
-    "insufficientStorage": "存储空间不足 — 请释放 {{requiredMb}} MB 以安装此引擎（当前可用 {{freeMb}} MB）。",
     "supertonicLanguageLabel": "语言",
     "supertonicLanguageAuto": "自动",
     "supertonicLanguageSheetTitle": "语言",
@@ -1480,22 +1730,48 @@
       "tr": "土耳其语",
       "uk": "乌克兰语",
       "vi": "越南语"
-    }
-  },
-  "htmlPreview": {
-    "defaultTitle": "预览",
-    "showPreview": "显示渲染的预览",
-    "showCode": "显示 HTML 代码",
-    "copyHtml": "复制 HTML",
-    "closePreview": "关闭预览",
-    "openFullscreen": "全屏打开：{{title}}"
+    },
+    "toggleAutoSpeakLabel": "切换自动朗读",
+    "openSettingsLabel": "TTS设置",
+    "playMessageLabel": "播放消息",
+    "stopMessageLabel": "停止播放",
+    "autoSpeakLabel": "自动朗读回复",
+    "autoSpeakDescription": "收到新回复时自动朗读。",
+    "engineChipKitten": "Kitten",
+    "engineChipKokoro": "Kokoro",
+    "engineChipSupertonic": "Supertonic",
+    "engineChipSystem": "系统",
+    "stepsCount": "{{steps}} 步",
+    "engineKittenTagline": "占用最小、稳定可靠、最适合旧设备。",
+    "engineKokoroTagline": "最高质量、启动较慢、部分语音可能无法在所有设备上运行。",
+    "engineSupertonicTagline": "启动最快、内存占用更高、偶尔可能漏字。",
+    "engineSystemTagline": "系统内置语音，始终可用，无需安装。",
+    "engineSystemTitleIos": "iOS语音",
+    "engineSystemTitleAndroid": "安卓语音",
+    "engineSystemTier": "始终可用",
+    "engineTierLightest": "最轻量",
+    "engineTierBestQuality": "最佳质量",
+    "engineTierFastestStart": "启动最快",
+    "engineSpecsLine": "{{voices}} 个语音  ·  {{sizeMb}} MB  ·  约{{ramMb}} MB 内存",
+    "engineSystemSpecsLine": "{{voices}} 个语音",
+    "engineRemoveTitle": "删除 {{engineTitle}}？",
+    "engineRemoveBody": "可在此设备上释放约 {{sizeMb}} MB 空间。",
+    "engineRemoveCancel": "取消",
+    "engineRemoveConfirm": "删除",
+    "engineInstallCta": "安装 · {{sizeMb}} MB",
+    "engineDownloadingLabel": "下载中…  {{pct}}%  ·  {{mbDone}} / {{sizeMb}} MB",
+    "engineRetryCta": "再试一次",
+    "voicesEmptyState": "未找到语音。",
+    "kokoroDeviceNote": "部分语音可能不兼容所有设备。",
+    "insufficientStorage": "存储空间不足 — 请释放 {{requiredMb}} MB 以安装此引擎（当前可用 {{freeMb}} MB）。"
   },
   "onboarding": {
     "back": "返回",
     "skip": "跳过",
     "skipForNow": "暂时跳过",
     "splash": {
-      "brand": "DRS AI"
+      "brand": "DRS AI",
+      "tagline": "您的私密 AI，就在您的设备上"
     },
     "screen1": {
       "title": "认识您的 助手。",

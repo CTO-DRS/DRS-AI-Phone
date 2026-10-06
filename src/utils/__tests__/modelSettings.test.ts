@@ -231,7 +231,11 @@ describe('modelSettings', () => {
     it('has default values matching defaultCompletionParams', () => {
       Object.entries(COMPLETION_PARAMS_METADATA).forEach(([key, metadata]) => {
         if (key in defaultCompletionParams) {
-          expect(metadata.defaultValue).toBe(defaultCompletionParams[key]);
+          expect(metadata.defaultValue).toBe(
+            defaultCompletionParams[
+              key as keyof typeof defaultCompletionParams
+            ],
+          );
         }
       });
     });

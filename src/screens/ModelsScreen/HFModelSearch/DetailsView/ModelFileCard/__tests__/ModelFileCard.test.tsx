@@ -19,6 +19,8 @@ import {downloadManager} from '../../../../../../services/downloads';
 
 import {modelStore} from '../../../../../../store';
 
+import type {Model} from '../../../../../../utils/types';
+
 const render = (ui: React.ReactElement, options: any = {}) =>
   baseRender(ui, {withBottomSheetProvider: true, ...options});
 
@@ -29,7 +31,7 @@ describe('ModelFileCard', () => {
     oid: 'test-oid',
     canFitInStorage: true,
   };
-  let downloadedHFModel;
+  let downloadedHFModel: Model;
 
   beforeEach(() => {
     downloadedHFModel = createModel({

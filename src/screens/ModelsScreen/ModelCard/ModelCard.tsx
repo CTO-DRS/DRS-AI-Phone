@@ -41,14 +41,16 @@ import {
   RootDrawerParamList,
 } from '../../../utils/types';
 import {
-  getModelSizeString,
   L10nContext,
-  checkModelFileIntegrity,
   getModelSkills,
   formatNumber,
   isMTPCapable,
   isDraftOnlyModel,
 } from '../../../utils';
+import {
+  checkModelFileIntegrity,
+  getModelSizeString,
+} from '../../../utils/modelIntegrity';
 
 import {
   LinkExternalIcon,

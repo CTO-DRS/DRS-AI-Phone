@@ -45,22 +45,22 @@ const getBinarySteps = (min: number, max: number): number[] => {
 const BENCHMARK_PARAMS_METADATA = {
   pp: {
     validation: {min: 64, max: 4096},
-    descriptionKey: 'pp',
+    descriptionKey: 'pp' as const,
     steps: getBinarySteps(64, 4096),
   },
   tg: {
     validation: {min: 32, max: 2048},
-    descriptionKey: 'tg',
+    descriptionKey: 'tg' as const,
     steps: getBinarySteps(32, 2048),
   },
   pl: {
     validation: {min: 1, max: 4},
-    descriptionKey: 'pl',
+    descriptionKey: 'pl' as const,
     steps: [1, 2, 3, 4],
   },
   nr: {
     validation: {min: 1, max: 10},
-    descriptionKey: 'nr',
+    descriptionKey: 'nr' as const,
     steps: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
   },
 };

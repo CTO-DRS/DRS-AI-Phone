@@ -3,6 +3,9 @@
     "cancel": "Cancelar",
     "delete": "Eliminar",
     "dismiss": "Rechazar",
+    "rename": "Renombrar",
+    "reset": "Restablecer",
+    "save": "Guardar",
     "stop": "Detener",
     "update": "Actualizar",
     "error": "Error",
@@ -30,13 +33,42 @@
     "clear": "Borrar todo",
     "gallery": "Galería",
     "noResults": "Sin resultados",
-    "rename": "Renombrar",
-    "reset": "Restablecer",
-    "save": "Guardar"
+    "openDrawer": "Abrir panel lateral",
+    "openMenu": "Abrir menú",
+    "closeMenu": "Cerrar menú"
   },
   "settings": {
     "modelInitializationSettings": "Ajustes de inicialización del modelo",
     "metal": "Metal",
+    "metalDescription": "API acelerada por hardware de Apple.",
+    "metalRequiresNewerIOS": "La aceleración por Metal requiere iOS 18 o posterior. Actualiza tu dispositivo para usar esta función.",
+    "openCL": "OpenCL (Experimental)",
+    "openCLDescription": "Aceleración por GPU para GPUs Adreno. Procesamiento de prompts más rápido, pero la generación no siempre será más rápida.",
+    "openCLNotAvailable": "OpenCL no está disponible en este dispositivo. Requiere una GPU Adreno con funciones de CPU i8mm y dotprod.",
+    "openCLMissingCPUFeatures": "OpenCL requiere funciones de CPU i8mm y dotprod, que no están disponibles en este dispositivo.",
+    "openCLQuantizationNote": "Nota: Los modelos con cuantización pura Q4_0 ofrecen el mejor rendimiento con OpenCL.",
+    "openCLDocsLink": "Consulta la documentación de OpenCL de llama.cpp para más detalles.",
+    "layersOnGPU": "Capas en la GPU: {{gpuLayers}}",
+    "deviceSelection": "Selección de Dispositivo",
+    "deviceSelectionIOS": "Dispositivo (Metal)",
+    "deviceSelectionIOSDescription": "Elige el modo GPU Metal o solo CPU",
+    "deviceSelectionAndroidDescription": "Elige el dispositivo de procesamiento (CPU, GPU o NPU Hexagon)",
+    "cpuOnlyNoAccelerators": "Solo CPU - No se detectaron aceleradores por hardware",
+    "contextSize": "Tamaño del Contexto",
+    "contextSizePlaceholder": "Ingresa el tamaño del contexto (mínimo {{minContextSize}})",
+    "invalidContextSizeError": "Por favor, ingresa un número válido (mínimo {{minContextSize}})",
+    "modelReloadNotice": "Es necesario recargar el modelo para que los cambios surtan efecto.",
+    "advancedSettings": "Ajustes Avanzados",
+    "batchSize": "Tamaño del lote",
+    "batchSizeDescription": "Tamaño del lote: {{batchSize}}{{effectiveBatch}}",
+    "effectiveLabel": "Efectivo",
+    "physicalBatchSize": "Tamaño del Lote Físico",
+    "physicalBatchSizeDescription": "Tamaño del lote físico: {{physicalBatchSize}}{{effectivePhysicalBatch}}",
+    "cpuThreads": "Hilos de la CPU",
+    "cpuThreadsDescription": "Usando {{threads}} de {{maxThreads}} hilos disponibles",
+    "imageMaxTokens": "Tokens máximos de imagen",
+    "imageMaxTokensDescription": "Tokens máximos para el procesamiento de imágenes: {{tokens}}{{effectiveTokens}} (menor = más rápido, menos detalle)",
+    "flashAttention": "Flash Attention",
     "flashAttentionDescription": "Habilitar Flash Attention para un procesamiento más rápido",
     "flashAttentionIOSDescription": "Mecanismo de atención optimizado para memoria (auto-habilitado en Metal)",
     "flashAttentionAndroidDescription": "Debe desactivarse para guardar/cargar el estado de OpenCL",
@@ -51,6 +83,20 @@
     "valueCacheTypeDisabledDescription": "Habilitar Flash Attention para cambiar el tipo de caché",
     "memorySettings": "Ajustes de Memoria",
     "useMlock": "Usar Bloqueo de Memoria",
+    "useMlockDescription": "Fuerza al sistema a mantener el modelo en la RAM en lugar de usar intercambio o compresión",
+    "useMmap": "Mapeo de Memoria",
+    "useMmapDescription": "Usa archivos mapeados en memoria para una carga más rápida del modelo",
+    "useMmapTrue": "Activado",
+    "useMmapFalse": "Desactivado",
+    "useMmapTrueDescription": "Usa siempre el mapeo de memoria para una carga más rápida",
+    "useMmapFalseDescription": "Se recomienda desactivarlo cuando el reempaquetado de pesos está activado para evitar duplicar el uso de memoria",
+    "weightRepacking": "Activar el reempaquetado de pesos",
+    "weightRepackingDescription": "Procesamiento del prompt más rápido con un consumo adicional mínimo de memoria cuando el mapeo de memoria está desactivado. La generación de tokens no se ve afectada.",
+    "speculativeDecoding": "Decodificación especulativa",
+    "speculativeDecodingDescription": "Usa un modelo borrador pequeño (o un modelo MTP integrado) para predecir tokens y acelerar la generación. Experimental.",
+    "speculativeNotMTPCapable": "El modelo activo no es compatible con la decodificación especulativa y no hay un modelo borrador compatible emparejado, por lo que esta opción permanece desactivada sin efecto. Se aplicará automáticamente a los modelos compatibles.",
+    "speculativeDraftModel": "Modelo Borrador",
+    "speculativeDraftModelDescription": "Genera tokens borrador para el modelo activo.",
     "speculativeDraftModelNone": "Ninguno (MTP incorporado)",
     "speculativeDraftModelIgnoredOverridden": "El modelo activo incluye su propio modelo borrador, por lo que esta opción se ignora.",
     "speculativeDraftModelIgnoredIncompatible": "Este borrador no es compatible con el modelo activo, por lo que se ignora.",
@@ -72,6 +118,10 @@
     "language": "Idioma",
     "languageSheetTitle": "Seleccionar idioma",
     "languageSearchPlaceholder": "Buscar idioma",
+    "languageRestartTitle": "Reinicio necesario",
+    "languageRestartMessage": "La dirección del diseño cambió para este idioma. Reinicia la app para aplicar el cambio por completo.",
+    "languageRestartNow": "Reiniciar ahora",
+    "languageRestartLater": "Más tarde",
     "darkMode": "Modo Oscuro",
     "displayMemoryUsage": "Mostrar uso de memoria",
     "displayMemoryUsageDescription": "Mostrar el uso de memoria en la página del chat.",
@@ -109,73 +159,6 @@
       "consentGivenDescription": "Las consultas y la lectura de páginas pueden salir de tu dispositivo como se describe arriba.",
       "consentRevoke": "Retirar"
     },
-    "serverUrlRequired": "Se requiere la URL del servidor",
-    "serverUrlInvalid": "Formato de URL no válido",
-    "serverUrlHttpWarning": "iOS requiere HTTPS para servidores no locales. Usa https:// o una dirección de red local.",
-    "addRemoteModel": "Agregar modelo remoto",
-    "yourServers": "Tus Servidores",
-    "orConnectNewServer": "o conectar un nuevo servidor",
-    "selectModel": "Seleccionar modelo",
-    "addModel": "Agregar Modelo",
-    "connected": "Conectado",
-    "connectionFailed": "Error de conexión: {{error}}",
-    "connecting": "Conectando...",
-    "noModelsAvailable": "No hay modelos disponibles en este servidor.",
-    "alreadyAdded": "Ya agregado",
-    "connectedServers": "Servidores Conectados",
-    "modelsCount": "{{count}} modelos",
-    "serverDetails": "Detalles del servidor",
-    "modelsUsingServer": "Modelos que usan este servidor:",
-    "saveChanges": "Guardar cambios",
-    "removeServer": "Eliminar servidor",
-    "removeServerMessage": "¿Eliminar {{serverName}} y sus {{count}} modelos?",
-    "removeRemoteModel": "¿Eliminar {{modelName}} ({{serverName}})?",
-    "retryConnection": "Reintentar",
-    "enterUrlManually": "Ingresar URL manualmente",
-    "manageServers": "Administrar Servidores",
-    "metalDescription": "API acelerada por hardware de Apple.",
-    "metalRequiresNewerIOS": "La aceleración por Metal requiere iOS 18 o posterior. Actualiza tu dispositivo para usar esta función.",
-    "openCL": "OpenCL (Experimental)",
-    "openCLDescription": "Aceleración por GPU para GPUs Adreno. Procesamiento de prompts más rápido, pero la generación no siempre será más rápida.",
-    "openCLNotAvailable": "OpenCL no está disponible en este dispositivo. Requiere una GPU Adreno con funciones de CPU i8mm y dotprod.",
-    "openCLMissingCPUFeatures": "OpenCL requiere funciones de CPU i8mm y dotprod, que no están disponibles en este dispositivo.",
-    "openCLQuantizationNote": "Nota: Los modelos con cuantización pura Q4_0 ofrecen el mejor rendimiento con OpenCL.",
-    "openCLDocsLink": "Consulta la documentación de OpenCL de llama.cpp para más detalles.",
-    "layersOnGPU": "Capas en la GPU: {{gpuLayers}}",
-    "deviceSelection": "Selección de Dispositivo",
-    "deviceSelectionIOS": "Dispositivo (Metal)",
-    "deviceSelectionIOSDescription": "Elige el modo GPU Metal o solo CPU",
-    "deviceSelectionAndroidDescription": "Elige el dispositivo de procesamiento (CPU, GPU o NPU Hexagon)",
-    "cpuOnlyNoAccelerators": "Solo CPU - No se detectaron aceleradores por hardware",
-    "contextSize": "Tamaño del Contexto",
-    "contextSizePlaceholder": "Ingresa el tamaño del contexto (mínimo {{minContextSize}})",
-    "invalidContextSizeError": "Por favor, ingresa un número válido (mínimo {{minContextSize}})",
-    "modelReloadNotice": "Es necesario recargar el modelo para que los cambios surtan efecto.",
-    "advancedSettings": "Ajustes Avanzados",
-    "batchSize": "Tamaño del lote",
-    "batchSizeDescription": "Tamaño del lote: {{batchSize}}{{effectiveBatch}}",
-    "effectiveLabel": "Efectivo",
-    "physicalBatchSize": "Tamaño del Lote Físico",
-    "physicalBatchSizeDescription": "Tamaño del lote físico: {{physicalBatchSize}}{{effectivePhysicalBatch}}",
-    "cpuThreads": "Hilos de la CPU",
-    "cpuThreadsDescription": "Usando {{threads}} de {{maxThreads}} hilos disponibles",
-    "imageMaxTokens": "Tokens máximos de imagen",
-    "imageMaxTokensDescription": "Tokens máximos para el procesamiento de imágenes: {{tokens}}{{effectiveTokens}} (menor = más rápido, menos detalle)",
-    "flashAttention": "Flash Attention",
-    "useMlockDescription": "Fuerza al sistema a mantener el modelo en la RAM en lugar de usar intercambio o compresión",
-    "useMmap": "Mapeo de Memoria",
-    "useMmapDescription": "Usa archivos mapeados en memoria para una carga más rápida del modelo",
-    "useMmapTrue": "Activado",
-    "useMmapFalse": "Desactivado",
-    "useMmapTrueDescription": "Usa siempre el mapeo de memoria para una carga más rápida",
-    "useMmapFalseDescription": "Se recomienda desactivarlo cuando el reempaquetado de pesos está activado para evitar duplicar el uso de memoria",
-    "weightRepacking": "Activar el reempaquetado de pesos",
-    "weightRepackingDescription": "Procesamiento del prompt más rápido con un consumo adicional mínimo de memoria cuando el mapeo de memoria está desactivado. La generación de tokens no se ve afectada.",
-    "speculativeDecoding": "Decodificación especulativa",
-    "speculativeDecodingDescription": "Usa un modelo borrador pequeño (o un modelo MTP integrado) para predecir tokens y acelerar la generación. Experimental.",
-    "speculativeNotMTPCapable": "El modelo activo no es compatible con la decodificación especulativa y no hay un modelo borrador compatible emparejado, por lo que esta opción permanece desactivada sin efecto. Se aplicará automáticamente a los modelos compatibles.",
-    "speculativeDraftModel": "Modelo Borrador",
-    "speculativeDraftModelDescription": "Genera tokens borrador para el modelo activo.",
     "apiSettingsTitle": "Ajustes de API",
     "huggingFaceTokenLabel": "Token de acceso de Hugging Face",
     "tokenIsSetDescription": "El token está configurado. Se requiere para acceder a modelos de acceso restringido.",
@@ -205,7 +188,32 @@
     "apiKeyDescription": "Se almacena de forma segura en el dispositivo.",
     "remoteModel": "Remoto",
     "remotePrivacyNotice": "Los mensajes enviados a servidores remotos salen de tu dispositivo. Conéctate solo a servidores de confianza.",
-    "remoteIndicator": "Remoto"
+    "remoteIndicator": "Remoto",
+    "serverUrlRequired": "Se requiere la URL del servidor",
+    "serverUrlInvalid": "Formato de URL no válido",
+    "serverUrlHttpWarning": "iOS requiere HTTPS para servidores no locales. Usa https:// o una dirección de red local.",
+    "addRemoteModel": "Agregar modelo remoto",
+    "yourServers": "Tus Servidores",
+    "orConnectNewServer": "o conectar un nuevo servidor",
+    "selectModel": "Seleccionar modelo",
+    "addModel": "Agregar Modelo",
+    "connected": "Conectado",
+    "connectionFailed": "Error de conexión: {{error}}",
+    "connecting": "Conectando...",
+    "noModelsAvailable": "No hay modelos disponibles en este servidor.",
+    "alreadyAdded": "Ya agregado",
+    "connectedServers": "Servidores Conectados",
+    "modelsCount": "{{count}} modelos",
+    "serverDetails": "Detalles del servidor",
+    "modelsUsingServer": "Modelos que usan este servidor:",
+    "saveChanges": "Guardar cambios",
+    "removeServer": "Eliminar servidor",
+    "removeServerMessage": "¿Eliminar {{serverName}} y sus {{count}} modelos?",
+    "removeRemoteModel": "¿Eliminar {{modelName}} ({{serverName}})?",
+    "retryConnection": "Reintentar",
+    "enterUrlManually": "Ingresar URL manualmente",
+    "manageServers": "Administrar Servidores",
+    "exportLegacyError": "Error al exportar las sesiones de chat antiguas. Es posible que el archivo no exista."
   },
   "memory": {
     "shortWarning": "Advertencia de memoria",
@@ -353,6 +361,7 @@
       "modelUpdatedLong": "Actualizado hace {{time}}",
       "modelUpdatedShort": "Hace {{time}}",
       "modelUpdatedJustNowLong": "Actualizado justo ahora",
+      "modelUpdatedJustNowShort": "hace un momento",
       "errorOccurred": "No se pudieron cargar los modelos. Inténtalo de nuevo.",
       "filters": {
         "author": "Autor",
@@ -365,8 +374,7 @@
         "sortDownloads": "Descargas",
         "sortRecent": "Recientemente actualizados",
         "sortLikes": "Más gustados"
-      },
-      "modelUpdatedJustNowShort": "hace un momento"
+      }
     },
     "hubRun": {
       "title": "Descargar modelo",
@@ -378,24 +386,6 @@
       "resolveError": "No se pudieron cargar los detalles del modelo. Comprueba tu conexión e inténtalo de nuevo."
     },
     "modelCard": {
-      "accessibility": {
-        "memoryWarning": "Advertencia de memoria",
-        "integrityWarning": "Advertencia de integridad",
-        "downloadProgress": "Progreso de descarga",
-        "loadingIndicator": "Cargando",
-        "loadButton": "Cargar modelo",
-        "offloadButton": "Liberar modelo",
-        "downloadButton": "Descargar modelo",
-        "settingsButton": "Ajustes del modelo",
-        "deleteButton": "Eliminar modelo",
-        "removeButton": "Eliminar modelo",
-        "expandDetailsButton": "Expandir detalles del modelo",
-        "memoryWarningButton": "Mostrar detalles de la advertencia de memoria",
-        "integrityWarningButton": "Mostrar detalles de la advertencia de integridad",
-        "memoryWarningSnackbar": "Notificación de advertencia de memoria",
-        "expandDetails": "Expandir detalles",
-        "collapseDetails": "Contraer detalles"
-      },
       "alerts": {
         "deleteTitle": "Eliminar modelo",
         "deleteMessage": "¿Estás seguro de que quieres eliminar este modelo descargado?",
@@ -424,6 +414,24 @@
         "downloadProjectionModel": "Descargar modelo de proyección",
         "viewModelCardOnHuggingFace": "Ver ficha del modelo en Hugging Face",
         "draftOnlyReason": "Modelo exclusivo para borrador. Selecciónalo en Ajustes → Decodificación especulativa."
+      },
+      "accessibility": {
+        "expandDetails": "Expandir detalles",
+        "collapseDetails": "Contraer detalles",
+        "memoryWarning": "Advertencia de memoria",
+        "integrityWarning": "Advertencia de integridad",
+        "downloadProgress": "Progreso de descarga",
+        "loadingIndicator": "Cargando",
+        "loadButton": "Cargar modelo",
+        "offloadButton": "Liberar modelo",
+        "downloadButton": "Descargar modelo",
+        "settingsButton": "Ajustes del modelo",
+        "deleteButton": "Eliminar modelo",
+        "removeButton": "Eliminar modelo",
+        "expandDetailsButton": "Expandir detalles del modelo",
+        "memoryWarningButton": "Mostrar detalles de la advertencia de memoria",
+        "integrityWarningButton": "Mostrar detalles de la advertencia de integridad",
+        "memoryWarningSnackbar": "Notificación de advertencia de memoria"
       }
     },
     "modelSettings": {
@@ -469,6 +477,196 @@
       "vision": "Visión",
       "mtp": "Predicción múltiple (MTP)",
       "mtpDraft": "Borrador especulativo"
+    },
+    "emptyTitle": "Aún no hay modelos",
+    "emptyHint": "Toca + para descargar desde Hugging Face, añadir un modelo local o conectarte a un servidor remoto."
+  },
+  "modelsHub": {
+    "title": "Modelos",
+    "subtitle": "Descubre, descarga y gestiona todos los modelos que tu app puede ejecutar.",
+    "searchPlaceholder": "Buscar modelos, publicadores, tareas…",
+    "retry": "Reintentar",
+    "notAvailable": "No disponible",
+    "noDownloadableFile": "No hay archivos GGUF descargables en este repositorio",
+    "downloadStarted": "Descarga iniciada",
+    "seeAll": "Ver todo",
+    "exploreAction": "Explorar modelos",
+    "emptyTitle": "Aún no hay modelos instalados",
+    "emptyHint": "Explora el hub y descarga un modelo adecuado para tu dispositivo y tu trabajo.",
+    "fitScore": "{score}/100 de compatibilidad",
+    "installedFromRepo": "Instalado desde este repositorio",
+    "installedBadge": "Instalado",
+    "noFiles": "No hay archivos GGUF publicados en este repositorio.",
+    "visionFilesTitle": "Archivos de proyección de visión (mmproj)",
+    "visionFilesHint": "Estos archivos pequeños añaden comprensión de imágenes al modelo de texto correspondiente; se descargan automáticamente con los modelos de visión.",
+    "downloadFile": "Descargar archivo",
+    "downloadShort": "Obtener",
+    "version": "Versión",
+    "engineUnsupportedShort": "No ejecutable localmente",
+    "engineYes": "GGUF — se ejecuta localmente (llama.cpp)",
+    "engineNo": "No compatible con el motor local",
+    "capabilitiesTitle": "Capacidades",
+    "categoryEngineNotice": "Esta categoría enumera repositorios reales, pero el motor GGUF local aún no puede ejecutar este tipo de modelo, por lo que las descargas están deshabilitadas aquí. Nada es simulado: cuando el motor lo admita, estos modelos se podrán descargar.",
+    "categoryInstalledSection": "Tus modelos en esta categoría",
+    "categoryRemoteSection": "Descubrir en HuggingFace",
+    "featuredTitle": "Modelos destacados",
+    "recommendedTitle": "Recomendados para tu dispositivo",
+    "recentTitle": "Añadidos recientemente",
+    "favoritesTitle": "Favoritos",
+    "installedTitle": "Instalados",
+    "wifiOnly": "Solo con Wi-Fi",
+    "categoriesTitle": "Categorías",
+    "installedCount": "{count} instalados",
+    "discover": "Descubrir",
+    "device": {
+      "ram": "RAM",
+      "storage": "Almacenamiento libre",
+      "cpu": "CPU",
+      "gpu": "GPU",
+      "gpuOk": "Acelerado",
+      "gpuNo": "Solo CPU"
+    },
+    "compat": {
+      "excellent": "Compatibilidad excelente",
+      "good": "Buena compatibilidad",
+      "limited": "Compatibilidad limitada",
+      "notRecommended": "No recomendado",
+      "unknown": "Compatibilidad desconocida"
+    },
+    "reasons": {
+      "engineUnsupported": "Este tipo de modelo no puede ejecutarse en el motor GGUF local",
+      "engineSupported": "Se ejecuta en el motor GGUF local",
+      "memoryComfortable": "El uso de memoria será cómodo",
+      "memoryOk": "El uso de memoria es aceptable",
+      "memoryTight": "La memoria estará justa — espera ejecuciones más lentas",
+      "memoryInsufficient": "La RAM de este dispositivo no es suficiente para cargarlo",
+      "memoryUnknown": "No se puede estimar la necesidad de memoria con los datos del repositorio",
+      "storagePlenty": "Mucho almacenamiento libre",
+      "storageTight": "El almacenamiento quedará justo después de instalar",
+      "storageInsufficient": "No hay suficiente almacenamiento libre",
+      "storageUnknown": "No se pudo leer el almacenamiento libre",
+      "cpuGood": "La CPU tiene núcleos suficientes para una inferencia rápida",
+      "cpuOk": "La CPU puede ejecutarlo, con velocidad moderada",
+      "cpuLimited": "Pocos núcleos de CPU — la inferencia será lenta",
+      "cpuUnknown": "No se pudo leer el número de núcleos de la CPU",
+      "gpuSupported": "La aceleración por GPU está disponible",
+      "gpuUnsupported": "Sin aceleración por GPU — se ejecuta en la CPU",
+      "gpuUnknown": "No se pudo determinar el soporte de GPU"
+    },
+    "overviewTemplate": "Un modelo {categories} publicado por {author} con aproximadamente {params} parámetros, distribuido como archivos GGUF para inferencia local y sin conexión en este dispositivo.",
+    "overviewBlocked": "Este es un repositorio real, pero su tipo de modelo no es ejecutable por el motor local, así que no se puede descargar aquí.",
+    "statsTemplate": "En HuggingFace: {downloads} descargas · {likes} me gusta.",
+    "tech": {
+      "architecture": "Arquitectura",
+      "parameters": "Parámetros",
+      "contextLength": "Longitud de contexto",
+      "formats": "Formatos",
+      "quantization": "Cuantizaciones",
+      "fileCount": "Archivos GGUF",
+      "version": "Revisión (sha)",
+      "lastModified": "Última actualización",
+      "license": "Licencia",
+      "engine": "Motor"
+    },
+    "capabilities": {
+      "offline": "Sin conexión",
+      "context": "Contexto",
+      "arabic": "Soporte de árabe",
+      "multilingual": "Multilingüe"
+    },
+    "tabs": {
+      "overview": "Resumen",
+      "technical": "Técnico",
+      "files": "Archivos"
+    },
+    "categories": {
+      "text": "Texto",
+      "vision": "Visión",
+      "reasoning": "Razonamiento",
+      "coding": "Programación",
+      "multimodal": "Multimodal",
+      "embedding": "Embeddings",
+      "translation": "Traducción",
+      "audio": "Audio",
+      "image": "Imagen",
+      "video": "Video",
+      "general": "General"
+    },
+    "dialog": {
+      "aboutTitle": "Acerca de este modelo",
+      "aboutTemplate": "Un modelo GGUF {family} de {author}. Se ejecuta completamente sin conexión en este dispositivo una vez descargado. El tamaño de abajo es el tamaño exacto del archivo informado por HuggingFace.",
+      "familyUnknown": "GGUF",
+      "file": "Archivo",
+      "downloadSize": "Tamaño de descarga",
+      "extraVisionFiles": "Archivos de visión adicionales (mmproj)",
+      "storageAfter": "Almacenamiento usado tras la instalación",
+      "offline": "Funciona sin conexión",
+      "offlineYes": "Sí — completamente en el dispositivo",
+      "context": "Longitud de contexto",
+      "wifiOnlyWaiting": "La descarga solo con Wi-Fi está activada. Con datos móviles, esta descarga esperará en la cola hasta que vuelva el Wi-Fi.",
+      "engineUnsupported": "Este tipo de modelo (generación de imagen/video/audio) no puede ser ejecutado por el motor GGUF local, por lo que la descarga está deshabilitada. Nada falso aquí: el listado es real, el motor simplemente no puede ejecutarlo.",
+      "confirmDownload": "Descargar modelo",
+      "starting": "Iniciando…"
+    },
+    "storage": {
+      "title": "Almacenamiento de modelos",
+      "entryHint": "Desglose de uso, modelos más grandes, limpieza",
+      "used": "Usado por modelos",
+      "available": "Disponible",
+      "distribution": "Por categoría",
+      "largest": "Modelos más grandes",
+      "orphans": "Archivos incompletos y residuales",
+      "orphansFound": "{count} archivos · {size} se pueden liberar",
+      "orphansNone": "Nada que limpiar — el almacenamiento está ordenado.",
+      "cleanNow": "Limpiar",
+      "cleanTitle": "¿Eliminar archivos residuales?",
+      "cleanMessage": "{count} archivos incompletos o huérfanos se eliminarán permanentemente.",
+      "cleanConfirm": "Eliminar",
+      "checking": "Verificando almacenamiento…",
+      "enough": "Espacio libre suficiente",
+      "notEnough": "Espacio libre insuficiente",
+      "required": "Necesario",
+      "availableLabel": "Disponible",
+      "deficit": "Faltan {amount}"
+    },
+    "downloads": {
+      "title": "Descargas",
+      "emptyTitle": "No hay descargas",
+      "emptyHint": "Los modelos que descargues aparecen aquí con progreso en vivo y siguen siendo gestionables sin conexión.",
+      "active": "Descargando",
+      "paused": "En pausa",
+      "pausedHint": "En pausa — se reanuda desde la misma posición de bytes",
+      "verifying": "Verificando",
+      "verifyingHint": "Comprobando la integridad del archivo (tamaño + checksum) antes de instalar",
+      "completed": "Completado",
+      "remaining": "≈",
+      "pause": "Pausar",
+      "resume": "Reanudar",
+      "cancel": "Cancelar"
+    },
+    "updates": {
+      "title": "Actualizaciones",
+      "check": "Buscar actualizaciones",
+      "checking": "Comprobando…",
+      "recheck": "Comprobar de nuevo",
+      "upToDate": "Todos los modelos instalados coinciden con su revisión de origen.",
+      "update": "Actualizar"
+    },
+    "sort": {
+      "title": "Ordenar",
+      "recommended": "Mejor ajuste",
+      "downloads": "Más descargados",
+      "newest": "Más recientes",
+      "name": "Nombre",
+      "sizeAsc": "Los más pequeños primero",
+      "sizeDesc": "Los más grandes primero"
+    },
+    "search": {
+      "installedSection": "Tus modelos",
+      "hfSection": "Resultados de HuggingFace",
+      "noResults": "No se encontraron modelos",
+      "noResultsHint": "Prueba con otro nombre, publicador o tarea.",
+      "errorTitle": "Error en la búsqueda"
     }
   },
   "completionParams": {
@@ -514,7 +712,9 @@
     "tourDescription": "Vuelve a ver las pantallas de bienvenida para descubrir lo que ofrece DRS AI.",
     "showIntroButton": "Volver a mostrar la introducción",
     "privacyPolicy": "Política de privacidad",
-    "termsOfService": "Términos de servicio"
+    "termsOfService": "Términos de servicio",
+    "versionFormat": "Versión {{version}} ({{build}})",
+    "successTitle": "Éxito"
   },
   "feedback": {
     "title": "Enviar comentarios",
@@ -698,34 +898,6 @@
       "assistantSettings": "Ajustes de Asistente",
       "settingsSource": "Origen de los ajustes"
     },
-    "systemPromptSection": {
-      "buttons": {
-        "stopGenerating": "Detener generación",
-        "generatePrompt": "Generar instrucción del sistema",
-        "loadingModel": "Cargando modelo...",
-        "resetParameters": "Restablecer parámetros",
-        "resetTemplate": "Restablecer plantilla"
-      },
-      "sectionTitle": "Prompt del sistema",
-      "useAIPrompt": "Usar IA para generar el prompt del sistema",
-      "modelSelector": {
-        "label": "Seleccionar modelo para la generación*",
-        "sublabel": "Recomendado: Llama 3.2 3B o Qwen3 4B Instruct 2507.",
-        "placeholder": "Seleccionar modelo"
-      },
-      "generatingPrompt": {
-        "label": "Propósito y contexto",
-        "placeholder": "Describe el rol, propósito o escenario para este Asistente..."
-      },
-      "systemPrompt": {
-        "label": "Prompt del sistema",
-        "sublabel": "Siéntete libre de editar y experimentar para encontrar el prompt óptimo para tu escenario",
-        "placeholder": "Eres un asistente útil"
-      },
-      "warnings": {
-        "promptChanged": "El prompt del sistema ha sido modificado manualmente"
-      }
-    },
     "assistantGenerationSettingsSheet": {
       "title": "Ajustes de generación - {{assistantName}}",
       "invalidValues": "Valores no válidos",
@@ -768,17 +940,17 @@
       "forbiddenTitle": "Acceso denegado",
       "forbiddenMessage": "No tienes permiso para acceder a este modelo. Asegúrate de:",
       "forbiddenSteps": [
-        "Que tu token tenga permisos de lectura (\"read\")",
-        "Que hayas solicitado y se te haya concedido acceso a este modelo",
-        "Que el propietario del modelo haya aprobado tu solicitud de acceso"
+        "Your token has \"read\" permission",
+        "You requested and were granted access to this model",
+        "The model owner approved your access request"
       ],
       "getTokenTitle": "Obtener token de Hugging Face",
       "getTokenMessage": "Este modelo requiere un token de Hugging Face para descargarse.",
       "getTokenSteps": [
-        "Entra en huggingface.co e inicia sesión",
-        "Ve a Ajustes > Tokens de acceso",
-        "Crea un token nuevo con permisos de lectura (\"read\")",
-        "Copia el token y pégalo en el campo de tokens"
+        "Go to huggingface.co and sign in",
+        "Navigate to Settings > Access Tokens",
+        "Create a new token with \"read\" access",
+        "Copy the token and paste it in the token field"
       ],
       "tokenDisabledTitle": "El token está desactivado",
       "tokenDisabledMessage": "Tienes configurado un token de Hugging Face, pero actualmente está desactivado. Este modelo requiere un token para descargarse. Activa tu token para continuar.",
@@ -799,7 +971,12 @@
       "exportCurrentSessionMarkdown": "Exportar como Markdown",
       "exportAllSessions": "Exportar todas las sesiones",
       "exportChatSession": "Exportar sesión de chat",
-      "importSessions": "Importar sesiones"
+      "importSessions": "Importar sesiones",
+      "exportErrorTitle": "Error de exportación",
+      "exportCurrentSessionError": "No se pudo exportar la sesión actual.",
+      "exportAllError": "No se pudieron exportar todas las sesiones.",
+      "importSuccessTitle": "Importación exitosa",
+      "importErrorTitle": "Error de importación"
     },
     "hfTokenSheet": {
       "title": "Token de Hugging Face",
@@ -812,10 +989,10 @@
       "resetSuccess": "Token eliminado con éxito",
       "instructions": "Cómo obtener un token:",
       "instructionsSteps": [
-        "Ve a huggingface.co e inicia sesión",
-        "Ve a Configuración > Tokens de acceso",
-        "Crea un nuevo token con acceso de lectura (\"read\")",
-        "Copia el token y pégalo abajo"
+        "Go to huggingface.co and sign in",
+        "Navigate to Settings > Access Tokens",
+        "Create a new token with \"read\" access",
+        "Copy the token and paste it below"
       ],
       "getTokenLink": "Obtener un token en huggingface.co ↗",
       "error": {
@@ -968,6 +1145,34 @@
     "sendButton": {
       "accessibilityLabel": "Enviar"
     },
+    "systemPromptSection": {
+      "sectionTitle": "Prompt del sistema",
+      "useAIPrompt": "Usar IA para generar el prompt del sistema",
+      "modelSelector": {
+        "label": "Seleccionar modelo para la generación*",
+        "sublabel": "Recomendado: Llama 3.2 3B o Qwen3 4B Instruct 2507.",
+        "placeholder": "Seleccionar modelo"
+      },
+      "generatingPrompt": {
+        "label": "Propósito y contexto",
+        "placeholder": "Describe el rol, propósito o escenario para este Asistente..."
+      },
+      "buttons": {
+        "loadingModel": "Cargando modelo...",
+        "stopGenerating": "Detener generación",
+        "generatePrompt": "Generar instrucción del sistema",
+        "resetParameters": "Restablecer parámetros",
+        "resetTemplate": "Restablecer plantilla"
+      },
+      "systemPrompt": {
+        "label": "Prompt del sistema",
+        "sublabel": "Siéntete libre de editar y experimentar para encontrar el prompt óptimo para tu escenario",
+        "placeholder": "Eres un asistente útil"
+      },
+      "warnings": {
+        "promptChanged": "El prompt del sistema ha sido modificado manualmente"
+      }
+    },
     "sidebarContent": {
       "menuItems": {
         "chat": "Chat",
@@ -1004,7 +1209,9 @@
         "fourWeeksAgo": "Hace 4 semanas",
         "lastMonth": "El mes pasado",
         "older": "Más antiguos"
-      }
+      },
+      "emptySessionsTitle": "Aún no hay chats",
+      "emptySessionsHint": "Inicia una nueva conversación desde la pantalla de chat"
     },
     "usageStats": {
       "tooltip": {
@@ -1033,7 +1240,60 @@
       "exportAllAssistants": "Exportar todos los assistants",
       "importAssistants": "Importar assistants",
       "importSuccess": "Se importaron {{count}} assistant(s) con éxito.",
-      "importError": "No se pudieron importar los assistants. Revisa el formato del archivo."
+      "importError": "No se pudieron importar los assistants. Revisa el formato del archivo.",
+      "exportErrorTitle": "Error de exportación",
+      "exportAllError": "No se pudieron exportar todos los asistentes.",
+      "importSuccessTitle": "Importación exitosa",
+      "importErrorTitle": "Error de importación"
+    },
+    "brandHeader": {
+      "tagline": "Tu IA privada en el dispositivo"
+    },
+    "authSheet": {
+      "signInTitle": "Iniciar sesión",
+      "signUpTitle": "Crear cuenta",
+      "fullNameLabel": "Nombre completo",
+      "emailLabel": "Correo electrónico",
+      "passwordLabel": "Contraseña",
+      "signInButton": "Iniciar sesión",
+      "signUpButton": "Crear cuenta",
+      "forgotPassword": "¿Olvidaste tu contraseña?",
+      "or": "o",
+      "continueWithGoogle": "Continuar con Google",
+      "haveAccount": "¿Ya tienes una cuenta? ",
+      "noAccount": "¿No tienes una cuenta? ",
+      "signUpLink": "Registrarse",
+      "signInLink": "Iniciar sesión",
+      "signingIn": "Iniciando sesión...",
+      "fillRequiredFields": "Completa todos los campos obligatorios.",
+      "enterFullName": "Ingresa tu nombre completo.",
+      "enterEmailFirst": "Primero ingresa tu dirección de correo electrónico.",
+      "accountCreatedTitle": "Cuenta creada",
+      "accountCreatedMessage": "Revisa tu correo electrónico para verificar tu cuenta.",
+      "welcomeBackTitle": "¡Bienvenido de nuevo!",
+      "welcomeBackMessage": "Has iniciado sesión correctamente.",
+      "googleErrorTitle": "Error de inicio de sesión con Google",
+      "passwordResetTitle": "Restablecimiento de contraseña",
+      "passwordResetMessage": "Revisa tu correo electrónico para ver las instrucciones para restablecer la contraseña.",
+      "authErrorTitle": "Error de autenticación"
+    },
+    "squareAssistantCard": {
+      "videoAssistant": "Asistente de IA para video",
+      "advancedAssistant": "Asistente de IA avanzado",
+      "assistant": "Asistente de IA",
+      "byCreator": "por {{creator}}",
+      "downloadAssistantTitle": "Descargar asistente",
+      "downloadAssistantMessage": "¿Descargar \"{{assistantName}}\" para empezar a chatear?",
+      "download": "Descargar",
+      "downloadErrorTitle": "Error de descarga",
+      "downloadErrorMessage": "No se pudo descargar el asistente. Inténtalo de nuevo.",
+      "startChatErrorMessage": "No se pudo iniciar el chat. Inténtalo de nuevo.",
+      "switchModelTitle": "¿Cambiar de modelo?",
+      "switchModelMessage": "¿Cambiar a \"{{modelName}}\" para este asistente?",
+      "keepCurrent": "Mantener actual",
+      "switch": "Cambiar",
+      "shareErrorTitle": "Error al compartir",
+      "shareErrorMessage": "No se pudo compartir el asistente. Inténtalo de nuevo."
     }
   },
   "assistantsScreen": {
@@ -1121,7 +1381,9 @@
       "signInAgain": "Iniciar sesión de nuevo",
       "assistantNotAvailable": "Este Asistente no está disponible para la compra en este momento.",
       "checkoutFailed": "Algo salió mal. Por favor, inténtalo de nuevo."
-    }
+    },
+    "emptyLocal": "Aún no hay asistentes.\n¡Crea tu primer asistente con el botón +!",
+    "emptyFiltered": "No se encontraron asistentes.\nPrueba ajustando tus filtros o tu búsqueda."
   },
   "validation": {
     "nameRequired": "El nombre es obligatorio",
@@ -1171,7 +1433,11 @@
       "step2": "• Toca el botón de la cámara para iniciar el análisis de video en vivo",
       "step3": "• Ajusta la frecuencia de las capturas mientras la cámara esté activa",
       "step4": "• Cambia a otro amigo para chatear con texto normal"
-    }
+    },
+    "defaultPrompt": "¿Qué ves?",
+    "multimodalTitle": "Multimodal no habilitado",
+    "multimodalMessage": "Este modelo no admite análisis de imágenes. Carga un modelo multimodal.",
+    "checkSupportError": "No se pudo comprobar si el modelo admite imágenes."
   },
   "screenTitles": {
     "chat": "Chat",
@@ -1385,6 +1651,15 @@
         "no": "✗"
       },
       "versionFormat": "{{version}} ({{buildNumber}})"
+    },
+    "presetDefault": "Predeterminado",
+    "presetFast": "Rápido",
+    "presetCustom": "Personalizado",
+    "params": {
+      "pp": "Número de tokens de procesamiento del prompt (máx.: tamaño de lote físico)",
+      "tg": "Número de tokens de generación de texto",
+      "pl": "Tamaño de paralelismo de pipeline",
+      "nr": "Número de repeticiones"
     }
   },
   "errors": {
@@ -1495,7 +1770,8 @@
     "skip": "Omitir",
     "skipForNow": "Omitir por ahora",
     "splash": {
-      "brand": "DRS AI"
+      "brand": "DRS AI",
+      "tagline": "Tu IA privada, en tu dispositivo"
     },
     "screen1": {
       "title": "Conoce a tus amigos (Asistentes).",

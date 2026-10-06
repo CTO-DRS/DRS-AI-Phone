@@ -6,7 +6,10 @@
     "rename": "Renommer",
     "reset": "Réinitialiser",
     "save": "Enregistrer",
+    "stop": "Stop",
     "update": "Mettre à jour",
+    "error": "Erreur",
+    "export": "Exporter",
     "networkError": "Erreur réseau. Veuillez réessayer.",
     "downloadETA": "Temps estimé",
     "calculating": "calcul en cours...",
@@ -25,21 +28,32 @@
     "minute": "min",
     "minutes": "min",
     "justNow": "à l'instant",
-    "stop": "Stop",
-    "error": "Erreur",
-    "export": "Exporter",
     "ok": "Ok",
     "close": "Fermer",
     "clear": "Tout effacer",
     "gallery": "Gallerie",
-    "noResults": "Pas de résultats"
+    "noResults": "Pas de résultats",
+    "openDrawer": "Ouvrir le menu latéral",
+    "openMenu": "Ouvrir le menu",
+    "closeMenu": "Fermer le menu"
   },
   "settings": {
     "modelInitializationSettings": "Paramètres d'initialisation du modèle",
     "metal": "Metal",
     "metalDescription": "API accélérée par le matériel d'Apple.",
     "metalRequiresNewerIOS": "L'accélération Metal nécessite iOS 18 ou supérieur. Veuillez mettre à jour votre appareil pour utiliser cette fonctionnalité.",
+    "openCL": "OpenCL (expérimental)",
+    "openCLDescription": "Acceleration GPU pour Adreno GPUs. prompt plus rapide, generation ne sera pas toujours plus rapide.",
+    "openCLNotAvailable": "OpenCL n'es pas disponible sur cet appareil. Nécessite un GPU adreno avec i8mm et dotprod CPU.",
+    "openCLMissingCPUFeatures": "OpenCL nécessite les fonctionnalités CPU i8mm et dotprod, qui ne sont pas disponibles sur cet appareil.",
+    "openCLQuantizationNote": "Remarque : les modèles quantifiés en Q4_0 pur offrent les meilleures performances avec OpenCL.",
+    "openCLDocsLink": "Consultez la documentation OpenCL de llama.cpp pour plus de détails.",
     "layersOnGPU": "Couches sur GPU : {{gpuLayers}}",
+    "deviceSelection": "Choix de l'appareil",
+    "deviceSelectionIOS": "Appareil (Metal)",
+    "deviceSelectionIOSDescription": "Choisissez le GPU Metal ou le mode CPU seul",
+    "deviceSelectionAndroidDescription": "Sélectionnez l'appareil de calcul (CPU, GPU ou NPU Hexagon)",
+    "cpuOnlyNoAccelerators": "CPU seul - Aucun accélérateur matériel détecté",
     "contextSize": "Taille du contexte",
     "contextSizePlaceholder": "Entrez la taille du contexte (min {{minContextSize}})",
     "invalidContextSizeError": "Veuillez entrer un nombre valide (minimum {{minContextSize}})",
@@ -52,14 +66,49 @@
     "physicalBatchSizeDescription": "Taille de lot physique : {{physicalBatchSize}}{{effectivePhysicalBatch}}",
     "cpuThreads": "Threads CPU",
     "cpuThreadsDescription": "Utilisation de {{threads}} sur {{maxThreads}} threads disponibles",
+    "imageMaxTokens": "Tokens max pour l'image",
+    "imageMaxTokensDescription": "Tokens maximum pour le traitement d'image : {{tokens}}{{effectiveTokens}} (plus bas = plus rapide, moins de détails)",
     "flashAttention": "Flash Attention",
     "flashAttentionDescription": "Activer Flash Attention pour un traitement plus rapide",
+    "flashAttentionIOSDescription": "Attention économe en mémoire (activée automatiquement sur Metal)",
+    "flashAttentionAndroidDescription": "Doit être désactivée pour la sauvegarde/le chargement d'état OpenCL",
+    "flashAttentionAuto": "Auto",
+    "flashAttentionOn": "Activé",
+    "flashAttentionOff": "Désactivé",
     "keyCacheType": "Type de cache clé",
     "keyCacheTypeDescription": "Sélectionnez le type de cache pour le calcul des clés",
     "keyCacheTypeDisabledDescription": "Activez Flash Attention pour modifier le type de cache",
     "valueCacheType": "Type de cache valeur",
     "valueCacheTypeDescription": "Sélectionnez le type de cache pour le calcul des valeurs",
     "valueCacheTypeDisabledDescription": "Activez Flash Attention pour modifier le type de cache",
+    "memorySettings": "Paramètres mémoire",
+    "useMlock": "Utiliser le verrouillage mémoire",
+    "useMlockDescription": "Force le système à garder le modèle en RAM plutôt que de l'échanger ou de le compresser",
+    "useMmap": "Mappage mémoire",
+    "useMmapDescription": "Utilise des fichiers mappés en mémoire pour un chargement plus rapide du modèle",
+    "useMmapTrue": "Activé",
+    "useMmapFalse": "Désactivé",
+    "useMmapTrueDescription": "Toujours utiliser le mappage mémoire pour un chargement plus rapide",
+    "useMmapFalseDescription": "Désactivé est recommandé lorsque le repacking des poids est activé, pour éviter de doubler l'utilisation de la mémoire",
+    "weightRepacking": "Activer le repacking des poids",
+    "weightRepackingDescription": "Traitement des invites plus rapide avec une surcharge mémoire minimale lorsque le mappage mémoire est désactivé. La génération de tokens n'est pas affectée.",
+    "speculativeDecoding": "Décodage spéculatif",
+    "speculativeDecodingDescription": "Utilise un petit modèle brouillon (ou un modèle MTP intégré) pour prédire les tokens et accélérer la génération. Expérimental.",
+    "speculativeNotMTPCapable": "Le modèle actif ne prend pas en charge le décodage spéculatif et aucun brouillon compatible n'est associé : il reste donc désactivé pour lui, sans effet. Il s'applique automatiquement aux modèles compatibles.",
+    "speculativeDraftModel": "Modèle brouillon",
+    "speculativeDraftModelDescription": "Prédit les tokens pour le modèle actif.",
+    "speculativeDraftModelNone": "Aucun (MTP intégré)",
+    "speculativeDraftModelIgnoredOverridden": "Le modèle actif est livré avec son propre modèle brouillon : ce choix est ignoré.",
+    "speculativeDraftModelIgnoredIncompatible": "Ce brouillon n'est pas compatible avec le modèle actif : il est ignoré.",
+    "speculativeDraftModelIgnoredNotCapable": "Ce modèle n'a pas de couches brouillon : il ne peut donc pas servir de modèle brouillon.",
+    "speculativeDraftKeyCacheType": "Type de cache clé du brouillon",
+    "speculativeDraftValueCacheType": "Type de cache valeur du brouillon",
+    "speculativeDraftNGpuLayers": "Couches GPU du brouillon",
+    "speculativeDraftNGpuLayersDescription": "Nombre de couches du modèle brouillon à décharger sur le GPU.",
+    "speculativeDraftCacheTypeInactiveDescription": "S'applique dès que le décodage spéculatif s'exécute.",
+    "ttsAvailability": "Synthèse vocale",
+    "ttsAvailabilityDescription": "Lit les réponses de l'assistant à voix haute.",
+    "ttsAvailabilityLowMemoryWarning": "La mémoire de votre appareil est faible — cette fonction risque de ne pas fonctionner de manière fiable.",
     "modelLoadingSettings": "Paramètres de chargement du modèle",
     "autoOffloadLoad": "Déchargement/Chargement auto",
     "autoOffloadLoadDescription": "Décharger le modèle quand l'application est en arrière-plan.",
@@ -67,6 +116,12 @@
     "autoNavigateToChatDescription": "Naviguer vers le chat quand le chargement commence.",
     "appSettings": "Paramètres de l'application",
     "language": "Langue",
+    "languageSheetTitle": "Langue",
+    "languageSearchPlaceholder": "Rechercher des langues",
+    "languageRestartTitle": "Redémarrage requis",
+    "languageRestartMessage": "Le sens de mise en page a changé pour cette langue. Redémarrez l'application pour l'appliquer entièrement.",
+    "languageRestartNow": "Redémarrer maintenant",
+    "languageRestartLater": "Plus tard",
     "darkMode": "Mode sombre",
     "displayMemoryUsage": "Afficher l'utilisation de mémoire",
     "displayMemoryUsageDescription": "Afficher l'utilisation de mémoire dans la page de chat.",
@@ -79,6 +134,31 @@
     "importButton": "Importer",
     "importSuccess": "{{count}} session(s) de chat importée(s) avec succès.",
     "importError": "Échec de l'importation des sessions de chat. Veuillez vérifier le format du fichier.",
+    "internetSearch": {
+      "title": "Recherche Internet",
+      "description": "Laissez les Assistants chercher sur le web avec leurs propres outils. Apportez votre propre clé API — DRS AI ne conserve jamais vos clés ni ne route vos requêtes.",
+      "providerLabel": "Fournisseur de recherche",
+      "providerGated": "Bientôt disponible",
+      "keyLabel": "Clé API",
+      "keyIsSet": "Clé configurée pour {{provider}}.",
+      "keyNotSet": "Aucune clé configurée pour {{provider}}.",
+      "setKeyButton": "Définir la clé",
+      "updateKeyButton": "Mettre à jour la clé",
+      "clearKeyButton": "Effacer la clé",
+      "keyInputPlaceholder": "Collez votre clé API {{provider}}",
+      "keyUpdateError": "Impossible de mettre à jour la clé. Veuillez réessayer.",
+      "showKeyAccessibilityLabel": "Afficher la clé API",
+      "hideKeyAccessibilityLabel": "Masquer la clé API",
+      "resultCountLabel": "Résultats par recherche",
+      "resultCountDescription": "Moins de résultats laisse plus de place dans le contexte du modèle.",
+      "consentTitle": "Les recherches quittent votre appareil",
+      "consentDescription": "Lorsqu'un Assistant recherche sur le web, votre requête est envoyée au fournisseur sélectionné via Internet. Lorsqu'un Assistant lit une page, l'URL et le contenu de la page peuvent être envoyés à un service de lecture par défaut (r.jina.ai) si le fournisseur sélectionné n'a pas de lecteur natif. Les clés et les requêtes ne sont jamais envoyées à DRS AI.",
+      "consentAccept": "J'ai compris",
+      "consentRequired": "Acceptez la divulgation ci-dessus pour définir une clé et activer la recherche.",
+      "consentGivenTitle": "La recherche web est activée",
+      "consentGivenDescription": "Les requêtes et les lectures de pages peuvent quitter votre appareil comme décrit ci-dessus.",
+      "consentRevoke": "Révoquer"
+    },
     "apiSettingsTitle": "Paramètres API",
     "huggingFaceTokenLabel": "Token Hugging Face",
     "tokenIsSetDescription": "Token configuré. Nécessaire pour accéder aux modèles restreints.",
@@ -86,13 +166,72 @@
     "setTokenButton": "Configurer le token",
     "useHfTokenLabel": "Utiliser le token HF",
     "useHfTokenDescription": "Activez pour utiliser le token pour les requêtes API. Désactivez si le token cause des problèmes d'authentification.",
-    "openCL": "OpenCL (expérimental)",
-    "openCLDescription": "Acceleration GPU pour Adreno GPUs. prompt plus rapide, generation ne sera pas toujours plus rapide.",
-    "openCLNotAvailable": "OpenCL n'es pas disponible sur cet appareil. Nécessite un GPU adreno avec i8mm et dotprod CPU.",
-    "deviceSelection": "Choix de l'appareil"
+    "cacheStorageTitle": "Cache & stockage",
+    "clearAssistantCaches": "Effacer les caches des Assistants",
+    "clearAssistantCachesDescription": "Efface les données en cache utilisées pour accélérer les Assistants. Cela n'affectera ni vos Assistants ni votre historique de discussion.",
+    "clearCachesButton": "Effacer les caches",
+    "clearCachesConfirmTitle": "Effacer les caches des Assistants ?",
+    "clearCachesConfirmMessage": "Ceci effacera toutes les données de session en cache ({{fileCount}} fichiers, {{size}}). Les Assistants peuvent être plus lents à la première utilisation après l'effacement. Cela n'affectera ni vos Assistants ni votre historique de discussion.",
+    "clearCachesSuccess": "{{count}} fichier(s) de cache effacé(s) avec succès.",
+    "clearCachesError": "Échec de l'effacement des caches. Veuillez réessayer.",
+    "noCachesToClear": "Aucun cache à effacer.",
+    "serverName": "Nom du serveur",
+    "serverUrl": "URL du serveur",
+    "serverUrlPlaceholder": "ex. http://192.168.1.100:1234",
+    "requestTimeout": "Délai d'attente des requêtes (secondes)",
+    "requestTimeoutPlaceholder": "Optionnel - laissez vide pour la valeur par défaut",
+    "requestTimeoutHelp": "Attente maximale pour qu'un serveur lent réponde. Laissez vide pour la valeur par défaut.",
+    "serverType": "Type de serveur",
+    "serverTypeHelp": "Détecté automatiquement ; modifiez-le s'il est incorrect.",
+    "apiKey": "Clé API",
+    "apiKeyPlaceholder": "Optionnel - requis pour OpenAI/Groq",
+    "apiKeyDescription": "Stockée de manière sécurisée sur l'appareil.",
+    "remoteModel": "Distant",
+    "remotePrivacyNotice": "Les messages envoyés à des serveurs distants quittent votre appareil. Connectez-vous uniquement à des serveurs de confiance.",
+    "remoteIndicator": "Distant",
+    "serverUrlRequired": "L'URL du serveur est requise",
+    "serverUrlInvalid": "Format d'URL invalide",
+    "serverUrlHttpWarning": "Le HTTP non chiffré n'est autorisé que pour les adresses du réseau local. Utilisez https:// pour les serveurs publics.",
+    "addRemoteModel": "Ajouter un modèle distant",
+    "yourServers": "Vos serveurs",
+    "orConnectNewServer": "ou connecter un nouveau serveur",
+    "selectModel": "Sélectionner un modèle",
+    "addModel": "Ajouter un modèle",
+    "connected": "Connecté",
+    "connectionFailed": "Échec de la connexion : {{error}}",
+    "connecting": "Connexion...",
+    "noModelsAvailable": "Aucun modèle disponible sur ce serveur.",
+    "alreadyAdded": "Déjà ajouté",
+    "connectedServers": "Serveurs connectés",
+    "modelsCount": "{{count}} modèles",
+    "serverDetails": "Détails du serveur",
+    "modelsUsingServer": "Modèles utilisant ce serveur :",
+    "saveChanges": "Enregistrer les modifications",
+    "removeServer": "Supprimer le serveur",
+    "removeServerMessage": "Supprimer {{serverName}} et ses {{count}} modèles ?",
+    "removeRemoteModel": "Supprimer {{modelName}} ({{serverName}}) ?",
+    "retryConnection": "Réessayer",
+    "enterUrlManually": "Saisir l'URL manuellement",
+    "manageServers": "Gérer les serveurs",
+    "exportLegacyError": "Échec de l'exportation des anciennes sessions de chat. Le fichier n'existe peut-être pas."
   },
   "memory": {
-    "shortWarning": "Alerte mémoire"
+    "shortWarning": "Alerte mémoire",
+    "multimodalWarning": "Cet appareil peut ne pas disposer de suffisamment de ressources pour les modèles multimodaux.",
+    "memoryTight": "Mémoire juste",
+    "lowMemory": "Mémoire faible",
+    "memoryDetailMessage": "Ce modèle nécessite ~{{needed}} mais seulement ~{{available}} sont estimés utilisables. Les estimations s'améliorent à mesure que vous utilisez l'application.",
+    "estimatedMemory": "Mémoire estimée : ~{{size}}",
+    "alerts": {
+      "memoryWarningTitle": "Avertissement mémoire",
+      "memoryWarningMessage": "Ce modèle peut dépasser la mémoire disponible, ce qui pourrait causer une instabilité. Continuer le chargement ?",
+      "multimodalWarningTitle": "Avertissement de performance de l'appareil",
+      "multimodalWarningMessage": "Cet appareil peut ne pas disposer de suffisamment de ressources pour les modèles multimodaux. Le chargement peut causer une instabilité. Continuer quand même ?",
+      "combinedWarningTitle": "Avertissement de performance",
+      "combinedWarningMessage": "Ce modèle peut dépasser la mémoire disponible et cet appareil peut ne pas disposer de suffisamment de ressources pour les modèles multimodaux. Le chargement peut causer une instabilité. Continuer quand même ?",
+      "cancel": "Annuler",
+      "continue": "Continuer"
+    }
   },
   "storage": {
     "checkFailed": "Échec de vérification du stockage",
@@ -107,7 +246,9 @@
       "fileAlreadyExists": "Fichier déjà existant",
       "fileAlreadyExistsMessage": "Un fichier avec ce nom existe déjà. Que souhaitez-vous faire ?",
       "replace": "Remplacer",
-      "keepBoth": "Garder les deux"
+      "keepBoth": "Garder les deux",
+      "copyingModel": "Copie du fichier du modèle...",
+      "copyFailed": "Échec de la copie du fichier du modèle"
     },
     "labels": {
       "localModel": "Local",
@@ -116,6 +257,47 @@
       "availableToUse": "Prêt à utiliser",
       "availableToDownload": "Disponible au téléchargement",
       "useAddButtonForMore": "Utilisez le bouton + pour trouver plus de modèles"
+    },
+    "vision": "Vision",
+    "mmproj": "Projecteur",
+    "multimodal": {
+      "settings": "Paramètres multimodaux",
+      "projectionModels": "Modèles de projection",
+      "noCompatibleModels": "Aucun modèle de projection compatible trouvé",
+      "noProjectionModels": "Aucun modèle de projection disponible",
+      "selected": "Sélectionné",
+      "select": "Sélectionner",
+      "download": "Télécharger",
+      "projectionNeededTitle": "Modèle de projection requis",
+      "projectionNeededMessage": "Ce modèle nécessite un modèle de projection pour les capacités multimodales.",
+      "projectionMissingWarning": "Modèle de projection manquant",
+      "projectionMissingShort": "Projection manquante",
+      "reloadModelTitle": "Recharger le modèle",
+      "reloadModelMessage": "Le modèle doit être rechargé pour appliquer le nouveau modèle de projection. Voulez-vous recharger maintenant ?",
+      "reload": "Recharger",
+      "deleteProjectionTitle": "Supprimer le modèle de projection",
+      "deleteProjectionMessage": "Êtes-vous sûr de vouloir supprimer ce modèle de projection ?",
+      "cannotDeleteTitle": "Suppression impossible",
+      "visionControls": {
+        "enableVision": "Activer les capacités de vision",
+        "disableVision": "Désactiver les capacités de vision",
+        "visionEnabled": "Vision activée",
+        "visionDisabled": "Vision désactivée",
+        "textOnlyMode": "Texte seul",
+        "visionMode": "Vision activée",
+        "downloadWithVision": "Télécharger avec vision",
+        "downloadTextOnly": "Télécharger texte seul",
+        "visionToggleDescription": "Activer les capacités de traitement d'image",
+        "projectionModelSize": "Modèle de projection (+{{size}})",
+        "visionModeDescription": "Traiter les images et le texte",
+        "textOnlyModeDescription": "Traiter le texte uniquement",
+        "includesVisionCapability": "Inclut la capacité de vision",
+        "requiresProjectionModel": "Téléchargez d'abord un modèle de projection compatible"
+      },
+      "cannotDeleteActive": "Ce modèle de projection est actuellement actif.",
+      "cannotDeleteInUse": "Ce modèle de projection est utilisé par des modèles LLM téléchargés :",
+      "dependentModels": "Modèles dépendants :",
+      "visionWillBeDisabled": "Les capacités de vision seront désactivées pour ces modèles."
     },
     "buttons": {
       "addFromHuggingFace": "Ajouter depuis Hugging Face",
@@ -180,7 +362,28 @@
       "modelUpdatedShort": "il y a {{time}}",
       "modelUpdatedJustNowLong": "Mis à jour à l'instant",
       "modelUpdatedJustNowShort": "à l'instant",
-      "errorOccurred": "Impossible de charger les modèles. Veuillez réessayer."
+      "errorOccurred": "Impossible de charger les modèles. Veuillez réessayer.",
+      "filters": {
+        "author": "Auteur",
+        "authorPlaceholder": "Filtrer par auteur...",
+        "sortBy": "Trier par",
+        "clearFilters": "Effacer les filtres",
+        "showFilters": "Afficher les filtres",
+        "hideFilters": "Masquer les filtres",
+        "sortRelevance": "Pertinence",
+        "sortDownloads": "Téléchargements",
+        "sortRecent": "Récemment mis à jour",
+        "sortLikes": "Plus aimés"
+      }
+    },
+    "hubRun": {
+      "title": "Télécharger le modèle",
+      "resolving": "Chargement des détails du modèle…",
+      "cancel": "Annuler",
+      "retry": "Réessayer",
+      "invalidLinkTitle": "Lien invalide",
+      "invalidLinkMessage": "Ce lien Hugging Face est incomplet ou contient un modèle ou fichier invalide.",
+      "resolveError": "Impossible de charger les détails du modèle. Vérifiez votre connexion et réessayez."
     },
     "modelCard": {
       "alerts": {
@@ -197,7 +400,38 @@
         "offload": "Décharger"
       },
       "labels": {
-        "skills": "Compétences : "
+        "skills": "Compétences : ",
+        "vision": "Vision",
+        "visionSupported": "Pris en charge",
+        "visionNotSupported": "Non pris en charge",
+        "visionUnknown": "Inconnu",
+        "capabilities": "capacités.",
+        "modelName": "Nom du modèle",
+        "contextLength": "Longueur du contexte",
+        "architecture": "Architecture",
+        "author": "Auteur",
+        "requiresProjectionModel": "Nécessite un modèle de projection",
+        "downloadProjectionModel": "Télécharger le modèle de projection",
+        "viewModelCardOnHuggingFace": "Voir la fiche du modèle sur Hugging Face",
+        "draftOnlyReason": "Modèle brouillon uniquement. Sélectionnez-le dans Paramètres → Décodage spéculatif."
+      },
+      "accessibility": {
+        "expandDetails": "Développer les détails",
+        "collapseDetails": "Réduire les détails",
+        "memoryWarning": "Avertissement mémoire",
+        "integrityWarning": "Avertissement d'intégrité",
+        "downloadProgress": "Progression du téléchargement",
+        "loadingIndicator": "Chargement",
+        "loadButton": "Charger le modèle",
+        "offloadButton": "Décharger le modèle",
+        "downloadButton": "Télécharger le modèle",
+        "settingsButton": "Paramètres du modèle",
+        "deleteButton": "Supprimer le modèle",
+        "removeButton": "Retirer le modèle",
+        "expandDetailsButton": "Développer les détails du modèle",
+        "memoryWarningButton": "Afficher les détails de l'avertissement mémoire",
+        "integrityWarningButton": "Afficher les détails de l'avertissement d'intégrité",
+        "memoryWarningSnackbar": "Notification d'avertissement mémoire"
       }
     },
     "modelSettings": {
@@ -239,11 +473,205 @@
       "math": "Résolution mathématique",
       "multilingual": "Multilingue",
       "rewriting": "Réécriture",
-      "creativity": "Écriture créative"
+      "creativity": "Écriture créative",
+      "vision": "Vision",
+      "mtp": "Spéculatif (MTP)",
+      "mtpDraft": "Brouillon spéculatif"
+    },
+    "emptyTitle": "Aucun modèle pour l'instant",
+    "emptyHint": "Appuyez sur + pour télécharger depuis Hugging Face, ajouter un modèle local ou connecter un serveur distant."
+  },
+  "modelsHub": {
+    "title": "Modèles",
+    "subtitle": "Découvrez, téléchargez et gérez chaque modèle que votre application peut exécuter.",
+    "searchPlaceholder": "Rechercher des modèles, éditeurs, tâches…",
+    "retry": "Réessayer",
+    "notAvailable": "Indisponible",
+    "noDownloadableFile": "Aucun fichier GGUF téléchargeable dans ce dépôt",
+    "downloadStarted": "Téléchargement démarré",
+    "seeAll": "Tout voir",
+    "exploreAction": "Explorer les modèles",
+    "emptyTitle": "Aucun modèle installé pour l'instant",
+    "emptyHint": "Parcourez le hub et téléchargez un modèle adapté à votre appareil et à votre usage.",
+    "fitScore": "{score}/100 compatibilité",
+    "installedFromRepo": "Installé depuis ce dépôt",
+    "installedBadge": "Installé",
+    "noFiles": "Aucun fichier GGUF n'est publié dans ce dépôt.",
+    "visionFilesTitle": "Fichiers de projection vision (mmproj)",
+    "visionFilesHint": "Ces petits fichiers ajoutent la compréhension d'images au modèle de texte correspondant ; ils se téléchargent automatiquement avec les modèles vision.",
+    "downloadFile": "Télécharger le fichier",
+    "downloadShort": "Obtenir",
+    "version": "Version",
+    "engineUnsupportedShort": "Non exécutable localement",
+    "engineYes": "GGUF — s'exécute localement (llama.cpp)",
+    "engineNo": "Non pris en charge par le moteur local",
+    "capabilitiesTitle": "Capacités",
+    "categoryEngineNotice": "Cette catégorie liste de vrais dépôts, mais le moteur GGUF local ne peut pas encore exécuter ce type de modèle, donc les téléchargements sont désactivés ici. Rien n'est simulé — lorsque le moteur les prendra en charge, ils deviendront téléchargeables.",
+    "categoryInstalledSection": "Vos modèles dans cette catégorie",
+    "categoryRemoteSection": "Découvrir sur HuggingFace",
+    "featuredTitle": "Modèles en vedette",
+    "recommendedTitle": "Recommandés pour votre appareil",
+    "recentTitle": "Ajoutés récemment",
+    "favoritesTitle": "Favoris",
+    "installedTitle": "Installés",
+    "wifiOnly": "Wi-Fi uniquement",
+    "categoriesTitle": "Catégories",
+    "installedCount": "{count} installés",
+    "discover": "Découvrir",
+    "device": {
+      "ram": "RAM",
+      "storage": "Stockage libre",
+      "cpu": "CPU",
+      "gpu": "GPU",
+      "gpuOk": "Accéléré",
+      "gpuNo": "CPU seul"
+    },
+    "compat": {
+      "excellent": "Compatibilité excellente",
+      "good": "Bonne compatibilité",
+      "limited": "Compatibilité limitée",
+      "notRecommended": "Non recommandé",
+      "unknown": "Compatibilité inconnue"
+    },
+    "reasons": {
+      "engineUnsupported": "Ce type de modèle ne peut pas s'exécuter sur le moteur GGUF local",
+      "engineSupported": "S'exécute sur le moteur GGUF local",
+      "memoryComfortable": "L'utilisation de la mémoire sera confortable",
+      "memoryOk": "L'utilisation de la mémoire est acceptable",
+      "memoryTight": "La mémoire sera juste — attendez-vous à des exécutions plus lentes",
+      "memoryInsufficient": "La RAM de cet appareil est insuffisante pour le charger",
+      "memoryUnknown": "Le besoin mémoire ne peut pas être estimé à partir des données du dépôt",
+      "storagePlenty": "Stockage libre largement suffisant",
+      "storageTight": "Le stockage sera juste après l'installation",
+      "storageInsufficient": "Stockage libre insuffisant",
+      "storageUnknown": "Impossible de lire le stockage libre",
+      "cpuGood": "Le CPU a suffisamment de cœurs pour une inférence rapide",
+      "cpuOk": "Le CPU peut l'exécuter, moyennement rapide",
+      "cpuLimited": "Peu de cœurs CPU — l'inférence sera lente",
+      "cpuUnknown": "Impossible de lire le nombre de cœurs CPU",
+      "gpuSupported": "L'accélération GPU est disponible",
+      "gpuUnsupported": "Pas d'accélération GPU — s'exécute sur CPU",
+      "gpuUnknown": "Impossible de déterminer la prise en charge GPU"
+    },
+    "overviewTemplate": "Un modèle {categories} publié par {author}, avec environ {params} paramètres, distribué sous forme de fichiers GGUF pour une inférence locale et hors ligne sur cet appareil.",
+    "overviewBlocked": "C'est un vrai dépôt, mais son type de modèle n'est pas exécutable par le moteur local : il ne peut donc pas être téléchargé ici.",
+    "statsTemplate": "Sur HuggingFace : {downloads} téléchargements · {likes} j'aime.",
+    "tech": {
+      "architecture": "Architecture",
+      "parameters": "Paramètres",
+      "contextLength": "Longueur du contexte",
+      "formats": "Formats",
+      "quantization": "Quantifications",
+      "fileCount": "Fichiers GGUF",
+      "version": "Révision (sha)",
+      "lastModified": "Dernière mise à jour",
+      "license": "Licence",
+      "engine": "Moteur"
+    },
+    "capabilities": {
+      "offline": "Hors ligne",
+      "context": "Contexte",
+      "arabic": "Prise en charge de l'arabe",
+      "multilingual": "Multilingue"
+    },
+    "tabs": {
+      "overview": "Aperçu",
+      "technical": "Technique",
+      "files": "Fichiers"
+    },
+    "categories": {
+      "text": "Texte",
+      "vision": "Vision",
+      "reasoning": "Raisonnement",
+      "coding": "Programmation",
+      "multimodal": "Multimodal",
+      "embedding": "Embedding",
+      "translation": "Traduction",
+      "audio": "Audio",
+      "image": "Image",
+      "video": "Vidéo",
+      "general": "Général"
+    },
+    "dialog": {
+      "aboutTitle": "À propos de ce modèle",
+      "aboutTemplate": "Un modèle GGUF {family} de {author}. Il fonctionne entièrement hors ligne sur cet appareil une fois téléchargé. La taille ci-dessous est la taille exacte du fichier indiquée par HuggingFace.",
+      "familyUnknown": "GGUF",
+      "file": "Fichier",
+      "downloadSize": "Taille du téléchargement",
+      "extraVisionFiles": "Fichiers vision supplémentaires (mmproj)",
+      "storageAfter": "Stockage utilisé après l'installation",
+      "offline": "Fonctionne hors ligne",
+      "offlineYes": "Oui — entièrement sur l'appareil",
+      "context": "Longueur du contexte",
+      "wifiOnlyWaiting": "Le téléchargement en Wi-Fi uniquement est activé. En données mobiles, ce téléchargement attendra dans la file jusqu'au retour du Wi-Fi.",
+      "engineUnsupported": "Ce type de modèle (génération d'images/vidéos/audio) ne peut pas être exécuté par le moteur GGUF local, donc le téléchargement est désactivé. Rien de factice ici — la fiche est réelle, le moteur ne peut simplement pas l'exécuter.",
+      "confirmDownload": "Télécharger le modèle",
+      "starting": "Démarrage…"
+    },
+    "storage": {
+      "title": "Stockage des modèles",
+      "entryHint": "Détail de l'utilisation, plus grands modèles, nettoyage",
+      "used": "Utilisé par les modèles",
+      "available": "Disponible",
+      "distribution": "Par catégorie",
+      "largest": "Plus grands modèles",
+      "orphans": "Fichiers incomplets et résiduels",
+      "orphansFound": "{count} fichiers · {size} peuvent être libérés",
+      "orphansNone": "Rien à nettoyer — le stockage est propre.",
+      "cleanNow": "Nettoyer",
+      "cleanTitle": "Supprimer les fichiers résiduels ?",
+      "cleanMessage": "{count} fichiers inachevés ou orphelins seront supprimés définitivement.",
+      "cleanConfirm": "Supprimer",
+      "checking": "Vérification du stockage…",
+      "enough": "Espace libre suffisant",
+      "notEnough": "Espace libre insuffisant",
+      "required": "Requis",
+      "availableLabel": "Disponible",
+      "deficit": "Il manque {amount}"
+    },
+    "downloads": {
+      "title": "Téléchargements",
+      "emptyTitle": "Aucun téléchargement",
+      "emptyHint": "Les modèles que vous téléchargez apparaissent ici avec une progression en direct, et restent gérables hors ligne.",
+      "active": "Téléchargement",
+      "paused": "En pause",
+      "pausedHint": "En pause — reprend à la même position en octets",
+      "verifying": "Vérification",
+      "verifyingHint": "Vérification de l'intégrité du fichier (taille + somme de contrôle) avant l'installation",
+      "completed": "Terminé",
+      "remaining": "≈",
+      "pause": "Pause",
+      "resume": "Reprendre",
+      "cancel": "Annuler"
+    },
+    "updates": {
+      "title": "Mises à jour",
+      "check": "Rechercher des mises à jour",
+      "checking": "Vérification…",
+      "recheck": "Rechercher à nouveau",
+      "upToDate": "Tous les modèles installés correspondent à leur révision amont.",
+      "update": "Mettre à jour"
+    },
+    "sort": {
+      "title": "Trier",
+      "recommended": "Meilleure compatibilité",
+      "downloads": "Plus téléchargés",
+      "newest": "Plus récents",
+      "name": "Nom",
+      "sizeAsc": "Plus petits d'abord",
+      "sizeDesc": "Plus grands d'abord"
+    },
+    "search": {
+      "installedSection": "Vos modèles",
+      "hfSection": "Résultats HuggingFace",
+      "noResults": "Aucun modèle trouvé",
+      "noResultsHint": "Essayez un autre nom, éditeur ou tâche.",
+      "errorTitle": "Échec de la recherche"
     }
   },
   "completionParams": {
     "include_thinking_in_context": "Inclure les parties de réflexion/raisonnement de l'IA dans le contexte envoyé au modèle. Désactiver ceci peut économiser de l'espace de contexte. Cela pourrait impacter les performances.",
+    "jinja": "Active le templating Jinja pour le formatage du chat. Lorsqu'activé, utilise le traitement des modèles de chat basé sur Jinja pour une meilleure compatibilité avec les modèles récents.",
     "grammar": "Appliquer des règles grammaticales spécifiques pour s'assurer que le texte généré suit une structure ou un format particulier",
     "stop": "Définir des phrases spécifiques qui arrêteront la génération de texte",
     "n_predict": "Définir la longueur de la réponse générée (en tokens)",
@@ -279,7 +707,14 @@
     "githubButton": "Ajouter une étoile sur GitHub",
     "orBy": "ou en",
     "versionCopiedTitle": "Version copiée",
-    "versionCopiedDescription": "Les informations de version ont été copiées dans le presse-papier"
+    "versionCopiedDescription": "Les informations de version ont été copiées dans le presse-papier",
+    "tour": "Visite",
+    "tourDescription": "Revoir les écrans de bienvenue pour découvrir ce que DRS AI offre.",
+    "showIntroButton": "Revoir l'introduction",
+    "privacyPolicy": "Politique de confidentialité",
+    "termsOfService": "Conditions d'utilisation",
+    "versionFormat": "Version {{version}} ({{build}})",
+    "successTitle": "Succès"
   },
   "feedback": {
     "title": "Envoyer un feedback",
@@ -323,6 +758,14 @@
     "attachmentButton": {
       "attachmentButtonAccessibilityLabel": "Envoyer un média"
     },
+    "bubble": {
+      "msPerToken": "{{value}}ms/token",
+      "tokensPerSec": "{{value}} tokens/s",
+      "ttft": "{{value}}ms TTFT",
+      "draftAccepted": "brouillon : {{accepted}}/{{total}} ({{pct}}%)",
+      "interrupted": "Interrompu",
+      "truncated": "Tronqué — contexte probablement plein"
+    },
     "exportUtils": {
       "fileSaved": "Fichier enregistré",
       "fileSavedMessage": "Le fichier a été enregistré dans votre dossier Téléchargements sous le nom {{filename}}",
@@ -346,6 +789,17 @@
     "thinkingBubble": {
       "reasoning": "Raisonnement"
     },
+    "pendingIndicator": {
+      "preparingTool": "Préparation de l'outil",
+      "buildingPage": "Création de la page",
+      "calculating": "Calcul",
+      "lookingUpTime": "Recherche de l'heure",
+      "stopping": "Arrêt…"
+    },
+    "toolMetrics": {
+      "tokens": "{{count}} tokens",
+      "elapsed": "{{seconds}}s"
+    },
     "chatEmptyPlaceholder": {
       "noModelsTitle": "Aucun modèle disponible",
       "noModelsDescription": "Téléchargez un modèle pour commencer à discuter avec DRS AI",
@@ -353,10 +807,78 @@
       "activateModelTitle": "Activez un modèle pour commencer",
       "activateModelDescription": "Sélectionnez le modèle et téléchargez-le. Après le téléchargement, appuyez sur Charger à côté du modèle et commencez à discuter.",
       "activateModelButton": "Sélectionner un modèle",
-      "loading": "Chargement..."
+      "loading": "Chargement...",
+      "gettingReadyTitle": "{{name}} se prépare",
+      "gettingReadyDescription": "Nous vous préviendrons dès que votre assistant pourra discuter. Appuyez sur la bannière en haut pour voir où il en est."
     },
     "chatInput": {
-      "inputPlaceholder": "Message"
+      "inputPlaceholder": "Message",
+      "thinkingToggle": {
+        "enableThinking": "Activer le mode réflexion",
+        "disableThinking": "Désactiver le mode réflexion",
+        "thinkingEnabled": "Mode réflexion activé",
+        "thinkingDisabled": "Mode réflexion désactivé",
+        "thinkText": "Réfléchir",
+        "cycleEffort": "Effort de raisonnement : {{level}}. Touchez deux fois pour changer de niveau d'effort"
+      }
+    },
+    "contentReportSheet": {
+      "title": "Signaler le contenu",
+      "privacyNote": "Nous n'envoyons aucun contenu de message ni détail de conversation. Veuillez décrire le problème spécifique que vous avez rencontré.",
+      "categoryLabel": "Catégorie du signalement",
+      "selectCategory": "Sélectionnez une catégorie",
+      "categories": {
+        "hate": "Discours haineux",
+        "sexual": "Contenu sexuel",
+        "selfHarm": "Automutilation",
+        "violence": "Violence",
+        "other": "Autre"
+      },
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Veuillez décrire le problème de ce contenu...",
+      "includeModelInfo": "Inclure les informations du modèle",
+      "includeModelInfoDescription": "Inclure le nom et l'identifiant du modèle pour nous aider à enquêter",
+      "noActiveModelNote": "Aucun modèle n'est actuellement actif",
+      "submit": "Envoyer le signalement",
+      "validation": {
+        "title": "Informations manquantes",
+        "message": "Veuillez sélectionner une catégorie et fournir une description."
+      },
+      "success": {
+        "title": "Signalement envoyé",
+        "message": "Merci pour votre signalement. Nous l'examinerons et prendrons les mesures appropriées."
+      },
+      "error": {
+        "title": "Échec du signalement",
+        "message": "Échec de l'envoi du signalement. Veuillez réessayer."
+      }
+    },
+    "modelErrorReportSheet": {
+      "title": "Signaler un problème de chargement du modèle",
+      "privacyNote": "Aidez-nous à améliorer DRS AI en partageant des détails sur cette erreur. Vérifiez ci-dessous ce qui sera partagé - vous pouvez désélectionner les éléments que vous préférez ne pas inclure.",
+      "errorMessage": "Message d'erreur",
+      "modelInfo": "Informations sur le modèle",
+      "modelName": "Nom",
+      "modelSource": "Source",
+      "modelSize": "Taille",
+      "contextParams": "Paramètres du contexte",
+      "deviceInfo": "Informations sur l'appareil",
+      "deviceModel": "Appareil",
+      "osVersion": "OS",
+      "memoryInfo": "Mémoire",
+      "cpuArchitecture": "CPU",
+      "isEmulator": "Émulateur",
+      "additionalInfoLabel": "Contexte supplémentaire (optionnel)",
+      "additionalInfoPlaceholder": "Tous détails supplémentaires pouvant nous aider à comprendre le problème...",
+      "submit": "Envoyer le signalement",
+      "success": {
+        "title": "Signalement envoyé",
+        "message": "Merci de nous aider à améliorer DRS AI. Votre signalement nous aidera à corriger ce problème."
+      },
+      "error": {
+        "title": "Échec du signalement",
+        "message": "Échec de l'envoi du signalement. Veuillez réessayer plus tard."
+      }
     },
     "chatGenerationSettingsSheet": {
       "invalidValues": "Valeurs invalides",
@@ -372,7 +894,23 @@
       "applytoPresetAlert": {
         "title": "Succès",
         "message": "Ces paramètres seront appliqués à toutes les futures sessions"
-      }
+      },
+      "assistantSettings": "Paramètres de l'assistant",
+      "settingsSource": "Source des paramètres"
+    },
+    "assistantGenerationSettingsSheet": {
+      "title": "Paramètres de génération - {{assistantName}}",
+      "invalidValues": "Valeurs invalides",
+      "invalidNumericValuesMessage": "Doit être un nombre valide",
+      "pleaseCorrect": "Veuillez corriger ce qui suit :",
+      "ok": "OK",
+      "error": "Erreur",
+      "failedToSave": "Échec de l'enregistrement des paramètres de l'assistant",
+      "resetToGlobal": "Réinitialiser aux valeurs globales",
+      "resetToSystem": "Réinitialiser aux valeurs par défaut du système",
+      "clearAssistantSettings": "Effacer les paramètres de l'assistant",
+      "customSettingsFor": "Paramètres personnalisés pour {{assistantName}}",
+      "inheritedSettingsFor": "Paramètres hérités pour {{assistantName}}"
     },
     "chatHeaderTitle": {
       "defaultTitle": "Discussion"
@@ -388,6 +926,7 @@
       "noDescription": "Pas de description",
       "assistantType": "Assistant",
       "roleplayType": "Jeu de rôle",
+      "videoType": "Vidéo",
       "confirmationTitle": "Confirmation",
       "modelSwitchMessage": "Cet assistant a un modèle par défaut différent ({{modelName}}). Voulez-vous passer au modèle par défaut de l'assistant ?",
       "keepButton": "Garder",
@@ -401,17 +940,17 @@
       "forbiddenTitle": "Accès refusé",
       "forbiddenMessage": "Vous n'avez pas la permission d'accéder à ce modèle. Veuillez vous assurer que :",
       "forbiddenSteps": [
-        "Votre token a une permission de \"lecture\"",
-        "Vous avez demandé et obtenu l'accès à ce modèle",
-        "Le propriétaire du modèle a approuvé votre demande d'accès"
+        "Your token has \"read\" permission",
+        "You requested and were granted access to this model",
+        "The model owner approved your access request"
       ],
       "getTokenTitle": "Obtenir un token Hugging Face",
       "getTokenMessage": "Ce modèle nécessite un token Hugging Face pour être téléchargé.",
       "getTokenSteps": [
-        "Allez sur huggingface.co et connectez-vous",
-        "Naviguez vers Paramètres > Tokens d'accès",
-        "Créez un nouveau token avec accès \"lecture\"",
-        "Copiez le token et collez-le dans le champ correspondant"
+        "Go to huggingface.co and sign in",
+        "Navigate to Settings > Access Tokens",
+        "Create a new token with \"read\" access",
+        "Copy the token and paste it in the token field"
       ],
       "tokenDisabledTitle": "Token désactivé",
       "tokenDisabledMessage": "Vous avez configuré un token Hugging Face, mais il est actuellement désactivé. Ce modèle nécessite un token pour être téléchargé. Activez votre token pour continuer.",
@@ -429,9 +968,15 @@
       "makeChatTemporary": "Rendre la discussion temporaire",
       "export": "Exporter/Importer",
       "exportCurrentSession": "Exporter la session actuelle",
+      "exportCurrentSessionMarkdown": "Exporter en Markdown",
       "exportAllSessions": "Exporter toutes les sessions",
       "exportChatSession": "Exporter la session de discussion",
-      "importSessions": "Importer des sessions"
+      "importSessions": "Importer des sessions",
+      "exportErrorTitle": "Erreur d'exportation",
+      "exportCurrentSessionError": "Échec de l'exportation de la session actuelle.",
+      "exportAllError": "Échec de l'exportation de toutes les sessions.",
+      "importSuccessTitle": "Importation réussie",
+      "importErrorTitle": "Erreur d'importation"
     },
     "hfTokenSheet": {
       "title": "Token Hugging Face",
@@ -444,10 +989,10 @@
       "resetSuccess": "Token supprimé avec succès",
       "instructions": "Comment obtenir un token :",
       "instructionsSteps": [
-        "Allez sur huggingface.co et connectez-vous",
-        "Naviguez vers Paramètres > Tokens d'accès",
-        "Créez un nouveau token avec accès \"lecture\"",
-        "Copiez le token et collez-le ci-dessous"
+        "Go to huggingface.co and sign in",
+        "Navigate to Settings > Access Tokens",
+        "Create a new token with \"read\" access",
+        "Copy the token and paste it below"
       ],
       "getTokenLink": "Obtenir un token depuis huggingface.co ↗",
       "error": {
@@ -463,7 +1008,20 @@
     },
     "modelSettingsSheet": {
       "modelSettings": "Paramètres du modèle",
-      "saveChanges": "Enregistrer les modifications"
+      "saveChanges": "Enregistrer les modifications",
+      "reasoningSection": "Raisonnement",
+      "isReasoningModel": "Modèle de raisonnement",
+      "isReasoningModelHelp": "Afficher la commande de réflexion pour ce modèle, même s'il n'a pas été détecté automatiquement.",
+      "supportsEffort": "Prend en charge l'effort gradué",
+      "effortValues": "Niveaux d'effort pris en charge par ce modèle",
+      "effortLevels": {
+        "minimal": "Minimal",
+        "low": "Bas",
+        "medium": "Moyen",
+        "high": "Élevé",
+        "xhigh": "Très élevé",
+        "max": "Max"
+      }
     },
     "modelsHeaderRight": {
       "menuTitleHf": "Modèles Hugging Face",
@@ -474,6 +1032,47 @@
     "modelsResetDialog": {
       "proceedWithReset": "Procéder à la réinitialisation",
       "confirmReset": "Confirmer la réinitialisation"
+    },
+    "assistantSheet": {
+      "title": {
+        "edit": "Modifier l'assistant",
+        "newAssistant": "Nouvel assistant",
+        "newVideoAssistant": "Nouvel assistant vidéo"
+      },
+      "description": "Description",
+      "descriptionPlaceholder": "Entrez une brève description de votre assistant",
+      "parameters": "Paramètres",
+      "generationSettings": "Paramètres de génération",
+      "configureGenerationSettings": "Configurer les paramètres de génération",
+      "validation": {
+        "nameRequired": "Le nom est requis",
+        "generatingPromptRequired": "L'invite de génération est requise lors de l'utilisation de l'invite IA",
+        "promptModelRequired": "Le modèle de génération d'invites est requis lors de l'utilisation de l'invite IA"
+      },
+      "talents": "Talents",
+      "talentNames": {
+        "render_html": "Aperçu HTML",
+        "calculate": "Expressions mathématiques",
+        "datetime": "Date & heure",
+        "web_search": "Recherche web",
+        "read_url": "Lire une page web"
+      },
+      "talentDescriptions": {
+        "render_html": "Afficher des documents HTML directement dans le chat",
+        "calculate": "Évaluer des expressions mathématiques",
+        "datetime": "Obtenir la date et l'heure actuelles",
+        "web_search": "Rechercher sur Internet des informations à jour (nécessite une clé API dans les Paramètres)",
+        "read_url": "Lire le contenu complet d'une page web (nécessite une clé API dans les Paramètres)"
+      },
+      "greeting": {
+        "sectionLabel": "Message d'accueil",
+        "textLabel": "Message d'accueil",
+        "textPlaceholder": "Que doit dire cet assistant dans un chat vide ?",
+        "suggestedPromptsLabel": "Invites suggérées",
+        "addPromptButton": "Ajouter une invite",
+        "promptPlaceholder": "Une invite courte pour la puce",
+        "removePromptLabel": "Supprimer l'invite"
+      }
     },
     "assistantPersonaSheet": {
       "title": {
@@ -494,6 +1093,8 @@
       "noModelsDownloaded": "Vous n'avez encore téléchargé aucun modèle. Veuillez d'abord télécharger un modèle.",
       "downloadAModel": "Télécharger un modèle",
       "defaultModelNotDownloaded": "Le modèle par défaut n'est pas encore téléchargé. Veuillez d'abord le télécharger.",
+      "modelNotDownloadedShort": "Modèle non téléchargé",
+      "recommendedModel": "Modèle recommandé",
       "cancelDownload": "Annuler le téléchargement",
       "download": "Télécharger"
     },
@@ -527,6 +1128,20 @@
       },
       "create": "Créer"
     },
+    "lookiePersonaSheet": {
+      "title": {
+        "create": "Créer un assistant Lookie",
+        "edit": "Modifier l'assistant Lookie"
+      },
+      "assistantName": "Nom de l'assistant",
+      "assistantNamePlaceholder": "Entrez un nom pour votre assistant Lookie",
+      "visionModel": "Modèle de vision",
+      "visionModelPlaceholder": "Sélectionner un modèle de vision",
+      "requiredModelsSection": "Modèles requis",
+      "captureInterval": "Intervalle de capture",
+      "captureIntervalHelper": "Temps entre les captures automatiques en millisecondes",
+      "create": "Créer"
+    },
     "sendButton": {
       "accessibilityLabel": "Envoyer"
     },
@@ -545,7 +1160,9 @@
       "buttons": {
         "loadingModel": "Chargement du modèle...",
         "stopGenerating": "Arrêter la génération",
-        "generatePrompt": "Générer l'invite système"
+        "generatePrompt": "Générer l'invite système",
+        "resetParameters": "Réinitialiser les paramètres",
+        "resetTemplate": "Réinitialiser le modèle"
       },
       "systemPrompt": {
         "label": "Invite système",
@@ -568,7 +1185,21 @@
       },
       "deleteChatTitle": "Supprimer la discussion",
       "deleteChatMessage": "Êtes-vous sûr de vouloir supprimer cette discussion ?",
+      "select": "Sélectionner",
+      "nSelected": "{{count}} sélectionné(s)",
+      "selectAll": "Tout sélectionner",
+      "deselectAll": "Tout désélectionner",
+      "exportCount": "Exporter ({{count}})",
+      "deleteCount": "Supprimer ({{count}})",
+      "bulkDeleteTitle": "Supprimer les sessions de chat",
+      "bulkDeleteMessage": "Supprimer {{count}} session(s) de chat ? Cette action est irréversible.",
+      "bulkDeleteError": "Échec de la suppression des sessions de chat. Veuillez réessayer.",
+      "exportError": "Échec de l'exportation de la session de chat. Veuillez réessayer.",
+      "bulkExportError": "Échec de l'exportation des sessions de chat. Veuillez réessayer.",
+      "pin": "Épingler",
+      "unpin": "Désépingler",
       "dateGroups": {
+        "pinned": "Épinglés",
         "today": "Aujourd'hui",
         "yesterday": "Hier",
         "thisWeek": "Cette semaine",
@@ -578,7 +1209,9 @@
         "fourWeeksAgo": "Il y a 4 semaines",
         "lastMonth": "Le mois dernier",
         "older": "Plus ancien"
-      }
+      },
+      "emptySessionsTitle": "Aucune discussion pour l'instant",
+      "emptySessionsHint": "Démarrez une nouvelle conversation depuis l'écran de discussion"
     },
     "usageStats": {
       "tooltip": {
@@ -588,12 +1221,169 @@
         "usage": "Utilisation : "
       },
       "byteSizes": [
-        "Octets",
-        "Ko",
-        "Mo",
-        "Go"
+        "Bytes",
+        "KB",
+        "MB",
+        "GB"
       ]
+    },
+    "chatView": {
+      "menuItems": {
+        "copy": "Copier",
+        "regenerate": "Régénérer",
+        "regenerateWith": "Régénérer avec",
+        "edit": "Modifier",
+        "reportContent": "Signaler le contenu"
+      }
+    },
+    "assistantHeaderRight": {
+      "exportAllAssistants": "Exporter tous les assistants",
+      "importAssistants": "Importer des assistants",
+      "importSuccess": "{{count}} assistant(s) importé(s) avec succès.",
+      "importError": "Échec de l'importation des assistants. Veuillez vérifier le format du fichier.",
+      "exportErrorTitle": "Erreur d'exportation",
+      "exportAllError": "Échec de l'exportation de tous les assistants.",
+      "importSuccessTitle": "Importation réussie",
+      "importErrorTitle": "Erreur d'importation"
+    },
+    "brandHeader": {
+      "tagline": "Votre IA privée sur appareil"
+    },
+    "authSheet": {
+      "signInTitle": "Se connecter",
+      "signUpTitle": "Créer un compte",
+      "fullNameLabel": "Nom complet",
+      "emailLabel": "Email",
+      "passwordLabel": "Mot de passe",
+      "signInButton": "Se connecter",
+      "signUpButton": "Créer un compte",
+      "forgotPassword": "Mot de passe oublié ?",
+      "or": "ou",
+      "continueWithGoogle": "Continuer avec Google",
+      "haveAccount": "Vous avez déjà un compte ? ",
+      "noAccount": "Vous n'avez pas de compte ? ",
+      "signUpLink": "S'inscrire",
+      "signInLink": "Se connecter",
+      "signingIn": "Connexion en cours...",
+      "fillRequiredFields": "Veuillez remplir tous les champs requis.",
+      "enterFullName": "Veuillez saisir votre nom complet.",
+      "enterEmailFirst": "Veuillez d'abord saisir votre adresse email.",
+      "accountCreatedTitle": "Compte créé",
+      "accountCreatedMessage": "Veuillez vérifier votre email pour valider votre compte.",
+      "welcomeBackTitle": "Bon retour !",
+      "welcomeBackMessage": "Vous vous êtes connecté avec succès.",
+      "googleErrorTitle": "Erreur de connexion Google",
+      "passwordResetTitle": "Réinitialisation du mot de passe",
+      "passwordResetMessage": "Consultez votre email pour les instructions de réinitialisation du mot de passe.",
+      "authErrorTitle": "Erreur d'authentification"
+    },
+    "squareAssistantCard": {
+      "videoAssistant": "Assistant IA vidéo",
+      "advancedAssistant": "Assistant IA avancé",
+      "assistant": "Assistant IA",
+      "byCreator": "par {{creator}}",
+      "downloadAssistantTitle": "Télécharger l'assistant",
+      "downloadAssistantMessage": "Télécharger \"{{assistantName}}\" pour commencer à discuter ?",
+      "download": "Télécharger",
+      "downloadErrorTitle": "Erreur de téléchargement",
+      "downloadErrorMessage": "Échec du téléchargement de l'assistant. Veuillez réessayer.",
+      "startChatErrorMessage": "Échec du démarrage du chat. Veuillez réessayer.",
+      "switchModelTitle": "Changer de modèle ?",
+      "switchModelMessage": "Passer à \"{{modelName}}\" pour cet assistant ?",
+      "keepCurrent": "Garder l'actuel",
+      "switch": "Changer",
+      "shareErrorTitle": "Erreur de partage",
+      "shareErrorMessage": "Échec du partage de l'assistant. Veuillez réessayer."
     }
+  },
+  "assistantsScreen": {
+    "sectionTitles": {
+      "myAssistantsLocal": "Mes Assistants (local)",
+      "myLibrary": "Ma bibliothèque (hub.drsai.app)",
+      "discoverAssistants": "Découvrir des Assistants (hub.drsai.app)"
+    },
+    "systemPrompt": "Invite système",
+    "videoAnalysis": "Analyse vidéo",
+    "videoAnalysisDescription": "C'est un assistant IA basé sur la vidéo qui fournit des commentaires en temps réel sur les flux vidéo de la caméra de votre appareil.",
+    "captureInterval": "Intervalle de capture",
+    "captureIntervalUnit": "ms",
+    "world": "Monde",
+    "toneStyle": "Ton/Style",
+    "aiRole": "Rôle de l'IA",
+    "userRole": "Mon rôle",
+    "prompt": "Invite",
+    "assistant": "Assistant",
+    "roleplay": "Jeu de rôle",
+    "video": "Vidéo",
+    "deleteAssistant": "Supprimer l'assistant",
+    "deleteAssistantMessage": "Êtes-vous sûr de vouloir supprimer cet assistant ?",
+    "missingModel": "Modèle manquant",
+    "missingModelMessage": "Le modèle par défaut \"{{modelName}}\" de cet assistant n'est pas disponible. Veuillez le télécharger dans la feuille de modification ou sélectionner un autre modèle.",
+    "search": "Rechercher",
+    "profile": "Profil",
+    "signIn": "Se connecter",
+    "addAssistant": "Ajouter un assistant",
+    "signInToAccessLibrary": "Connectez-vous pour accéder à votre bibliothèque depuis hub.drsai.app",
+    "signOut": "Se déconnecter",
+    "signOutConfirmation": "Êtes-vous sûr de vouloir vous déconnecter ?",
+    "signOutError": "Échec de la déconnexion. Veuillez réessayer.",
+    "account": "Compte",
+    "signInToDrshub": "Se connecter à Drshub",
+    "signInDescription": "Accédez à votre bibliothèque, créez des Assistants privés et synchronisez entre vos appareils",
+    "searchAllAssistants": "Rechercher tous les Assistants...",
+    "deleteAssistantConfirmation": "Êtes-vous sûr de vouloir supprimer \"{{assistantName}}\" ?",
+    "filters": {
+      "all": "Tous",
+      "myAssistants": "Mes Assistants",
+      "local": "Local",
+      "video": "Vidéo",
+      "free": "Gratuit",
+      "premium": "Premium"
+    },
+    "labels": {
+      "free": "Gratuit",
+      "premium": "Premium",
+      "private": "Privé",
+      "download": "Télécharger",
+      "getFree": "Obtenir gratuitement"
+    },
+    "premiumAssistantDescription": "Assistant Premium de la communauté hub.drsai.app",
+    "premiumInfoText": "Visitez hub.drsai.app pour découvrir plus d'assistants",
+    "sortOptions": {
+      "newest": "Plus récents",
+      "oldest": "Plus anciens",
+      "rating": "Mieux notés",
+      "popular": "Plus populaires"
+    },
+    "assistantDetailSheet": {
+      "by": "par",
+      "unknown": "Inconnu",
+      "rating": "Note",
+      "reviews": "Avis",
+      "created": "Créé",
+      "description": "Description",
+      "noDescriptionAvailable": "Aucune description disponible.",
+      "categories": "Catégories",
+      "tags": "Tags",
+      "systemPrompt": "Invite système",
+      "downloaded": "Téléchargé",
+      "success": "Succès",
+      "assistantAddedToCollection": "L'assistant a été ajouté à votre collection !",
+      "error": "Erreur",
+      "failedToLoadDetails": "Échec du chargement des détails de l'assistant",
+      "failedToDownload": "Échec du téléchargement de l'assistant",
+      "premiumAssistantMessage": "C'est un Assistant Premium.\n• Si vous l'avez déjà débloqué avec votre compte Drshub, connectez-vous simplement pour accéder aux détails complets.\n• Pas encore débloqué ? Visitez hub.drsai.app pour en savoir plus.",
+      "notAvailable": "N/D",
+      "buyOnDrshub": "Acheter sur Drshub",
+      "finalizingPurchase": "Finalisation de votre achat…",
+      "processingPurchase": "Traitement — débloquage imminent.",
+      "checkoutSessionExpired": "Votre session a expiré. Reconnectez-vous pour continuer.",
+      "signInAgain": "Se reconnecter",
+      "assistantNotAvailable": "Cet assistant n'est pas disponible à l'achat pour le moment.",
+      "checkoutFailed": "Une erreur est survenue. Veuillez réessayer."
+    },
+    "emptyLocal": "Aucun Assistant pour l'instant.\nCréez votre premier Assistant avec le bouton + !",
+    "emptyFiltered": "Aucun Assistant trouvé.\nEssayez d'ajuster vos filtres ou votre recherche."
   },
   "validation": {
     "nameRequired": "Le nom est requis",
@@ -604,6 +1394,50 @@
     "userRoleRequired": "Le rôle de l'utilisateur est requis",
     "situationRequired": "La situation est requise",
     "toneStyleRequired": "Le ton/style est requis"
+  },
+  "camera": {
+    "permissionTitle": "Autorisation caméra requise",
+    "permissionMessage": "DRS AI a besoin d'accéder à la caméra pour analyser les images",
+    "requestingPermission": "Demande d'autorisation caméra...",
+    "noDevice": "Aucun appareil photo trouvé",
+    "errorTitle": "Erreur de caméra",
+    "errorMessage": "Une erreur s'est produite lors de la prise de photo",
+    "flip": "Pivoter",
+    "analyzing": "Analyse de l'image...",
+    "startCamera": "Démarrer la caméra",
+    "stopCamera": "Arrêter la caméra",
+    "promptPlaceholder": "Que voulez-vous savoir sur cette image ?",
+    "takePhoto": "Caméra"
+  },
+  "video": {
+    "permissionTitle": "Autorisation caméra requise",
+    "permissionMessage": "DRS AI a besoin d'accéder à la caméra pour l'analyse vidéo",
+    "requestingPermission": "Demande d'autorisation caméra...",
+    "noDevice": "Aucun appareil photo trouvé",
+    "errorTitle": "Erreur de caméra",
+    "errorMessage": "Une erreur s'est produite avec la caméra",
+    "flip": "Pivoter",
+    "analyzing": "Analyse de la vidéo...",
+    "startCamera": "Démarrer la caméra",
+    "stopCamera": "Arrêter la caméra",
+    "promptPlaceholder": "Que voulez-vous savoir sur cette vidéo ?",
+    "captureInterval": "Intervalle de capture",
+    "captureIntervalUnit": "ms",
+    "liveCommentary": "Commentaires en direct",
+    "emptyPlaceholder": {
+      "title": "Bienvenue dans Lookie",
+      "subtitle": "Analyse vidéo en temps réel, privée et sur l'appareil",
+      "experimentalNotice": "C'est une fonctionnalité expérimentale. La précision dépend du modèle sélectionné, la vitesse des spécifications de votre appareil, et certains modèles peuvent échouer.",
+      "howToUse": "Comment utiliser :",
+      "step1": "• Modifiez l'invite (optionnel) pour guider l'analyse",
+      "step2": "• Appuyez sur le bouton caméra pour démarrer l'analyse vidéo en direct",
+      "step3": "• Ajustez la fréquence des captures pendant que la caméra est active",
+      "step4": "• Passez à un autre assistant pour un chat texte normal"
+    },
+    "defaultPrompt": "Que voyez-vous ?",
+    "multimodalTitle": "Multimodal non activé",
+    "multimodalMessage": "Ce modèle ne prend pas en charge l'analyse d'images. Veuillez charger un modèle multimodal.",
+    "checkSupportError": "Échec de la vérification de la prise en charge des images par le modèle."
   },
   "screenTitles": {
     "chat": "Discussion",
@@ -618,17 +1452,81 @@
     "conversationReset": "Conversation réinitialisée !",
     "modelNotLoaded": "Modèle non chargé. Veuillez initialiser le modèle.",
     "completionFailed": "Échec de la complétion : ",
+    "toolCallTruncated": "Appel d'outil tronqué — le modèle a probablement manqué de place. Essayez un contexte plus grand ou une requête plus petite.",
+    "speculativeInitFailed": "Cet appareil n'a pas pu démarrer le décodage spéculatif pour ce modèle — très probablement par manque de mémoire pour le contexte du brouillon. Désactivez le décodage spéculatif dans Paramètres → Paramètres avancés et réessayez.",
     "loadingModel": "Chargement du modèle ...",
     "typeYourMessage": "Saisissez votre message ici",
     "load": "Charger",
     "goToModels": "Aller aux modèles",
     "readyToChat": "Prêt à discuter ? Chargez le dernier modèle utilisé.",
-    "pleaseLoadModel": "Chargez un modèle pour discuter."
+    "pleaseLoadModel": "Chargez un modèle pour discuter.",
+    "multimodalNotEnabled": "Le multimodal n'est pas activé pour ce modèle. Les images seront affichées mais pas traitées par l'IA.",
+    "cannotSendWithoutModel": "Chargez d'abord un modèle",
+    "toolCompatWarning": "Ce modèle peut ne pas prendre en charge l'appel d'outils. Les résultats peuvent être peu fiables.",
+    "softCapWarning": "Démarrez un nouveau chat pour de meilleures performances.",
+    "contextWarning": "Cette conversation devient longue et risque bientôt de manquer de place.",
+    "contextRemoteHedged": "Cette réponse a peut-être été tronquée. Essayez de renvoyer ou de raccourcir la requête.",
+    "contextFull": "La conversation a manqué de place. Démarrez un nouveau chat ou augmentez la taille du contexte.",
+    "contextFullRemote": "La conversation a manqué de place. Démarrez un nouveau chat.",
+    "contextFullEscalated": "Toujours à court de place. Démarrez un nouveau chat ou augmentez la taille du contexte pour continuer.",
+    "contextFullHeavyTalent": "La conversation a manqué de place — {{talent}} a tendance à en demander plus. Démarrez un nouveau chat ou augmentez la taille du contexte.",
+    "contextBannerDismiss": "Fermer",
+    "contextNewChat": "Nouveau chat",
+    "contextIncrease": "Augmenter le contexte",
+    "contextMoreRoom": "Plus de place",
+    "increaseContextTitle": "Donnez plus de place à ce chat",
+    "increaseContextBody": "La place est la mémoire de travail du modèle — la part de ce chat qu'il peut garder en tête à la fois. Plus de place signifie des discussions plus longues avant que les réponses ne soient tronquées.",
+    "increaseContextTokensUnit": "tokens",
+    "increaseContextWordsRam": "~{{words}} mots · ≈{{ram}} de RAM",
+    "increaseContextFitsChip": "Suffisant",
+    "increaseContextTightChip": "Juste",
+    "increaseContextWontFitChip": "Insuffisant",
+    "increaseContextFitsStatus": "Confortable pour cet appareil.",
+    "increaseContextFitsUnconstrainedStatus": "RAM largement suffisante — limité uniquement par le modèle.",
+    "increaseContextTightStatus": "Au-delà de ~{{tokens}}, cet appareil risque de manquer de mémoire et de ralentir. Il peut quand même essayer.",
+    "increaseContextWontFitStatus": "~{{tokens}} ne tiendra probablement pas dans la mémoire de cet appareil. Choisissez une taille plus petite.",
+    "increaseContextModelMax": "{{tokens}} · max du modèle",
+    "increaseContextHedge": "Le rechargement prend quelques secondes. Rien dans votre chat n'est perdu.",
+    "increaseContextAdvanced": "Avancé",
+    "increaseContextAdvancedBody": "Taille du contexte pour ce chat : {{from}} → {{to}} tokens (max du modèle {{max}}). La limite de l'appareil est une estimation et augmente à mesure que des contextes plus grands se chargent avec succès.",
+    "increaseContextSliderA11yLabel": "Taille du contexte",
+    "increaseContextSliderA11yValue": "{{tokens}} tokens",
+    "increaseContextConfirmSize": "Définir à {{size}}",
+    "increaseContextReloadingShort": "Rechargement…",
+    "increaseContextNoFitBody": "Cet appareil ne peut pas accueillir un contexte plus grand pour ce modèle. Démarrez un nouveau chat pour continuer.",
+    "increaseContextCancel": "Pas maintenant",
+    "increaseContextReloading": "Rechargement du modèle avec un contexte plus grand…",
+    "increaseContextSuccess": "Contexte augmenté à {{target}} tokens.",
+    "increaseContextFailure": "Impossible d'augmenter la taille du contexte. Votre paramètre précédent a été restauré.",
+    "assistantLoadHint": "Cet assistant a tendance à nécessiter plus de place que la taille de contexte actuelle ne le permet.",
+    "generatingPreview": "Génération de l'aperçu… ({{tokens}} tokens)",
+    "generatingPreviewPending": "Génération de l'aperçu…",
+    "toolUsedChip": "a utilisé {{name}}",
+    "toolErrorBlock": "{{name}} a échoué",
+    "webSearch": {
+      "searched": "Recherché : {{query}}",
+      "noResults": "Aucun résultat",
+      "noResultsFor": "Aucun résultat pour {{query}}",
+      "resultsCount": "{{count}} résultats",
+      "resultsCountOne": "1 résultat",
+      "searchResultsTitle": "Résultats de la recherche",
+      "showResultsAccessibilityLabel": "Afficher les résultats de recherche web pour {{query}}",
+      "openLinkError": "Impossible d'ouvrir ce lien."
+    }
+  },
+  "htmlPreview": {
+    "defaultTitle": "Aperçu",
+    "showPreview": "Afficher l'aperçu rendu",
+    "showCode": "Afficher le code HTML",
+    "copyHtml": "Copier le HTML",
+    "closePreview": "Fermer l'aperçu",
+    "openFullscreen": "Ouvrir en plein écran : {{title}}"
   },
   "benchmark": {
     "title": "Benchmark",
     "modelSelector": {
-      "prompt": "Sélectionner un modèle"
+      "prompt": "Sélectionner un modèle",
+      "noModels": "Aucun modèle téléchargé"
     },
     "buttons": {
       "advancedSettings": "Paramètres avancés",
@@ -691,6 +1589,7 @@
         "ubatch": "ULot : {{ubatch}}",
         "cpuThreads": "Threads CPU : {{threads}}",
         "gpuLayers": "Couches GPU : {{layers}}",
+        "device": "Appareil : {{device}}",
         "flashAttentionEnabled": "Flash Attention activé",
         "flashAttentionDisabled": "Flash Attention désactivé",
         "cacheTypes": "Types de cache : {{cacheK}}/{{cacheV}}"
@@ -703,6 +1602,7 @@
         "tokensPerSecond": "t/s"
       },
       "actions": {
+        "deleteButton": " ",
         "submittedText": "✓ Partagé à",
         "leaderboardLink": "Classement AI Phone ↗",
         "cannotShare": "Impossible de partager",
@@ -725,6 +1625,8 @@
       "sections": {
         "basicInfo": "Infos de base",
         "cpuDetails": "Détails CPU",
+        "gpuDetails": "Détails GPU",
+        "hexagonDetails": "DSP Hexagon",
         "appInfo": "Infos application"
       },
       "fields": {
@@ -735,7 +1637,13 @@
         "cpuModel": "Modèle CPU",
         "chipset": "Chipset",
         "instructions": "Instructions",
-        "version": "Version"
+        "version": "Version",
+        "gpuType": "Type de GPU",
+        "gpuRenderer": "Moteur de rendu",
+        "gpuVendor": "Fabricant",
+        "metalSupport": "Prise en charge Metal",
+        "openclSupport": "Prise en charge OpenCL",
+        "openclRequirement": "Nécessite i8mm & dotprod"
       },
       "instructions": {
         "format": "FP16 : {{fp16}}, DotProd : {{dotProd}}, SVE : {{sve}}, I8MM : {{i8mm}}",
@@ -743,6 +1651,15 @@
         "no": "✗"
       },
       "versionFormat": "{{version}} ({{buildNumber}})"
+    },
+    "presetDefault": "Par défaut",
+    "presetFast": "Rapide",
+    "presetCustom": "Personnalisé",
+    "params": {
+      "pp": "Nombre de tokens de traitement d'invite (max : taille de lot physique)",
+      "tg": "Nombre de tokens de génération de texte",
+      "pl": "Taille du parallélisme de pipeline",
+      "nr": "Nombre de répétitions"
     }
   },
   "errors": {
@@ -759,6 +1676,190 @@
     "hfNetworkError": "Erreur réseau : Impossible de se connecter à l'API Hugging Face",
     "networkError": "Erreur réseau : Impossible de se connecter à l'API",
     "downloadSetupFailedTitle": "Échec de configuration du téléchargement",
-    "downloadSetupFailedMessage": "Échec de préparation du modèle pour le téléchargement : {{message}}"
+    "downloadSetupFailedMessage": "Échec de préparation du modèle pour le téléchargement : {{message}}",
+    "cameraErrorTitle": "Erreur de caméra",
+    "cameraErrorMessage": "Échec de la prise de photo",
+    "galleryErrorTitle": "Erreur de galerie",
+    "galleryErrorMessage": "Échec de la sélection d'images"
+  },
+  "simulator": {
+    "cameraNotAvailable": "Caméra non disponible dans le simulateur. Veuillez utiliser un appareil physique."
+  },
+  "voiceAndSpeech": {
+    "sectionTitle": "Voix & synthèse vocale",
+    "voiceRowTitle": "Voix",
+    "notSet": "Non définie",
+    "previewButton": "Aperçu",
+    "stopPreviewButton": "Arrêter l'aperçu",
+    "voicesTitle": "Voix",
+    "voicesEmptyHint": "Appuyez sur une voix pour l'installer et l'utiliser. Ou choisissez une voix système — elles sont toujours disponibles.",
+    "supertonicStepsLabel": "Qualité (étapes de diffusion)",
+    "supertonicLanguageLabel": "Langue",
+    "supertonicLanguageAuto": "Auto",
+    "supertonicLanguageSheetTitle": "Langue",
+    "supertonicLanguageSearchPlaceholder": "Rechercher des langues",
+    "supertonicLanguageNames": {
+      "ar": "Arabe",
+      "bg": "Bulgare",
+      "hr": "Croate",
+      "cs": "Tchèque",
+      "da": "Danois",
+      "nl": "Néerlandais",
+      "en": "Anglais",
+      "et": "Estonien",
+      "fi": "Finnois",
+      "fr": "Français",
+      "de": "Allemand",
+      "el": "Grec",
+      "hi": "Hindi",
+      "hu": "Hongrois",
+      "id": "Indonésien",
+      "it": "Italien",
+      "ja": "Japonais",
+      "ko": "Coréen",
+      "lv": "Letton",
+      "lt": "Lituanien",
+      "pl": "Polonais",
+      "pt": "Portugais",
+      "ro": "Roumain",
+      "ru": "Russe",
+      "sk": "Slovaque",
+      "sl": "Slovène",
+      "es": "Espagnol",
+      "sv": "Suédois",
+      "tr": "Turc",
+      "uk": "Ukrainien",
+      "vi": "Vietnamien"
+    },
+    "toggleAutoSpeakLabel": "Activer/désactiver la lecture automatique",
+    "openSettingsLabel": "Paramètres TTS",
+    "playMessageLabel": "Lire le message",
+    "stopMessageLabel": "Arrêter le message",
+    "autoSpeakLabel": "Lire les réponses automatiquement",
+    "autoSpeakDescription": "Lit les nouvelles réponses à voix haute dès leur arrivée.",
+    "engineChipKitten": "Kitten",
+    "engineChipKokoro": "Kokoro",
+    "engineChipSupertonic": "Supertonic",
+    "engineChipSystem": "Système",
+    "stepsCount": "{{steps}} étapes",
+    "engineKittenTagline": "Le plus léger. Fiable. Idéal sur les appareils anciens.",
+    "engineKokoroTagline": "Qualité maximale. Démarrage plus lent. Certaines voix peuvent ne pas fonctionner sur tous les appareils.",
+    "engineSupertonicTagline": "Démarrage le plus rapide. Utilise plus de RAM. Peut occasionnellement omettre des mots.",
+    "engineSystemTagline": "Voix intégrées à l'OS. Toujours disponibles, aucune installation.",
+    "engineSystemTitleIos": "Voix iOS",
+    "engineSystemTitleAndroid": "Voix Android",
+    "engineSystemTier": "toujours disponible",
+    "engineTierLightest": "le plus léger",
+    "engineTierBestQuality": "meilleure qualité",
+    "engineTierFastestStart": "démarrage le plus rapide",
+    "engineSpecsLine": "{{voices}} voix  ·  {{sizeMb}} Mo  ·  ~{{ramMb}} Mo de RAM",
+    "engineSystemSpecsLine": "{{voices}} voix",
+    "engineRemoveTitle": "Supprimer {{engineTitle}} ?",
+    "engineRemoveBody": "Libère ~{{sizeMb}} Mo sur cet appareil.",
+    "engineRemoveCancel": "Annuler",
+    "engineRemoveConfirm": "Supprimer",
+    "engineInstallCta": "Installer · {{sizeMb}} Mo",
+    "engineDownloadingLabel": "Téléchargement…  {{pct}}%  ·  {{mbDone}} / {{sizeMb}} Mo",
+    "engineRetryCta": "Réessayer",
+    "voicesEmptyState": "Aucune voix trouvée.",
+    "kokoroDeviceNote": "Certaines voix peuvent ne pas fonctionner sur tous les appareils.",
+    "insufficientStorage": "Espace insuffisant — libérez {{requiredMb}} Mo pour installer ce moteur ({{freeMb}} Mo disponibles)."
+  },
+  "onboarding": {
+    "back": "Retour",
+    "skip": "Passer",
+    "skipForNow": "Passer pour l'instant",
+    "splash": {
+      "brand": "DRS AI",
+      "tagline": "Votre IA privée, sur votre appareil"
+    },
+    "screen1": {
+      "title": "Faites connaissance avec vos assistants.",
+      "titleAccent": "assistants.",
+      "body": "Des petits compagnons intelligents qui vivent dans votre téléphone.\nConfigurons tout - cela ne prendra qu'une minute.",
+      "cta": "Visite guidée",
+      "eyebrow": "Bienvenue dans DRS AI"
+    },
+    "screen2": {
+      "title": "N'importe quand,\nn'importe où.",
+      "body": "Vos assistants vivent dans votre téléphone.\nPas d'internet, pas de réseau - ils fonctionnent en avion, hors réseau, dans les villages isolés.",
+      "highlight": "Pas d'internet, pas de réseau",
+      "cta": "Suivant",
+      "eyebrow": "L'idée",
+      "titleAccent": "N'importe quand,"
+    },
+    "screen3": {
+      "title": "Plus petit,\nmais le vôtre.",
+      "titleAccent": "Plus petit,",
+      "body": "Un assistant sur votre téléphone est rapide et privé - mais plus léger que l'IA du cloud. Pensez compagnon de poche, pas oracle omniscient.",
+      "highlight": "rapide et privé",
+      "cta": "Compris",
+      "eyebrow": "À savoir"
+    },
+    "screen4": {
+      "title": "Rien ne quitte votre téléphone.",
+      "titleAccent": "quitte",
+      "body": "Pas de compte. Pas de cloud. Pas de pistage. Vos conversations restent les vôtres.",
+      "highlight": "Pas de compte. Pas de cloud. Pas de pistage.",
+      "cta": "Commencer",
+      "eyebrow": "Vie privée garantie"
+    },
+    "screen5": {
+      "title": "À quoi servira votre assistant ?",
+      "body": "Choisissez ce dont vous voulez discuter - nous vous proposerons un assistant adapté à votre téléphone.",
+      "topic": {
+        "smartchat": "Chat intelligent",
+        "coding": "Programmation",
+        "education": "Éducation",
+        "roleplay": "Jeu de rôle",
+        "creative_writing": "Écriture créative",
+        "else": "Vous cherchez autre chose ?"
+      },
+      "topicDescription": {
+        "smartchat": "Compagnon du quotidien, sympathique",
+        "coding": "Coder, déboguer, expliquer",
+        "education": "Apprendre, expliquer, s'exercer",
+        "roleplay": "Personnages, scénarios",
+        "creative_writing": "Histoires, idées, brouillons",
+        "else": "Parcourez tous les assistants plus tard dans l'application"
+      }
+    },
+    "screen6": {
+      "cta": "Télécharger {{name}}",
+      "ctaTemplate": "Télécharger {{name}} ({{size}})",
+      "useTemplate": "Utiliser {{name}}",
+      "deviceRamSuffix": "Go de RAM",
+      "deviceFreeSuffix": "Go libres",
+      "recommended": "Recommandé",
+      "downloaded": "Téléchargé",
+      "modelTier": {
+        "quick": "Rapide",
+        "balanced": "Équilibré",
+        "best": "Le meilleur"
+      },
+      "subtitleTemplate": "{{name}} réfléchit grâce à un petit modèle d'IA sur votre téléphone - choisissez celui qui convient.",
+      "assistant": {
+        "pip": {
+          "body": "Nous avons trouvé l'assistant parfait pour vous - un compagnon du quotidien sympathique. Assez intelligent pour la plupart des choses, assez léger pour tout téléphone."
+        },
+        "codie": {
+          "body": "Voici Codie — votre binôme de programmation local. Il lit le code, écrit du code et explique les points délicats sans jamais quitter votre téléphone."
+        },
+        "sage": {
+          "body": "Sage est patient, curieux, et vous guide pas à pas dans vos idées. Un compagnon d'étude à garder dans votre poche."
+        },
+        "echo": {
+          "body": "Echo est un compagnon de jeu de rôle polyvalent — il reste dans son personnage, peint des scènes et suit votre histoire là où elle mène."
+        },
+        "muse": {
+          "body": "Muse vous aide à écrire. Elle suggère des formulations, trouve le rythme et préserve votre ton."
+        }
+      }
+    }
+  },
+  "downloadBanner": {
+    "titleByAssistant": "Téléchargement de {{name}}",
+    "titleByModel": "Téléchargement de {{name}}",
+    "extraInProgress": "+{{count}} autres en cours"
   }
 }

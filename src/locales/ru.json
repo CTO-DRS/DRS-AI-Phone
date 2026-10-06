@@ -1,216 +1,4 @@
 {
-  "about": {
-    "screenTitle": "О приложении",
-    "description": "Приложение, которое приносит языковые модели прямо в ваш телефон. Работает на базе llama.cpp и llama.rn.",
-    "supportProject": "Поддержать проект",
-    "supportProjectDescription": "Если вам нравится DRS AI, поддержите разработчиков:",
-    "githubButton": "Поставить звезду на GitHub",
-    "versionCopiedTitle": "Версия скопирована",
-    "versionCopiedDescription": "Информация о версии скопирована в буфер обмена",
-    "orBy": "или через",
-    "privacyPolicy": "Политика конфиденциальности",
-    "termsOfService": "Условия использования",
-    "tour": "Тур",
-    "tourDescription": "Просмотрите экраны приветствия снова, чтобы узнать, что предлагает DRS AI.",
-    "showIntroButton": "Показать введение снова"
-  },
-  "benchmark": {
-    "title": "Бенчмарк",
-    "modelSelector": {
-      "prompt": "Выбрать модель",
-      "noModels": "Не загружено ни одной модели"
-    },
-    "buttons": {
-      "advancedSettings": "Дополнительные настройки",
-      "startTest": "Запустить тест",
-      "runningTest": "Запуск теста...",
-      "clearAll": "Очистить всё",
-      "done": "Готово",
-      "cancel": "Отмена",
-      "delete": "Удалить",
-      "share": "Поделиться",
-      "sharing": "Поделиться...",
-      "viewRawData": "Показать необработанные данные",
-      "hideRawData": "Скрыть необработанные данные"
-    },
-    "messages": {
-      "pleaseSelectModel": "Сначала выберите и инициализируйте модель",
-      "testWarning": "Примечание: Тестирование больших моделей может занять от 2 до 5 минут и его нельзя прервать после запуска.",
-      "keepScreenOpen": "Пожалуйста, не закрывайте этот экран.",
-      "initializingModel": "Инициализация модели...",
-      "modelMaxValue": "(макс.: {{maxValue}})"
-    },
-    "dialogs": {
-      "advancedSettings": {
-        "title": "Дополнительные настройки",
-        "testProfile": "Профиль тестирования",
-        "customParameters": "Пользовательские параметры",
-        "description": "Точная настройка параметров тестирования под определенные сценарии."
-      },
-      "deleteResult": {
-        "title": "Удалить результат",
-        "message": "Вы уверены, что хотите удалить этот результат тестирования?"
-      },
-      "clearAllResults": {
-        "title": "Очистить все результаты",
-        "message": "Вы уверены, что хотите удалить все результаты тестирования?"
-      },
-      "shareResults": {
-        "title": "Поделиться результатами тестирования",
-        "sharedDataTitle": "Передаваемые данные включают:",
-        "deviceAndModelInfo": "• Характеристики устройства и данные модели",
-        "performanceMetrics": "• Метрики производительности",
-        "dontShowAgain": "Больше не показывать это сообщение"
-      }
-    },
-    "sections": {
-      "testResults": "Результаты тестирования"
-    },
-    "benchmarkResultCard": {
-      "modelMeta": {
-        "params": "парам."
-      },
-      "config": {
-        "title": "Настройки тестирования",
-        "format": "PP: {{pp}} • TG: {{tg}} • PL: {{pl}} • Повт.: {{nr}}"
-      },
-      "modelSettings": {
-        "title": "Настройки модели",
-        "context": "Контекст: {{context}}",
-        "batch": "Batch: {{batch}}",
-        "cpuThreads": "Потоки CPU: {{threads}}",
-        "gpuLayers": "Слои GPU: {{layers}}",
-        "flashAttentionEnabled": "Flash Attention включен",
-        "flashAttentionDisabled": "Flash Attention отключен",
-        "cacheTypes": "Типы кэша: {{cacheK}}/{{cacheV}}",
-        "ubatch": "UBatch: {{ubatch}}",
-        "device": "Устройство: {{device}}"
-      },
-      "results": {
-        "promptProcessing": "Обработка промпта",
-        "tokenGeneration": "Генерация токенов",
-        "totalTime": "Общее время",
-        "peakMemory": "Пиковая память",
-        "tokensPerSecond": "т/сек"
-      },
-      "actions": {
-        "submittedText": "✓ Поделиться в",
-        "leaderboardLink": "Таблица лидеров AI Phone ↗",
-        "cannotShare": "Невозможно поделиться",
-        "cannotShareTooltip": "Невозможно поделиться результатами локальной модели",
-        "submitButton": "Отправить в таблицу лидеров",
-        "viewLeaderboard": "Посмотреть таблицу лидеров ↗",
-        "deleteButton": " "
-      },
-      "errors": {
-        "networkRetry": "Проверить соединение и повторить",
-        "appCheckRetry": "Отправить повторно",
-        "serverRetry": "Попробуйте ещё раз позже",
-        "genericRetry": "Повторить",
-        "failedToSubmit": "Не удалось отправить результаты тестирования"
-      }
-    },
-    "deviceInfoCard": {
-      "title": "Информация об устройстве",
-      "deviceSummary": "{{brand}} {{model}} • {{systemName}} {{systemVersion}}",
-      "coreSummary": "Ядер: {{cores}} • {{memory}}",
-      "sections": {
-        "basicInfo": "Основная информация",
-        "cpuDetails": "Сведения о CPU",
-        "appInfo": "О приложении",
-        "gpuDetails": "Сведения о GPU",
-        "hexagonDetails": "Hexagon DSP"
-      },
-      "fields": {
-        "architecture": "Архитектура",
-        "totalMemory": "Всего памяти",
-        "deviceId": "ID устройства",
-        "cpuCores": "Ядер CPU",
-        "cpuModel": "Модель CPU",
-        "chipset": "Чипсет",
-        "instructions": "Инструкции",
-        "version": "Версия",
-        "gpuType": "Тип GPU",
-        "gpuRenderer": "Рендерер",
-        "gpuVendor": "Поставщик",
-        "metalSupport": "Поддержка Metal",
-        "openclSupport": "Поддержка OpenCL",
-        "openclRequirement": "Требуется i8mm & dotprod"
-      },
-      "instructions": {
-        "format": "FP16: {{fp16}}, DotProd: {{dotProd}}, SVE: {{sve}}, I8MM: {{i8mm}}",
-        "yes": "✓",
-        "no": "✗"
-      },
-      "versionFormat": "{{version}} ({{buildNumber}})"
-    }
-  },
-  "chat": {
-    "loadingModel": "Загрузка модели...",
-    "typeYourMessage": "Введите сообщение",
-    "load": "Загрузка",
-    "goToModels": "Перейти к моделям",
-    "readyToChat": "Хотите начать общение? Загрузите последнюю использованную модель.",
-    "pleaseLoadModel": "Загрузите модель, чтобы начать общение.",
-    "conversationReset": "Контекст диалога сброшен!",
-    "modelNotLoaded": "Модель не загружена. Пожалуйста, инициализируйте модель.",
-    "completionFailed": "Завершение не удалось: ",
-    "multimodalNotEnabled": "Мультимодальность для этой модели не включена. Изображения будут отображаться, но не будут обрабатываться ИИ.",
-    "cannotSendWithoutModel": "Загрузите модель перед началом работы",
-    "toolCallTruncated": "Вызов инструмента прерван – вероятно, у модели закончилась рабочая память. Попробуйте использовать более широкий контекст или более короткий запрос.",
-    "toolCompatWarning": "Эта модель может не поддерживать вызовы инструментов. Результаты могут быть недостоверными.",
-    "softCapWarning": "Начните новый чат для оптимальной работы.",
-    "generatingPreview": "Генерация предпросмотра… ({{tokens}} ток.)",
-    "generatingPreviewPending": "Генерация предпросмотра…",
-    "toolUsedChip": "использовал {{name}}",
-    "toolErrorBlock": "{{name}} завершилось с ошибкой",
-    "contextWarning": "Контекст диалога становится длинным, и в рабочей памяти модели скоро может закончиться место.",
-    "contextRemoteHedged": "Этот ответ мог быть обрезан. Попробуйте отправить запрос еще раз или сократите его.",
-    "contextFull": "В рабочей памяти модели не хватило места для контекста диалога. Начните новый чат или увеличьте размер контекста.",
-    "contextFullEscalated": "Всё ещё не хватает рабочей памяти модели. Начните новый чат или увеличьте размер контекста, чтобы продолжить работу.",
-    "contextFullHeavyTalent": "Лимит контекста диалога исчерпан — {{talent}} обычно требует больше. Начните новый чат или увеличьте размер контекста.",
-    "contextBannerDismiss": "Отклонить",
-    "contextNewChat": "Новый чат",
-    "contextIncrease": "Увеличить контекст",
-    "contextMoreRoom": "Больше рабочей памяти",
-    "increaseContextTitle": "Дать чату больше рабочей памяти",
-    "increaseContextBody": "Рабочая память модели – это объем информации данного чата, который она может сохранять в памяти одновременно. Больше рабочей памяти означает более длинные чаты, прежде чем сообщения будут обрезаны.",
-    "increaseContextTokensUnit": "токены",
-    "increaseContextWordsRam": "~{{words}} слов · ≈{{ram}} ОЗУ",
-    "increaseContextFitsChip": "Подходит",
-    "increaseContextTightChip": "На пределе",
-    "increaseContextWontFitChip": "Не поместится",
-    "increaseContextFitsStatus": "Подходит для этого устройства.",
-    "increaseContextFitsUnconstrainedStatus": "Объём ОЗУ достаточен – ограничивается только моделью.",
-    "increaseContextTightStatus": "При превышении ~{{tokens}} у этого устройства может закончиться память, и оно начнёт работать медленнее. Всё равно можно попробовать.",
-    "increaseContextWontFitStatus": "~{{tokens}}, вероятно, не поместятся в памяти этого устройства. Выберите размер поменьше.",
-    "increaseContextModelMax": "{{tokens}} · макс. модели",
-    "increaseContextHedge": "Перезагрузка займёт несколько секунд. Ничего из вашего чата не потеряется.",
-    "increaseContextAdvanced": "Дополнительно",
-    "increaseContextAdvancedBody": "Размер контекста для этого чата: {{from}} → {{to}} токенов (макс. модели {{max}}). Лимит устройства является оценочным и растёт по мере успешной загрузки более объёмных контекстов.",
-    "increaseContextSliderA11yLabel": "Размер контекста",
-    "increaseContextSliderA11yValue": "{{tokens}} токенов",
-    "increaseContextConfirmSize": "Установить на {{size}}",
-    "increaseContextReloadingShort": "Перезагрузка…",
-    "increaseContextNoFitBody": "Это устройство не может вместить более широкий контекст для данной модели. Начните новый чат, чтобы продолжить.",
-    "increaseContextCancel": "Не сейчас",
-    "increaseContextReloading": "Перезагрузка модели с увеличенным контекстом…",
-    "increaseContextSuccess": "Контекст увеличен до {{target}} токенов.",
-    "increaseContextFailure": "Не удалось увеличить размер контекста. Предыдущие настройки были восстановлены.",
-    "assistantLoadHint": "Этому Ассистент обычно требуется больше рабочей памяти модели, чем позволяет текущий размер контекста.",
-    "webSearch": {
-      "searched": "Поиск: {{query}}",
-      "noResults": "Ничего не найдено",
-      "noResultsFor": "Ничего не найдено по запросу {{query}}",
-      "resultsCount": "Результатов: {{count}}",
-      "resultsCountOne": "1 результат",
-      "searchResultsTitle": "Результаты поиска",
-      "showResultsAccessibilityLabel": "Показать результаты поиска в интернете по запросу {{query}}",
-      "openLinkError": "Не удалось открыть эту ссылку."
-    },
-    "contextFullRemote": "Лимит контекста диалога исчерпан. Начните новый чат.",
-    "speculativeInitFailed": "На этом устройстве не удалось запустить спекулятивное декодирование для этой модели — скорее всего, не хватает памяти для чернового контекста. Отключите спекулятивное декодирование в разделе Настройки → Дополнительные настройки и попробуйте снова."
-  },
   "common": {
     "cancel": "Отмена",
     "delete": "Удалить",
@@ -218,6 +6,10 @@
     "rename": "Переименовать",
     "reset": "Сброс",
     "save": "Сохранить",
+    "stop": "Остановить",
+    "update": "Обновить",
+    "error": "Ошибка",
+    "export": "Экспорт",
     "networkError": "Ошибка сети. Попробуйте ещё раз.",
     "downloadETA": "Осталось",
     "calculating": "вычисление...",
@@ -236,569 +28,192 @@
     "minute": "мин",
     "minutes": "мин",
     "justNow": "только что",
-    "update": "Обновить",
-    "error": "Ошибка",
-    "export": "Экспорт",
     "ok": "ОК",
     "close": "Закрыть",
     "clear": "Очистить всё",
     "gallery": "Галерея",
-    "stop": "Остановить",
-    "noResults": "Ничего не найдено"
+    "noResults": "Ничего не найдено",
+    "openDrawer": "Открыть боковую панель",
+    "openMenu": "Открыть меню",
+    "closeMenu": "Закрыть меню"
   },
-  "completionParams": {
-    "grammar": "Принудительное соблюдение грамматических правил, чтобы текст следовал строгой структуре или формату",
-    "stop": "Определить фразы, при появлении которых генерация текста прекратится",
-    "n_predict": "Максимальное количество генерируемых токенов. Выберите 'Unlimited', чтобы снять ограничение, или 'Custom', чтобы указать лимит вручную.",
-    "n_probs": "Показать вероятности для альтернативных вариантов слов.",
-    "top_k": "Контроль креативности, ограничить выбор K наиболее вероятными словами. Низкие значения делают ответы более логичными",
-    "top_p": "Баланс креативности и связности. Высокие значения (близкие к 1.0) делают ответы более разнообразными",
-    "min_p": "Минимальный порог вероятности для токена. Помогает отсечь бессмысленные или неуместные слова",
-    "temperature": "Баланс креативности и предсказуемости. Высокие значения делают ответы более творческими, но менее логичными",
-    "penalty_last_n": "Глубина проверки повторений. Большие значения помогают предотвратить повторы на длинных дистанциях",
-    "penalty_repeat": "Штраф за повторение слов. Высокие значения делают речь модели более разнообразной",
-    "penalty_freq": "Штраф за частоту слов. Стимулирует использование более широкого словарного запаса",
-    "penalty_present": "Штраф за повторение тем и идей. Побуждает модель обсуждать новые идеи и концепции",
-    "mirostat": "Расширенный контроль креативности. Режимы 1 или 2 для умной настройки случайности и связности в реальном времени.",
-    "mirostat_tau": "Целевой уровень креативности для Mirostat. Высокие значения дают более разнообразные и творческие ответы, низкие значения дают более логичные результаты.",
-    "mirostat_eta": "Скорость адаптации Mirostat к изменениям. Высокие значения ускоряют подстройку креативности",
-    "dry_multiplier": "Сила функции DRY (Don't Repeat Yourself). Высокие значения жестко подавляют повторения",
-    "dry_base": "Базовый штраф за повторение в режиме DRY. Высокие значения агрессивнее предотвращают повторения в тексте",
-    "dry_allowed_length": "Количество слов, которые могут повториться, прежде чем сработает штраф DRY",
-    "dry_penalty_last_n": "Как далеко назад модель просматривает текст для поиска повторов в режиме DRY",
-    "dry_sequence_breakers": "Символы, которые сбрасывают счетчик повторений в режиме DRY",
-    "ignore_eos": "Продолжать генерацию после того, как модель захочет остановиться. Полезно для получения длинных ответов",
-    "logit_bias": "Изменить вероятность появления конкретных слов в ответе",
-    "seed": "Задать начальное значение генератора случайных чисел. Полезно для получения повторяемых результатов",
-    "xtc_probability": "Шанс удаления токенов через сэмплер XTC. 0 - отключено",
-    "xtc_threshold": "Минимальный порог вероятности для удаления токенов в XTC (значения > 0.5 отключают XTC)",
-    "typical_p": "Включить локально-типичное сэмплирование с параметром p. 1.0 - отключено",
-    "include_thinking_in_context": "Включать рассуждения ИИ в контекст, отправляемый модели. Отключение экономит место в контексте. Но может снизить качество ответов.",
-    "jinja": "Включить шаблоны Jinja для форматирования чата. При включении используется обработка шаблонов Jinja для лучшей совместимости с современными моделями."
-  },
-  "components": {
-    "attachmentButton": {
-      "attachmentButtonAccessibilityLabel": "Отправить медиа"
+  "settings": {
+    "modelInitializationSettings": "Настройки инициализации модели",
+    "metal": "Metal",
+    "metalDescription": "Аппаратно-ускоренный API от Apple.",
+    "metalRequiresNewerIOS": "Ускорение Metal требует iOS 18 или выше. Пожалуйста, обновите устройство для использования этой функции.",
+    "openCL": "OpenCL (экспериментально)",
+    "openCLDescription": "GPU-ускорение для графических процессоров Adreno. Ускоряет обработку промптов, но генерация может быть не всегда быстрее.",
+    "openCLNotAvailable": "OpenCL недоступен на этом устройстве. Требуется графический процессор Adreno с функциями CPU i8mm и dotprod.",
+    "openCLMissingCPUFeatures": "Для работы OpenCL требуются функции CPU i8mm и dotprod, которые отсутствуют на этом устройстве.",
+    "openCLQuantizationNote": "Примечание: Чистые модели с квантованием Q4_0 работают лучше всего с OpenCL.",
+    "openCLDocsLink": "Подробности см. в документации llama.cpp по OpenCL.",
+    "layersOnGPU": "Слои на GPU: {{gpuLayers}}",
+    "deviceSelection": "Выбор устройства",
+    "deviceSelectionIOS": "Устройство (Metal)",
+    "deviceSelectionIOSDescription": "Выберите GPU Metal или режим работы только с CPU",
+    "deviceSelectionAndroidDescription": "Выберите вычислительное устройство (CPU, GPU или Hexagon NPU)",
+    "cpuOnlyNoAccelerators": "Только CPU - аппаратные ускорители не обнаружены",
+    "contextSize": "Размер контекста",
+    "contextSizePlaceholder": "Введите размер контекста (мин. {{minContextSize}})",
+    "invalidContextSizeError": "Пожалуйста, введите допустимое число (мин. {{minContextSize}})",
+    "modelReloadNotice": "Для применения изменений требуется перезагрузка модели.",
+    "advancedSettings": "Дополнительные настройки",
+    "batchSize": "Размер пакета (Batch Size)",
+    "batchSizeDescription": "Размер пакета: {{batchSize}}{{effectiveBatch}}",
+    "effectiveLabel": "эффективный",
+    "physicalBatchSize": "Физический размер пакета",
+    "physicalBatchSizeDescription": "Физический размер пакета: {{physicalBatchSize}}{{effectivePhysicalBatch}}",
+    "cpuThreads": "Потоки CPU",
+    "cpuThreadsDescription": "Используется {{threads}} из {{maxThreads}} доступных потоков",
+    "imageMaxTokens": "Макс. токенов для изображения",
+    "imageMaxTokensDescription": "Максимальное количество токенов для обработки изображения: {{tokens}}{{effectiveTokens}} (меньше = быстрее, но меньше деталей)",
+    "flashAttention": "Flash Attention",
+    "flashAttentionDescription": "Включить Flash Attention для ускорения обработки",
+    "flashAttentionIOSDescription": "Экономное использование памяти (автоматически включено на Metal)",
+    "flashAttentionAndroidDescription": "Должно быть отключено для сохранения/загрузки состояния OpenCL",
+    "flashAttentionAuto": "Авто",
+    "flashAttentionOn": "Вкл",
+    "flashAttentionOff": "Выкл",
+    "keyCacheType": "Тип кэша ключей (Key Cache)",
+    "keyCacheTypeDescription": "Выберите тип кэша для вычисления ключей",
+    "keyCacheTypeDisabledDescription": "Включите Flash Attention, чтобы изменить тип кэша",
+    "valueCacheType": "Тип кэша значений (Value Cache)",
+    "valueCacheTypeDescription": "Выберите тип кэша для вычисления значений",
+    "valueCacheTypeDisabledDescription": "Включите Flash Attention, чтобы изменить тип кэша",
+    "memorySettings": "Настройки памяти",
+    "useMlock": "Блокировка памяти (Mlock)",
+    "useMlockDescription": "Принудительно удерживать модель в ОЗУ, предотвращая её выгрузку в файл подкачки или сжатие",
+    "useMmap": "Отображение в память (Mmap)",
+    "useMmapDescription": "Использовать файлы, отображаемые в память, для более быстрой загрузки модели",
+    "useMmapTrue": "Включено",
+    "useMmapFalse": "Отключено",
+    "useMmapTrueDescription": "Всегда использовать отображение в память для быстрой загрузки",
+    "useMmapFalseDescription": "Рекомендуется отключать эту функцию, если включена функция повторной упаковки весов, чтобы избежать удвоения объема используемой памяти",
+    "weightRepacking": "Включить функцию повторной упаковки весов",
+    "weightRepackingDescription": "Более быстрая обработка запросов при минимальной нагрузке на память, когда функция сопоставления памяти отключена. Генерация токенов не изменится.",
+    "speculativeDecoding": "Спекулятивное декодирование",
+    "speculativeDecodingDescription": "Используйте небольшую черновую модель (или встроенную модель MTP) для предсказания токенов и ускорения генерации. Экспериментально.",
+    "speculativeNotMTPCapable": "Активная модель не поддерживает спекулятивное декодирование, и совместимая черновая модель не выбрана, поэтому для неё эта функция отключена и ни на что не влияет. Она применяется автоматически к моделям, которые её поддерживают.",
+    "speculativeDraftModel": "Черновая модель",
+    "speculativeDraftModelDescription": "Предлагает черновые токены для активной модели.",
+    "speculativeDraftModelNone": "Нет (встроенный MTP)",
+    "speculativeDraftModelIgnoredOverridden": "У активной модели есть собственная черновая модель, поэтому этот выбор игнорируется.",
+    "speculativeDraftModelIgnoredIncompatible": "Эта черновая модель несовместима с активной, поэтому она игнорируется.",
+    "speculativeDraftModelIgnoredNotCapable": "В этой модели нет черновых слоёв, поэтому её нельзя использовать как черновую модель.",
+    "speculativeDraftKeyCacheType": "Тип кэша ключей черновой модели",
+    "speculativeDraftValueCacheType": "Тип кэша значений черновой модели",
+    "speculativeDraftNGpuLayers": "Слои GPU черновой модели",
+    "speculativeDraftNGpuLayersDescription": "Количество слоёв черновой модели для выгрузки на GPU.",
+    "speculativeDraftCacheTypeInactiveDescription": "Применяется, когда запускается спекулятивное декодирование.",
+    "ttsAvailability": "Голосовой синтез",
+    "ttsAvailabilityDescription": "Озвучивать ответы ассистента.",
+    "ttsAvailabilityLowMemoryWarning": "Недостаточно памяти на вашем устройстве – может работать нестабильно.",
+    "modelLoadingSettings": "Настройки загрузки модели",
+    "autoOffloadLoad": "Авто-выгрузка/загрузка",
+    "autoOffloadLoadDescription": "Выгружать модель из памяти, когда приложение переходит в фоновый режим.",
+    "autoNavigateToChat": "Автоматический переход в чат",
+    "autoNavigateToChatDescription": "Переходить к экрану чата сразу после начала загрузки модели.",
+    "appSettings": "Настройки приложения",
+    "language": "Язык",
+    "languageSheetTitle": "Язык",
+    "languageSearchPlaceholder": "Поиск языков",
+    "languageRestartTitle": "Требуется перезапуск",
+    "languageRestartMessage": "Для этого языка изменилось направление отображения. Перезапустите приложение, чтобы применить изменения полностью.",
+    "languageRestartNow": "Перезапустить сейчас",
+    "languageRestartLater": "Позже",
+    "darkMode": "Темный режим",
+    "displayMemoryUsage": "Показывать использование памяти",
+    "displayMemoryUsageDescription": "Показывать использование памяти на странице чата.",
+    "exportOptions": "Параметры экспорта",
+    "exportLegacyChats": "Экспорт старых чатов",
+    "exportLegacyChatsDescription": "Используйте, если миграция не удалась или нужно восстановить старые сессии чата.",
+    "exportButton": "Экспорт",
+    "importChats": "Импорт сессий чата",
+    "importChatsDescription": "Импорт сессий чата из (экспортированного) JSON-файла.",
+    "importButton": "Импорт",
+    "importSuccess": "Успешно импортировано сессий чата: {{count}}.",
+    "importError": "Не удалось импортировать сессии чата. Проверьте формат файла.",
+    "internetSearch": {
+      "title": "Поиск в интернете",
+      "description": "Разрешите Ассистентs искать в интернете с помощью собственных инструментов. Используйте свой API-ключ – DRS AI никогда не хранит ваши ключи и не перенаправляет запросы через свои серверы.",
+      "providerLabel": "Провайдер поиска",
+      "providerGated": "Скоро",
+      "keyLabel": "API-ключ",
+      "keyIsSet": "Ключ для {{provider}} установлен.",
+      "keyNotSet": "Ключ для {{provider}} не установлен.",
+      "setKeyButton": "Установить ключ",
+      "updateKeyButton": "Обновить ключ",
+      "clearKeyButton": "Удалить ключ",
+      "keyInputPlaceholder": "Вставьте ваш API-ключ {{provider}}",
+      "keyUpdateError": "Не удалось обновить ключ. Попробуйте ещё раз.",
+      "showKeyAccessibilityLabel": "Показать API-ключ",
+      "hideKeyAccessibilityLabel": "Скрыть API-ключ",
+      "resultCountLabel": "Результатов за поиск",
+      "resultCountDescription": "Меньше результатов – больше места в контексте модели.",
+      "consentTitle": "Поисковые запросы покидают ваше устройство",
+      "consentDescription": "Когда Ассистент ищет в интернете, ваш запрос отправляется выбранному провайдеру через интернет. Когда Ассистент читает страницу, URL-адрес и содержимое страницы могут быть отправлены службе чтения по умолчанию (r.jina.ai), если у выбранного провайдера нет встроенной функции чтения. Ключи и запросы никогда не передаются в DRS AI.",
+      "consentAccept": "Я понимаю",
+      "consentRequired": "Примите уведомление выше, чтобы установить ключ и включить поиск.",
+      "consentGivenTitle": "Поиск в интернете включён",
+      "consentGivenDescription": "Запросы и чтение страниц могут покидать ваше устройство, как описано выше.",
+      "consentRevoke": "Отозвать"
     },
-    "chatEmptyPlaceholder": {
-      "noModelsTitle": "Нет доступных моделей",
-      "noModelsDescription": "Загрузите модель, чтобы начать общение в DRS AI",
-      "noModelsButton": "Загрузить модель",
-      "activateModelTitle": "Активируйте модель",
-      "activateModelDescription": "Выберите и загрузите модель. После этого, нажмите 'Загрузить' рядом с моделью и начните общение.",
-      "activateModelButton": "Выбрать модель",
-      "loading": "Загрузка...",
-      "gettingReadyTitle": "{{name}} готовится",
-      "gettingReadyDescription": "Мы сообщим вам, как только Ассистент сможет начать общение. Нажмите на баннер наверху, чтобы увидеть текущее состояние."
-    },
-    "chatInput": {
-      "inputPlaceholder": "Сообщение",
-      "thinkingToggle": {
-        "enableThinking": "Включить режим рассуждения",
-        "disableThinking": "Отключить режим рассуждения",
-        "thinkingEnabled": "Режим рассуждения включён",
-        "thinkingDisabled": "Режим рассуждения выключен",
-        "thinkText": "Рассуждение",
-        "cycleEffort": "Уровень рассуждений: {{level}}. Нажмите дважды, чтобы изменить"
-      }
-    },
-    "chatGenerationSettingsSheet": {
-      "invalidValues": "Неверные значения",
-      "invalidNumericValuesMessage": "Должно быть действительным числом",
-      "pleaseCorrect": "Исправьте следующее:",
-      "ok": "ОК",
-      "saveChanges": "Сохранить изменения",
-      "saveAsPreset": "Сохранить как предустановку",
-      "title_preset": "Настройки генерации чата (Предустановка)",
-      "resetToPreset": "Сброс к предустановке",
-      "applytoPresetAlert": {
-        "title": "Успешно",
-        "message": "Эти настройки будут применяться ко всем будущим сессиям"
-      },
-      "title_session": "Настройки генерации чата (Сессия)",
-      "resetToSystemDefaults": "Сброс к системным",
-      "assistantSettings": "Настройки Ассистент",
-      "settingsSource": "Источник настроек"
-    },
-    "chatHeaderTitle": {
-      "defaultTitle": "Чат"
-    },
-    "fileMessage": {
-      "fileButtonAccessibilityLabel": "Файл"
-    },
-    "chatAssistantModelPickerSheet": {
-      "modelsTab": "Модели",
-      "assistantsTab": "Ассистент",
-      "noAssistant": "Без Ассистент",
-      "disableAssistant": "Отключить активный Ассистент",
-      "noDescription": "Без описания",
-      "assistantType": "Ассистент",
-      "roleplayType": "Ролевая игра",
-      "confirmationTitle": "Подтверждение",
-      "modelSwitchMessage": "У этого Ассистент другая модель по умолчанию ({{modelName}}). Хотите переключиться на неё?",
-      "keepButton": "Оставить",
-      "switchButton": "Переключить",
-      "videoType": "Видео"
-    },
-    "headerRight": {
-      "deleteChatTitle": "Удалить чат",
-      "deleteChatMessage": "Вы уверены, что хотите удалить этот чат?",
-      "generationSettings": "Настройки генерации",
-      "model": "Модель",
-      "duplicateChatHistory": "Дублировать историю чата",
-      "makeChatTemporary": "Сделать чат временным",
-      "exportChatSession": "Экспорт сессии чата",
-      "export": "Экспорт/Импорт",
-      "exportCurrentSession": "Экспорт текущей сессии",
-      "exportAllSessions": "Экспорт всех сессий",
-      "importSessions": "Импорт сессий",
-      "exportCurrentSessionMarkdown": "Экспорт в Markdown"
-    },
-    "modelSettingsSheet": {
-      "modelSettings": "Настройки модели",
-      "saveChanges": "Сохранить изменения",
-      "reasoningSection": "Рассуждение",
-      "isReasoningModel": "Модель рассуждений",
-      "isReasoningModelHelp": "Показывать управление рассуждением для этой модели, даже если оно не было обнаружено автоматически.",
-      "supportsEffort": "Поддерживает регулировку уровней",
-      "effortValues": "Уровни, которые поддерживает эта модель",
-      "effortLevels": {
-        "minimal": "Минимум",
-        "low": "Низкий",
-        "medium": "Средний",
-        "high": "Высокий",
-        "xhigh": "Экстра высокий",
-        "max": "Максимум"
-      }
-    },
-    "modelsHeaderRight": {
-      "menuTitleHf": "Модели от Hugging Face",
-      "menuTitleDownloaded": "Загруженные модели",
-      "menuTitleGrouped": "Группировать по типу модели",
-      "menuTitleReset": "Сбросить список моделей"
-    },
-    "modelsResetDialog": {
-      "proceedWithReset": "Выполнить сброс",
-      "confirmReset": "Подтвердить сброс"
-    },
-    "assistantPersonaSheet": {
-      "title": {
-        "create": "Создать Ассистент",
-        "edit": "Редактировать Ассистент"
-      },
-      "assistantName": "Имя Ассистент",
-      "assistantNamePlaceholder": "Имя",
-      "defaultModel": "Модель по умолчанию",
-      "defaultModelPlaceholder": "Выбор модели",
-      "validation": {
-        "generatingPromptRequired": "Требуется генерирующий промпт",
-        "promptModelRequired": "Требуется модель для генерации промпта"
-      },
-      "create": "Создать"
-    },
-    "modelNotAvailable": {
-      "noModelsDownloaded": "У вас еще нет загруженных моделей. Пожалуйста, сначала загрузите модель.",
-      "downloadAModel": "Загрузить модель",
-      "defaultModelNotDownloaded": "Этот Ассистент предлагает конкретную модель, которую необходимо загрузить, либо вы можете выбрать другую модель.",
-      "cancelDownload": "Отменить загрузку",
-      "download": "Загрузить",
-      "modelNotDownloadedShort": "Модель не загружена",
-      "recommendedModel": "Рекомендуемая модель"
-    },
-    "roleplayPersonaSheet": {
-      "title": {
-        "create": "Создать Ассистент ролевых игр",
-        "edit": "Редактировать Ассистент ролевых игр"
-      },
-      "assistantName": "Имя Ассистент",
-      "assistantNamePlaceholder": "Имя",
-      "defaultModel": "Модель по умолчанию",
-      "defaultModelPlaceholder": "Выбор модели",
-      "descriptionSection": "Описание",
-      "world": "Мир",
-      "worldPlaceholder": "Фэнтези",
-      "location": "Место",
-      "locationPlaceholder": "Зачарованный лес",
-      "locationSublabel": "В каком месте происходит действие?",
-      "aiRole": "Роль ИИ",
-      "aiRolePlaceholder": "Эльдара, озорная лесная фея",
-      "aiRoleSublabel": "Установите роль персонажа",
-      "userRole": "Роль пользователя",
-      "userRolePlaceholder": "Сэр Эландор, доблестный рыцарь",
-      "userRoleSublabel": "Кто вы?",
-      "situation": "Ситуация",
-      "situationPlaceholder": "Миссия спасения, разгадывание тайны",
-      "toneStyle": "Тон/Стиль",
-      "toneStylePlaceholder": "Серьезный",
-      "validation": {
-        "promptModelRequired": "Требуется модель для генерации промпта"
-      },
-      "create": "Создать"
-    },
-    "sendButton": {
-      "accessibilityLabel": "Отправить"
-    },
-    "systemPromptSection": {
-      "sectionTitle": "Системный промпт",
-      "useAIPrompt": "Генерировать системный промпт с помощью ИИ",
-      "modelSelector": {
-        "label": "Выберите модель для генерации*",
-        "sublabel": "Рекомендуется: Llama 3.2 3B или Qwen3 4B Instruct 2507.",
-        "placeholder": "Выбор модели"
-      },
-      "generatingPrompt": {
-        "label": "Цель & Контекст",
-        "placeholder": "Опишите роль, цель или сценарий для этого Ассистент..."
-      },
-      "buttons": {
-        "loadingModel": "Загрузка модели...",
-        "stopGenerating": "Остановить генерацию",
-        "generatePrompt": "Генерировать системный промпт",
-        "resetParameters": "Сброс параметров",
-        "resetTemplate": "Сброс шаблона"
-      },
-      "systemPrompt": {
-        "label": "Системный промпт",
-        "sublabel": "Смело редактируйте и экспериментируйте для поиска наилучшего промпта под ваш сценарий",
-        "placeholder": "Вы полезный ассистент"
-      },
-      "warnings": {
-        "promptChanged": "Системный промпт был изменен вручную"
-      }
-    },
-    "sidebarContent": {
-      "menuItems": {
-        "chat": "Чат",
-        "models": "Модели",
-        "assistants": "Ассистент",
-        "benchmark": "Бенчмарк",
-        "settings": "Настройки",
-        "appInfo": "О приложении",
-        "testCompletion": "Завершение теста"
-      },
-      "deleteChatTitle": "Удалить чат",
-      "deleteChatMessage": "Вы уверены, что хотите удалить этот чат?",
-      "dateGroups": {
-        "today": "Сегодня",
-        "yesterday": "Вчера",
-        "thisWeek": "На этой неделе",
-        "lastWeek": "На прошлой неделе",
-        "twoWeeksAgo": "2 недели назад",
-        "threeWeeksAgo": "3 недели назад",
-        "fourWeeksAgo": "4 недели назад",
-        "lastMonth": "В прошлом месяце",
-        "older": "Старше",
-        "pinned": "Закреплённые"
-      },
-      "select": "Выбрать",
-      "nSelected": "{{count}} выбрано",
-      "selectAll": "Выбрать все",
-      "deselectAll": "Отменить выбор",
-      "exportCount": "Экспорт ({{count}})",
-      "deleteCount": "Удалить ({{count}})",
-      "bulkDeleteTitle": "Удалить сеансы чата",
-      "bulkDeleteMessage": "Удалить {{count}} сеанс(а) чата? Это действие нельзя отменить.",
-      "bulkDeleteError": "Не удалось удалить сеансы чата. Попробуйте ещё раз.",
-      "exportError": "Не удалось экспортировать сеанс чата. Попробуйте ещё раз.",
-      "bulkExportError": "Не удалось экспортировать сеансы чата. Попробуйте ещё раз.",
-      "pin": "Закрепить",
-      "unpin": "Открепить"
-    },
-    "usageStats": {
-      "tooltip": {
-        "title": "Использование памяти",
-        "used": "Используется: ",
-        "total": "Всего: ",
-        "usage": "Использование: "
-      },
-      "byteSizes": [
-        "Байт",
-        "КБ",
-        "МБ",
-        "ГБ"
-      ]
-    },
-    "exportUtils": {
-      "fileSaved": "Файл сохранён",
-      "fileSavedMessage": "Файл был сохранён в папку 'Загрузки' как {{filename}}",
-      "share": "Поделиться",
-      "ok": "ОК",
-      "shareError": "Ошибка отправки",
-      "shareErrorMessage": "Не удалось поделиться файлом. Попробуйте ещё раз.",
-      "saveError": "Ошибка сохранения в 'Загрузки'",
-      "saveOptions": "Параметры сохранения",
-      "saveOptionsMessage": "Не удалось сохранить напрямую в 'Загрузки'. Хотите вместо этого поделиться файлом?",
-      "cancel": "Отмена",
-      "shareContentErrorMessage": "Не удалось поделиться контентом. Попробуйте ещё раз.",
-      "exportError": "Ошибка экспорта",
-      "exportErrorMessage": "Произошла ошибка при экспорте файла. Попробуйте ещё раз.",
-      "permissionRequired": "Нужен доступ к хранилищу",
-      "permissionMessage": "Требуется разрешение для сохранения экспортированных файлов в папку 'Загрузки'.",
-      "permissionDenied": "Доступ запрещён",
-      "permissionDeniedMessage": "Без доступа к хранилищу функция экспорта будет отключена.",
-      "continue": "Продолжить"
-    },
-    "thinkingBubble": {
-      "reasoning": "Рассуждение"
-    },
-    "contentReportSheet": {
-      "title": "Жалоба на контент",
-      "privacyNote": "Мы не передаем содержимое сообщений или детали контекста диалога. Пожалуйста, опишите конкретную проблему, с которой вы столкнулись.",
-      "categoryLabel": "Категория",
-      "selectCategory": "Выберите категорию",
-      "categories": {
-        "hate": "Разжигание ненависти",
-        "sexual": "Контент сексуального характера",
-        "selfHarm": "Самоповреждение",
-        "violence": "Насилие",
-        "other": "Другое"
-      },
-      "descriptionLabel": "Описание",
-      "descriptionPlaceholder": "Опишите проблему с этим ответом...",
-      "includeModelInfo": "Включить данные о модели",
-      "includeModelInfoDescription": "Добавить название и ID модели для помощи в расследовании",
-      "noActiveModelNote": "Нет активной модели",
-      "submit": "Отправить отчёт",
-      "validation": {
-        "title": "Недостаточно данных",
-        "message": "Пожалуйста, выберите категорию и добавьте описание."
-      },
-      "success": {
-        "title": "Отчёт отправлен",
-        "message": "Спасибо. Мы рассмотрим ваше сообщение и примем меры."
-      },
-      "error": {
-        "title": "Ошибка",
-        "message": "Не удалось отправить отчёт. Попробуйте ещё раз."
-      }
-    },
-    "modelErrorReportSheet": {
-      "title": "Ошибка загрузки модели",
-      "privacyNote": "Помогите нам улучшить DRS AI, предоставив подробную информацию об этой ошибке. Просмотрите ниже, вы можете отменить выбор любых элементов, которые не хотите включать.",
-      "errorMessage": "Текст ошибки",
-      "modelInfo": "Информация о модели",
-      "modelName": "Название",
-      "modelSource": "Источник",
-      "modelSize": "Размер",
-      "contextParams": "Параметры контекста",
-      "deviceInfo": "Информация об устройстве",
-      "deviceModel": "Устройство",
-      "osVersion": "ОС",
-      "memoryInfo": "Память",
-      "cpuArchitecture": "CPU",
-      "isEmulator": "Эмулятор",
-      "additionalInfoLabel": "Дополнительно (опционально)",
-      "additionalInfoPlaceholder": "Любые детали, которые могут помочь…",
-      "submit": "Отправить отчёт",
-      "success": {
-        "title": "Отчёт отправлен",
-        "message": "Спасибо за помощь в улучшении DRS AI. Ваш отчёт поможет нам исправить проблему."
-      },
-      "error": {
-        "title": "Ошибка",
-        "message": "Не удалось отправить отчёт. Попробуйте ещё раз позже."
-      }
-    },
-    "assistantGenerationSettingsSheet": {
-      "title": "Настройки генерации - {{assistantName}}",
-      "invalidValues": "Неверные значения",
-      "invalidNumericValuesMessage": "Должно быть действительным числом",
-      "pleaseCorrect": "Исправьте следующее:",
-      "ok": "ОК",
-      "error": "Ошибка",
-      "failedToSave": "Не удалось сохранить настройки Ассистент",
-      "resetToGlobal": "Сброс к глобальным настройкам",
-      "resetToSystem": "Сброс к системным",
-      "clearAssistantSettings": "Очистить настройки Ассистент",
-      "customSettingsFor": "Пользовательские настройки для {{assistantName}}",
-      "inheritedSettingsFor": "Унаследованные настройки для {{assistantName}}"
-    },
-    "downloadErrorDialog": {
-      "downloadFailedTitle": "Ошибка загрузки",
-      "downloadFailedMessage": "Не удалось загрузить модель: {{message}}",
-      "unauthorizedTitle": "Ошибка авторизации",
-      "unauthorizedMessage": "Ваш токен Hugging Face недействителен или истёк. Обновите его в настройках.",
-      "forbiddenTitle": "Доступ запрещён",
-      "forbiddenMessage": "У вас нет прав для доступа к этой модели. Убедитесь, что:",
-      "forbiddenSteps": [
-        "Ваш токен имеет права на чтение (read)",
-        "Вы запросили и получили доступ на странице модели",
-        "Владелец модели одобрил ваш запрос"
-      ],
-      "getTokenTitle": "Нужен токен Hugging Face",
-      "getTokenMessage": "Для загрузки этой модели требуется токен Hugging Face.",
-      "getTokenSteps": [
-        "Зайдите на huggingface.co и авторизуйтесь",
-        "Перейдите в Settings > Access Tokens",
-        "Создайте новый токен с правами \"read\"",
-        "Скопируйте и вставьте его в приложении"
-      ],
-      "tokenDisabledTitle": "Токен отключен",
-      "tokenDisabledMessage": "У вас задан токен Hugging Face, но он отключен в настройках. Для загрузки этой модели требуется токен. Включите токен, чтобы продолжить.",
-      "enableAndRetry": "Включить и повторить",
-      "goToSettings": "В настройки",
-      "tryAgain": "Повторить",
-      "viewOnHuggingFace": "Открыть на HF ↗"
-    },
-    "hfTokenSheet": {
-      "title": "Токен Hugging Face",
-      "description": "Требуется для доступа к моделям с ограниченным доступом",
-      "inputLabel": "Персональный токен доступа",
-      "inputPlaceholder": "Вставьте ваш токен здесь",
-      "save": "Сохранить токен",
-      "saved": "Токен успешно сохранён",
-      "reset": "Сброс токена",
-      "resetSuccess": "Токен успешно удалён",
-      "instructions": "Как получить токен:",
-      "instructionsSteps": [
-        "Перейдите на huggingface.co и выполните вход",
-        "Перейдите в Settings > Access Tokens",
-        "Создайте новый токен с правом \"read\"",
-        "Скопируйте токен и вставьте его ниже"
-      ],
-      "getTokenLink": "Получить токен на huggingface.co ↗",
-      "error": {
-        "saving": "Ошибка сохранения токена",
-        "missing": "Требуется токен Hugging Face",
-        "invalid": "Недействительный или истёкший токен",
-        "gatedModelAccess": "Доступ к этой закрытой модели отклонён"
-      },
-      "gatedModelIndicator": "Требуется токен",
-      "tokenRequired": "Для этой модели требуется токен доступа Hugging Face",
-      "searchErrorHint": "Ваш токен API Hugging Face недействителен или истёк. Чтобы продолжить поиск, удалите токен или отключите авторизацию по токену в Настройках.",
-      "disableAndRetry": "Отключить токен и повторить"
-    },
-    "assistantSheet": {
-      "title": {
-        "edit": "Редактировать Ассистент",
-        "newAssistant": "Новый ассистент",
-        "newVideoAssistant": "Новый видео Ассистент"
-      },
-      "description": "Описание",
-      "descriptionPlaceholder": "Введите краткое описание вашего Ассистент",
-      "parameters": "Параметры",
-      "generationSettings": "Настройки генерации",
-      "configureGenerationSettings": "Настройка параметров генерации",
-      "validation": {
-        "nameRequired": "Требуется имя",
-        "generatingPromptRequired": "Требуется генерирующий промпт при использовании ИИ-промпта",
-        "promptModelRequired": "Требуется модель генерации промпта при использовании ИИ-промпта"
-      },
-      "talents": "Таланты",
-      "talentNames": {
-        "render_html": "Предпросмотр HTML",
-        "calculate": "Математические выражения",
-        "datetime": "Дата и время",
-        "web_search": "Поиск в интернете",
-        "read_url": "Чтение веб-страницы"
-      },
-      "talentDescriptions": {
-        "render_html": "Отображать HTML-документы встроенно в чате",
-        "calculate": "Вычисление математических выражений",
-        "datetime": "Получить текущую дату и время",
-        "web_search": "Поиск актуальной информации в интернете (требуется API-ключ в настройках)",
-        "read_url": "Чтение полного содержимого веб-страницы (требуется API-ключ в настройках)"
-      },
-      "greeting": {
-        "sectionLabel": "Приветствие",
-        "textLabel": "Приветственное сообщение",
-        "textPlaceholder": "Что должен написать этот Ассистент в пустом чате?",
-        "suggestedPromptsLabel": "Рекомендуемые промпты",
-        "addPromptButton": "Добавить промпт",
-        "promptPlaceholder": "Короткий промпт для быстрой команды",
-        "removePromptLabel": "Удалить промпт"
-      }
-    },
-    "lookiePersonaSheet": {
-      "title": {
-        "create": "Создать Lookie Ассистент",
-        "edit": "Редактировать Lookie Ассистент"
-      },
-      "assistantName": "Имя Ассистент",
-      "assistantNamePlaceholder": "Введите имя для Lookie Ассистент",
-      "visionModel": "Модель зрения",
-      "visionModelPlaceholder": "Выберите модель зрения",
-      "requiredModelsSection": "Необходимые модели",
-      "captureInterval": "Интервал захвата",
-      "captureIntervalHelper": "Интервал между автоматическими захватами в миллисекундах",
-      "create": "Создать"
-    },
-    "chatView": {
-      "menuItems": {
-        "copy": "Копировать",
-        "regenerate": "Сгенерировать заново",
-        "regenerateWith": "Сгенерировать заново с",
-        "edit": "Редактировать",
-        "reportContent": "Жалоба на контент"
-      }
-    },
-    "assistantHeaderRight": {
-      "exportAllAssistants": "Экспорт всех ассистентов",
-      "importAssistants": "Импорт ассистентов",
-      "importSuccess": "Успешно импортировано Ассистент: {{count}}.",
-      "importError": "Не удалось импортировать Ассистент. Проверьте формат файла."
-    },
-    "bubble": {
-      "msPerToken": "{{value}} мс/ток",
-      "tokensPerSec": "{{value}} ток/сек",
-      "ttft": "{{value}} мс TTFT",
-      "interrupted": "Прервано",
-      "truncated": "Прервано – вероятно, контекст исчерпан",
-      "draftAccepted": "черновик: {{accepted}}/{{total}} ({{pct}}%)"
-    },
-    "pendingIndicator": {
-      "preparingTool": "Подготовка инструмента",
-      "buildingPage": "Создание страницы",
-      "calculating": "Вычисление",
-      "lookingUpTime": "Определение времени",
-      "stopping": "Остановка…"
-    },
-    "toolMetrics": {
-      "tokens": "{{count}} ток.",
-      "elapsed": "{{seconds}} сек."
-    }
-  },
-  "feedback": {
-    "title": "Оставить отзыв",
-    "description": "Ваш голос важен! Расскажите, как DRS AI помогает вам и что мы можем улучшить, чтобы сделать его ещё более полезным.",
-    "shareThoughtsButton": "Поделитесь мнением",
-    "useCase": {
-      "label": "Для чего вы используете DRS AI?",
-      "placeholder": "напр.: суммаризация, ролевые игры, код и т.д."
-    },
-    "featureRequests": {
-      "label": "Запрос новой функции",
-      "placeholder": "Чего вам не хватает в приложении?"
-    },
-    "generalFeedback": {
-      "label": "Общий отзыв",
-      "placeholder": "Расскажите о других ваших идеях."
-    },
-    "usageFrequency": {
-      "label": "Как часто вы пользуетесь DRS AI? (Опционально)",
-      "options": {
-        "daily": "Ежедневно",
-        "weekly": "Еженедельно",
-        "monthly": "Ежемесячно",
-        "rarely": "Редко"
-      }
-    },
-    "email": {
-      "label": "Контактный Email (Опционально)",
-      "placeholder": "Ваш Email"
-    },
-    "submit": "Отправить отзыв",
-    "validation": {
-      "required": "Пожалуйста, напишите хотя бы краткий отзыв"
-    },
-    "success": "Спасибо за обратную связь!",
-    "error": {
-      "general": "Не удалось отправить отзыв. Попробуйте ещё раз."
-    }
-  },
-  "generation": {
-    "modelNotInitialized": "Контекст модели не инициализирован",
-    "failedToGenerate": "Ошибка генерации ответа"
+    "apiSettingsTitle": "Настройки API",
+    "huggingFaceTokenLabel": "Токен Hugging Face",
+    "tokenIsSetDescription": "Токен установлен. Требуется для доступа к моделям с ограниченным доступом.",
+    "setTokenDescription": "Установите токен для доступа к закрытым моделям на Hugging Face.",
+    "setTokenButton": "Установить токен",
+    "useHfTokenLabel": "Использовать HF токен",
+    "useHfTokenDescription": "Включите для использования токена в API-запросах. Отключите, если токен вызывает проблемы с авторизацией.",
+    "cacheStorageTitle": "Кэш и хранилище",
+    "clearAssistantCaches": "Очистить кэш ярлыков",
+    "clearAssistantCachesDescription": "Очищает кэшированные данные, используемые для ускорения работы ярлыков. Это не затронет ваших помощников (Ассистентs) или историю чатов.",
+    "clearCachesButton": "Очистить кэш",
+    "clearCachesConfirmTitle": "Очистить кэш ярлыков?",
+    "clearCachesConfirmMessage": "Это удалит все кэшированные данные сессий ({{fileCount}} файлов, {{size}}). При первом запуске после очистки ярлыки могут работать медленнее. Это не затронет ваших помощников (Ассистентs) или историю чатов.",
+    "clearCachesSuccess": "Успешно удалено {{count}} файлов кэша.",
+    "clearCachesError": "Не удалось очистить кэш. Попробуйте ещё раз.",
+    "noCachesToClear": "Нет данных для очистки.",
+    "serverName": "Имя сервера",
+    "serverUrl": "URL сервера",
+    "serverUrlPlaceholder": "Напр., http://192.168.1.100:1234",
+    "requestTimeout": "Время ожидания запроса (сек)",
+    "requestTimeoutPlaceholder": "Необязательно – оставьте пустым для использования значения по умолчанию",
+    "requestTimeoutHelp": "Макс. время ожидания ответа от медленного сервера. Оставьте пустым для использования значения по умолчанию.",
+    "serverType": "Тип сервера",
+    "serverTypeHelp": "Определено автоматически. Измените, если неверно.",
+    "apiKey": "API-ключ",
+    "apiKeyPlaceholder": "Необязательно – необходимо для использования с OpenAI/Groq",
+    "apiKeyDescription": "Надежно сохранено на устройстве.",
+    "remoteModel": "Удалённая",
+    "remotePrivacyNotice": "Сообщения, отправленные на удаленные серверы, покидают ваше устройство. Подключайтесь только к тем серверам, которым доверяете.",
+    "remoteIndicator": "Удалённая",
+    "serverUrlRequired": "Требуется URL сервера",
+    "serverUrlInvalid": "Неверный формат URL",
+    "serverUrlHttpWarning": "В iOS для нелокальных серверов требуется протокол HTTPS. Используйте протокол https:// или адрес локальной сети.",
+    "addRemoteModel": "Добавить удалённую модель",
+    "yourServers": "Ваши серверы",
+    "orConnectNewServer": "или подключите новый сервер",
+    "selectModel": "Выбрать модель",
+    "addModel": "Добавить модель",
+    "connected": "Подключено",
+    "connectionFailed": "Подключение не удалось: {{error}}",
+    "connecting": "Подключение...",
+    "noModelsAvailable": "На данном сервере нет доступных моделей.",
+    "alreadyAdded": "Уже добавлено",
+    "connectedServers": "Подключенные серверы",
+    "modelsCount": "Моделей: {{count}}",
+    "serverDetails": "Информация о сервере",
+    "modelsUsingServer": "Модели, использующие данный сервер:",
+    "saveChanges": "Сохранить изменения",
+    "removeServer": "Удалить сервер",
+    "removeServerMessage": "Удалить {{serverName}} и связанные модели ({{count}})?",
+    "removeRemoteModel": "Удалить {{modelName}} ({{serverName}})?",
+    "retryConnection": "Повторить",
+    "enterUrlManually": "Введите URL вручную",
+    "manageServers": "Управление серверами",
+    "exportLegacyError": "Не удалось экспортировать старые сеансы чата. Возможно, файл не существует."
   },
   "memory": {
     "shortWarning": "Предупреждение о памяти",
@@ -818,11 +233,97 @@
       "continue": "Продолжить"
     }
   },
+  "storage": {
+    "checkFailed": "Не удалось проверить хранилище",
+    "lowStorage": "Недостаточно места! Модель {{modelSize}} > {{freeSpace}} свободно"
+  },
+  "generation": {
+    "modelNotInitialized": "Контекст модели не инициализирован",
+    "failedToGenerate": "Ошибка генерации ответа"
+  },
   "models": {
+    "fileManagement": {
+      "fileAlreadyExists": "Файл уже существует",
+      "fileAlreadyExistsMessage": "Файл с таким именем уже существует. Что вы хотите сделать?",
+      "replace": "Заменить",
+      "keepBoth": "Сохранить оба",
+      "copyingModel": "Копирование файла модели...",
+      "copyFailed": "Ошибка копирования файла модели"
+    },
+    "labels": {
+      "localModel": "Локальная",
+      "hfModel": "HF",
+      "unknownGroup": "Неизвестно",
+      "availableToUse": "Готово к использованию",
+      "availableToDownload": "Доступно для загрузки",
+      "useAddButtonForMore": "Используйте кнопку +, чтобы найти больше моделей"
+    },
+    "vision": "Зрение",
+    "mmproj": "Проектор",
+    "multimodal": {
+      "settings": "Настройки мультимодальности",
+      "projectionModels": "Проекционные модели",
+      "noCompatibleModels": "Совместимые проекционные модели не найдены",
+      "noProjectionModels": "Нет доступных проекционных моделей",
+      "selected": "Выбрано",
+      "select": "Выбрать",
+      "download": "Загрузить",
+      "projectionNeededTitle": "Нужна проекционная модель",
+      "projectionNeededMessage": "Этой модели требуется проекционная модель для работы мультимодальных функций.",
+      "projectionMissingWarning": "Проекционная модель отсутствует",
+      "projectionMissingShort": "Нет проекции",
+      "reloadModelTitle": "Перезагрузить модель",
+      "reloadModelMessage": "Необходимо перезагрузить модель, чтобы применить новую проекционную модель. Хотите перезагрузить сейчас?",
+      "reload": "Перезагрузить",
+      "deleteProjectionTitle": "Удалить проекционную модель",
+      "deleteProjectionMessage": "Вы уверены, что хотите удалить эту проекционную модель?",
+      "cannotDeleteTitle": "Невозможно удалить",
+      "visionControls": {
+        "enableVision": "Включить поддержку зрения",
+        "disableVision": "Отключить поддержку зрения",
+        "visionEnabled": "Зрение включено",
+        "visionDisabled": "Зрение выключено",
+        "textOnlyMode": "Только текст",
+        "visionMode": "Зрение включено",
+        "downloadWithVision": "Загрузить с поддержкой зрения",
+        "downloadTextOnly": "Загрузить только текст",
+        "visionToggleDescription": "Включить поддержку обработки изображений",
+        "projectionModelSize": "+{{size}} модель проекции",
+        "visionModeDescription": "Обработка изображений и текста",
+        "textOnlyModeDescription": "Только текстовый режим",
+        "includesVisionCapability": "Включает поддержку зрения",
+        "requiresProjectionModel": "Сначала загрузите совместимую модель проекции"
+      },
+      "cannotDeleteActive": "Эта модель проекции сейчас используется.",
+      "cannotDeleteInUse": "Эта модель проекции используется загруженными LLM-моделями:",
+      "dependentModels": "Зависимые модели:",
+      "visionWillBeDisabled": "Поддержка зрения будет отключена для этих моделей."
+    },
+    "buttons": {
+      "addFromHuggingFace": "Добавить из Hugging Face",
+      "addLocalModel": "Добавить локальную модель",
+      "reset": "Сброс"
+    },
+    "modelsHeaderRight": {
+      "menuTitleHf": "Модели от Hugging Face",
+      "menuTitleDownloaded": "Загруженные модели",
+      "menuTitleGrouped": "Группировать по типу модели",
+      "menuTitleReset": "Сбросить список моделей"
+    },
+    "modelsResetDialog": {
+      "proceedWithReset": "Выполнить сброс",
+      "confirmReset": "Подтвердить сброс"
+    },
+    "chatTemplate": {
+      "label": "Базовый шаблон чата:"
+    },
+    "details": {
+      "title": "Доступные файлы GGUF"
+    },
     "modelFile": {
       "alerts": {
-        "modelPreset": "Эта модель является предустановленной.",
         "cannotRemoveTitle": "Невозможно удалить",
+        "modelPreset": "Эта модель является предустановленной.",
         "downloadedFirst": "Модель уже загружена. Пожалуйста, сначала удалите файл.",
         "removeTitle": "Удалить из списка",
         "removeMessage": "Вы уверены, что хотите удалить эту модель из списка?",
@@ -853,43 +354,6 @@
         "downloadSpeed": "{{speed}}"
       }
     },
-    "modelsHeaderRight": {
-      "menuTitleHf": "Модели от Hugging Face",
-      "menuTitleDownloaded": "Загруженные модели",
-      "menuTitleGrouped": "Группировать по типу модели",
-      "menuTitleReset": "Сбросить список моделей"
-    },
-    "modelsResetDialog": {
-      "proceedWithReset": "Выполнить сброс",
-      "confirmReset": "Подтвердить сброс"
-    },
-    "fileManagement": {
-      "fileAlreadyExists": "Файл уже существует",
-      "fileAlreadyExistsMessage": "Файл с таким именем уже существует. Что вы хотите сделать?",
-      "replace": "Заменить",
-      "keepBoth": "Сохранить оба",
-      "copyingModel": "Копирование файла модели...",
-      "copyFailed": "Ошибка копирования файла модели"
-    },
-    "labels": {
-      "localModel": "Локальная",
-      "hfModel": "HF",
-      "unknownGroup": "Неизвестно",
-      "availableToUse": "Готово к использованию",
-      "availableToDownload": "Доступно для загрузки",
-      "useAddButtonForMore": "Используйте кнопку +, чтобы найти больше моделей"
-    },
-    "buttons": {
-      "addFromHuggingFace": "Добавить из Hugging Face",
-      "addLocalModel": "Добавить локальную модель",
-      "reset": "Сброс"
-    },
-    "chatTemplate": {
-      "label": "Базовый шаблон чата:"
-    },
-    "details": {
-      "title": "Доступные файлы GGUF"
-    },
     "search": {
       "noResults": "Модели не найдены",
       "loadingMore": "Загрузка дополнительных данных...",
@@ -912,6 +376,15 @@
         "sortLikes": "Самые популярные"
       }
     },
+    "hubRun": {
+      "title": "Загрузить модель",
+      "resolving": "Загрузка сведений о модели…",
+      "cancel": "Отмена",
+      "retry": "Повторить",
+      "invalidLinkTitle": "Недействительная ссылка",
+      "invalidLinkMessage": "Эта ссылка на Hugging Face отсутствует или содержит неверную модель или файл.",
+      "resolveError": "Не удалось загрузить сведения о модели. Проверьте подключение и попробуйте ещё раз."
+    },
     "modelCard": {
       "alerts": {
         "deleteTitle": "Удалить модель",
@@ -929,6 +402,9 @@
       "labels": {
         "skills": "Навыки: ",
         "vision": "Зрение",
+        "visionSupported": "Поддерживается",
+        "visionNotSupported": "Не поддерживается",
+        "visionUnknown": "Неизвестно",
         "capabilities": "поддерживает.",
         "modelName": "Название модели",
         "contextLength": "Длина контекста",
@@ -937,9 +413,6 @@
         "requiresProjectionModel": "Требуется модель проекции",
         "downloadProjectionModel": "Загрузить модель проекции",
         "viewModelCardOnHuggingFace": "Открыть карточку модели на Hugging Face",
-        "visionSupported": "Поддерживается",
-        "visionNotSupported": "Не поддерживается",
-        "visionUnknown": "Неизвестно",
         "draftOnlyReason": "Модель только для черновика. Выберите её в разделе Настройки → Спекулятивное декодирование."
       },
       "accessibility": {
@@ -1005,252 +478,823 @@
       "mtp": "Спекулятивная (MTP)",
       "mtpDraft": "Спекулятивный черновик"
     },
-    "vision": "Зрение",
-    "mmproj": "Проектор",
-    "multimodal": {
-      "settings": "Настройки мультимодальности",
-      "projectionModels": "Проекционные модели",
-      "noCompatibleModels": "Совместимые проекционные модели не найдены",
-      "noProjectionModels": "Нет доступных проекционных моделей",
-      "selected": "Выбрано",
-      "select": "Выбрать",
-      "download": "Загрузить",
-      "projectionNeededTitle": "Нужна проекционная модель",
-      "projectionNeededMessage": "Этой модели требуется проекционная модель для работы мультимодальных функций.",
-      "projectionMissingWarning": "Проекционная модель отсутствует",
-      "projectionMissingShort": "Нет проекции",
-      "reloadModelTitle": "Перезагрузить модель",
-      "reloadModelMessage": "Необходимо перезагрузить модель, чтобы применить новую проекционную модель. Хотите перезагрузить сейчас?",
-      "reload": "Перезагрузить",
-      "deleteProjectionTitle": "Удалить проекционную модель",
-      "deleteProjectionMessage": "Вы уверены, что хотите удалить эту проекционную модель?",
-      "cannotDeleteTitle": "Невозможно удалить",
-      "visionControls": {
-        "enableVision": "Включить поддержку зрения",
-        "disableVision": "Отключить поддержку зрения",
-        "visionEnabled": "Зрение включено",
-        "visionDisabled": "Зрение выключено",
-        "textOnlyMode": "Только текст",
-        "visionMode": "Зрение включено",
-        "downloadWithVision": "Загрузить с поддержкой зрения",
-        "downloadTextOnly": "Загрузить только текст",
-        "visionToggleDescription": "Включить поддержку обработки изображений",
-        "projectionModelSize": "+{{size}} модель проекции",
-        "visionModeDescription": "Обработка изображений и текста",
-        "textOnlyModeDescription": "Только текстовый режим",
-        "includesVisionCapability": "Включает поддержку зрения",
-        "requiresProjectionModel": "Сначала загрузите совместимую модель проекции"
-      },
-      "cannotDeleteActive": "Эта модель проекции сейчас используется.",
-      "cannotDeleteInUse": "Эта модель проекции используется загруженными LLM-моделями:",
-      "dependentModels": "Зависимые модели:",
-      "visionWillBeDisabled": "Поддержка зрения будет отключена для этих моделей."
+    "emptyTitle": "Моделей пока нет",
+    "emptyHint": "Нажмите +, чтобы загрузить модель с Hugging Face, добавить локальную модель или подключиться к удалённому серверу."
+  },
+  "modelsHub": {
+    "title": "Модели",
+    "subtitle": "Находите, загружайте и управляйте каждой моделью, которую может запустить ваше приложение.",
+    "searchPlaceholder": "Поиск моделей, издателей, задач…",
+    "retry": "Повторить",
+    "notAvailable": "Недоступно",
+    "noDownloadableFile": "В этом репозитории нет файла GGUF для загрузки",
+    "downloadStarted": "Загрузка началась",
+    "seeAll": "Показать все",
+    "exploreAction": "Обзор моделей",
+    "emptyTitle": "Модели ещё не установлены",
+    "emptyHint": "Просмотрите хаб и загрузите модель, которая подойдёт вашему устройству и вашим задачам.",
+    "fitScore": "{score}/100 соответствие",
+    "installedFromRepo": "Установлено из этого репозитория",
+    "installedBadge": "Установлено",
+    "noFiles": "В этом репозитории не опубликовано ни одного файла GGUF.",
+    "visionFilesTitle": "Файлы проекции зрения (mmproj)",
+    "visionFilesHint": "Эти небольшие файлы добавляют понимание изображений к соответствующей текстовой модели; они загружаются автоматически вместе с моделями зрения.",
+    "downloadFile": "Загрузить файл",
+    "downloadShort": "Получить",
+    "version": "Версия",
+    "engineUnsupportedShort": "Не запускается локально",
+    "engineYes": "GGUF — работает локально (llama.cpp)",
+    "engineNo": "Не поддерживается локальным движком",
+    "capabilitiesTitle": "Возможности",
+    "categoryEngineNotice": "В этой категории перечислены реальные репозитории, но локальный движок GGUF пока не может выполнять такие модели, поэтому загрузка здесь отключена. Ничего не имитируется — когда движок получит поддержку, эти модели можно будет загрузить.",
+    "categoryInstalledSection": "Ваши модели в этой категории",
+    "categoryRemoteSection": "Найти на HuggingFace",
+    "featuredTitle": "Рекомендуемые модели",
+    "recommendedTitle": "Рекомендуется для вашего устройства",
+    "recentTitle": "Недавно добавленные",
+    "favoritesTitle": "Избранное",
+    "installedTitle": "Установленные",
+    "wifiOnly": "Только Wi-Fi",
+    "categoriesTitle": "Категории",
+    "installedCount": "Установлено: {count}",
+    "discover": "Каталог",
+    "device": {
+      "ram": "RAM",
+      "storage": "Свободное место",
+      "cpu": "CPU",
+      "gpu": "GPU",
+      "gpuOk": "Ускорение",
+      "gpuNo": "Только CPU"
     },
-    "hubRun": {
-      "title": "Загрузить модель",
-      "resolving": "Загрузка сведений о модели…",
-      "cancel": "Отмена",
-      "retry": "Повторить",
-      "invalidLinkTitle": "Недействительная ссылка",
-      "invalidLinkMessage": "Эта ссылка на Hugging Face отсутствует или содержит неверную модель или файл.",
-      "resolveError": "Не удалось загрузить сведения о модели. Проверьте подключение и попробуйте ещё раз."
+    "compat": {
+      "excellent": "Отличная совместимость",
+      "good": "Хорошая совместимость",
+      "limited": "Ограниченная совместимость",
+      "notRecommended": "Не рекомендуется",
+      "unknown": "Совместимость неизвестна"
+    },
+    "reasons": {
+      "engineUnsupported": "Этот тип модели не может работать на локальном движке GGUF",
+      "engineSupported": "Работает на локальном движке GGUF",
+      "memoryComfortable": "Использование памяти будет комфортным",
+      "memoryOk": "Использование памяти приемлемо",
+      "memoryTight": "Памяти будет впритык — ожидайте более медленной работы",
+      "memoryInsufficient": "ОЗУ этого устройства недостаточно для его загрузки",
+      "memoryUnknown": "Не удалось оценить потребность в памяти по данным репозитория",
+      "storagePlenty": "Много свободного места",
+      "storageTight": "После установки места останется впритык",
+      "storageInsufficient": "Недостаточно свободного места",
+      "storageUnknown": "Не удалось определить объём свободного места",
+      "cpuGood": "У CPU достаточно ядер для быстрого инференса",
+      "cpuOk": "CPU справится, умеренно быстро",
+      "cpuLimited": "Мало ядер CPU — инференс будет медленным",
+      "cpuUnknown": "Не удалось определить количество ядер CPU",
+      "gpuSupported": "Доступно ускорение GPU",
+      "gpuUnsupported": "Нет ускорения GPU — работает на CPU",
+      "gpuUnknown": "Не удалось определить поддержку GPU"
+    },
+    "overviewTemplate": "Модель {categories}, опубликованная автором {author}, содержит около {params} параметров и распространяется в виде файлов GGUF для локального офлайн-инференса на этом устройстве.",
+    "overviewBlocked": "Это реальный репозиторий, но его тип модели не может быть выполнен локальным движком, поэтому загрузить его здесь нельзя.",
+    "statsTemplate": "На HuggingFace: {downloads} загрузок · {likes} лайков.",
+    "tech": {
+      "architecture": "Архитектура",
+      "parameters": "Параметры",
+      "contextLength": "Длина контекста",
+      "formats": "Форматы",
+      "quantization": "Квантования",
+      "fileCount": "Файлы GGUF",
+      "version": "Ревизия (sha)",
+      "lastModified": "Последнее обновление",
+      "license": "Лицензия",
+      "engine": "Движок"
+    },
+    "capabilities": {
+      "offline": "Офлайн",
+      "context": "Контекст",
+      "arabic": "Поддержка арабского",
+      "multilingual": "Мультиязычность"
+    },
+    "tabs": {
+      "overview": "Обзор",
+      "technical": "Технические",
+      "files": "Файлы"
+    },
+    "categories": {
+      "text": "Текст",
+      "vision": "Зрение",
+      "reasoning": "Рассуждение",
+      "coding": "Программирование",
+      "multimodal": "Мультимодальные",
+      "embedding": "Эмбеддинг",
+      "translation": "Перевод",
+      "audio": "Аудио",
+      "image": "Изображения",
+      "video": "Видео",
+      "general": "Общие"
+    },
+    "dialog": {
+      "aboutTitle": "Об этой модели",
+      "aboutTemplate": "Модель GGUF {family} от {author}. После загрузки работает полностью офлайн на этом устройстве. Указанный ниже размер — это точный размер файла по данным HuggingFace.",
+      "familyUnknown": "GGUF",
+      "file": "Файл",
+      "downloadSize": "Размер загрузки",
+      "extraVisionFiles": "Дополнительные файлы зрения (mmproj)",
+      "storageAfter": "Место после установки",
+      "offline": "Работает офлайн",
+      "offlineYes": "Да — полностью на устройстве",
+      "context": "Длина контекста",
+      "wifiOnlyWaiting": "Включена загрузка только по Wi-Fi. В мобильной сети эта загрузка будет ждать в очереди, пока не вернётся Wi-Fi.",
+      "engineUnsupported": "Этот тип модели (генерация изображений/видео/аудио) не может быть выполнен локальным движком GGUF, поэтому загрузка отключена. Здесь ничего не подделано — список реальный, просто движок не может его запустить.",
+      "confirmDownload": "Загрузить модель",
+      "starting": "Запуск…"
+    },
+    "storage": {
+      "title": "Хранилище моделей",
+      "entryHint": "Разбивка использования, крупнейшие модели, очистка",
+      "used": "Занято моделями",
+      "available": "Доступно",
+      "distribution": "По категориям",
+      "largest": "Крупнейшие модели",
+      "orphans": "Незавершённые и лишние файлы",
+      "orphansFound": "{count} файлов · можно освободить {size}",
+      "orphansNone": "Чистить нечего — хранилище в порядке.",
+      "cleanNow": "Очистить",
+      "cleanTitle": "Удалить оставшиеся файлы?",
+      "cleanMessage": "{count} незавершённых или лишних файлов будут удалены безвозвратно.",
+      "cleanConfirm": "Удалить",
+      "checking": "Проверка хранилища…",
+      "enough": "Достаточно свободного места",
+      "notEnough": "Недостаточно свободного места",
+      "required": "Требуется",
+      "availableLabel": "Доступно",
+      "deficit": "Не хватает {amount}"
+    },
+    "downloads": {
+      "title": "Загрузки",
+      "emptyTitle": "Нет загрузок",
+      "emptyHint": "Загруженные модели появляются здесь с прогрессом в реальном времени и остаются доступными офлайн.",
+      "active": "Загрузка",
+      "paused": "Приостановлено",
+      "pausedHint": "Приостановлено — возобновление с той же позиции",
+      "verifying": "Проверка",
+      "verifyingHint": "Проверка целостности файла (размер + контрольная сумма) перед установкой",
+      "completed": "Завершено",
+      "remaining": "≈",
+      "pause": "Пауза",
+      "resume": "Продолжить",
+      "cancel": "Отмена"
+    },
+    "updates": {
+      "title": "Обновления",
+      "check": "Проверить обновления",
+      "checking": "Проверка…",
+      "recheck": "Проверить снова",
+      "upToDate": "Все установленные модели соответствуют своим исходным версиям.",
+      "update": "Обновить"
+    },
+    "sort": {
+      "title": "Сортировка",
+      "recommended": "Лучшее соответствие",
+      "downloads": "Больше всего загрузок",
+      "newest": "Самые новые",
+      "name": "Название",
+      "sizeAsc": "Сначала маленькие",
+      "sizeDesc": "Сначала большие"
+    },
+    "search": {
+      "installedSection": "Ваши модели",
+      "hfSection": "Результаты HuggingFace",
+      "noResults": "Модели не найдены",
+      "noResultsHint": "Попробуйте другое название, издателя или задачу.",
+      "errorTitle": "Ошибка поиска"
     }
   },
-  "screenTitles": {
-    "chat": "Чат",
-    "models": "Модели",
-    "benchmark": "Бенчмарк",
-    "settings": "Настройки",
-    "appInfo": "О приложении",
-    "testCompletion": "Завершение теста",
-    "assistants": "Ассистенты (экспериментально)"
+  "completionParams": {
+    "include_thinking_in_context": "Включать рассуждения ИИ в контекст, отправляемый модели. Отключение экономит место в контексте. Но может снизить качество ответов.",
+    "jinja": "Включить шаблоны Jinja для форматирования чата. При включении используется обработка шаблонов Jinja для лучшей совместимости с современными моделями.",
+    "grammar": "Принудительное соблюдение грамматических правил, чтобы текст следовал строгой структуре или формату",
+    "stop": "Определить фразы, при появлении которых генерация текста прекратится",
+    "n_predict": "Максимальное количество генерируемых токенов. Выберите 'Unlimited', чтобы снять ограничение, или 'Custom', чтобы указать лимит вручную.",
+    "n_probs": "Показать вероятности для альтернативных вариантов слов.",
+    "top_k": "Контроль креативности, ограничить выбор K наиболее вероятными словами. Низкие значения делают ответы более логичными",
+    "top_p": "Баланс креативности и связности. Высокие значения (близкие к 1.0) делают ответы более разнообразными",
+    "min_p": "Минимальный порог вероятности для токена. Помогает отсечь бессмысленные или неуместные слова",
+    "temperature": "Баланс креативности и предсказуемости. Высокие значения делают ответы более творческими, но менее логичными",
+    "penalty_last_n": "Глубина проверки повторений. Большие значения помогают предотвратить повторы на длинных дистанциях",
+    "penalty_repeat": "Штраф за повторение слов. Высокие значения делают речь модели более разнообразной",
+    "penalty_freq": "Штраф за частоту слов. Стимулирует использование более широкого словарного запаса",
+    "penalty_present": "Штраф за повторение тем и идей. Побуждает модель обсуждать новые идеи и концепции",
+    "mirostat": "Расширенный контроль креативности. Режимы 1 или 2 для умной настройки случайности и связности в реальном времени.",
+    "mirostat_tau": "Целевой уровень креативности для Mirostat. Высокие значения дают более разнообразные и творческие ответы, низкие значения дают более логичные результаты.",
+    "mirostat_eta": "Скорость адаптации Mirostat к изменениям. Высокие значения ускоряют подстройку креативности",
+    "dry_multiplier": "Сила функции DRY (Don't Repeat Yourself). Высокие значения жестко подавляют повторения",
+    "dry_base": "Базовый штраф за повторение в режиме DRY. Высокие значения агрессивнее предотвращают повторения в тексте",
+    "dry_allowed_length": "Количество слов, которые могут повториться, прежде чем сработает штраф DRY",
+    "dry_penalty_last_n": "Как далеко назад модель просматривает текст для поиска повторов в режиме DRY",
+    "dry_sequence_breakers": "Символы, которые сбрасывают счетчик повторений в режиме DRY",
+    "ignore_eos": "Продолжать генерацию после того, как модель захочет остановиться. Полезно для получения длинных ответов",
+    "logit_bias": "Изменить вероятность появления конкретных слов в ответе",
+    "seed": "Задать начальное значение генератора случайных чисел. Полезно для получения повторяемых результатов",
+    "xtc_probability": "Шанс удаления токенов через сэмплер XTC. 0 - отключено",
+    "xtc_threshold": "Минимальный порог вероятности для удаления токенов в XTC (значения > 0.5 отключают XTC)",
+    "typical_p": "Включить локально-типичное сэмплирование с параметром p. 1.0 - отключено"
   },
-  "settings": {
-    "modelInitializationSettings": "Настройки инициализации модели",
-    "metal": "Metal",
-    "metalDescription": "Аппаратно-ускоренный API от Apple.",
-    "metalRequiresNewerIOS": "Ускорение Metal требует iOS 18 или выше. Пожалуйста, обновите устройство для использования этой функции.",
-    "layersOnGPU": "Слои на GPU: {{gpuLayers}}",
-    "contextSize": "Размер контекста",
-    "contextSizePlaceholder": "Введите размер контекста (мин. {{minContextSize}})",
-    "invalidContextSizeError": "Пожалуйста, введите допустимое число (мин. {{minContextSize}})",
-    "modelReloadNotice": "Для применения изменений требуется перезагрузка модели.",
-    "advancedSettings": "Дополнительные настройки",
-    "batchSize": "Размер пакета (Batch Size)",
-    "batchSizeDescription": "Размер пакета: {{batchSize}}{{effectiveBatch}}",
-    "effectiveLabel": "эффективный",
-    "physicalBatchSize": "Физический размер пакета",
-    "physicalBatchSizeDescription": "Физический размер пакета: {{physicalBatchSize}}{{effectivePhysicalBatch}}",
-    "cpuThreads": "Потоки CPU",
-    "cpuThreadsDescription": "Используется {{threads}} из {{maxThreads}} доступных потоков",
-    "flashAttention": "Flash Attention",
-    "flashAttentionDescription": "Включить Flash Attention для ускорения обработки",
-    "keyCacheType": "Тип кэша ключей (Key Cache)",
-    "keyCacheTypeDescription": "Выберите тип кэша для вычисления ключей",
-    "keyCacheTypeDisabledDescription": "Включите Flash Attention, чтобы изменить тип кэша",
-    "valueCacheType": "Тип кэша значений (Value Cache)",
-    "valueCacheTypeDescription": "Выберите тип кэша для вычисления значений",
-    "valueCacheTypeDisabledDescription": "Включите Flash Attention, чтобы изменить тип кэша",
-    "modelLoadingSettings": "Настройки загрузки модели",
-    "autoOffloadLoad": "Авто-выгрузка/загрузка",
-    "autoOffloadLoadDescription": "Выгружать модель из памяти, когда приложение переходит в фоновый режим.",
-    "autoNavigateToChat": "Автоматический переход в чат",
-    "autoNavigateToChatDescription": "Переходить к экрану чата сразу после начала загрузки модели.",
-    "appSettings": "Настройки приложения",
-    "language": "Язык",
-    "darkMode": "Темный режим",
-    "displayMemoryUsage": "Показывать использование памяти",
-    "displayMemoryUsageDescription": "Показывать использование памяти на странице чата.",
-    "openCL": "OpenCL (экспериментально)",
-    "openCLDescription": "GPU-ускорение для графических процессоров Adreno. Ускоряет обработку промптов, но генерация может быть не всегда быстрее.",
-    "openCLNotAvailable": "OpenCL недоступен на этом устройстве. Требуется графический процессор Adreno с функциями CPU i8mm и dotprod.",
-    "openCLMissingCPUFeatures": "Для работы OpenCL требуются функции CPU i8mm и dotprod, которые отсутствуют на этом устройстве.",
-    "openCLQuantizationNote": "Примечание: Чистые модели с квантованием Q4_0 работают лучше всего с OpenCL.",
-    "openCLDocsLink": "Подробности см. в документации llama.cpp по OpenCL.",
-    "deviceSelection": "Выбор устройства",
-    "deviceSelectionIOS": "Устройство (Metal)",
-    "deviceSelectionIOSDescription": "Выберите GPU Metal или режим работы только с CPU",
-    "deviceSelectionAndroidDescription": "Выберите вычислительное устройство (CPU, GPU или Hexagon NPU)",
-    "cpuOnlyNoAccelerators": "Только CPU - аппаратные ускорители не обнаружены",
-    "imageMaxTokens": "Макс. токенов для изображения",
-    "imageMaxTokensDescription": "Максимальное количество токенов для обработки изображения: {{tokens}}{{effectiveTokens}} (меньше = быстрее, но меньше деталей)",
-    "flashAttentionIOSDescription": "Экономное использование памяти (автоматически включено на Metal)",
-    "flashAttentionAndroidDescription": "Должно быть отключено для сохранения/загрузки состояния OpenCL",
-    "flashAttentionAuto": "Авто",
-    "flashAttentionOn": "Вкл",
-    "flashAttentionOff": "Выкл",
-    "memorySettings": "Настройки памяти",
-    "useMlock": "Блокировка памяти (Mlock)",
-    "useMlockDescription": "Принудительно удерживать модель в ОЗУ, предотвращая её выгрузку в файл подкачки или сжатие",
-    "useMmap": "Отображение в память (Mmap)",
-    "useMmapDescription": "Использовать файлы, отображаемые в память, для более быстрой загрузки модели",
-    "useMmapTrue": "Включено",
-    "useMmapFalse": "Отключено",
-    "useMmapTrueDescription": "Всегда использовать отображение в память для быстрой загрузки",
-    "useMmapFalseDescription": "Рекомендуется отключать эту функцию, если включена функция повторной упаковки весов, чтобы избежать удвоения объема используемой памяти",
-    "exportOptions": "Параметры экспорта",
-    "exportLegacyChats": "Экспорт старых чатов",
-    "exportLegacyChatsDescription": "Используйте, если миграция не удалась или нужно восстановить старые сессии чата.",
-    "exportButton": "Экспорт",
-    "importChats": "Импорт сессий чата",
-    "importChatsDescription": "Импорт сессий чата из (экспортированного) JSON-файла.",
-    "importButton": "Импорт",
-    "importSuccess": "Успешно импортировано сессий чата: {{count}}.",
-    "importError": "Не удалось импортировать сессии чата. Проверьте формат файла.",
-    "apiSettingsTitle": "Настройки API",
-    "huggingFaceTokenLabel": "Токен Hugging Face",
-    "tokenIsSetDescription": "Токен установлен. Требуется для доступа к моделям с ограниченным доступом.",
-    "setTokenDescription": "Установите токен для доступа к закрытым моделям на Hugging Face.",
-    "setTokenButton": "Установить токен",
-    "useHfTokenLabel": "Использовать HF токен",
-    "useHfTokenDescription": "Включите для использования токена в API-запросах. Отключите, если токен вызывает проблемы с авторизацией.",
-    "cacheStorageTitle": "Кэш и хранилище",
-    "clearAssistantCaches": "Очистить кэш ярлыков",
-    "clearAssistantCachesDescription": "Очищает кэшированные данные, используемые для ускорения работы ярлыков. Это не затронет ваших помощников (Ассистентs) или историю чатов.",
-    "clearCachesButton": "Очистить кэш",
-    "clearCachesConfirmTitle": "Очистить кэш ярлыков?",
-    "clearCachesConfirmMessage": "Это удалит все кэшированные данные сессий ({{fileCount}} файлов, {{size}}). При первом запуске после очистки ярлыки могут работать медленнее. Это не затронет ваших помощников (Ассистентs) или историю чатов.",
-    "clearCachesSuccess": "Успешно удалено {{count}} файлов кэша.",
-    "clearCachesError": "Не удалось очистить кэш. Попробуйте ещё раз.",
-    "noCachesToClear": "Нет данных для очистки.",
-    "weightRepacking": "Включить функцию повторной упаковки весов",
-    "weightRepackingDescription": "Более быстрая обработка запросов при минимальной нагрузке на память, когда функция сопоставления памяти отключена. Генерация токенов не изменится.",
-    "serverName": "Имя сервера",
-    "serverUrl": "URL сервера",
-    "serverUrlPlaceholder": "Напр., http://192.168.1.100:1234",
-    "apiKey": "API-ключ",
-    "apiKeyPlaceholder": "Необязательно – необходимо для использования с OpenAI/Groq",
-    "apiKeyDescription": "Надежно сохранено на устройстве.",
-    "remoteModel": "Удалённая",
-    "remotePrivacyNotice": "Сообщения, отправленные на удаленные серверы, покидают ваше устройство. Подключайтесь только к тем серверам, которым доверяете.",
-    "remoteIndicator": "Удалённая",
-    "serverUrlRequired": "Требуется URL сервера",
-    "serverUrlInvalid": "Неверный формат URL",
-    "serverUrlHttpWarning": "В iOS для нелокальных серверов требуется протокол HTTPS. Используйте протокол https:// или адрес локальной сети.",
-    "addRemoteModel": "Добавить удалённую модель",
-    "yourServers": "Ваши серверы",
-    "orConnectNewServer": "или подключите новый сервер",
-    "selectModel": "Выбрать модель",
-    "addModel": "Добавить модель",
-    "connected": "Подключено",
-    "connectionFailed": "Подключение не удалось: {{error}}",
-    "connecting": "Подключение...",
-    "noModelsAvailable": "На данном сервере нет доступных моделей.",
-    "alreadyAdded": "Уже добавлено",
-    "connectedServers": "Подключенные серверы",
-    "modelsCount": "Моделей: {{count}}",
-    "serverDetails": "Информация о сервере",
-    "modelsUsingServer": "Модели, использующие данный сервер:",
-    "saveChanges": "Сохранить изменения",
-    "removeServer": "Удалить сервер",
-    "removeServerMessage": "Удалить {{serverName}} и связанные модели ({{count}})?",
-    "removeRemoteModel": "Удалить {{modelName}} ({{serverName}})?",
-    "retryConnection": "Повторить",
-    "enterUrlManually": "Введите URL вручную",
-    "manageServers": "Управление серверами",
-    "ttsAvailability": "Голосовой синтез",
-    "ttsAvailabilityDescription": "Озвучивать ответы ассистента.",
-    "ttsAvailabilityLowMemoryWarning": "Недостаточно памяти на вашем устройстве – может работать нестабильно.",
-    "requestTimeout": "Время ожидания запроса (сек)",
-    "requestTimeoutPlaceholder": "Необязательно – оставьте пустым для использования значения по умолчанию",
-    "requestTimeoutHelp": "Макс. время ожидания ответа от медленного сервера. Оставьте пустым для использования значения по умолчанию.",
-    "serverType": "Тип сервера",
-    "serverTypeHelp": "Определено автоматически. Измените, если неверно.",
-    "internetSearch": {
-      "title": "Поиск в интернете",
-      "description": "Разрешите Ассистентs искать в интернете с помощью собственных инструментов. Используйте свой API-ключ – DRS AI никогда не хранит ваши ключи и не перенаправляет запросы через свои серверы.",
-      "providerLabel": "Провайдер поиска",
-      "providerGated": "Скоро",
-      "keyLabel": "API-ключ",
-      "keyIsSet": "Ключ для {{provider}} установлен.",
-      "keyNotSet": "Ключ для {{provider}} не установлен.",
-      "setKeyButton": "Установить ключ",
-      "updateKeyButton": "Обновить ключ",
-      "clearKeyButton": "Удалить ключ",
-      "keyInputPlaceholder": "Вставьте ваш API-ключ {{provider}}",
-      "keyUpdateError": "Не удалось обновить ключ. Попробуйте ещё раз.",
-      "showKeyAccessibilityLabel": "Показать API-ключ",
-      "hideKeyAccessibilityLabel": "Скрыть API-ключ",
-      "resultCountLabel": "Результатов за поиск",
-      "resultCountDescription": "Меньше результатов – больше места в контексте модели.",
-      "consentTitle": "Поисковые запросы покидают ваше устройство",
-      "consentDescription": "Когда Ассистент ищет в интернете, ваш запрос отправляется выбранному провайдеру через интернет. Когда Ассистент читает страницу, URL-адрес и содержимое страницы могут быть отправлены службе чтения по умолчанию (r.jina.ai), если у выбранного провайдера нет встроенной функции чтения. Ключи и запросы никогда не передаются в DRS AI.",
-      "consentAccept": "Я понимаю",
-      "consentRequired": "Примите уведомление выше, чтобы установить ключ и включить поиск.",
-      "consentGivenTitle": "Поиск в интернете включён",
-      "consentGivenDescription": "Запросы и чтение страниц могут покидать ваше устройство, как описано выше.",
-      "consentRevoke": "Отозвать"
+  "about": {
+    "screenTitle": "О приложении",
+    "description": "Приложение, которое приносит языковые модели прямо в ваш телефон. Работает на базе llama.cpp и llama.rn.",
+    "supportProject": "Поддержать проект",
+    "supportProjectDescription": "Если вам нравится DRS AI, поддержите разработчиков:",
+    "githubButton": "Поставить звезду на GitHub",
+    "orBy": "или через",
+    "versionCopiedTitle": "Версия скопирована",
+    "versionCopiedDescription": "Информация о версии скопирована в буфер обмена",
+    "tour": "Тур",
+    "tourDescription": "Просмотрите экраны приветствия снова, чтобы узнать, что предлагает DRS AI.",
+    "showIntroButton": "Показать введение снова",
+    "privacyPolicy": "Политика конфиденциальности",
+    "termsOfService": "Условия использования",
+    "versionFormat": "Версия {{version}} ({{build}})",
+    "successTitle": "Успешно"
+  },
+  "feedback": {
+    "title": "Оставить отзыв",
+    "description": "Ваш голос важен! Расскажите, как DRS AI помогает вам и что мы можем улучшить, чтобы сделать его ещё более полезным.",
+    "shareThoughtsButton": "Поделитесь мнением",
+    "useCase": {
+      "label": "Для чего вы используете DRS AI?",
+      "placeholder": "напр.: суммаризация, ролевые игры, код и т.д."
     },
-    "languageSheetTitle": "Язык",
-    "languageSearchPlaceholder": "Поиск языков",
-    "speculativeDecoding": "Спекулятивное декодирование",
-    "speculativeDecodingDescription": "Используйте небольшую черновую модель (или встроенную модель MTP) для предсказания токенов и ускорения генерации. Экспериментально.",
-    "speculativeNotMTPCapable": "Активная модель не поддерживает спекулятивное декодирование, и совместимая черновая модель не выбрана, поэтому для неё эта функция отключена и ни на что не влияет. Она применяется автоматически к моделям, которые её поддерживают.",
-    "speculativeDraftModel": "Черновая модель",
-    "speculativeDraftModelDescription": "Предлагает черновые токены для активной модели.",
-    "speculativeDraftModelNone": "Нет (встроенный MTP)",
-    "speculativeDraftModelIgnoredOverridden": "У активной модели есть собственная черновая модель, поэтому этот выбор игнорируется.",
-    "speculativeDraftModelIgnoredIncompatible": "Эта черновая модель несовместима с активной, поэтому она игнорируется.",
-    "speculativeDraftModelIgnoredNotCapable": "В этой модели нет черновых слоёв, поэтому её нельзя использовать как черновую модель.",
-    "speculativeDraftKeyCacheType": "Тип кэша ключей черновой модели",
-    "speculativeDraftValueCacheType": "Тип кэша значений черновой модели",
-    "speculativeDraftNGpuLayers": "Слои GPU черновой модели",
-    "speculativeDraftNGpuLayersDescription": "Количество слоёв черновой модели для выгрузки на GPU.",
-    "speculativeDraftCacheTypeInactiveDescription": "Применяется, когда запускается спекулятивное декодирование."
+    "featureRequests": {
+      "label": "Запрос новой функции",
+      "placeholder": "Чего вам не хватает в приложении?"
+    },
+    "generalFeedback": {
+      "label": "Общий отзыв",
+      "placeholder": "Расскажите о других ваших идеях."
+    },
+    "usageFrequency": {
+      "label": "Как часто вы пользуетесь DRS AI? (Опционально)",
+      "options": {
+        "daily": "Ежедневно",
+        "weekly": "Еженедельно",
+        "monthly": "Ежемесячно",
+        "rarely": "Редко"
+      }
+    },
+    "email": {
+      "label": "Контактный Email (Опционально)",
+      "placeholder": "Ваш Email"
+    },
+    "submit": "Отправить отзыв",
+    "validation": {
+      "required": "Пожалуйста, напишите хотя бы краткий отзыв"
+    },
+    "success": "Спасибо за обратную связь!",
+    "error": {
+      "general": "Не удалось отправить отзыв. Попробуйте ещё раз."
+    }
   },
-  "storage": {
-    "checkFailed": "Не удалось проверить хранилище",
-    "lowStorage": "Недостаточно места! Модель {{modelSize}} > {{freeSpace}} свободно"
-  },
-  "validation": {
-    "nameRequired": "Требуется имя",
-    "systemPromptRequired": "Требуется системный промпт",
-    "worldRequired": "Требуется мир",
-    "locationRequired": "Требуется местоположение",
-    "aiRoleRequired": "Требуется роль ИИ",
-    "userRoleRequired": "Требуется роль пользователя",
-    "situationRequired": "Требуется ситуация",
-    "toneStyleRequired": "Требуется тон/стиль"
+  "components": {
+    "attachmentButton": {
+      "attachmentButtonAccessibilityLabel": "Отправить медиа"
+    },
+    "bubble": {
+      "msPerToken": "{{value}} мс/ток",
+      "tokensPerSec": "{{value}} ток/сек",
+      "ttft": "{{value}} мс TTFT",
+      "draftAccepted": "черновик: {{accepted}}/{{total}} ({{pct}}%)",
+      "interrupted": "Прервано",
+      "truncated": "Прервано – вероятно, контекст исчерпан"
+    },
+    "exportUtils": {
+      "fileSaved": "Файл сохранён",
+      "fileSavedMessage": "Файл был сохранён в папку 'Загрузки' как {{filename}}",
+      "share": "Поделиться",
+      "ok": "ОК",
+      "shareError": "Ошибка отправки",
+      "shareErrorMessage": "Не удалось поделиться файлом. Попробуйте ещё раз.",
+      "saveError": "Ошибка сохранения в 'Загрузки'",
+      "saveOptions": "Параметры сохранения",
+      "saveOptionsMessage": "Не удалось сохранить напрямую в 'Загрузки'. Хотите вместо этого поделиться файлом?",
+      "cancel": "Отмена",
+      "shareContentErrorMessage": "Не удалось поделиться контентом. Попробуйте ещё раз.",
+      "exportError": "Ошибка экспорта",
+      "exportErrorMessage": "Произошла ошибка при экспорте файла. Попробуйте ещё раз.",
+      "permissionRequired": "Нужен доступ к хранилищу",
+      "permissionMessage": "Требуется разрешение для сохранения экспортированных файлов в папку 'Загрузки'.",
+      "permissionDenied": "Доступ запрещён",
+      "permissionDeniedMessage": "Без доступа к хранилищу функция экспорта будет отключена.",
+      "continue": "Продолжить"
+    },
+    "thinkingBubble": {
+      "reasoning": "Рассуждение"
+    },
+    "pendingIndicator": {
+      "preparingTool": "Подготовка инструмента",
+      "buildingPage": "Создание страницы",
+      "calculating": "Вычисление",
+      "lookingUpTime": "Определение времени",
+      "stopping": "Остановка…"
+    },
+    "toolMetrics": {
+      "tokens": "{{count}} ток.",
+      "elapsed": "{{seconds}} сек."
+    },
+    "chatEmptyPlaceholder": {
+      "noModelsTitle": "Нет доступных моделей",
+      "noModelsDescription": "Загрузите модель, чтобы начать общение в DRS AI",
+      "noModelsButton": "Загрузить модель",
+      "activateModelTitle": "Активируйте модель",
+      "activateModelDescription": "Выберите и загрузите модель. После этого, нажмите 'Загрузить' рядом с моделью и начните общение.",
+      "activateModelButton": "Выбрать модель",
+      "loading": "Загрузка...",
+      "gettingReadyTitle": "{{name}} готовится",
+      "gettingReadyDescription": "Мы сообщим вам, как только Ассистент сможет начать общение. Нажмите на баннер наверху, чтобы увидеть текущее состояние."
+    },
+    "chatInput": {
+      "inputPlaceholder": "Сообщение",
+      "thinkingToggle": {
+        "enableThinking": "Включить режим рассуждения",
+        "disableThinking": "Отключить режим рассуждения",
+        "thinkingEnabled": "Режим рассуждения включён",
+        "thinkingDisabled": "Режим рассуждения выключен",
+        "thinkText": "Рассуждение",
+        "cycleEffort": "Уровень рассуждений: {{level}}. Нажмите дважды, чтобы изменить"
+      }
+    },
+    "contentReportSheet": {
+      "title": "Жалоба на контент",
+      "privacyNote": "Мы не передаем содержимое сообщений или детали контекста диалога. Пожалуйста, опишите конкретную проблему, с которой вы столкнулись.",
+      "categoryLabel": "Категория",
+      "selectCategory": "Выберите категорию",
+      "categories": {
+        "hate": "Разжигание ненависти",
+        "sexual": "Контент сексуального характера",
+        "selfHarm": "Самоповреждение",
+        "violence": "Насилие",
+        "other": "Другое"
+      },
+      "descriptionLabel": "Описание",
+      "descriptionPlaceholder": "Опишите проблему с этим ответом...",
+      "includeModelInfo": "Включить данные о модели",
+      "includeModelInfoDescription": "Добавить название и ID модели для помощи в расследовании",
+      "noActiveModelNote": "Нет активной модели",
+      "submit": "Отправить отчёт",
+      "validation": {
+        "title": "Недостаточно данных",
+        "message": "Пожалуйста, выберите категорию и добавьте описание."
+      },
+      "success": {
+        "title": "Отчёт отправлен",
+        "message": "Спасибо. Мы рассмотрим ваше сообщение и примем меры."
+      },
+      "error": {
+        "title": "Ошибка",
+        "message": "Не удалось отправить отчёт. Попробуйте ещё раз."
+      }
+    },
+    "modelErrorReportSheet": {
+      "title": "Ошибка загрузки модели",
+      "privacyNote": "Помогите нам улучшить DRS AI, предоставив подробную информацию об этой ошибке. Просмотрите ниже, вы можете отменить выбор любых элементов, которые не хотите включать.",
+      "errorMessage": "Текст ошибки",
+      "modelInfo": "Информация о модели",
+      "modelName": "Название",
+      "modelSource": "Источник",
+      "modelSize": "Размер",
+      "contextParams": "Параметры контекста",
+      "deviceInfo": "Информация об устройстве",
+      "deviceModel": "Устройство",
+      "osVersion": "ОС",
+      "memoryInfo": "Память",
+      "cpuArchitecture": "CPU",
+      "isEmulator": "Эмулятор",
+      "additionalInfoLabel": "Дополнительно (опционально)",
+      "additionalInfoPlaceholder": "Любые детали, которые могут помочь…",
+      "submit": "Отправить отчёт",
+      "success": {
+        "title": "Отчёт отправлен",
+        "message": "Спасибо за помощь в улучшении DRS AI. Ваш отчёт поможет нам исправить проблему."
+      },
+      "error": {
+        "title": "Ошибка",
+        "message": "Не удалось отправить отчёт. Попробуйте ещё раз позже."
+      }
+    },
+    "chatGenerationSettingsSheet": {
+      "invalidValues": "Неверные значения",
+      "invalidNumericValuesMessage": "Должно быть действительным числом",
+      "pleaseCorrect": "Исправьте следующее:",
+      "ok": "ОК",
+      "saveChanges": "Сохранить изменения",
+      "saveAsPreset": "Сохранить как предустановку",
+      "title_session": "Настройки генерации чата (Сессия)",
+      "title_preset": "Настройки генерации чата (Предустановка)",
+      "resetToSystemDefaults": "Сброс к системным",
+      "resetToPreset": "Сброс к предустановке",
+      "applytoPresetAlert": {
+        "title": "Успешно",
+        "message": "Эти настройки будут применяться ко всем будущим сессиям"
+      },
+      "assistantSettings": "Настройки Ассистент",
+      "settingsSource": "Источник настроек"
+    },
+    "assistantGenerationSettingsSheet": {
+      "title": "Настройки генерации - {{assistantName}}",
+      "invalidValues": "Неверные значения",
+      "invalidNumericValuesMessage": "Должно быть действительным числом",
+      "pleaseCorrect": "Исправьте следующее:",
+      "ok": "ОК",
+      "error": "Ошибка",
+      "failedToSave": "Не удалось сохранить настройки Ассистент",
+      "resetToGlobal": "Сброс к глобальным настройкам",
+      "resetToSystem": "Сброс к системным",
+      "clearAssistantSettings": "Очистить настройки Ассистент",
+      "customSettingsFor": "Пользовательские настройки для {{assistantName}}",
+      "inheritedSettingsFor": "Унаследованные настройки для {{assistantName}}"
+    },
+    "chatHeaderTitle": {
+      "defaultTitle": "Чат"
+    },
+    "fileMessage": {
+      "fileButtonAccessibilityLabel": "Файл"
+    },
+    "chatAssistantModelPickerSheet": {
+      "modelsTab": "Модели",
+      "assistantsTab": "Ассистент",
+      "noAssistant": "Без Ассистент",
+      "disableAssistant": "Отключить активный Ассистент",
+      "noDescription": "Без описания",
+      "assistantType": "Ассистент",
+      "roleplayType": "Ролевая игра",
+      "videoType": "Видео",
+      "confirmationTitle": "Подтверждение",
+      "modelSwitchMessage": "У этого Ассистент другая модель по умолчанию ({{modelName}}). Хотите переключиться на неё?",
+      "keepButton": "Оставить",
+      "switchButton": "Переключить"
+    },
+    "downloadErrorDialog": {
+      "downloadFailedTitle": "Ошибка загрузки",
+      "downloadFailedMessage": "Не удалось загрузить модель: {{message}}",
+      "unauthorizedTitle": "Ошибка авторизации",
+      "unauthorizedMessage": "Ваш токен Hugging Face недействителен или истёк. Обновите его в настройках.",
+      "forbiddenTitle": "Доступ запрещён",
+      "forbiddenMessage": "У вас нет прав для доступа к этой модели. Убедитесь, что:",
+      "forbiddenSteps": [
+        "Your token has \"read\" permission",
+        "You requested and were granted access to this model",
+        "The model owner approved your access request"
+      ],
+      "getTokenTitle": "Нужен токен Hugging Face",
+      "getTokenMessage": "Для загрузки этой модели требуется токен Hugging Face.",
+      "getTokenSteps": [
+        "Go to huggingface.co and sign in",
+        "Navigate to Settings > Access Tokens",
+        "Create a new token with \"read\" access",
+        "Copy the token and paste it in the token field"
+      ],
+      "tokenDisabledTitle": "Токен отключен",
+      "tokenDisabledMessage": "У вас задан токен Hugging Face, но он отключен в настройках. Для загрузки этой модели требуется токен. Включите токен, чтобы продолжить.",
+      "enableAndRetry": "Включить и повторить",
+      "goToSettings": "В настройки",
+      "tryAgain": "Повторить",
+      "viewOnHuggingFace": "Открыть на HF ↗"
+    },
+    "headerRight": {
+      "deleteChatTitle": "Удалить чат",
+      "deleteChatMessage": "Вы уверены, что хотите удалить этот чат?",
+      "generationSettings": "Настройки генерации",
+      "model": "Модель",
+      "duplicateChatHistory": "Дублировать историю чата",
+      "makeChatTemporary": "Сделать чат временным",
+      "export": "Экспорт/Импорт",
+      "exportCurrentSession": "Экспорт текущей сессии",
+      "exportCurrentSessionMarkdown": "Экспорт в Markdown",
+      "exportAllSessions": "Экспорт всех сессий",
+      "exportChatSession": "Экспорт сессии чата",
+      "importSessions": "Импорт сессий",
+      "exportErrorTitle": "Ошибка экспорта",
+      "exportCurrentSessionError": "Не удалось экспортировать текущую сессию.",
+      "exportAllError": "Не удалось экспортировать все сессии.",
+      "importSuccessTitle": "Успешный импорт",
+      "importErrorTitle": "Ошибка импорта"
+    },
+    "hfTokenSheet": {
+      "title": "Токен Hugging Face",
+      "description": "Требуется для доступа к моделям с ограниченным доступом",
+      "inputLabel": "Персональный токен доступа",
+      "inputPlaceholder": "Вставьте ваш токен здесь",
+      "save": "Сохранить токен",
+      "saved": "Токен успешно сохранён",
+      "reset": "Сброс токена",
+      "resetSuccess": "Токен успешно удалён",
+      "instructions": "Как получить токен:",
+      "instructionsSteps": [
+        "Go to huggingface.co and sign in",
+        "Navigate to Settings > Access Tokens",
+        "Create a new token with \"read\" access",
+        "Copy the token and paste it below"
+      ],
+      "getTokenLink": "Получить токен на huggingface.co ↗",
+      "error": {
+        "saving": "Ошибка сохранения токена",
+        "missing": "Требуется токен Hugging Face",
+        "invalid": "Недействительный или истёкший токен",
+        "gatedModelAccess": "Доступ к этой закрытой модели отклонён"
+      },
+      "gatedModelIndicator": "Требуется токен",
+      "tokenRequired": "Для этой модели требуется токен доступа Hugging Face",
+      "searchErrorHint": "Ваш токен API Hugging Face недействителен или истёк. Чтобы продолжить поиск, удалите токен или отключите авторизацию по токену в Настройках.",
+      "disableAndRetry": "Отключить токен и повторить"
+    },
+    "modelSettingsSheet": {
+      "modelSettings": "Настройки модели",
+      "saveChanges": "Сохранить изменения",
+      "reasoningSection": "Рассуждение",
+      "isReasoningModel": "Модель рассуждений",
+      "isReasoningModelHelp": "Показывать управление рассуждением для этой модели, даже если оно не было обнаружено автоматически.",
+      "supportsEffort": "Поддерживает регулировку уровней",
+      "effortValues": "Уровни, которые поддерживает эта модель",
+      "effortLevels": {
+        "minimal": "Минимум",
+        "low": "Низкий",
+        "medium": "Средний",
+        "high": "Высокий",
+        "xhigh": "Экстра высокий",
+        "max": "Максимум"
+      }
+    },
+    "modelsHeaderRight": {
+      "menuTitleHf": "Модели от Hugging Face",
+      "menuTitleDownloaded": "Загруженные модели",
+      "menuTitleGrouped": "Группировать по типу модели",
+      "menuTitleReset": "Сбросить список моделей"
+    },
+    "modelsResetDialog": {
+      "proceedWithReset": "Выполнить сброс",
+      "confirmReset": "Подтвердить сброс"
+    },
+    "assistantSheet": {
+      "title": {
+        "edit": "Редактировать Ассистент",
+        "newAssistant": "Новый ассистент",
+        "newVideoAssistant": "Новый видео Ассистент"
+      },
+      "description": "Описание",
+      "descriptionPlaceholder": "Введите краткое описание вашего Ассистент",
+      "parameters": "Параметры",
+      "generationSettings": "Настройки генерации",
+      "configureGenerationSettings": "Настройка параметров генерации",
+      "validation": {
+        "nameRequired": "Требуется имя",
+        "generatingPromptRequired": "Требуется генерирующий промпт при использовании ИИ-промпта",
+        "promptModelRequired": "Требуется модель генерации промпта при использовании ИИ-промпта"
+      },
+      "talents": "Таланты",
+      "talentNames": {
+        "render_html": "Предпросмотр HTML",
+        "calculate": "Математические выражения",
+        "datetime": "Дата и время",
+        "web_search": "Поиск в интернете",
+        "read_url": "Чтение веб-страницы"
+      },
+      "talentDescriptions": {
+        "render_html": "Отображать HTML-документы встроенно в чате",
+        "calculate": "Вычисление математических выражений",
+        "datetime": "Получить текущую дату и время",
+        "web_search": "Поиск актуальной информации в интернете (требуется API-ключ в настройках)",
+        "read_url": "Чтение полного содержимого веб-страницы (требуется API-ключ в настройках)"
+      },
+      "greeting": {
+        "sectionLabel": "Приветствие",
+        "textLabel": "Приветственное сообщение",
+        "textPlaceholder": "Что должен написать этот Ассистент в пустом чате?",
+        "suggestedPromptsLabel": "Рекомендуемые промпты",
+        "addPromptButton": "Добавить промпт",
+        "promptPlaceholder": "Короткий промпт для быстрой команды",
+        "removePromptLabel": "Удалить промпт"
+      }
+    },
+    "assistantPersonaSheet": {
+      "title": {
+        "create": "Создать Ассистент",
+        "edit": "Редактировать Ассистент"
+      },
+      "assistantName": "Имя Ассистент",
+      "assistantNamePlaceholder": "Имя",
+      "defaultModel": "Модель по умолчанию",
+      "defaultModelPlaceholder": "Выбор модели",
+      "validation": {
+        "generatingPromptRequired": "Требуется генерирующий промпт",
+        "promptModelRequired": "Требуется модель для генерации промпта"
+      },
+      "create": "Создать"
+    },
+    "modelNotAvailable": {
+      "noModelsDownloaded": "У вас еще нет загруженных моделей. Пожалуйста, сначала загрузите модель.",
+      "downloadAModel": "Загрузить модель",
+      "defaultModelNotDownloaded": "Этот Ассистент предлагает конкретную модель, которую необходимо загрузить, либо вы можете выбрать другую модель.",
+      "modelNotDownloadedShort": "Модель не загружена",
+      "recommendedModel": "Рекомендуемая модель",
+      "cancelDownload": "Отменить загрузку",
+      "download": "Загрузить"
+    },
+    "roleplayPersonaSheet": {
+      "title": {
+        "create": "Создать Ассистент ролевых игр",
+        "edit": "Редактировать Ассистент ролевых игр"
+      },
+      "assistantName": "Имя Ассистент",
+      "assistantNamePlaceholder": "Имя",
+      "defaultModel": "Модель по умолчанию",
+      "defaultModelPlaceholder": "Выбор модели",
+      "descriptionSection": "Описание",
+      "world": "Мир",
+      "worldPlaceholder": "Фэнтези",
+      "location": "Место",
+      "locationPlaceholder": "Зачарованный лес",
+      "locationSublabel": "В каком месте происходит действие?",
+      "aiRole": "Роль ИИ",
+      "aiRolePlaceholder": "Эльдара, озорная лесная фея",
+      "aiRoleSublabel": "Установите роль персонажа",
+      "userRole": "Роль пользователя",
+      "userRolePlaceholder": "Сэр Эландор, доблестный рыцарь",
+      "userRoleSublabel": "Кто вы?",
+      "situation": "Ситуация",
+      "situationPlaceholder": "Миссия спасения, разгадывание тайны",
+      "toneStyle": "Тон/Стиль",
+      "toneStylePlaceholder": "Серьезный",
+      "validation": {
+        "promptModelRequired": "Требуется модель для генерации промпта"
+      },
+      "create": "Создать"
+    },
+    "lookiePersonaSheet": {
+      "title": {
+        "create": "Создать Lookie Ассистент",
+        "edit": "Редактировать Lookie Ассистент"
+      },
+      "assistantName": "Имя Ассистент",
+      "assistantNamePlaceholder": "Введите имя для Lookie Ассистент",
+      "visionModel": "Модель зрения",
+      "visionModelPlaceholder": "Выберите модель зрения",
+      "requiredModelsSection": "Необходимые модели",
+      "captureInterval": "Интервал захвата",
+      "captureIntervalHelper": "Интервал между автоматическими захватами в миллисекундах",
+      "create": "Создать"
+    },
+    "sendButton": {
+      "accessibilityLabel": "Отправить"
+    },
+    "systemPromptSection": {
+      "sectionTitle": "Системный промпт",
+      "useAIPrompt": "Генерировать системный промпт с помощью ИИ",
+      "modelSelector": {
+        "label": "Выберите модель для генерации*",
+        "sublabel": "Рекомендуется: Llama 3.2 3B или Qwen3 4B Instruct 2507.",
+        "placeholder": "Выбор модели"
+      },
+      "generatingPrompt": {
+        "label": "Цель & Контекст",
+        "placeholder": "Опишите роль, цель или сценарий для этого Ассистент..."
+      },
+      "buttons": {
+        "loadingModel": "Загрузка модели...",
+        "stopGenerating": "Остановить генерацию",
+        "generatePrompt": "Генерировать системный промпт",
+        "resetParameters": "Сброс параметров",
+        "resetTemplate": "Сброс шаблона"
+      },
+      "systemPrompt": {
+        "label": "Системный промпт",
+        "sublabel": "Смело редактируйте и экспериментируйте для поиска наилучшего промпта под ваш сценарий",
+        "placeholder": "Вы полезный ассистент"
+      },
+      "warnings": {
+        "promptChanged": "Системный промпт был изменен вручную"
+      }
+    },
+    "sidebarContent": {
+      "menuItems": {
+        "chat": "Чат",
+        "models": "Модели",
+        "assistants": "Ассистент",
+        "benchmark": "Бенчмарк",
+        "settings": "Настройки",
+        "appInfo": "О приложении",
+        "testCompletion": "Завершение теста"
+      },
+      "deleteChatTitle": "Удалить чат",
+      "deleteChatMessage": "Вы уверены, что хотите удалить этот чат?",
+      "select": "Выбрать",
+      "nSelected": "{{count}} выбрано",
+      "selectAll": "Выбрать все",
+      "deselectAll": "Отменить выбор",
+      "exportCount": "Экспорт ({{count}})",
+      "deleteCount": "Удалить ({{count}})",
+      "bulkDeleteTitle": "Удалить сеансы чата",
+      "bulkDeleteMessage": "Удалить {{count}} сеанс(а) чата? Это действие нельзя отменить.",
+      "bulkDeleteError": "Не удалось удалить сеансы чата. Попробуйте ещё раз.",
+      "exportError": "Не удалось экспортировать сеанс чата. Попробуйте ещё раз.",
+      "bulkExportError": "Не удалось экспортировать сеансы чата. Попробуйте ещё раз.",
+      "pin": "Закрепить",
+      "unpin": "Открепить",
+      "dateGroups": {
+        "pinned": "Закреплённые",
+        "today": "Сегодня",
+        "yesterday": "Вчера",
+        "thisWeek": "На этой неделе",
+        "lastWeek": "На прошлой неделе",
+        "twoWeeksAgo": "2 недели назад",
+        "threeWeeksAgo": "3 недели назад",
+        "fourWeeksAgo": "4 недели назад",
+        "lastMonth": "В прошлом месяце",
+        "older": "Старше"
+      },
+      "emptySessionsTitle": "Пока нет чатов",
+      "emptySessionsHint": "Начните новый разговор на экране чата"
+    },
+    "usageStats": {
+      "tooltip": {
+        "title": "Использование памяти",
+        "used": "Используется: ",
+        "total": "Всего: ",
+        "usage": "Использование: "
+      },
+      "byteSizes": [
+        "Bytes",
+        "KB",
+        "MB",
+        "GB"
+      ]
+    },
+    "chatView": {
+      "menuItems": {
+        "copy": "Копировать",
+        "regenerate": "Сгенерировать заново",
+        "regenerateWith": "Сгенерировать заново с",
+        "edit": "Редактировать",
+        "reportContent": "Жалоба на контент"
+      }
+    },
+    "assistantHeaderRight": {
+      "exportAllAssistants": "Экспорт всех ассистентов",
+      "importAssistants": "Импорт ассистентов",
+      "importSuccess": "Успешно импортировано Ассистент: {{count}}.",
+      "importError": "Не удалось импортировать Ассистент. Проверьте формат файла.",
+      "exportErrorTitle": "Ошибка экспорта",
+      "exportAllError": "Не удалось экспортировать всех ассистентов.",
+      "importSuccessTitle": "Успешный импорт",
+      "importErrorTitle": "Ошибка импорта"
+    },
+    "brandHeader": {
+      "tagline": "Ваш приватный ИИ на устройстве"
+    },
+    "authSheet": {
+      "signInTitle": "Вход",
+      "signUpTitle": "Создать аккаунт",
+      "fullNameLabel": "Полное имя",
+      "emailLabel": "Электронная почта",
+      "passwordLabel": "Пароль",
+      "signInButton": "Войти",
+      "signUpButton": "Создать аккаунт",
+      "forgotPassword": "Забыли пароль?",
+      "or": "или",
+      "continueWithGoogle": "Продолжить с Google",
+      "haveAccount": "Уже есть аккаунт? ",
+      "noAccount": "Нет аккаунта? ",
+      "signUpLink": "Регистрация",
+      "signInLink": "Войти",
+      "signingIn": "Выполняется вход...",
+      "fillRequiredFields": "Пожалуйста, заполните все обязательные поля.",
+      "enterFullName": "Пожалуйста, введите полное имя.",
+      "enterEmailFirst": "Сначала введите адрес электронной почты.",
+      "accountCreatedTitle": "Аккаунт создан",
+      "accountCreatedMessage": "Проверьте свою почту, чтобы подтвердить аккаунт.",
+      "welcomeBackTitle": "С возвращением!",
+      "welcomeBackMessage": "Вы успешно вошли.",
+      "googleErrorTitle": "Ошибка входа через Google",
+      "passwordResetTitle": "Сброс пароля",
+      "passwordResetMessage": "Проверьте свою почту — там инструкции по сбросу пароля.",
+      "authErrorTitle": "Ошибка аутентификации"
+    },
+    "squareAssistantCard": {
+      "videoAssistant": "Видео-ассистент ИИ",
+      "advancedAssistant": "Продвинутый ИИ-ассистент",
+      "assistant": "ИИ-ассистент",
+      "byCreator": "от {{creator}}",
+      "downloadAssistantTitle": "Загрузить Ассистента",
+      "downloadAssistantMessage": "Загрузить \"{{assistantName}}\", чтобы начать общение?",
+      "download": "Загрузить",
+      "downloadErrorTitle": "Ошибка загрузки",
+      "downloadErrorMessage": "Не удалось загрузить ассистента. Попробуйте ещё раз.",
+      "startChatErrorMessage": "Не удалось начать чат. Попробуйте ещё раз.",
+      "switchModelTitle": "Сменить модель?",
+      "switchModelMessage": "Переключиться на \"{{modelName}}\" для этого ассистента?",
+      "keepCurrent": "Оставить текущую",
+      "switch": "Сменить",
+      "shareErrorTitle": "Ошибка отправки",
+      "shareErrorMessage": "Не удалось поделиться ассистентом. Попробуйте ещё раз."
+    }
   },
   "assistantsScreen": {
     "sectionTitles": {
@@ -1337,7 +1381,19 @@
       "signInAgain": "Войти снова",
       "assistantNotAvailable": "Этот Ассистент сейчас недоступен для покупки.",
       "checkoutFailed": "Что-то пошло не так. Попробуйте ещё раз."
-    }
+    },
+    "emptyLocal": "Пока нет Ассистентов.\nСоздайте первого Ассистента с помощью кнопки +!",
+    "emptyFiltered": "Ассистенты не найдены.\nПопробуйте изменить фильтры или поисковый запрос."
+  },
+  "validation": {
+    "nameRequired": "Требуется имя",
+    "systemPromptRequired": "Требуется системный промпт",
+    "worldRequired": "Требуется мир",
+    "locationRequired": "Требуется местоположение",
+    "aiRoleRequired": "Требуется роль ИИ",
+    "userRoleRequired": "Требуется роль пользователя",
+    "situationRequired": "Требуется ситуация",
+    "toneStyleRequired": "Требуется тон/стиль"
   },
   "camera": {
     "permissionTitle": "Требуется доступ к камере",
@@ -1377,6 +1433,233 @@
       "step2": "• Нажмите кнопку камеры, чтобы начать анализ видео в реальном времени",
       "step3": "• Регулируйте частоту снимков, пока камера активна",
       "step4": "• Переключитесь на другой Ассистент для обычного текстового чата"
+    },
+    "defaultPrompt": "Что вы видите?",
+    "multimodalTitle": "Мультимодальность не включена",
+    "multimodalMessage": "Эта модель не поддерживает анализ изображений. Загрузите мультимодальную модель.",
+    "checkSupportError": "Не удалось проверить, поддерживает ли модель изображения."
+  },
+  "screenTitles": {
+    "chat": "Чат",
+    "models": "Модели",
+    "assistants": "Ассистенты (экспериментально)",
+    "benchmark": "Бенчмарк",
+    "settings": "Настройки",
+    "appInfo": "О приложении",
+    "testCompletion": "Завершение теста"
+  },
+  "chat": {
+    "conversationReset": "Контекст диалога сброшен!",
+    "modelNotLoaded": "Модель не загружена. Пожалуйста, инициализируйте модель.",
+    "completionFailed": "Завершение не удалось: ",
+    "toolCallTruncated": "Вызов инструмента прерван – вероятно, у модели закончилась рабочая память. Попробуйте использовать более широкий контекст или более короткий запрос.",
+    "speculativeInitFailed": "На этом устройстве не удалось запустить спекулятивное декодирование для этой модели — скорее всего, не хватает памяти для чернового контекста. Отключите спекулятивное декодирование в разделе Настройки → Дополнительные настройки и попробуйте снова.",
+    "loadingModel": "Загрузка модели...",
+    "typeYourMessage": "Введите сообщение",
+    "load": "Загрузка",
+    "goToModels": "Перейти к моделям",
+    "readyToChat": "Хотите начать общение? Загрузите последнюю использованную модель.",
+    "pleaseLoadModel": "Загрузите модель, чтобы начать общение.",
+    "multimodalNotEnabled": "Мультимодальность для этой модели не включена. Изображения будут отображаться, но не будут обрабатываться ИИ.",
+    "cannotSendWithoutModel": "Загрузите модель перед началом работы",
+    "toolCompatWarning": "Эта модель может не поддерживать вызовы инструментов. Результаты могут быть недостоверными.",
+    "softCapWarning": "Начните новый чат для оптимальной работы.",
+    "contextWarning": "Контекст диалога становится длинным, и в рабочей памяти модели скоро может закончиться место.",
+    "contextRemoteHedged": "Этот ответ мог быть обрезан. Попробуйте отправить запрос еще раз или сократите его.",
+    "contextFull": "В рабочей памяти модели не хватило места для контекста диалога. Начните новый чат или увеличьте размер контекста.",
+    "contextFullRemote": "Лимит контекста диалога исчерпан. Начните новый чат.",
+    "contextFullEscalated": "Всё ещё не хватает рабочей памяти модели. Начните новый чат или увеличьте размер контекста, чтобы продолжить работу.",
+    "contextFullHeavyTalent": "Лимит контекста диалога исчерпан — {{talent}} обычно требует больше. Начните новый чат или увеличьте размер контекста.",
+    "contextBannerDismiss": "Отклонить",
+    "contextNewChat": "Новый чат",
+    "contextIncrease": "Увеличить контекст",
+    "contextMoreRoom": "Больше рабочей памяти",
+    "increaseContextTitle": "Дать чату больше рабочей памяти",
+    "increaseContextBody": "Рабочая память модели – это объем информации данного чата, который она может сохранять в памяти одновременно. Больше рабочей памяти означает более длинные чаты, прежде чем сообщения будут обрезаны.",
+    "increaseContextTokensUnit": "токены",
+    "increaseContextWordsRam": "~{{words}} слов · ≈{{ram}} ОЗУ",
+    "increaseContextFitsChip": "Подходит",
+    "increaseContextTightChip": "На пределе",
+    "increaseContextWontFitChip": "Не поместится",
+    "increaseContextFitsStatus": "Подходит для этого устройства.",
+    "increaseContextFitsUnconstrainedStatus": "Объём ОЗУ достаточен – ограничивается только моделью.",
+    "increaseContextTightStatus": "При превышении ~{{tokens}} у этого устройства может закончиться память, и оно начнёт работать медленнее. Всё равно можно попробовать.",
+    "increaseContextWontFitStatus": "~{{tokens}}, вероятно, не поместятся в памяти этого устройства. Выберите размер поменьше.",
+    "increaseContextModelMax": "{{tokens}} · макс. модели",
+    "increaseContextHedge": "Перезагрузка займёт несколько секунд. Ничего из вашего чата не потеряется.",
+    "increaseContextAdvanced": "Дополнительно",
+    "increaseContextAdvancedBody": "Размер контекста для этого чата: {{from}} → {{to}} токенов (макс. модели {{max}}). Лимит устройства является оценочным и растёт по мере успешной загрузки более объёмных контекстов.",
+    "increaseContextSliderA11yLabel": "Размер контекста",
+    "increaseContextSliderA11yValue": "{{tokens}} токенов",
+    "increaseContextConfirmSize": "Установить на {{size}}",
+    "increaseContextReloadingShort": "Перезагрузка…",
+    "increaseContextNoFitBody": "Это устройство не может вместить более широкий контекст для данной модели. Начните новый чат, чтобы продолжить.",
+    "increaseContextCancel": "Не сейчас",
+    "increaseContextReloading": "Перезагрузка модели с увеличенным контекстом…",
+    "increaseContextSuccess": "Контекст увеличен до {{target}} токенов.",
+    "increaseContextFailure": "Не удалось увеличить размер контекста. Предыдущие настройки были восстановлены.",
+    "assistantLoadHint": "Этому Ассистент обычно требуется больше рабочей памяти модели, чем позволяет текущий размер контекста.",
+    "generatingPreview": "Генерация предпросмотра… ({{tokens}} ток.)",
+    "generatingPreviewPending": "Генерация предпросмотра…",
+    "toolUsedChip": "использовал {{name}}",
+    "toolErrorBlock": "{{name}} завершилось с ошибкой",
+    "webSearch": {
+      "searched": "Поиск: {{query}}",
+      "noResults": "Ничего не найдено",
+      "noResultsFor": "Ничего не найдено по запросу {{query}}",
+      "resultsCount": "Результатов: {{count}}",
+      "resultsCountOne": "1 результат",
+      "searchResultsTitle": "Результаты поиска",
+      "showResultsAccessibilityLabel": "Показать результаты поиска в интернете по запросу {{query}}",
+      "openLinkError": "Не удалось открыть эту ссылку."
+    }
+  },
+  "htmlPreview": {
+    "defaultTitle": "Предпросмотр",
+    "showPreview": "Показать рендеринг предпросмотра",
+    "showCode": "Показать HTML-код",
+    "copyHtml": "Копировать HTML",
+    "closePreview": "Закрыть предпросмотр",
+    "openFullscreen": "Открыть во весь экран: {{title}}"
+  },
+  "benchmark": {
+    "title": "Бенчмарк",
+    "modelSelector": {
+      "prompt": "Выбрать модель",
+      "noModels": "Не загружено ни одной модели"
+    },
+    "buttons": {
+      "advancedSettings": "Дополнительные настройки",
+      "startTest": "Запустить тест",
+      "runningTest": "Запуск теста...",
+      "clearAll": "Очистить всё",
+      "done": "Готово",
+      "cancel": "Отмена",
+      "delete": "Удалить",
+      "share": "Поделиться",
+      "sharing": "Поделиться...",
+      "viewRawData": "Показать необработанные данные",
+      "hideRawData": "Скрыть необработанные данные"
+    },
+    "messages": {
+      "pleaseSelectModel": "Сначала выберите и инициализируйте модель",
+      "testWarning": "Примечание: Тестирование больших моделей может занять от 2 до 5 минут и его нельзя прервать после запуска.",
+      "keepScreenOpen": "Пожалуйста, не закрывайте этот экран.",
+      "initializingModel": "Инициализация модели...",
+      "modelMaxValue": "(макс.: {{maxValue}})"
+    },
+    "dialogs": {
+      "advancedSettings": {
+        "title": "Дополнительные настройки",
+        "testProfile": "Профиль тестирования",
+        "customParameters": "Пользовательские параметры",
+        "description": "Точная настройка параметров тестирования под определенные сценарии."
+      },
+      "deleteResult": {
+        "title": "Удалить результат",
+        "message": "Вы уверены, что хотите удалить этот результат тестирования?"
+      },
+      "clearAllResults": {
+        "title": "Очистить все результаты",
+        "message": "Вы уверены, что хотите удалить все результаты тестирования?"
+      },
+      "shareResults": {
+        "title": "Поделиться результатами тестирования",
+        "sharedDataTitle": "Передаваемые данные включают:",
+        "deviceAndModelInfo": "• Характеристики устройства и данные модели",
+        "performanceMetrics": "• Метрики производительности",
+        "dontShowAgain": "Больше не показывать это сообщение"
+      }
+    },
+    "sections": {
+      "testResults": "Результаты тестирования"
+    },
+    "benchmarkResultCard": {
+      "modelMeta": {
+        "params": "парам."
+      },
+      "config": {
+        "title": "Настройки тестирования",
+        "format": "PP: {{pp}} • TG: {{tg}} • PL: {{pl}} • Повт.: {{nr}}"
+      },
+      "modelSettings": {
+        "title": "Настройки модели",
+        "context": "Контекст: {{context}}",
+        "batch": "Batch: {{batch}}",
+        "ubatch": "UBatch: {{ubatch}}",
+        "cpuThreads": "Потоки CPU: {{threads}}",
+        "gpuLayers": "Слои GPU: {{layers}}",
+        "device": "Устройство: {{device}}",
+        "flashAttentionEnabled": "Flash Attention включен",
+        "flashAttentionDisabled": "Flash Attention отключен",
+        "cacheTypes": "Типы кэша: {{cacheK}}/{{cacheV}}"
+      },
+      "results": {
+        "promptProcessing": "Обработка промпта",
+        "tokenGeneration": "Генерация токенов",
+        "totalTime": "Общее время",
+        "peakMemory": "Пиковая память",
+        "tokensPerSecond": "т/сек"
+      },
+      "actions": {
+        "deleteButton": " ",
+        "submittedText": "✓ Поделиться в",
+        "leaderboardLink": "Таблица лидеров AI Phone ↗",
+        "cannotShare": "Невозможно поделиться",
+        "cannotShareTooltip": "Невозможно поделиться результатами локальной модели",
+        "submitButton": "Отправить в таблицу лидеров",
+        "viewLeaderboard": "Посмотреть таблицу лидеров ↗"
+      },
+      "errors": {
+        "networkRetry": "Проверить соединение и повторить",
+        "appCheckRetry": "Отправить повторно",
+        "serverRetry": "Попробуйте ещё раз позже",
+        "genericRetry": "Повторить",
+        "failedToSubmit": "Не удалось отправить результаты тестирования"
+      }
+    },
+    "deviceInfoCard": {
+      "title": "Информация об устройстве",
+      "deviceSummary": "{{brand}} {{model}} • {{systemName}} {{systemVersion}}",
+      "coreSummary": "Ядер: {{cores}} • {{memory}}",
+      "sections": {
+        "basicInfo": "Основная информация",
+        "cpuDetails": "Сведения о CPU",
+        "gpuDetails": "Сведения о GPU",
+        "hexagonDetails": "Hexagon DSP",
+        "appInfo": "О приложении"
+      },
+      "fields": {
+        "architecture": "Архитектура",
+        "totalMemory": "Всего памяти",
+        "deviceId": "ID устройства",
+        "cpuCores": "Ядер CPU",
+        "cpuModel": "Модель CPU",
+        "chipset": "Чипсет",
+        "instructions": "Инструкции",
+        "version": "Версия",
+        "gpuType": "Тип GPU",
+        "gpuRenderer": "Рендерер",
+        "gpuVendor": "Поставщик",
+        "metalSupport": "Поддержка Metal",
+        "openclSupport": "Поддержка OpenCL",
+        "openclRequirement": "Требуется i8mm & dotprod"
+      },
+      "instructions": {
+        "format": "FP16: {{fp16}}, DotProd: {{dotProd}}, SVE: {{sve}}, I8MM: {{i8mm}}",
+        "yes": "✓",
+        "no": "✗"
+      },
+      "versionFormat": "{{version}} ({{buildNumber}})"
+    },
+    "presetDefault": "По умолчанию",
+    "presetFast": "Быстрый",
+    "presetCustom": "Пользовательский",
+    "params": {
+      "pp": "Количество токенов обработки промпта (макс.: физический размер батча)",
+      "tg": "Количество токенов генерации текста",
+      "pl": "Размер конвейерного параллелизма",
+      "nr": "Количество повторений"
     }
   },
   "errors": {
@@ -1411,39 +1694,6 @@
     "voicesTitle": "Голоса",
     "voicesEmptyHint": "Нажмите на любой голос, чтобы установить и использовать его. Или выберите системный голос – они доступны всегда.",
     "supertonicStepsLabel": "Качество (шаги диффузии)",
-    "toggleAutoSpeakLabel": "Переключить автоозвучивание",
-    "openSettingsLabel": "Настройки TTS",
-    "playMessageLabel": "Воспроизвести сообщение",
-    "stopMessageLabel": "Остановить сообщение",
-    "autoSpeakLabel": "Автоозвучивание ответов",
-    "autoSpeakDescription": "Озвучивать новые ответы по мере их поступления.",
-    "engineChipKitten": "Kitten",
-    "engineChipKokoro": "Kokoro",
-    "engineChipSupertonic": "Supertonic",
-    "engineChipSystem": "Система",
-    "stepsCount": "{{steps}} шаг(ов)",
-    "engineKittenTagline": "Минимум ресурсов. Надёжно. Подходит для старых устройств.",
-    "engineKokoroTagline": "Высокое качество. Медленный запуск. Некоторые голоса могут быть недоступны на вашем устройстве.",
-    "engineSupertonicTagline": "Быстрый запуск. Использует больше ОЗУ. Возможны пропуски слов.",
-    "engineSystemTagline": "Системные голоса ОС. Всегда доступны, установка не требуется.",
-    "engineSystemTitleIos": "Голоса iOS",
-    "engineSystemTitleAndroid": "Голоса Android",
-    "engineSystemTier": "всегда доступны",
-    "engineTierLightest": "лёгкие",
-    "engineTierBestQuality": "макс. качество",
-    "engineTierFastestStart": "быстрый запуск",
-    "engineSpecsLine": "{{voices}} голосов · {{sizeMb}} МБ · ~{{ramMb}} МБ ОЗУ",
-    "engineSystemSpecsLine": "{{voices}} голосов",
-    "engineRemoveTitle": "Удалить {{engineTitle}}?",
-    "engineRemoveBody": "Освободит ~{{sizeMb}} МБ на этом устройстве.",
-    "engineRemoveCancel": "Отмена",
-    "engineRemoveConfirm": "Удалить",
-    "engineInstallCta": "Установить · {{sizeMb}} МБ",
-    "engineDownloadingLabel": "Загрузка… {{pct}}% · {{mbDone}} / {{sizeMb}} МБ",
-    "engineRetryCta": "Повторить",
-    "voicesEmptyState": "Голоса не найдены.",
-    "kokoroDeviceNote": "Некоторые голоса могут быть недоступны на вашем устройстве.",
-    "insufficientStorage": "Недостаточно места – освободите {{requiredMb}} МБ для установки этого движка (доступно {{freeMb}} МБ).",
     "supertonicLanguageLabel": "Язык",
     "supertonicLanguageAuto": "Авто",
     "supertonicLanguageSheetTitle": "Язык",
@@ -1480,22 +1730,48 @@
       "tr": "Турецкий",
       "uk": "Украинский",
       "vi": "Вьетнамский"
-    }
-  },
-  "htmlPreview": {
-    "defaultTitle": "Предпросмотр",
-    "showPreview": "Показать рендеринг предпросмотра",
-    "showCode": "Показать HTML-код",
-    "copyHtml": "Копировать HTML",
-    "closePreview": "Закрыть предпросмотр",
-    "openFullscreen": "Открыть во весь экран: {{title}}"
+    },
+    "toggleAutoSpeakLabel": "Переключить автоозвучивание",
+    "openSettingsLabel": "Настройки TTS",
+    "playMessageLabel": "Воспроизвести сообщение",
+    "stopMessageLabel": "Остановить сообщение",
+    "autoSpeakLabel": "Автоозвучивание ответов",
+    "autoSpeakDescription": "Озвучивать новые ответы по мере их поступления.",
+    "engineChipKitten": "Kitten",
+    "engineChipKokoro": "Kokoro",
+    "engineChipSupertonic": "Supertonic",
+    "engineChipSystem": "Система",
+    "stepsCount": "{{steps}} шаг(ов)",
+    "engineKittenTagline": "Минимум ресурсов. Надёжно. Подходит для старых устройств.",
+    "engineKokoroTagline": "Высокое качество. Медленный запуск. Некоторые голоса могут быть недоступны на вашем устройстве.",
+    "engineSupertonicTagline": "Быстрый запуск. Использует больше ОЗУ. Возможны пропуски слов.",
+    "engineSystemTagline": "Системные голоса ОС. Всегда доступны, установка не требуется.",
+    "engineSystemTitleIos": "Голоса iOS",
+    "engineSystemTitleAndroid": "Голоса Android",
+    "engineSystemTier": "всегда доступны",
+    "engineTierLightest": "лёгкие",
+    "engineTierBestQuality": "макс. качество",
+    "engineTierFastestStart": "быстрый запуск",
+    "engineSpecsLine": "{{voices}} голосов · {{sizeMb}} МБ · ~{{ramMb}} МБ ОЗУ",
+    "engineSystemSpecsLine": "{{voices}} голосов",
+    "engineRemoveTitle": "Удалить {{engineTitle}}?",
+    "engineRemoveBody": "Освободит ~{{sizeMb}} МБ на этом устройстве.",
+    "engineRemoveCancel": "Отмена",
+    "engineRemoveConfirm": "Удалить",
+    "engineInstallCta": "Установить · {{sizeMb}} МБ",
+    "engineDownloadingLabel": "Загрузка… {{pct}}% · {{mbDone}} / {{sizeMb}} МБ",
+    "engineRetryCta": "Повторить",
+    "voicesEmptyState": "Голоса не найдены.",
+    "kokoroDeviceNote": "Некоторые голоса могут быть недоступны на вашем устройстве.",
+    "insufficientStorage": "Недостаточно места – освободите {{requiredMb}} МБ для установки этого движка (доступно {{freeMb}} МБ)."
   },
   "onboarding": {
     "back": "Назад",
     "skip": "Пропустить",
     "skipForNow": "Пропустить",
     "splash": {
-      "brand": "DRS AI"
+      "brand": "DRS AI",
+      "tagline": "Ваш приватный ИИ, на вашем устройстве"
     },
     "screen1": {
       "title": "Познакомьтесь с Ассистент.",

@@ -1713,11 +1713,15 @@ describe('ModelStore', () => {
     });
 
     it('should not cleanup projection model if multiple LLMs use it', async () => {
+      // Distinct filenames: all fixture copies otherwise share one file path,
+      // so unlinking one model would make the RNFS mock report every other
+      // model's file as missing and flip isDownloaded mid-assertion.
       const projModel = {
         ...presetModelFixture,
         id: 'test-proj-model',
         modelType: ModelType.PROJECTION,
         isDownloaded: true,
+        filename: 'test-proj-model.gguf',
       };
 
       const llmModel1 = {
@@ -1726,6 +1730,7 @@ describe('ModelStore', () => {
         supportsMultimodal: true,
         defaultProjectionModel: projModel.id,
         isDownloaded: true,
+        filename: 'test-llm-model-1.gguf',
       };
 
       const llmModel2 = {
@@ -1734,12 +1739,17 @@ describe('ModelStore', () => {
         supportsMultimodal: true,
         defaultProjectionModel: projModel.id,
         isDownloaded: true,
+        filename: 'test-llm-model-2.gguf',
       };
 
       modelStore.models = [projModel, llmModel1, llmModel2];
 
       // Delete one LLM model
       await modelStore.deleteModel(llmModel1);
+
+      // deleteModel kicks off refreshDownloadStatuses without awaiting it;
+      // flush it so the isDownloaded writes settle before we assert.
+      await modelStore.refreshDownloadStatuses();
 
       // Verify the projection model is still downloaded (still used by llmModel2)
       const remainingProjModel = modelStore.models.find(

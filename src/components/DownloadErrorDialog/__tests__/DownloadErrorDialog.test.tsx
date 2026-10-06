@@ -20,7 +20,11 @@ jest.spyOn(Linking, 'openURL').mockImplementation(mockOpenURL);
 
 // Mock the CheckCircleIcon component
 jest.mock('../../../assets/icons', () => ({
-  CheckCircleIcon: props => (
+  CheckCircleIcon: (props: {
+    width?: number;
+    height?: number;
+    stroke?: string;
+  }) => (
     <div
       data-testid="check-circle-icon"
       style={{

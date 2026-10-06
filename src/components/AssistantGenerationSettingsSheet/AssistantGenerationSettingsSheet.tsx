@@ -162,7 +162,8 @@ export const AssistantGenerationSettingsSheet = ({
     // Convert string values to numbers where needed
     const processedSettings = Object.entries(settings).reduce(
       (acc, [key, value]) => {
-        const metadata = COMPLETION_PARAMS_METADATA[key];
+        const metadata =
+          COMPLETION_PARAMS_METADATA[key as keyof CompletionParams];
         if (metadata?.validation.type === 'numeric') {
           let numValue: number;
           if (typeof value === 'string') {
@@ -187,14 +188,14 @@ export const AssistantGenerationSettingsSheet = ({
         return acc;
       },
       {settings: {}, errors: {}} as {
-        settings: typeof settings;
+        settings: Record<string, unknown>;
         errors: Record<string, string>;
       },
     );
 
     // Validate the converted values
     const validationResult = validateCompletionSettings(
-      processedSettings.settings,
+      processedSettings.settings as Partial<CompletionParams>,
     );
     const allErrors = {
       ...processedSettings.errors,

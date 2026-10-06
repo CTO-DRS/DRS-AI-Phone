@@ -10,7 +10,17 @@ import type {ParameterDefinition} from '../../../types/assistant';
 // Mock the Sheet component
 jest.mock('../../Sheet/Sheet', () => {
   const {View, Button, ScrollView} = require('react-native');
-  const MockSheet = ({children, isVisible, onClose, title}) => {
+  const MockSheet = ({
+    children,
+    isVisible,
+    onClose,
+    title,
+  }: {
+    children?: React.ReactNode;
+    isVisible?: boolean;
+    onClose?: () => void;
+    title?: string;
+  }) => {
     if (!isVisible) {
       return null;
     }
@@ -22,10 +32,10 @@ jest.mock('../../Sheet/Sheet', () => {
       </View>
     );
   };
-  MockSheet.ScrollView = ({children}) => (
+  MockSheet.ScrollView = ({children}: {children?: React.ReactNode}) => (
     <ScrollView testID="sheet-scroll-view">{children}</ScrollView>
   );
-  MockSheet.Actions = ({children}) => (
+  MockSheet.Actions = ({children}: {children?: React.ReactNode}) => (
     <View testID="sheet-actions">{children}</View>
   );
   return {Sheet: MockSheet};
@@ -33,7 +43,13 @@ jest.mock('../../Sheet/Sheet', () => {
 
 // Mock AssistantGenerationSettingsSheet
 jest.mock('../../AssistantGenerationSettingsSheet', () => ({
-  AssistantGenerationSettingsSheet: ({isVisible, onClose}) => {
+  AssistantGenerationSettingsSheet: ({
+    isVisible,
+    onClose,
+  }: {
+    isVisible?: boolean;
+    onClose?: () => void;
+  }) => {
     const {View, Button} = require('react-native');
     if (!isVisible) {
       return null;
