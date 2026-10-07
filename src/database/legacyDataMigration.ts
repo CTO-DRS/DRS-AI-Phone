@@ -57,7 +57,7 @@ const migrateLegacyTable = async (
 
 /** Rename the legacy on-device thumbnail directory, preserving files. */
 const migrateLegacyImagesDir = async (): Promise<void> => {
-  const legacyDir = `${RNFS.DocumentDirectoryPath}/${LEGACY_SCHEMA.assistantImagesDirName}`;
+  const legacyDir = `${RNFS.DocumentDirectoryPath}/${LEGACY_SCHEMA.palImagesDirName}`;
   const renamedDir = `${RNFS.DocumentDirectoryPath}/assistant-images`;
 
   if (!(await RNFS.exists(legacyDir))) {
@@ -89,7 +89,7 @@ const runLegacyDataMigration = async (): Promise<void> => {
   // 1. Local assistants (user-created — the irreplaceable data).
   try {
     await migrateLegacyTable(
-      LEGACY_SCHEMA.localAssistantsTable,
+      LEGACY_SCHEMA.localPalsTable,
       'local_assistants',
       LEGACY_ASSISTANT_COPY_COLUMNS,
     );
@@ -102,7 +102,7 @@ const runLegacyDataMigration = async (): Promise<void> => {
   // 2. DRS Hub catalogue cache (rebuildable, but migrated for continuity).
   try {
     await migrateLegacyTable(
-      LEGACY_SCHEMA.cachedAssistantsTable,
+      LEGACY_SCHEMA.cachedPalsTable,
       'cached_assistants',
       LEGACY_CACHED_ASSISTANT_COPY_COLUMNS,
     );
@@ -120,8 +120,8 @@ const runLegacyDataMigration = async (): Promise<void> => {
     await executeSqls([
       [
         'UPDATE chat_sessions SET active_assistant_id = ' +
-          `${LEGACY_SCHEMA.activeAssistantIdColumn} WHERE ` +
-          `${LEGACY_SCHEMA.activeAssistantIdColumn} IS NOT NULL`,
+          `${LEGACY_SCHEMA.activePalIdColumn} WHERE ` +
+          `${LEGACY_SCHEMA.activePalIdColumn} IS NOT NULL`,
         [],
       ],
     ]);
@@ -135,7 +135,7 @@ const runLegacyDataMigration = async (): Promise<void> => {
     await executeSqls([
       [
         'UPDATE chat_sessions SET settings_source = ? WHERE settings_source = ?',
-        ['assistant', LEGACY_SCHEMA.settingsSourceAssistantValue],
+        ['assistant', LEGACY_SCHEMA.settingsSourcePalValue],
       ],
     ]);
   } catch (error) {
@@ -149,7 +149,7 @@ const runLegacyDataMigration = async (): Promise<void> => {
     await executeSqls([
       [
         'UPDATE sync_status SET entity_type = ? WHERE entity_type = ?',
-        ['assistant', LEGACY_SCHEMA.entityTypeAssistantValue],
+        ['assistant', LEGACY_SCHEMA.entityTypePalValue],
       ],
     ]);
   } catch (error) {

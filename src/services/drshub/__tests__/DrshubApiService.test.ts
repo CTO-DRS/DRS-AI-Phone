@@ -134,7 +134,7 @@ describe('DrshubApiService', () => {
       expect(options.method).toBe('POST');
       expect(options.headers.Authorization).toBe('Bearer token-abc');
       expect(JSON.parse(options.body)).toEqual({
-        assistant_id: 'assistant-1',
+        pal_id: 'assistant-1',
         success_url: 'https://host.test/app-return/success',
         cancel_url: 'https://host.test/app-return/cancel',
       });
