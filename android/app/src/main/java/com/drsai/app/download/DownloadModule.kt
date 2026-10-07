@@ -56,7 +56,7 @@ class DownloadModule(reactContext: ReactApplicationContext) : NativeDownloadModu
 
     override fun startDownload(url: String, config: ReadableMap, promise: Promise) {
         // Never dump the full config: it can carry the plaintext authToken.
-        Log.d(TAG, "Starting download with config keys: ${config.keySet()}")
+        Log.d(TAG, "Starting download with config keys: ${config.toHashMap().keys}")
         scope.launch {
             try {
                 val downloadId = UUID.randomUUID().toString()

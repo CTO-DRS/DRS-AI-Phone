@@ -60,6 +60,12 @@ react {
 
     /* Autolinking */
     autolinkLibrariesWithApp()
+
+    // LOCAL BUILD (low-RAM sandbox): skip Metro/Hermes bundling for prodDebug so the
+    // native/Kotlin/CMake/packaging chain can be validated end-to-end. The APK will
+    // expect a Metro dev server. REMOVE this line on machines with >= 6 GB RAM to
+    // produce a self-contained bundle.
+    debuggableVariants = ["prodDebug"]
 }
 
 /**
@@ -93,7 +99,7 @@ android {
         versionCode 159
         versionName "1.28.0"
         ndk {
-            abiFilters "arm64-v8a", "x86_64"
+            abiFilters "arm64-v8a"
         }
     }
     externalNativeBuild {
