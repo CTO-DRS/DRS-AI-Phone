@@ -305,7 +305,8 @@ class ChatSessionStore {
           messages,
           completionSettings,
           activeAssistantId: session.activeAssistantId,
-          settingsSource: (session.settingsSource as 'assistant' | 'custom') || 'assistant',
+          settingsSource:
+            (session.settingsSource as 'assistant' | 'custom') || 'assistant',
           pinned: session.pinned || false,
           messagesLoaded: false, // Mark as not loaded for lazy loading
         });

@@ -1,5 +1,7 @@
 // Drshub data types and interfaces
 
+import {DRS_HUB_WIRE} from '../services/drshub/wireContract';
+
 export interface DrshubProfile {
   id: string;
   email?: string;
@@ -32,7 +34,8 @@ export interface DrshubTag {
 
 export interface DrshubReview {
   id: string;
-  assistant_id: string;
+  /** Server wire name — see wireContract.ts */
+  [DRS_HUB_WIRE.assistantIdField]: string;
   user_id: string;
   rating: number; // 1-5
   comment?: string;
@@ -213,7 +216,8 @@ export interface DrshubAssistant {
 export interface DrshubUserAssistant {
   id: string;
   user_id: string;
-  assistant_id: string;
+  /** Server wire name — see wireContract.ts */
+  [DRS_HUB_WIRE.assistantIdField]: string;
   purchased_at: string;
   purchase_id?: string;
   created_at: string;
@@ -263,7 +267,7 @@ export interface AssistantsResponse {
 }
 
 export interface LibraryResponse {
-  assistants: DrshubAssistant[]; // Processed assistants, not raw user_assistants
+  assistants: DrshubAssistant[]; // Processed assistants
   total_count: number;
   page: number;
   limit: number;
@@ -294,13 +298,15 @@ export interface CreateAssistantRequest {
 }
 
 export interface CreateReviewRequest {
-  assistant_id: string;
+  /** Server wire name — see wireContract.ts */
+  [DRS_HUB_WIRE.assistantIdField]: string;
   rating: number; // 1-5
   comment?: string; // Max 2000 characters
 }
 
 export interface CreatePurchaseRequest {
-  assistant_id: string;
+  /** Server wire name — see wireContract.ts */
+  [DRS_HUB_WIRE.assistantIdField]: string;
 }
 
 export interface PurchaseResponse {

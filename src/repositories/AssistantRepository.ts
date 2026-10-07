@@ -11,13 +11,31 @@ import {
 import {CompletionParams} from '../utils/completionTypes';
 import {migrateCompletionSettings} from '../utils/completionSettingsVersions';
 import {logger} from '../utils/logger';
+import {ensureLegacyDataMigrated} from '../database/legacyDataMigration';
+import {LEGACY_SCHEMA} from '../database/legacyCompat';
 
 class AssistantRepository {
   // Check if we need to migrate from JSON/AsyncStorage
   async checkAndMigrateFromJSON(): Promise<boolean> {
     try {
-      // Check if we've already migrated
+      // Move any pre-v9 legacy tables/columns/values into their renamed
+      // counterparts before touching the collections below.
+      await ensureLegacyDataMigrated();
+
+      // Check if we've already migrated. Devices that ran the original
+      // AsyncStorage migration wrote the legacy flag filename; honor it
+      // and upgrade the marker to the renamed one.
       const migrationFlagPath = `${RNFS.DocumentDirectoryPath}/assistant-db-migration-complete.flag`;
+      const legacyFlagPath = `${RNFS.DocumentDirectoryPath}/${LEGACY_SCHEMA.assistantDbMigrationFlag}`;
+
+      if (!(await RNFS.exists(migrationFlagPath))) {
+        if (await RNFS.exists(legacyFlagPath)) {
+          await RNFS.writeFile(migrationFlagPath, 'true');
+          logger.debug('Assistant database migration already completed');
+          return false;
+        }
+      }
+
       const migrationComplete = await RNFS.exists(migrationFlagPath);
 
       if (migrationComplete) {

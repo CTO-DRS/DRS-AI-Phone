@@ -18,6 +18,7 @@ import {
   migrateCompletionSettings,
 } from '../utils/completionSettingsVersions';
 import {logger} from '../utils/logger';
+import {ensureLegacyDataMigrated} from '../database/legacyDataMigration';
 
 // Default completion settings without prompt and stop
 const defaultCompletionSettings = {...defaultCompletionParams};
@@ -28,6 +29,10 @@ class ChatSessionRepository {
   // Check if we need to migrate from JSON files
   async checkAndMigrateFromJSON(): Promise<boolean> {
     try {
+      // Move any pre-v9 legacy tables/columns/values into their renamed
+      // counterparts before touching the collections below.
+      await ensureLegacyDataMigrated();
+
       // Check if we've already migrated
       const migrationFlagPath = `${RNFS.DocumentDirectoryPath}/db-migration-complete.flag`;
       const migrationComplete = await RNFS.exists(migrationFlagPath);

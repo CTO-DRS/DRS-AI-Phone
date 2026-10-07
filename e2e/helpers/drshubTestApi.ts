@@ -14,6 +14,8 @@
  *   E2E_DRSHUB_ASSISTANT_ID   - premium fixture assistant id (defaults to the seeded assistant)
  */
 
+import {DRS_HUB_WIRE} from '../../src/services/drshub/wireContract';
+
 export const drshubTestConfig = {
   baseUrl: process.env.E2E_DRSHUB_BASE_URL || 'http://192.168.0.92:3010',
   testKey: process.env.E2E_API_KEY || '',
@@ -78,7 +80,7 @@ export async function resetAssistantOwnership(
   assistantId: string = drshubTestConfig.assistantId,
   userEmail: string = drshubTestConfig.email,
 ): Promise<void> {
-  await post(RESET_OWNERSHIP_PATH, {assistant_id: assistantId, user_email: userEmail});
+  await post(RESET_OWNERSHIP_PATH, {[DRS_HUB_WIRE.assistantIdField]: assistantId, user_email: userEmail});
 }
 
 /**

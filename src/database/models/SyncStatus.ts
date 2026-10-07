@@ -2,7 +2,12 @@ import {Model} from '@nozbe/watermelondb';
 import {field, readonly, date} from '@nozbe/watermelondb/decorators';
 
 export type SyncStatusType = 'synced' | 'pending' | 'error';
-export type EntityType = 'library' | 'assistant' | 'categories' | 'tags' | 'reviews';
+export type EntityType =
+  | 'library'
+  | 'assistant'
+  | 'categories'
+  | 'tags'
+  | 'reviews';
 
 export default class SyncStatus extends Model {
   static table = 'sync_status';
