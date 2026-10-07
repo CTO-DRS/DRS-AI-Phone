@@ -2212,3 +2212,39 @@ describe('streamChatCompletion reasoning payload', () => {
     await resultPromise;
   });
 });
+
+describe('request-time cleartext choke point (F-02 second line of defense)', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('refuses cleartext HTTP to public hosts before any fetch happens', async () => {
+    global.fetch = jest.fn();
+    await expect(fetchModels('http://api.openai.com')).rejects.toThrow(
+      /non-local host/i,
+    );
+    await expect(
+      fetchModelsWithHeaders('http://hub.drsai.app/v1'),
+    ).rejects.toThrow(/non-local host/i);
+    // testConnection reports failures as {ok:false, error} instead of throwing.
+    const result = await testConnection('http://8.8.8.8');
+    expect(result.ok).toBe(false);
+    expect(result.error).toMatch(/non-local host/i);
+    // The gate must fire before any network I/O — this also covers configs
+    // persisted by older app versions before ServerStore gated addServer.
+    expect(global.fetch).not.toHaveBeenCalled();
+  });
+
+  it('still allows cleartext HTTP for LAN servers', async () => {
+    global.fetch = jest.fn().mockResolvedValueOnce({
+      ok: true,
+      headers: mockHeaders(),
+      json: () => Promise.resolve({data: []}),
+    });
+    await expect(fetchModels('http://192.168.1.50:1234')).resolves.toEqual([]);
+    expect(global.fetch).toHaveBeenCalledWith(
+      'http://192.168.1.50:1234/v1/models',
+      expect.objectContaining({method: 'GET'}),
+    );
+  });
+});

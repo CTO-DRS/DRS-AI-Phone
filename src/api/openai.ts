@@ -9,6 +9,7 @@ import {
 } from '../utils/completionTypes';
 import {RemoteModelCaps} from '../utils/types';
 import {logger} from '../utils/logger';
+import {assertCleartextTargetAllowed} from '../utils/network';
 
 /**
  * Raw API response shape from OpenAI /v1/models. The optional fields are what
@@ -210,9 +211,19 @@ function buildHeaders(apiKey?: string): Record<string, string> {
 
 /**
  * Normalize server URL: remove trailing slash.
+ *
+ * Request-time security choke point (audit F-02/R-02, second line of
+ * defense): every remote-server request funnels through here, so the
+ * cleartext policy holds even for servers persisted by older app versions
+ * before ServerStore began gating addServer/updateServer, or any future
+ * path that skips the store-level checks. LAN endpoints (localhost, private
+ * IPv4, .local, single-label hostnames) are unaffected; everything else
+ * must use HTTPS.
  */
 function normalizeUrl(serverUrl: string): string {
-  return serverUrl.replace(/\/+$/, '');
+  const trimmed = serverUrl.replace(/\/+$/, '');
+  assertCleartextTargetAllowed(trimmed);
+  return trimmed;
 }
 
 /** Result from fetchModelsWithHeaders: models + raw response headers. */
