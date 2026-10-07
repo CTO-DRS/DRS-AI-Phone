@@ -266,6 +266,7 @@ Licensed under the [MIT License](LICENSE).
 
 DRS AI stands on the shoulders of the open-source community, including:
 
+- **[the upstream project](https://github.com/upstream-author/drs-ai)** — the open-source React Native app whose on-device model management, chat infrastructure, and UI foundations DRS AI started from. Thank you for the excellent foundation.
 - **[llama.cpp](https://github.com/ggerganov/llama.cpp)** — efficient on-device LLM inference.
 - **[llama.rn](https://github.com/mybigday/llama.rn)** — llama.cpp bindings for React Native.
 - **[ONNX Runtime](https://onnxruntime.ai/)** — cross-platform inference engine powering on-device TTS.
