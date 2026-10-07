@@ -7,8 +7,8 @@ import {LEGACY_SCHEMA} from '../legacyCompat';
 // devices at those schema versions; their columns must therefore agree
 // with the RENAMED counterpart table in the current schema.
 const legacyToRenamedTable: Record<string, string> = {
-  [LEGACY_SCHEMA.localAssistantsTable]: 'local_assistants',
-  [LEGACY_SCHEMA.cachedAssistantsTable]: 'cached_assistants',
+  [LEGACY_SCHEMA.localPalsTable]: 'local_assistants',
+  [LEGACY_SCHEMA.cachedPalsTable]: 'cached_assistants',
 };
 
 // The watermelondb mock's `addColumns` takes (table, columns) where the real API

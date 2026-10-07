@@ -10,16 +10,20 @@
  * names may appear. All request bodies and typed response fields must
  * reference these constants. Once the server renames its fields, flip
  * the values here and every call site follows automatically.
+ *
+ * NOTE: the values below are intentional server-contract strings and
+ * MUST NOT be "modernized" by bulk renames — that would silently break
+ * every DrsHub API call against the deployed backend.
  */
 export const DRS_HUB_WIRE = {
   /**
    * Request-body field that identifies an assistant on endpoints that
    * mutate reviews and purchases (server contract, POST bodies).
    */
-  assistantIdField: 'assistant_id',
+  assistantIdField: 'pal_id',
   /**
    * Response field in the my-assistants summary that reports how many
    * assistants the user has created (server contract, GET response).
    */
-  totalAssistantsField: 'total_assistants',
+  totalAssistantsField: 'total_pals',
 } as const;

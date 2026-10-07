@@ -12,7 +12,7 @@ export default schemaMigrations({
       toVersion: 2,
       steps: [
         createTable({
-          name: LEGACY_SCHEMA.cachedAssistantsTable,
+          name: LEGACY_SCHEMA.cachedPalsTable,
           columns: [
             {name: 'drshub_id', type: 'string', isIndexed: true},
             {name: 'title', type: 'string'},
@@ -69,7 +69,7 @@ export default schemaMigrations({
       toVersion: 3,
       steps: [
         createTable({
-          name: LEGACY_SCHEMA.localAssistantsTable,
+          name: LEGACY_SCHEMA.localPalsTable,
           columns: [
             {name: 'name', type: 'string'},
             {name: 'system_prompt', type: 'string'},
@@ -105,7 +105,7 @@ export default schemaMigrations({
       toVersion: 4,
       steps: [
         addColumns({
-          table: LEGACY_SCHEMA.localAssistantsTable,
+          table: LEGACY_SCHEMA.localPalsTable,
           columns: [{name: 'description', type: 'string', isOptional: true}],
         }),
       ],
@@ -115,7 +115,7 @@ export default schemaMigrations({
       toVersion: 5,
       steps: [
         addColumns({
-          table: LEGACY_SCHEMA.localAssistantsTable,
+          table: LEGACY_SCHEMA.localPalsTable,
           columns: [{name: 'thumbnail_url', type: 'string', isOptional: true}],
         }),
       ],
@@ -137,7 +137,7 @@ export default schemaMigrations({
       toVersion: 7,
       steps: [
         addColumns({
-          table: LEGACY_SCHEMA.localAssistantsTable,
+          table: LEGACY_SCHEMA.localPalsTable,
           columns: [
             {name: 'pact', type: 'string', isOptional: true}, // JSON stringified { talents: TalentRef[] }
             {name: 'greeting', type: 'string', isOptional: true}, // JSON stringified Assistant['greeting']

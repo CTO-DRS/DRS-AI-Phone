@@ -26,7 +26,7 @@ class AssistantRepository {
       // AsyncStorage migration wrote the legacy flag filename; honor it
       // and upgrade the marker to the renamed one.
       const migrationFlagPath = `${RNFS.DocumentDirectoryPath}/assistant-db-migration-complete.flag`;
-      const legacyFlagPath = `${RNFS.DocumentDirectoryPath}/${LEGACY_SCHEMA.assistantDbMigrationFlag}`;
+      const legacyFlagPath = `${RNFS.DocumentDirectoryPath}/${LEGACY_SCHEMA.palDbMigrationFlag}`;
 
       if (!(await RNFS.exists(migrationFlagPath))) {
         if (await RNFS.exists(legacyFlagPath)) {
