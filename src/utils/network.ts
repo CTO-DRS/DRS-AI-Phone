@@ -1,6 +1,18 @@
 import axios from 'axios';
 
 /**
+ * Full-match IPv4 checks for loopback and RFC1918/link-local space. Never
+ * use startsWith: `10.0.0.0.evil.com` is a public domain, not a LAN host.
+ */
+const PRIVATE_IPV4_PATTERNS: RegExp[] = [
+  /^127\.\d+\.\d+\.\d+$/, // loopback
+  /^10\.\d+\.\d+\.\d+$/, // RFC1918 10/8
+  /^192\.168\.\d+\.\d+$/, // RFC1918 192.168/16
+  /^172\.(1[6-9]|2\d|3[01])\.\d+\.\d+$/, // RFC1918 172.16/12
+  /^169\.254\.\d+\.\d+$/, // link-local
+];
+
+/**
  * Checks if the device has internet connectivity
  * @param timeoutMs Timeout in milliseconds (default: 5000)
  * @returns Promise resolving to boolean indicating connectivity status
@@ -47,14 +59,11 @@ export function isLocalHost(url: string): boolean {
     if (!host.includes('.') && !host.includes(':')) {
       return true;
     }
-    // IPv4 private / reserved ranges
-    if (
-      host.startsWith('127.') ||
-      host.startsWith('10.') ||
-      host.startsWith('192.168.') ||
-      host.startsWith('169.254.') ||
-      /^172\.(1[6-9]|2\d|3[01])\./.test(host)
-    ) {
+    // IPv4 private / reserved ranges. Full-match only: a prefix test like
+    // startsWith('10.') would let attacker domains such as
+    // `10.0.0.0.evil.com` pass as "local" and re-open the cleartext door
+    // this guard exists to close.
+    if (PRIVATE_IPV4_PATTERNS.some(re => re.test(host))) {
       return true;
     }
     // IPv6 literals (URL.hostname strips the brackets)
@@ -75,6 +84,10 @@ export function isLocalHost(url: string): boolean {
  * as a domain rule. This app-layer check is the compensating control:
  * `http://` is only accepted for local/LAN hosts, so a public host can never
  * be saved with an unencrypted connection. HTTPS is always allowed.
+ * The guard fails CLOSED: a URL that cannot even be parsed has no provable
+ * local host, so it must not be blessed. Legitimate callers validate the
+ * URL format separately, so the only behavioral change is that malformed
+ * `http...` strings can no longer slip past the cleartext gate.
  */
 export function isCleartextUrlAllowed(url: string): boolean {
   try {
@@ -83,7 +96,29 @@ export function isCleartextUrlAllowed(url: string): boolean {
     }
     return isLocalHost(url);
   } catch {
-    // Malformed URLs fail their own validation paths; do not double-report.
-    return true;
+    return false;
+  }
+}
+
+/**
+ * Throw a descriptive error when a request would send cleartext HTTP to a
+ * non-local target. Used at the request-time choke point
+ * (src/api/openai.ts::normalizeUrl) so persisted configs from older
+ * versions — or any path that skips the ServerStore/UI gates — cannot
+ * silently downgrade a remote server connection to public cleartext HTTP.
+ */
+export function assertCleartextTargetAllowed(url: string): void {
+  if (!isCleartextUrlAllowed(url)) {
+    let host = url;
+    try {
+      host = new URL(url).hostname;
+    } catch {
+      // keep raw string as the "host" in the message
+    }
+    throw new Error(
+      `Refusing to send unencrypted HTTP to non-local host: ${host}. ` +
+        'LAN servers (localhost, private IPv4, .local, single-label hostnames) may use HTTP; ' +
+        'everything else must use HTTPS.',
+    );
   }
 }

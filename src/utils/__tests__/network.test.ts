@@ -70,6 +70,11 @@ describe('network utilities', () => {
       ['http://11.0.0.1:8080', false],
       ['http://example.com', false],
       ['https://example.com', false],
+      // prefix-bypass attempts: public domains that start with private IPs
+      ['http://10.0.0.0.evil.com', false],
+      ['http://192.168.1.1.evil.com', false],
+      ['http://127.0.0.1.evil.com', false],
+      ['http://169.254.1.1.evil.com', false],
     ])('%s -> %s', (url, expected) => {
       expect(isLocalHost(url)).toBe(expected);
     });
@@ -93,8 +98,29 @@ describe('network utilities', () => {
       expect(isCleartextUrlAllowed('http://a.com')).toBe(false);
     });
 
-    it('does not throw on malformed URLs (handled elsewhere)', () => {
-      expect(isCleartextUrlAllowed('not a url')).toBe(true);
+    it('rejects public domains disguised as private IPs (prefix bypass)', () => {
+      // A prefix test (startsWith('10.') etc.) would bless attacker domains
+      // like these and re-open the cleartext door. Full-match only.
+      expect(isCleartextUrlAllowed('http://10.0.0.0.evil.com')).toBe(false);
+      expect(isCleartextUrlAllowed('http://192.168.1.1.evil.com')).toBe(false);
+      expect(isCleartextUrlAllowed('http://127.0.0.1.public.example')).toBe(
+        false,
+      );
+      expect(isCleartextUrlAllowed('http://169.254.169.254.evil.com')).toBe(
+        false,
+      );
+      expect(isCleartextUrlAllowed('http://172.16.0.1.attacker.test')).toBe(
+        false,
+      );
+    });
+
+    it('fails closed on malformed URLs (security control)', () => {
+      // A URL that cannot be parsed has no provable local host, so the
+      // cleartext gate must not bless it. Legitimate callers validate URL
+      // format separately.
+      expect(isCleartextUrlAllowed('not a url')).toBe(false);
+      expect(isCleartextUrlAllowed('')).toBe(false);
+      expect(isCleartextUrlAllowed('http://')).toBe(false);
     });
   });
 });
