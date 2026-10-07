@@ -130,7 +130,7 @@ class SyncService {
         for (const assistant of libraryResponse.assistants) {
           await userLibraryCollection.create((entry: UserLibrary) => {
             entry.userId = authService.user!.id;
-            entry.drshubId = assistant.id; // Use assistant.id instead of assistant_id
+            entry.drshubId = assistant.id;
             entry.purchasedAt = Date.now(); // Use current time since purchase info not available
             entry.purchaseId = undefined; // Purchase ID not available in processed response
             entry.isDownloaded = false; // Will be updated when Assistant is downloaded

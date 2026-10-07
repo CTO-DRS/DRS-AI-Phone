@@ -1,5 +1,15 @@
 import migrations from '../migrations';
 import schema from '../schema';
+import {LEGACY_SCHEMA} from '../legacyCompat';
+
+// Schema v9 renamed the legacy data layer. Historical addColumns steps
+// (v4/v5/v7) correctly target the legacy table names that existed on
+// devices at those schema versions; their columns must therefore agree
+// with the RENAMED counterpart table in the current schema.
+const legacyToRenamedTable: Record<string, string> = {
+  [LEGACY_SCHEMA.localAssistantsTable]: 'local_assistants',
+  [LEGACY_SCHEMA.cachedAssistantsTable]: 'cached_assistants',
+};
 
 // The watermelondb mock's `addColumns` takes (table, columns) where the real API
 // takes a single {table, columns} object, so a mocked step nests the payload
@@ -36,11 +46,12 @@ describe('database schema and migrations agree', () => {
           continue;
         }
         const {table, columns} = stepPayload(step);
+        const targetTable = legacyToRenamedTable[table] ?? table;
 
-        expect(tables[table]).toBeDefined();
+        expect(tables[targetTable]).toBeDefined();
 
         for (const column of columns) {
-          const declared = tables[table].columns.find(
+          const declared = tables[targetTable].columns.find(
             (c: any) => c.name === column.name,
           );
           expect(declared).toBeDefined();

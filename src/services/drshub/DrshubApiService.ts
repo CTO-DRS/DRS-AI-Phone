@@ -13,6 +13,7 @@ import type {
 } from '../../types/drshub';
 
 import {DrshubError} from './DrshubError';
+import {DRS_HUB_WIRE} from './wireContract';
 export {DrshubError};
 
 // API Response types (matching the new API format)
@@ -115,7 +116,7 @@ interface ApiMyAssistantsResponse {
     sort: string;
   };
   summary: {
-    total_assistants: number;
+    [DRS_HUB_WIRE.totalAssistantsField]: number;
     total_revenue_cents: number;
     total_sales: number;
     average_rating: number | null;
@@ -384,7 +385,7 @@ class DrshubApiService {
     // Tax location is derived server-side from the billing address Stripe
     // collects at checkout; the app sends no country hint.
     const body: Record<string, string> = {
-      assistant_id: assistantId,
+      [DRS_HUB_WIRE.assistantIdField]: assistantId,
       success_url: successUrl,
       cancel_url: cancelUrl,
     };
