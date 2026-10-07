@@ -1,0 +1,13 @@
+diff --git a/node_modules/llama.rn/android/build.gradle b/node_modules/llama.rn/android/build.gradle
+index 7ac9615..205bc4e 100644
+--- a/node_modules/llama.rn/android/build.gradle
++++ b/node_modules/llama.rn/android/build.gradle
+@@ -171,7 +171,7 @@ android {
+     externalNativeBuild {
+       cmake {
+         abiFilters (*reactNativeArchitectures())
+-        arguments(*cmakeArgs)
++        arguments(*cmakeArgs, "-DCMAKE_CXX_FLAGS_DEBUG=-g0", "-DCMAKE_C_FLAGS_DEBUG=-g0")
+       }
+     }
+   }
