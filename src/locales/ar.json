@@ -1227,7 +1227,8 @@
       "deleteFolderTitle": "حذف المجلد",
       "deleteFolderMessage": "ستُحفظ المحادثات لكنها لن تنتمي بعد الآن إلى مجلد \"{{name}}\".",
       "deleteTagTitle": "إزالة الوسم",
-      "deleteTagMessage": "سيُزال الوسم \"{{name}}\" من جميع المحادثات."
+      "deleteTagMessage": "سيُزال الوسم \"{{name}}\" من جميع المحادثات.",
+      "renameFolderTitle": "إعادة تسمية المجلد"
     },
     "usageStats": {
       "tooltip": {
@@ -1236,7 +1237,12 @@
         "total": "الإجمالي: ",
         "usage": "الاستخدام: "
       },
-      "byteSizes": ["Bytes", "KB", "MB", "GB"]
+      "byteSizes": [
+        "Bytes",
+        "KB",
+        "MB",
+        "GB"
+      ]
     },
     "chatView": {
       "menuItems": {

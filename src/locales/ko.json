@@ -976,7 +976,8 @@
       "exportCurrentSessionError": "현재 세션을 내보내지 못했습니다.",
       "exportAllError": "모든 세션을 내보내지 못했습니다.",
       "importSuccessTitle": "가져오기 성공",
-      "importErrorTitle": "가져오기 오류"
+      "importErrorTitle": "가져오기 오류",
+      "exportCurrentSessionPdf": "PDF로 내보내기"
     },
     "hfTokenSheet": {
       "title": "Hugging Face 토큰",
@@ -1211,7 +1212,23 @@
         "older": "오래된 항목"
       },
       "emptySessionsTitle": "아직 채팅이 없습니다",
-      "emptySessionsHint": "채팅 화면에서 새 대화를 시작하세요"
+      "emptySessionsHint": "채팅 화면에서 새 대화를 시작하세요",
+      "searchSessions": "채팅 검색",
+      "searchResults": "검색 결과",
+      "noSearchResults": "채팅을 찾을 수 없습니다",
+      "noSearchResultsHint": "다른 키워드로 시도해 보세요",
+      "clearFilters": "필터 지우기",
+      "filteredBy": "필터:",
+      "statistics": "통계",
+      "moveToFolder": "폴더로 이동...",
+      "editTags": "태그 편집...",
+      "folders": "폴더",
+      "tags": "태그",
+      "renameFolderTitle": "폴더 이름 바꾸기",
+      "deleteFolderTitle": "폴더 삭제",
+      "deleteFolderMessage": "채팅은 유지되지만 더 이상 \"{{name}}\" 폴더에 속하지 않게 됩니다.",
+      "deleteTagTitle": "태그 삭제",
+      "deleteTagMessage": "\"{{name}}\" 태그가 모든 채팅에서 제거됩니다."
     },
     "usageStats": {
       "tooltip": {
@@ -1294,6 +1311,45 @@
       "switch": "전환",
       "shareErrorTitle": "공유 오류",
       "shareErrorMessage": "어시스턴트를 공유하지 못했습니다. 다시 시도해 주세요."
+    },
+    "chatPdf": {
+      "exported": "내보냄",
+      "user": "사용자",
+      "assistant": "어시스턴트",
+      "image": "이미지",
+      "page": "페이지"
+    },
+    "chatStats": {
+      "title": "채팅 통계",
+      "globalTitle": "전체 통계",
+      "sessionTitle": "세션 통계",
+      "sessions": "세션",
+      "totalMessages": "메시지",
+      "userMessages": "내 메시지",
+      "assistantMessages": "어시스턴트 메시지",
+      "totalWords": "단어",
+      "userWords": "내 단어",
+      "assistantWords": "어시스턴트 단어",
+      "totalChars": "문자",
+      "topTopics": "가장 자주 나온 주제",
+      "noTopics": "주제를 감지하기에는 메시지가 아직 부족합니다.",
+      "firstActivity": "첫 활동",
+      "lastActivity": "마지막 활동",
+      "emptySession": "이 세션에는 아직 메시지가 없습니다.",
+      "loadError": "통계를 불러올 수 없습니다."
+    },
+    "folderModal": {
+      "title": "폴더로 이동",
+      "inputLabel": "폴더 이름",
+      "inputPlaceholder": "폴더 이름 입력",
+      "existing": "기존 폴더",
+      "remove": "폴더에서 제거"
+    },
+    "tagsModal": {
+      "title": "태그 편집",
+      "inputLabel": "태그",
+      "inputPlaceholder": "쉼표로 구분, 예: 작업, 아이디어",
+      "suggestions": "기존 태그"
     }
   },
   "assistantsScreen": {

@@ -976,7 +976,8 @@
       "exportCurrentSessionError": "Échec de l'exportation de la session actuelle.",
       "exportAllError": "Échec de l'exportation de toutes les sessions.",
       "importSuccessTitle": "Importation réussie",
-      "importErrorTitle": "Erreur d'importation"
+      "importErrorTitle": "Erreur d'importation",
+      "exportCurrentSessionPdf": "Exporter en PDF"
     },
     "hfTokenSheet": {
       "title": "Token Hugging Face",
@@ -1211,7 +1212,23 @@
         "older": "Plus ancien"
       },
       "emptySessionsTitle": "Aucune discussion pour l'instant",
-      "emptySessionsHint": "Démarrez une nouvelle conversation depuis l'écran de discussion"
+      "emptySessionsHint": "Démarrez une nouvelle conversation depuis l'écran de discussion",
+      "searchSessions": "Rechercher dans les chats",
+      "searchResults": "Résultats de recherche",
+      "noSearchResults": "Aucun chat trouvé",
+      "noSearchResultsHint": "Essayez un autre mot-clé",
+      "clearFilters": "Effacer les filtres",
+      "filteredBy": "Filtré par",
+      "statistics": "Statistiques",
+      "moveToFolder": "Déplacer vers un dossier...",
+      "editTags": "Modifier les étiquettes...",
+      "folders": "Dossiers",
+      "tags": "Étiquettes",
+      "renameFolderTitle": "Renommer le dossier",
+      "deleteFolderTitle": "Supprimer le dossier",
+      "deleteFolderMessage": "Les chats seront conservés, mais ils n'appartiendront plus au dossier \"{{name}}\".",
+      "deleteTagTitle": "Retirer l'étiquette",
+      "deleteTagMessage": "L'étiquette \"{{name}}\" sera retirée de tous les chats."
     },
     "usageStats": {
       "tooltip": {
@@ -1294,6 +1311,45 @@
       "switch": "Changer",
       "shareErrorTitle": "Erreur de partage",
       "shareErrorMessage": "Échec du partage de l'assistant. Veuillez réessayer."
+    },
+    "chatPdf": {
+      "exported": "Exporté",
+      "user": "Utilisateur",
+      "assistant": "Assistant",
+      "image": "image",
+      "page": "Page"
+    },
+    "chatStats": {
+      "title": "Statistiques du chat",
+      "globalTitle": "Statistiques globales",
+      "sessionTitle": "Statistiques de la session",
+      "sessions": "Sessions",
+      "totalMessages": "Messages",
+      "userMessages": "Vos messages",
+      "assistantMessages": "Messages de l'assistant",
+      "totalWords": "Mots",
+      "userWords": "Vos mots",
+      "assistantWords": "Mots de l'assistant",
+      "totalChars": "Caractères",
+      "topTopics": "Sujets les plus fréquents",
+      "noTopics": "Pas assez de messages pour détecter des sujets pour le moment.",
+      "firstActivity": "Première activité",
+      "lastActivity": "Dernière activité",
+      "emptySession": "Cette session n'a pas encore de messages.",
+      "loadError": "Impossible de charger les statistiques."
+    },
+    "folderModal": {
+      "title": "Déplacer vers un dossier",
+      "inputLabel": "Nom du dossier",
+      "inputPlaceholder": "Saisir un nom de dossier",
+      "existing": "Dossiers existants",
+      "remove": "Retirer du dossier"
+    },
+    "tagsModal": {
+      "title": "Modifier les étiquettes",
+      "inputLabel": "Étiquettes",
+      "inputPlaceholder": "Séparées par des virgules, ex. travail, idées",
+      "suggestions": "Étiquettes existantes"
     }
   },
   "assistantsScreen": {

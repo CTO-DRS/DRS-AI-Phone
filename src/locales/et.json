@@ -976,7 +976,8 @@
       "exportCurrentSessionError": "Praeguse sessiooni eksportimine ebaõnnestus.",
       "exportAllError": "Kõigi sessioonide eksportimine ebaõnnestus.",
       "importSuccessTitle": "Importimine õnnestus",
-      "importErrorTitle": "Importimise viga"
+      "importErrorTitle": "Importimise viga",
+      "exportCurrentSessionPdf": "Ekspordi PDF-i"
     },
     "hfTokenSheet": {
       "title": "Hugging Face'i token",
@@ -1211,7 +1212,23 @@
         "older": "Vanemad"
       },
       "emptySessionsTitle": "Vestlusi pole veel",
-      "emptySessionsHint": "Alusta uut vestlust vestlusvaatest"
+      "emptySessionsHint": "Alusta uut vestlust vestlusvaatest",
+      "searchSessions": "Otsi vestlusi",
+      "searchResults": "Otsingutulemused",
+      "noSearchResults": "Vestlusi ei leitud",
+      "noSearchResultsHint": "Proovi teist märksõna",
+      "clearFilters": "Tühista filtrid",
+      "filteredBy": "Filtreeritud:",
+      "statistics": "Statistika",
+      "moveToFolder": "Teisalda kausta...",
+      "editTags": "Muuda silte...",
+      "folders": "Kaustad",
+      "tags": "Sildid",
+      "renameFolderTitle": "Nimeta kaust ümber",
+      "deleteFolderTitle": "Kustuta kaust",
+      "deleteFolderMessage": "Vestlused jäävad alles, kuid nad ei kuulu enam kausta \"{{name}}\".",
+      "deleteTagTitle": "Eemalda silt",
+      "deleteTagMessage": "Silt \"{{name}}\" eemaldatakse kõigist vestlustest."
     },
     "usageStats": {
       "tooltip": {
@@ -1294,6 +1311,45 @@
       "switch": "Lülita",
       "shareErrorTitle": "Jagamise viga",
       "shareErrorMessage": "Abilise jagamine ebaõnnestus. Palun proovi uuesti."
+    },
+    "chatPdf": {
+      "exported": "Eksporditud",
+      "user": "Kasutaja",
+      "assistant": "Abiline",
+      "image": "pilt",
+      "page": "Leht"
+    },
+    "chatStats": {
+      "title": "Vestluse statistika",
+      "globalTitle": "Üldine statistika",
+      "sessionTitle": "Sessiooni statistika",
+      "sessions": "Sessioonid",
+      "totalMessages": "Sõnumid",
+      "userMessages": "Sinu sõnumid",
+      "assistantMessages": "Assistendi sõnumid",
+      "totalWords": "Sõnad",
+      "userWords": "Sinu sõnad",
+      "assistantWords": "Assistendi sõnad",
+      "totalChars": "Märgid",
+      "topTopics": "Kõige sagedasemad teemad",
+      "noTopics": "Teemade tuvastamiseks pole veel piisavalt sõnumeid.",
+      "firstActivity": "Esimene tegevus",
+      "lastActivity": "Viimane tegevus",
+      "emptySession": "Selles sessioonis pole veel sõnumeid.",
+      "loadError": "Statistikat ei saanud laadida."
+    },
+    "folderModal": {
+      "title": "Teisalda kausta",
+      "inputLabel": "Kausta nimi",
+      "inputPlaceholder": "Sisesta kausta nimi",
+      "existing": "Olemasolevad kaustad",
+      "remove": "Eemalda kaustast"
+    },
+    "tagsModal": {
+      "title": "Muuda silte",
+      "inputLabel": "Sildid",
+      "inputPlaceholder": "Komadega eraldatud, nt töö, ideed",
+      "suggestions": "Olemasolevad sildid"
     }
   },
   "assistantsScreen": {

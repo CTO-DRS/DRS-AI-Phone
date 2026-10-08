@@ -976,7 +976,8 @@
       "exportCurrentSessionError": "Nie udało się wyeksportować bieżącej sesji.",
       "exportAllError": "Nie udało się wyeksportować wszystkich sesji.",
       "importSuccessTitle": "Import Zakończony",
-      "importErrorTitle": "Błąd Importu"
+      "importErrorTitle": "Błąd Importu",
+      "exportCurrentSessionPdf": "Eksportuj jako PDF"
     },
     "hfTokenSheet": {
       "title": "Token Hugging Face",
@@ -1211,7 +1212,23 @@
         "older": "Starsze"
       },
       "emptySessionsTitle": "Brak czatów",
-      "emptySessionsHint": "Rozpocznij nową rozmowę na ekranie czatu"
+      "emptySessionsHint": "Rozpocznij nową rozmowę na ekranie czatu",
+      "searchSessions": "Szukaj w czatach",
+      "searchResults": "Wyniki wyszukiwania",
+      "noSearchResults": "Nie znaleziono czatów",
+      "noSearchResultsHint": "Spróbuj innego słowa kluczowego",
+      "clearFilters": "Wyczyść filtry",
+      "filteredBy": "Filtrowanie wg",
+      "statistics": "Statystyki",
+      "moveToFolder": "Przenieś do folderu...",
+      "editTags": "Edytuj tagi...",
+      "folders": "Foldery",
+      "tags": "Tagi",
+      "renameFolderTitle": "Zmień nazwę folderu",
+      "deleteFolderTitle": "Usuń folder",
+      "deleteFolderMessage": "Czaty zostaną zachowane, ale nie będą już należeć do folderu \"{{name}}\".",
+      "deleteTagTitle": "Usuń tag",
+      "deleteTagMessage": "Tag \"{{name}}\" zostanie usunięty ze wszystkich czatów."
     },
     "usageStats": {
       "tooltip": {
@@ -1294,6 +1311,45 @@
       "switch": "Przełącz",
       "shareErrorTitle": "Błąd Udostępniania",
       "shareErrorMessage": "Nie udało się udostępnić asystenta. Spróbuj ponownie."
+    },
+    "chatPdf": {
+      "exported": "Wyeksportowano",
+      "user": "Użytkownik",
+      "assistant": "Asystent",
+      "image": "obraz",
+      "page": "Strona"
+    },
+    "chatStats": {
+      "title": "Statystyki czatu",
+      "globalTitle": "Statystyki ogólne",
+      "sessionTitle": "Statystyki sesji",
+      "sessions": "Sesje",
+      "totalMessages": "Wiadomości",
+      "userMessages": "Twoje wiadomości",
+      "assistantMessages": "Wiadomości asystenta",
+      "totalWords": "Słowa",
+      "userWords": "Twoje słowa",
+      "assistantWords": "Słowa asystenta",
+      "totalChars": "Znaki",
+      "topTopics": "Najczęstsze tematy",
+      "noTopics": "Za mało wiadomości, aby wykryć tematy.",
+      "firstActivity": "Pierwsza aktywność",
+      "lastActivity": "Ostatnia aktywność",
+      "emptySession": "Ta sesja nie ma jeszcze wiadomości.",
+      "loadError": "Nie udało się wczytać statystyk."
+    },
+    "folderModal": {
+      "title": "Przenieś do folderu",
+      "inputLabel": "Nazwa folderu",
+      "inputPlaceholder": "Wpisz nazwę folderu",
+      "existing": "Istniejące foldery",
+      "remove": "Usuń z folderu"
+    },
+    "tagsModal": {
+      "title": "Edytuj tagi",
+      "inputLabel": "Tagi",
+      "inputPlaceholder": "Rozdzielone przecinkami, np. praca, pomysły",
+      "suggestions": "Istniejące tagi"
     }
   },
   "assistantsScreen": {

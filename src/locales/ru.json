@@ -976,7 +976,8 @@
       "exportCurrentSessionError": "Не удалось экспортировать текущую сессию.",
       "exportAllError": "Не удалось экспортировать все сессии.",
       "importSuccessTitle": "Успешный импорт",
-      "importErrorTitle": "Ошибка импорта"
+      "importErrorTitle": "Ошибка импорта",
+      "exportCurrentSessionPdf": "Экспорт в PDF"
     },
     "hfTokenSheet": {
       "title": "Токен Hugging Face",
@@ -1211,7 +1212,23 @@
         "older": "Старше"
       },
       "emptySessionsTitle": "Пока нет чатов",
-      "emptySessionsHint": "Начните новый разговор на экране чата"
+      "emptySessionsHint": "Начните новый разговор на экране чата",
+      "searchSessions": "Поиск по чатам",
+      "searchResults": "Результаты поиска",
+      "noSearchResults": "Чаты не найдены",
+      "noSearchResultsHint": "Попробуйте другое ключевое слово",
+      "clearFilters": "Сбросить фильтры",
+      "filteredBy": "Фильтр:",
+      "statistics": "Статистика",
+      "moveToFolder": "Переместить в папку...",
+      "editTags": "Изменить теги...",
+      "folders": "Папки",
+      "tags": "Теги",
+      "renameFolderTitle": "Переименовать папку",
+      "deleteFolderTitle": "Удалить папку",
+      "deleteFolderMessage": "Чаты сохранятся, но больше не будут относиться к папке \"{{name}}\".",
+      "deleteTagTitle": "Удалить тег",
+      "deleteTagMessage": "Тег \"{{name}}\" будет удалён из всех чатов."
     },
     "usageStats": {
       "tooltip": {
@@ -1294,6 +1311,45 @@
       "switch": "Сменить",
       "shareErrorTitle": "Ошибка отправки",
       "shareErrorMessage": "Не удалось поделиться ассистентом. Попробуйте ещё раз."
+    },
+    "chatPdf": {
+      "exported": "Экспортировано",
+      "user": "Пользователь",
+      "assistant": "Ассистент",
+      "image": "изображение",
+      "page": "Страница"
+    },
+    "chatStats": {
+      "title": "Статистика чата",
+      "globalTitle": "Общая статистика",
+      "sessionTitle": "Статистика сессии",
+      "sessions": "Сессии",
+      "totalMessages": "Сообщения",
+      "userMessages": "Ваши сообщения",
+      "assistantMessages": "Сообщения ассистента",
+      "totalWords": "Слова",
+      "userWords": "Ваши слова",
+      "assistantWords": "Слова ассистента",
+      "totalChars": "Символы",
+      "topTopics": "Самые частые темы",
+      "noTopics": "Сообщений пока недостаточно для определения тем.",
+      "firstActivity": "Первая активность",
+      "lastActivity": "Последняя активность",
+      "emptySession": "В этой сессии пока нет сообщений.",
+      "loadError": "Не удалось загрузить статистику."
+    },
+    "folderModal": {
+      "title": "Переместить в папку",
+      "inputLabel": "Название папки",
+      "inputPlaceholder": "Введите название папки",
+      "existing": "Существующие папки",
+      "remove": "Убрать из папки"
+    },
+    "tagsModal": {
+      "title": "Изменить теги",
+      "inputLabel": "Теги",
+      "inputPlaceholder": "Через запятую, например: работа, идеи",
+      "suggestions": "Существующие теги"
     }
   },
   "assistantsScreen": {

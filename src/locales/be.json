@@ -976,7 +976,8 @@
       "exportCurrentSessionError": "Не ўдалося экспартаваць бягучую сесію.",
       "exportAllError": "Не ўдалося экспартаваць усе сесіі.",
       "importSuccessTitle": "Імпарт удаўся",
-      "importErrorTitle": "Памылка імпарту"
+      "importErrorTitle": "Памылка імпарту",
+      "exportCurrentSessionPdf": "Экспарт у PDF"
     },
     "hfTokenSheet": {
       "title": "Токен Hugging Face",
@@ -1211,7 +1212,23 @@
         "older": "Старэйшыя"
       },
       "emptySessionsTitle": "Яшчэ няма чатаў",
-      "emptySessionsHint": "Пачніце новую размову з экрана чата"
+      "emptySessionsHint": "Пачніце новую размову з экрана чата",
+      "searchSessions": "Пошук па чатах",
+      "searchResults": "Вынікі пошуку",
+      "noSearchResults": "Чаты не знойдзены",
+      "noSearchResultsHint": "Паспрабуйце іншае ключавое слова",
+      "clearFilters": "Скінуць фільтры",
+      "filteredBy": "Фільтр:",
+      "statistics": "Статыстыка",
+      "moveToFolder": "Перамясціць у папку...",
+      "editTags": "Змяніць тэгі...",
+      "folders": "Папкі",
+      "tags": "Тэгі",
+      "renameFolderTitle": "Перайменаваць папку",
+      "deleteFolderTitle": "Выдаліць папку",
+      "deleteFolderMessage": "Чаты будуць захаваны, але яны больш не будуць належаць да папкі \"{{name}}\".",
+      "deleteTagTitle": "Выдаліць тэг",
+      "deleteTagMessage": "Тэг \"{{name}}\" будзе выдалены з усіх чатаў."
     },
     "usageStats": {
       "tooltip": {
@@ -1294,6 +1311,45 @@
       "switch": "Пераключыць",
       "shareErrorTitle": "Памылка абагульвання",
       "shareErrorMessage": "Не ўдалося абагуліць асістэнта. Паспрабуйце яшчэ раз."
+    },
+    "chatPdf": {
+      "exported": "Экспартавана",
+      "user": "Карыстальнік",
+      "assistant": "Асістэнт",
+      "image": "выява",
+      "page": "Старонка"
+    },
+    "chatStats": {
+      "title": "Статыстыка чата",
+      "globalTitle": "Агульная статыстыка",
+      "sessionTitle": "Статыстыка сесіі",
+      "sessions": "Сесіі",
+      "totalMessages": "Паведамленні",
+      "userMessages": "Вашы паведамленні",
+      "assistantMessages": "Паведамленні асістэнта",
+      "totalWords": "Словы",
+      "userWords": "Вашы словы",
+      "assistantWords": "Словы асістэнта",
+      "totalChars": "Сімвалы",
+      "topTopics": "Найчастейшыя тэмы",
+      "noTopics": "Паведамленняў пакуль недастаткова для вызначэння тэм.",
+      "firstActivity": "Першая актыўнасць",
+      "lastActivity": "Апошняя актыўнасць",
+      "emptySession": "У гэтай сесіі яшчэ няма паведамленняў.",
+      "loadError": "Не ўдалося загрузіць статыстыку."
+    },
+    "folderModal": {
+      "title": "Перамясціць у папку",
+      "inputLabel": "Назва папкі",
+      "inputPlaceholder": "Увядзіце назву папкі",
+      "existing": "Наяўныя папкі",
+      "remove": "Прыбраць з папкі"
+    },
+    "tagsModal": {
+      "title": "Змяніць тэгі",
+      "inputLabel": "Тэгі",
+      "inputPlaceholder": "Праз коскі, напрыклад: праца, ідэі",
+      "suggestions": "Наяўныя тэгі"
     }
   },
   "assistantsScreen": {

@@ -10,27 +10,40 @@ interface RenameModalProps {
   visible: boolean;
   onClose: () => void;
   session: SessionMetaData | null;
+  /** When provided, the modal renames this folder instead of the session. */
+  folder?: string | null;
 }
 
 export const RenameModal: React.FC<RenameModalProps> = ({
   visible,
   onClose,
   session,
+  folder = null,
 }) => {
-  const [newTitle, setNewTitle] = React.useState(session?.title || '');
+  const [newTitle, setNewTitle] = React.useState(
+    folder || session?.title || '',
+  );
   const theme = useTheme();
   const styles = createStyles(theme);
   const l10n = useContext(L10nContext);
 
   useEffect(() => {
-    setNewTitle(session?.title || '');
-  }, [session, visible]);
+    setNewTitle(folder || session?.title || '');
+  }, [folder, session, visible]);
 
   const handleRename = async () => {
-    if (session?.id && newTitle.trim()) {
+    const trimmed = newTitle.trim();
+    if (folder) {
+      if (trimmed) {
+        await chatSessionStore.renameFolder(folder, trimmed);
+        onClose();
+      }
+      return;
+    }
+    if (session?.id && trimmed) {
       await chatSessionStore.updateSessionTitleBySessionId(
         session?.id,
-        newTitle,
+        trimmed,
       );
       onClose();
     }
@@ -48,10 +61,18 @@ export const RenameModal: React.FC<RenameModalProps> = ({
       animationType="fade">
       <View style={styles.modalOverlay}>
         <View style={styles.modalContent}>
-          <Text style={styles.modalTitle}>{l10n.common.rename}</Text>
+          <Text style={styles.modalTitle}>
+            {folder
+              ? l10n.components.sidebarContent.renameFolderTitle
+              : l10n.common.rename}
+          </Text>
           <TextInput
             style={styles.textInput}
-            placeholder="New Title"
+            placeholder={
+              folder
+                ? l10n.components.folderModal.inputPlaceholder
+                : 'New Title'
+            }
             placeholderTextColor={theme.colors.onSurfaceVariant}
             value={newTitle}
             maxLength={100}

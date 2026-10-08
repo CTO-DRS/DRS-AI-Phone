@@ -976,7 +976,8 @@
       "exportCurrentSessionError": "Gagal mengekspor sesi saat ini.",
       "exportAllError": "Gagal mengekspor semua sesi.",
       "importSuccessTitle": "Impor Berhasil",
-      "importErrorTitle": "Kesalahan Impor"
+      "importErrorTitle": "Kesalahan Impor",
+      "exportCurrentSessionPdf": "Ekspor sebagai PDF"
     },
     "hfTokenSheet": {
       "title": "Token Hugging Face",
@@ -1211,7 +1212,23 @@
         "older": "Lebih Lama"
       },
       "emptySessionsTitle": "Belum ada obrolan",
-      "emptySessionsHint": "Mulai percakapan baru dari layar obrolan"
+      "emptySessionsHint": "Mulai percakapan baru dari layar obrolan",
+      "searchSessions": "Cari chat",
+      "searchResults": "Hasil pencarian",
+      "noSearchResults": "Tidak ada chat yang cocok",
+      "noSearchResultsHint": "Coba kata kunci lain",
+      "clearFilters": "Hapus filter",
+      "filteredBy": "Difilter berdasarkan",
+      "statistics": "Statistik",
+      "moveToFolder": "Pindahkan ke folder...",
+      "editTags": "Edit tag...",
+      "folders": "Folder",
+      "tags": "Tag",
+      "renameFolderTitle": "Ganti nama folder",
+      "deleteFolderTitle": "Hapus folder",
+      "deleteFolderMessage": "Chat akan tetap disimpan, tetapi tidak lagi termasuk dalam folder \"{{name}}\".",
+      "deleteTagTitle": "Hapus tag",
+      "deleteTagMessage": "Tag \"{{name}}\" akan dihapus dari semua chat."
     },
     "usageStats": {
       "tooltip": {
@@ -1294,6 +1311,45 @@
       "switch": "Ganti",
       "shareErrorTitle": "Kesalahan Berbagi",
       "shareErrorMessage": "Gagal berbagi asisten. Silakan coba lagi."
+    },
+    "chatPdf": {
+      "exported": "Terekspor",
+      "user": "Pengguna",
+      "assistant": "Asisten",
+      "image": "gambar",
+      "page": "Halaman"
+    },
+    "chatStats": {
+      "title": "Statistik chat",
+      "globalTitle": "Statistik keseluruhan",
+      "sessionTitle": "Statistik sesi",
+      "sessions": "Sesi",
+      "totalMessages": "Pesan",
+      "userMessages": "Pesan Anda",
+      "assistantMessages": "Pesan asisten",
+      "totalWords": "Kata",
+      "userWords": "Kata Anda",
+      "assistantWords": "Kata asisten",
+      "totalChars": "Karakter",
+      "topTopics": "Topik paling sering",
+      "noTopics": "Belum cukup pesan untuk mendeteksi topik.",
+      "firstActivity": "Aktivitas pertama",
+      "lastActivity": "Aktivitas terakhir",
+      "emptySession": "Sesi ini belum memiliki pesan.",
+      "loadError": "Tidak dapat memuat statistik."
+    },
+    "folderModal": {
+      "title": "Pindahkan ke folder",
+      "inputLabel": "Nama folder",
+      "inputPlaceholder": "Masukkan nama folder",
+      "existing": "Folder yang ada",
+      "remove": "Hapus dari folder"
+    },
+    "tagsModal": {
+      "title": "Edit tag",
+      "inputLabel": "Tag",
+      "inputPlaceholder": "Pisahkan dengan koma, mis. kerja, ide",
+      "suggestions": "Tag yang ada"
     }
   },
   "assistantsScreen": {

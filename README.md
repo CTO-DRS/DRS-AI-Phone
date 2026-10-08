@@ -40,7 +40,7 @@ Most AI apps are a thin window onto someone else's server — every message you 
 - **🗣️ Text-to-speech** — give your assistant a voice with on-device neural TTS (Kokoro and other engines), no cloud calls.
 - **🎭 Assistants** — create personalized assistants with their own model, system prompt, and personality (Assistant and Roleplay types).
 - **🔎 Chat history search** — instantly filter your conversations by title or message content from the sidebar, with Arabic/RTL-aware layout.
-- **🗂️ Folders & tags** — organize chats into folders and tag them with keywords; one-tap filter chips live right under the search bar (long-press a chip to delete a folder or a tag everywhere).
+- **🗂️ Folders & tags** — organize chats into folders and tag them with keywords; one-tap filter chips live right under the search bar (long-press a chip to rename or delete a folder, or delete a tag everywhere).
 - **📊 Chat statistics** — see message/word counts per session or across all history, plus the most frequent topics you chat about.
 - **📄 PDF export** — export any chat as a print-ready PDF (alongside JSON and Markdown), with full right-to-left/Arabic typesetting powered by an embedded Amiri font.
 - **🛍️ Drshub** — discover and install community Assistants from the in-app marketplace (disabled by default in this build).

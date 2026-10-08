@@ -976,7 +976,8 @@
       "exportCurrentSessionError": "現在のセッションのエクスポートに失敗しました。",
       "exportAllError": "すべてのセッションのエクスポートに失敗しました。",
       "importSuccessTitle": "インポート成功",
-      "importErrorTitle": "インポートエラー"
+      "importErrorTitle": "インポートエラー",
+      "exportCurrentSessionPdf": "PDFとして書き出す"
     },
     "hfTokenSheet": {
       "title": "Hugging Face トークン",
@@ -1211,7 +1212,23 @@
         "older": "それ以前"
       },
       "emptySessionsTitle": "まだチャットがありません",
-      "emptySessionsHint": "チャット画面から新しい会話を始めましょう"
+      "emptySessionsHint": "チャット画面から新しい会話を始めましょう",
+      "searchSessions": "チャットを検索",
+      "searchResults": "検索結果",
+      "noSearchResults": "チャットが見つかりません",
+      "noSearchResultsHint": "別のキーワードをお試しください",
+      "clearFilters": "フィルタをクリア",
+      "filteredBy": "フィルタ:",
+      "statistics": "統計",
+      "moveToFolder": "フォルダに移動...",
+      "editTags": "タグを編集...",
+      "folders": "フォルダ",
+      "tags": "タグ",
+      "renameFolderTitle": "フォルダ名を変更",
+      "deleteFolderTitle": "フォルダを削除",
+      "deleteFolderMessage": "チャットは保持されますが、フォルダ「{{name}}」に属さなくなります。",
+      "deleteTagTitle": "タグを削除",
+      "deleteTagMessage": "タグ「{{name}}」がすべてのチャットから削除されます。"
     },
     "usageStats": {
       "tooltip": {
@@ -1294,6 +1311,45 @@
       "switch": "切り替え",
       "shareErrorTitle": "共有エラー",
       "shareErrorMessage": "アシスタントの共有に失敗しました。もう一度お試しください。"
+    },
+    "chatPdf": {
+      "exported": "書き出しました",
+      "user": "ユーザー",
+      "assistant": "アシスタント",
+      "image": "画像",
+      "page": "ページ"
+    },
+    "chatStats": {
+      "title": "チャット統計",
+      "globalTitle": "全体統計",
+      "sessionTitle": "セッション統計",
+      "sessions": "セッション",
+      "totalMessages": "メッセージ",
+      "userMessages": "あなたのメッセージ",
+      "assistantMessages": "アシスタントのメッセージ",
+      "totalWords": "単語",
+      "userWords": "あなたの単語",
+      "assistantWords": "アシスタントの単語",
+      "totalChars": "文字",
+      "topTopics": "最も多いトピック",
+      "noTopics": "トピックを検出するにはメッセージがまだ足りません。",
+      "firstActivity": "最初のアクティビティ",
+      "lastActivity": "最後のアクティビティ",
+      "emptySession": "このセッションにはまだメッセージがありません。",
+      "loadError": "統計を読み込めませんでした。"
+    },
+    "folderModal": {
+      "title": "フォルダに移動",
+      "inputLabel": "フォルダ名",
+      "inputPlaceholder": "フォルダ名を入力",
+      "existing": "既存のフォルダ",
+      "remove": "フォルダから削除"
+    },
+    "tagsModal": {
+      "title": "タグを編集",
+      "inputLabel": "タグ",
+      "inputPlaceholder": "カンマ区切りで入力（例: 仕事, アイデア）",
+      "suggestions": "既存のタグ"
     }
   },
   "assistantsScreen": {

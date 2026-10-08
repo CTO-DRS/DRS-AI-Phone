@@ -976,7 +976,8 @@
       "exportCurrentSessionError": "Det gick inte att exportera den aktuella sessionen.",
       "exportAllError": "Det gick inte att exportera alla sessioner.",
       "importSuccessTitle": "Importen lyckades",
-      "importErrorTitle": "Importfel"
+      "importErrorTitle": "Importfel",
+      "exportCurrentSessionPdf": "Exportera som PDF"
     },
     "hfTokenSheet": {
       "title": "Hugging Face-token",
@@ -1211,7 +1212,23 @@
         "older": "Äldre"
       },
       "emptySessionsTitle": "Inga chattar än",
-      "emptySessionsHint": "Starta ett nytt samtal från chattskärmen"
+      "emptySessionsHint": "Starta ett nytt samtal från chattskärmen",
+      "searchSessions": "Sök i chattar",
+      "searchResults": "Sökresultat",
+      "noSearchResults": "Inga chattar hittades",
+      "noSearchResultsHint": "Försök med ett annat sökord",
+      "clearFilters": "Rensa filter",
+      "filteredBy": "Filtrerat efter",
+      "statistics": "Statistik",
+      "moveToFolder": "Flytta till mapp...",
+      "editTags": "Redigera taggar...",
+      "folders": "Mappar",
+      "tags": "Taggar",
+      "renameFolderTitle": "Byt namn på mapp",
+      "deleteFolderTitle": "Ta bort mapp",
+      "deleteFolderMessage": "Chattarna behålls, men de kommer inte längre tillhöra mappen \"{{name}}\".",
+      "deleteTagTitle": "Ta bort tagg",
+      "deleteTagMessage": "Taggen \"{{name}}\" tas bort från alla chattar."
     },
     "usageStats": {
       "tooltip": {
@@ -1294,6 +1311,45 @@
       "switch": "Byt",
       "shareErrorTitle": "Delningsfel",
       "shareErrorMessage": "Det gick inte att dela assistenten. Försök igen."
+    },
+    "chatPdf": {
+      "exported": "Exporterad",
+      "user": "Användare",
+      "assistant": "Assistent",
+      "image": "bild",
+      "page": "Sida"
+    },
+    "chatStats": {
+      "title": "Chattstatistik",
+      "globalTitle": "Total statistik",
+      "sessionTitle": "Sessionsstatistik",
+      "sessions": "Sessioner",
+      "totalMessages": "Meddelanden",
+      "userMessages": "Dina meddelanden",
+      "assistantMessages": "Assistentmeddelanden",
+      "totalWords": "Ord",
+      "userWords": "Dina ord",
+      "assistantWords": "Assistentord",
+      "totalChars": "Tecken",
+      "topTopics": "Vanligaste ämnen",
+      "noTopics": "Inte tillräckligt med meddelanden för att upptäcka ämnen än.",
+      "firstActivity": "Första aktivitet",
+      "lastActivity": "Senaste aktivitet",
+      "emptySession": "Denna session har inga meddelanden än.",
+      "loadError": "Kunde inte läsa in statistiken."
+    },
+    "folderModal": {
+      "title": "Flytta till mapp",
+      "inputLabel": "Mappnamn",
+      "inputPlaceholder": "Ange ett mappnamn",
+      "existing": "Befintliga mappar",
+      "remove": "Ta bort från mapp"
+    },
+    "tagsModal": {
+      "title": "Redigera taggar",
+      "inputLabel": "Taggar",
+      "inputPlaceholder": "Kommaseparerade, t.ex. arbete, idéer",
+      "suggestions": "Befintliga taggar"
     }
   },
   "assistantsScreen": {

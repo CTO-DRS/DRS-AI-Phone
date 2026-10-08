@@ -458,6 +458,9 @@ export const SidebarContent: React.FC<DrawerContentComponentProps> = observer(
     const [tagsSessionId, setTagsSessionId] = useState<string | null>(null);
     const [statsSessionId, setStatsSessionId] = useState<string | null>(null);
     const [globalStatsVisible, setGlobalStatsVisible] = useState(false);
+    const [renameFolderName, setRenameFolderName] = useState<string | null>(
+      null,
+    );
 
     const theme = useTheme();
     const styles = createStyles(theme);
@@ -762,21 +765,39 @@ export const SidebarContent: React.FC<DrawerContentComponentProps> = observer(
                     )
                   }
                   onLongPress={() => {
-                    Alert.alert(
-                      l10n.components.sidebarContent.deleteFolderTitle,
-                      t(l10n.components.sidebarContent.deleteFolderMessage, {
-                        name: folder.name,
-                      }),
-                      [
-                        {text: l10n.common.cancel, style: 'cancel'},
-                        {
-                          text: l10n.common.delete,
-                          style: 'destructive',
-                          onPress: () =>
-                            chatSessionStore.deleteFolder(folder.name),
+                    // Same-sheet actions: rename or delete this folder.
+                    Alert.alert(folder.name, undefined, [
+                      {
+                        text: l10n.common.rename,
+                        onPress: () => setRenameFolderName(folder.name),
+                      },
+                      {
+                        text: l10n.common.delete,
+                        style: 'destructive',
+                        onPress: () => {
+                          Alert.alert(
+                            l10n.components.sidebarContent.deleteFolderTitle,
+                            t(
+                              l10n.components.sidebarContent
+                                .deleteFolderMessage,
+                              {
+                                name: folder.name,
+                              },
+                            ),
+                            [
+                              {text: l10n.common.cancel, style: 'cancel'},
+                              {
+                                text: l10n.common.delete,
+                                style: 'destructive',
+                                onPress: () =>
+                                  chatSessionStore.deleteFolder(folder.name),
+                              },
+                            ],
+                          );
                         },
-                      ],
-                    );
+                      },
+                      {text: l10n.common.cancel, style: 'cancel'},
+                    ]);
                   }}
                   testID={`filter-folder-${folder.name}`}>
                   <FolderIcon
@@ -1095,6 +1116,12 @@ export const SidebarContent: React.FC<DrawerContentComponentProps> = observer(
           visible={sessionToRename !== null}
           onClose={() => setSessionToRename(null)}
           session={sessionToRename}
+        />
+        <RenameModal
+          visible={renameFolderName !== null}
+          onClose={() => setRenameFolderName(null)}
+          session={null}
+          folder={renameFolderName}
         />
         <FolderModal
           visible={folderSessionId !== null}
