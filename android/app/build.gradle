@@ -96,8 +96,8 @@ android {
         applicationId "com.drsai.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 162
-        versionName "1.31.1"
+        versionCode 163
+        versionName "1.32.0"
         ndk {
             abiFilters "arm64-v8a"
         }
@@ -142,9 +142,17 @@ android {
     // on phones and install as "package appears to be invalid". Compressed
     // libs halve the download and remove all page-alignment requirements at
     // install time, maximizing compatibility with OEM package installers.
+    //
+    // The release workflow additionally passes -Parm64Only=true: x86_64 .so
+    // files serve emulators only, yet weigh ~28MB (~24%) of the download.
+    // Emulator builds (e2e) never set the property and keep x86_64 intact.
+    def arm64Only = project.findProperty("arm64Only")?.toString()?.toBoolean() ?: false
     packagingOptions {
         jniLibs {
             useLegacyPackaging = true
+            if (arm64Only) {
+                excludes += ["lib/x86_64/**"]
+            }
         }
     }
     buildTypes {
