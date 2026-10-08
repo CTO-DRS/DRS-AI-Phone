@@ -976,7 +976,8 @@
       "exportCurrentSessionError": "Gagal mengeksport sesi semasa.",
       "exportAllError": "Gagal mengeksport semua sesi.",
       "importSuccessTitle": "Import Berjaya",
-      "importErrorTitle": "Ralat Import"
+      "importErrorTitle": "Ralat Import",
+      "exportCurrentSessionPdf": "Eksport sebagai PDF"
     },
     "hfTokenSheet": {
       "title": "Token Hugging Face",
@@ -1211,7 +1212,23 @@
         "older": "Lebih Lama"
       },
       "emptySessionsTitle": "Tiada sembang lagi",
-      "emptySessionsHint": "Mulakan perbualan baharu daripada skrin sembang"
+      "emptySessionsHint": "Mulakan perbualan baharu daripada skrin sembang",
+      "searchSessions": "Cari sembang",
+      "searchResults": "Keputusan carian",
+      "noSearchResults": "Tiada sembang ditemui",
+      "noSearchResultsHint": "Cuba kata kunci lain",
+      "clearFilters": "Kosongkan penapis",
+      "filteredBy": "Ditapis mengikut",
+      "statistics": "Statistik",
+      "moveToFolder": "Pindah ke folder...",
+      "editTags": "Edit tag...",
+      "folders": "Folder",
+      "tags": "Tag",
+      "renameFolderTitle": "Namakan semula folder",
+      "deleteFolderTitle": "Padam folder",
+      "deleteFolderMessage": "Sembang akan dikekalkan, tetapi ia tidak lagi tergolong dalam folder \"{{name}}\".",
+      "deleteTagTitle": "Buang tag",
+      "deleteTagMessage": "Tag \"{{name}}\" akan dibuang daripada semua sembang."
     },
     "usageStats": {
       "tooltip": {
@@ -1294,6 +1311,45 @@
       "switch": "Tukar",
       "shareErrorTitle": "Ralat Kongsi",
       "shareErrorMessage": "Gagal berkongsi pembantu. Sila cuba lagi."
+    },
+    "chatPdf": {
+      "exported": "Dieksport",
+      "user": "Pengguna",
+      "assistant": "Penolong",
+      "image": "imej",
+      "page": "Halaman"
+    },
+    "chatStats": {
+      "title": "Statistik sembang",
+      "globalTitle": "Statistik keseluruhan",
+      "sessionTitle": "Statistik sesi",
+      "sessions": "Sesi",
+      "totalMessages": "Mesej",
+      "userMessages": "Mesej anda",
+      "assistantMessages": "Mesej penolong",
+      "totalWords": "Perkataan",
+      "userWords": "Perkataan anda",
+      "assistantWords": "Perkataan penolong",
+      "totalChars": "Aksara",
+      "topTopics": "Topik paling kerap",
+      "noTopics": "Belum cukup mesej untuk mengesan topik.",
+      "firstActivity": "Aktiviti pertama",
+      "lastActivity": "Aktiviti terakhir",
+      "emptySession": "Sesi ini belum mempunyai mesej.",
+      "loadError": "Tidak dapat memuatkan statistik."
+    },
+    "folderModal": {
+      "title": "Pindah ke folder",
+      "inputLabel": "Nama folder",
+      "inputPlaceholder": "Masukkan nama folder",
+      "existing": "Folder sedia ada",
+      "remove": "Buang daripada folder"
+    },
+    "tagsModal": {
+      "title": "Edit tag",
+      "inputLabel": "Tag",
+      "inputPlaceholder": "Dipisahkan dengan koma, cth. kerja, idea",
+      "suggestions": "Tag sedia ada"
     }
   },
   "assistantsScreen": {

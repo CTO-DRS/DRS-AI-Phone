@@ -976,7 +976,8 @@
       "exportCurrentSessionError": "ייצוא הסשן הנוכחי נכשל.",
       "exportAllError": "ייצוא כל הסשנים נכשל.",
       "importSuccessTitle": "הייבוא הצליח",
-      "importErrorTitle": "שגיאת ייבוא"
+      "importErrorTitle": "שגיאת ייבוא",
+      "exportCurrentSessionPdf": "ייצוא כ-PDF"
     },
     "hfTokenSheet": {
       "title": "טוקן Hugging Face",
@@ -1211,7 +1212,23 @@
         "older": "לפני זמן רב"
       },
       "emptySessionsTitle": "אין עדיין צ'אטים",
-      "emptySessionsHint": "התחילו שיחה חדשה ממסך הצ'אט"
+      "emptySessionsHint": "התחילו שיחה חדשה ממסך הצ'אט",
+      "searchSessions": "חיפוש בצ׳אטים",
+      "searchResults": "תוצאות חיפוש",
+      "noSearchResults": "לא נמצאו צ׳אטים",
+      "noSearchResultsHint": "נסו מילת מפתח אחרת",
+      "clearFilters": "ניקוי המסננים",
+      "filteredBy": "מסונן לפי",
+      "statistics": "סטטיסטיקות",
+      "moveToFolder": "העברה לתיקייה...",
+      "editTags": "עריכת תגיות...",
+      "folders": "תיקיות",
+      "tags": "תגיות",
+      "renameFolderTitle": "שינוי שם התיקייה",
+      "deleteFolderTitle": "מחיקת התיקייה",
+      "deleteFolderMessage": "הצ׳אטים יישמרו, אך הם כבר לא ישויכו לתיקייה \"{{name}}\".",
+      "deleteTagTitle": "הסרת התגית",
+      "deleteTagMessage": "התגית \"{{name}}\" תוסר מכל הצ׳אטים."
     },
     "usageStats": {
       "tooltip": {
@@ -1294,6 +1311,45 @@
       "switch": "החלף",
       "shareErrorTitle": "שגיאת שיתוף",
       "shareErrorMessage": "שיתוף העוזר נכשל. אנא נסה שוב."
+    },
+    "chatPdf": {
+      "exported": "יוצא",
+      "user": "משתמש",
+      "assistant": "עוזר",
+      "image": "תמונה",
+      "page": "עמוד"
+    },
+    "chatStats": {
+      "title": "סטטיסטיקות צ׳אט",
+      "globalTitle": "סטטיסטיקות כלליות",
+      "sessionTitle": "סטטיסטיקות סשן",
+      "sessions": "סשנים",
+      "totalMessages": "הודעות",
+      "userMessages": "ההודעות שלך",
+      "assistantMessages": "הודעות העוזר",
+      "totalWords": "מילים",
+      "userWords": "המילים שלך",
+      "assistantWords": "מילים של העוזר",
+      "totalChars": "תווים",
+      "topTopics": "הנושאים הנפוצים ביותר",
+      "noTopics": "עדיין אין מספיק הודעות לזיהוי נושאים.",
+      "firstActivity": "פעילות ראשונה",
+      "lastActivity": "פעילות אחרונה",
+      "emptySession": "לסשן זה עדיין אין הודעות.",
+      "loadError": "טעינת הסטטיסטיקות נכשלה."
+    },
+    "folderModal": {
+      "title": "העברה לתיקייה",
+      "inputLabel": "שם התיקייה",
+      "inputPlaceholder": "הזן שם תיקייה",
+      "existing": "תיקיות קיימות",
+      "remove": "הסרה מהתיקייה"
+    },
+    "tagsModal": {
+      "title": "עריכת תגיות",
+      "inputLabel": "תגיות",
+      "inputPlaceholder": "מופרדות בפסיקים, למשל עבודה, רעיונות",
+      "suggestions": "תגיות קיימות"
     }
   },
   "assistantsScreen": {

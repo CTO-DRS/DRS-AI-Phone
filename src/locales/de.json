@@ -976,7 +976,8 @@
       "exportCurrentSessionError": "Export der aktuellen Sitzung fehlgeschlagen.",
       "exportAllError": "Export aller Sitzungen fehlgeschlagen.",
       "importSuccessTitle": "Import erfolgreich",
-      "importErrorTitle": "Import-Fehler"
+      "importErrorTitle": "Import-Fehler",
+      "exportCurrentSessionPdf": "Als PDF exportieren"
     },
     "hfTokenSheet": {
       "title": "Hugging Face Token",
@@ -1211,7 +1212,23 @@
         "older": "Älter"
       },
       "emptySessionsTitle": "Noch keine Chats",
-      "emptySessionsHint": "Starte ein neues Gespräch über den Chat-Bildschirm"
+      "emptySessionsHint": "Starte ein neues Gespräch über den Chat-Bildschirm",
+      "searchSessions": "Chats durchsuchen",
+      "searchResults": "Suchergebnisse",
+      "noSearchResults": "Keine Chats gefunden",
+      "noSearchResultsHint": "Versuche ein anderes Stichwort",
+      "clearFilters": "Filter löschen",
+      "filteredBy": "Gefiltert nach",
+      "statistics": "Statistiken",
+      "moveToFolder": "In Ordner verschieben...",
+      "editTags": "Tags bearbeiten...",
+      "folders": "Ordner",
+      "tags": "Tags",
+      "renameFolderTitle": "Ordner umbenennen",
+      "deleteFolderTitle": "Ordner löschen",
+      "deleteFolderMessage": "Chats bleiben erhalten, gehören aber nicht mehr zum Ordner \"{{name}}\".",
+      "deleteTagTitle": "Tag entfernen",
+      "deleteTagMessage": "Der Tag \"{{name}}\" wird aus allen Chats entfernt."
     },
     "usageStats": {
       "tooltip": {
@@ -1294,6 +1311,45 @@
       "switch": "Wechseln",
       "shareErrorTitle": "Teilen-Fehler",
       "shareErrorMessage": "Assistent konnte nicht geteilt werden. Bitte versuche es erneut."
+    },
+    "chatPdf": {
+      "exported": "Exportiert",
+      "user": "Benutzer",
+      "assistant": "Assistent",
+      "image": "Bild",
+      "page": "Seite"
+    },
+    "chatStats": {
+      "title": "Chat-Statistiken",
+      "globalTitle": "Gesamtstatistiken",
+      "sessionTitle": "Sitzungsstatistiken",
+      "sessions": "Sitzungen",
+      "totalMessages": "Nachrichten",
+      "userMessages": "Deine Nachrichten",
+      "assistantMessages": "Assistent-Nachrichten",
+      "totalWords": "Wörter",
+      "userWords": "Deine Wörter",
+      "assistantWords": "Assistent-Wörter",
+      "totalChars": "Zeichen",
+      "topTopics": "Häufigste Themen",
+      "noTopics": "Noch nicht genug Nachrichten, um Themen zu erkennen.",
+      "firstActivity": "Erste Aktivität",
+      "lastActivity": "Letzte Aktivität",
+      "emptySession": "Diese Sitzung hat noch keine Nachrichten.",
+      "loadError": "Statistiken konnten nicht geladen werden."
+    },
+    "folderModal": {
+      "title": "In Ordner verschieben",
+      "inputLabel": "Ordnername",
+      "inputPlaceholder": "Ordnernamen eingeben",
+      "existing": "Vorhandene Ordner",
+      "remove": "Aus Ordner entfernen"
+    },
+    "tagsModal": {
+      "title": "Tags bearbeiten",
+      "inputLabel": "Tags",
+      "inputPlaceholder": "Komma-getrennt, z. B. Arbeit, Ideen",
+      "suggestions": "Vorhandene Tags"
     }
   },
   "assistantsScreen": {

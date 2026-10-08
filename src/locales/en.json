@@ -1227,7 +1227,8 @@
       "deleteFolderTitle": "Delete folder",
       "deleteFolderMessage": "Sessions will be kept, but they will no longer belong to the \"{{name}}\" folder.",
       "deleteTagTitle": "Remove tag",
-      "deleteTagMessage": "The tag \"{{name}}\" will be removed from all chats."
+      "deleteTagMessage": "The tag \"{{name}}\" will be removed from all chats.",
+      "renameFolderTitle": "Rename folder"
     },
     "usageStats": {
       "tooltip": {
@@ -1236,7 +1237,12 @@
         "total": "Total: ",
         "usage": "Usage: "
       },
-      "byteSizes": ["Bytes", "KB", "MB", "GB"]
+      "byteSizes": [
+        "Bytes",
+        "KB",
+        "MB",
+        "GB"
+      ]
     },
     "chatView": {
       "menuItems": {

@@ -976,7 +976,8 @@
       "exportCurrentSessionError": "No se pudo exportar la sesión actual.",
       "exportAllError": "No se pudieron exportar todas las sesiones.",
       "importSuccessTitle": "Importación exitosa",
-      "importErrorTitle": "Error de importación"
+      "importErrorTitle": "Error de importación",
+      "exportCurrentSessionPdf": "Exportar como PDF"
     },
     "hfTokenSheet": {
       "title": "Token de Hugging Face",
@@ -1211,7 +1212,23 @@
         "older": "Más antiguos"
       },
       "emptySessionsTitle": "Aún no hay chats",
-      "emptySessionsHint": "Inicia una nueva conversación desde la pantalla de chat"
+      "emptySessionsHint": "Inicia una nueva conversación desde la pantalla de chat",
+      "searchSessions": "Buscar chats",
+      "searchResults": "Resultados de búsqueda",
+      "noSearchResults": "No se encontraron chats",
+      "noSearchResultsHint": "Prueba con otra palabra clave",
+      "clearFilters": "Borrar filtros",
+      "filteredBy": "Filtrado por",
+      "statistics": "Estadísticas",
+      "moveToFolder": "Mover a carpeta...",
+      "editTags": "Editar etiquetas...",
+      "folders": "Carpetas",
+      "tags": "Etiquetas",
+      "renameFolderTitle": "Renombrar carpeta",
+      "deleteFolderTitle": "Eliminar carpeta",
+      "deleteFolderMessage": "Los chats se conservarán, pero ya no pertenecerán a la carpeta \"{{name}}\".",
+      "deleteTagTitle": "Quitar etiqueta",
+      "deleteTagMessage": "La etiqueta \"{{name}}\" se quitará de todos los chats."
     },
     "usageStats": {
       "tooltip": {
@@ -1294,6 +1311,45 @@
       "switch": "Cambiar",
       "shareErrorTitle": "Error al compartir",
       "shareErrorMessage": "No se pudo compartir el asistente. Inténtalo de nuevo."
+    },
+    "chatPdf": {
+      "exported": "Exportado",
+      "user": "Usuario",
+      "assistant": "Asistente",
+      "image": "imagen",
+      "page": "Página"
+    },
+    "chatStats": {
+      "title": "Estadísticas del chat",
+      "globalTitle": "Estadísticas generales",
+      "sessionTitle": "Estadísticas de la sesión",
+      "sessions": "Sesiones",
+      "totalMessages": "Mensajes",
+      "userMessages": "Tus mensajes",
+      "assistantMessages": "Mensajes del asistente",
+      "totalWords": "Palabras",
+      "userWords": "Tus palabras",
+      "assistantWords": "Palabras del asistente",
+      "totalChars": "Caracteres",
+      "topTopics": "Temas más frecuentes",
+      "noTopics": "Aún no hay mensajes suficientes para detectar temas.",
+      "firstActivity": "Primera actividad",
+      "lastActivity": "Última actividad",
+      "emptySession": "Esta sesión aún no tiene mensajes.",
+      "loadError": "No se pudieron cargar las estadísticas."
+    },
+    "folderModal": {
+      "title": "Mover a carpeta",
+      "inputLabel": "Nombre de la carpeta",
+      "inputPlaceholder": "Introduce un nombre de carpeta",
+      "existing": "Carpetas existentes",
+      "remove": "Quitar de la carpeta"
+    },
+    "tagsModal": {
+      "title": "Editar etiquetas",
+      "inputLabel": "Etiquetas",
+      "inputPlaceholder": "Separadas por comas, p. ej. trabajo, ideas",
+      "suggestions": "Etiquetas existentes"
     }
   },
   "assistantsScreen": {

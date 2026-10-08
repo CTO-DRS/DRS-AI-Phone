@@ -976,7 +976,8 @@
       "exportCurrentSessionError": "Не вдалося експортувати поточну сесію.",
       "exportAllError": "Не вдалося експортувати всі сесії.",
       "importSuccessTitle": "Успішний імпорт",
-      "importErrorTitle": "Помилка імпорту"
+      "importErrorTitle": "Помилка імпорту",
+      "exportCurrentSessionPdf": "Експорт у PDF"
     },
     "hfTokenSheet": {
       "title": "Токен Hugging Face",
@@ -1211,7 +1212,23 @@
         "older": "Старші"
       },
       "emptySessionsTitle": "Ще немає чатів",
-      "emptySessionsHint": "Почніть нову розмову на екрані чату"
+      "emptySessionsHint": "Почніть нову розмову на екрані чату",
+      "searchSessions": "Пошук по чатах",
+      "searchResults": "Результати пошуку",
+      "noSearchResults": "Чати не знайдено",
+      "noSearchResultsHint": "Спробуйте інше ключове слово",
+      "clearFilters": "Скинути фільтри",
+      "filteredBy": "Фільтр:",
+      "statistics": "Статистика",
+      "moveToFolder": "Перемістити до папки...",
+      "editTags": "Змінити теги...",
+      "folders": "Папки",
+      "tags": "Теги",
+      "renameFolderTitle": "Перейменувати папку",
+      "deleteFolderTitle": "Видалити папку",
+      "deleteFolderMessage": "Чати буде збережено, але вони більше не належатимуть до папки \"{{name}}\".",
+      "deleteTagTitle": "Видалити тег",
+      "deleteTagMessage": "Тег \"{{name}}\" буде видалено з усіх чатів."
     },
     "usageStats": {
       "tooltip": {
@@ -1294,6 +1311,45 @@
       "switch": "Змінити",
       "shareErrorTitle": "Помилка поширення",
       "shareErrorMessage": "Не вдалося поділитися асистентом. Спробуйте ще раз."
+    },
+    "chatPdf": {
+      "exported": "Експортовано",
+      "user": "Користувач",
+      "assistant": "Асистент",
+      "image": "зображення",
+      "page": "Сторінка"
+    },
+    "chatStats": {
+      "title": "Статистика чату",
+      "globalTitle": "Загальна статистика",
+      "sessionTitle": "Статистика сесії",
+      "sessions": "Сесії",
+      "totalMessages": "Повідомлення",
+      "userMessages": "Ваші повідомлення",
+      "assistantMessages": "Повідомлення асистента",
+      "totalWords": "Слова",
+      "userWords": "Ваші слова",
+      "assistantWords": "Слова асистента",
+      "totalChars": "Символи",
+      "topTopics": "Найчастіші теми",
+      "noTopics": "Повідомлень поки недостатньо для визначення тем.",
+      "firstActivity": "Перша активність",
+      "lastActivity": "Остання активність",
+      "emptySession": "У цій сесії ще немає повідомлень.",
+      "loadError": "Не вдалося завантажити статистику."
+    },
+    "folderModal": {
+      "title": "Перемістити до папки",
+      "inputLabel": "Назва папки",
+      "inputPlaceholder": "Введіть назву папки",
+      "existing": "Наявні папки",
+      "remove": "Вилучити з папки"
+    },
+    "tagsModal": {
+      "title": "Змінити теги",
+      "inputLabel": "Теги",
+      "inputPlaceholder": "Через кому, наприклад: робота, ідеї",
+      "suggestions": "Наявні теги"
     }
   },
   "assistantsScreen": {

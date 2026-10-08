@@ -976,7 +976,8 @@
       "exportCurrentSessionError": "خروجی‌گیری از جلسه فعلی انجام نشد.",
       "exportAllError": "خروجی‌گیری از همه جلسات انجام نشد.",
       "importSuccessTitle": "وارد کردن موفق",
-      "importErrorTitle": "خطا در وارد کردن"
+      "importErrorTitle": "خطا در وارد کردن",
+      "exportCurrentSessionPdf": "خروجی PDF"
     },
     "hfTokenSheet": {
       "title": "توکن Hugging Face",
@@ -1211,7 +1212,23 @@
         "older": "قدیمی‌تر"
       },
       "emptySessionsTitle": "هنوز چتی وجود ندارد",
-      "emptySessionsHint": "از صفحه چت یک گفتگوی جدید شروع کنید"
+      "emptySessionsHint": "از صفحه چت یک گفتگوی جدید شروع کنید",
+      "searchSessions": "جستجو در چت‌ها",
+      "searchResults": "نتایج جستجو",
+      "noSearchResults": "چتی یافت نشد",
+      "noSearchResultsHint": "کلیدواژه دیگری را امتحان کنید",
+      "clearFilters": "پاک کردن فیلترها",
+      "filteredBy": "فیلتر شده بر اساس",
+      "statistics": "آمار",
+      "moveToFolder": "انتقال به پوشه...",
+      "editTags": "ویرایش برچسب‌ها...",
+      "folders": "پوشه‌ها",
+      "tags": "برچسب‌ها",
+      "renameFolderTitle": "تغییر نام پوشه",
+      "deleteFolderTitle": "حذف پوشه",
+      "deleteFolderMessage": "چت‌ها حفظ می‌شوند اما دیگر به پوشه \"{{name}}\" تعلق نخواهند داشت.",
+      "deleteTagTitle": "حذف برچسب",
+      "deleteTagMessage": "برچسب \"{{name}}\" از همه چت‌ها حذف خواهد شد."
     },
     "usageStats": {
       "tooltip": {
@@ -1294,6 +1311,45 @@
       "switch": "تغییر",
       "shareErrorTitle": "خطا در اشتراک‌گذاری",
       "shareErrorMessage": "اشتراک‌گذاری دستیار ناموفق بود. لطفاً دوباره تلاش کنید."
+    },
+    "chatPdf": {
+      "exported": "صادر شد",
+      "user": "کاربر",
+      "assistant": "دستیار",
+      "image": "تصویر",
+      "page": "صفحه"
+    },
+    "chatStats": {
+      "title": "آمار چت",
+      "globalTitle": "آمار کلی",
+      "sessionTitle": "آمار جلسه",
+      "sessions": "جلسات",
+      "totalMessages": "پیام‌ها",
+      "userMessages": "پیام‌های شما",
+      "assistantMessages": "پیام‌های دستیار",
+      "totalWords": "کلمات",
+      "userWords": "کلمات شما",
+      "assistantWords": "کلمات دستیار",
+      "totalChars": "نویسه‌ها",
+      "topTopics": "پرتکرارترین موضوع‌ها",
+      "noTopics": "هنوز پیام کافی برای تشخیص موضوع‌ها وجود ندارد.",
+      "firstActivity": "اولین فعالیت",
+      "lastActivity": "آخرین فعالیت",
+      "emptySession": "این جلسه هنوز پیامی ندارد.",
+      "loadError": "بارگذاری آمار ممکن نشد."
+    },
+    "folderModal": {
+      "title": "انتقال به پوشه",
+      "inputLabel": "نام پوشه",
+      "inputPlaceholder": "نام پوشه را وارد کنید",
+      "existing": "پوشه‌های موجود",
+      "remove": "حذف از پوشه"
+    },
+    "tagsModal": {
+      "title": "ویرایش برچسب‌ها",
+      "inputLabel": "برچسب‌ها",
+      "inputPlaceholder": "با کاما جدا کنید، مثلا: کار، ایده‌ها",
+      "suggestions": "برچسب‌های موجود"
     }
   },
   "assistantsScreen": {

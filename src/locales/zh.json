@@ -976,7 +976,8 @@
       "exportCurrentSessionError": "导出当前会话失败。",
       "exportAllError": "导出所有会话失败。",
       "importSuccessTitle": "导入成功",
-      "importErrorTitle": "导入错误"
+      "importErrorTitle": "导入错误",
+      "exportCurrentSessionPdf": "导出为 PDF"
     },
     "hfTokenSheet": {
       "title": "Hugging Face 令牌",
@@ -1211,7 +1212,23 @@
         "older": "以前"
       },
       "emptySessionsTitle": "还没有聊天",
-      "emptySessionsHint": "从聊天页面开始新的对话"
+      "emptySessionsHint": "从聊天页面开始新的对话",
+      "searchSessions": "搜索聊天",
+      "searchResults": "搜索结果",
+      "noSearchResults": "未找到聊天",
+      "noSearchResultsHint": "试试其他关键词",
+      "clearFilters": "清除筛选",
+      "filteredBy": "筛选条件：",
+      "statistics": "统计",
+      "moveToFolder": "移动到文件夹...",
+      "editTags": "编辑标签...",
+      "folders": "文件夹",
+      "tags": "标签",
+      "renameFolderTitle": "重命名文件夹",
+      "deleteFolderTitle": "删除文件夹",
+      "deleteFolderMessage": "聊天将被保留，但不再属于“{{name}}”文件夹。",
+      "deleteTagTitle": "移除标签",
+      "deleteTagMessage": "标签“{{name}}”将从所有聊天中移除。"
     },
     "usageStats": {
       "tooltip": {
@@ -1294,6 +1311,45 @@
       "switch": "切换",
       "shareErrorTitle": "分享错误",
       "shareErrorMessage": "分享助手失败。请重试。"
+    },
+    "chatPdf": {
+      "exported": "已导出",
+      "user": "用户",
+      "assistant": "助手",
+      "image": "图片",
+      "page": "页"
+    },
+    "chatStats": {
+      "title": "聊天统计",
+      "globalTitle": "总体统计",
+      "sessionTitle": "会话统计",
+      "sessions": "会话",
+      "totalMessages": "消息",
+      "userMessages": "你的消息",
+      "assistantMessages": "助手消息",
+      "totalWords": "字数",
+      "userWords": "你的字数",
+      "assistantWords": "助手的字数",
+      "totalChars": "字符",
+      "topTopics": "最常见的话题",
+      "noTopics": "消息还不够，暂时无法识别话题。",
+      "firstActivity": "首次活动",
+      "lastActivity": "最近活动",
+      "emptySession": "此会话还没有消息。",
+      "loadError": "无法加载统计信息。"
+    },
+    "folderModal": {
+      "title": "移动到文件夹",
+      "inputLabel": "文件夹名称",
+      "inputPlaceholder": "输入文件夹名称",
+      "existing": "现有文件夹",
+      "remove": "从文件夹中移除"
+    },
+    "tagsModal": {
+      "title": "编辑标签",
+      "inputLabel": "标签",
+      "inputPlaceholder": "用逗号分隔，例如：工作, 想法",
+      "suggestions": "现有标签"
     }
   },
   "assistantsScreen": {
