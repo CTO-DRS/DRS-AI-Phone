@@ -1350,6 +1350,10 @@
       "inputLabel": "Tag",
       "inputPlaceholder": "Dipisahkan dengan koma, cth. kerja, idea",
       "suggestions": "Tag sedia ada"
+    },
+    "databaseMigrating": {
+      "title": "Menataras pangkalan data...",
+      "subText": "Sila jangan tutup aplikasi. Ini mungkin mengambil masa sebentar."
     }
   },
   "assistantsScreen": {

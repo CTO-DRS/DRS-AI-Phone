@@ -1350,6 +1350,10 @@
       "inputLabel": "標籤",
       "inputPlaceholder": "以逗號分隔，例如：工作, 想法",
       "suggestions": "現有標籤"
+    },
+    "databaseMigrating": {
+      "title": "正在升級資料庫...",
+      "subText": "請勿關閉應用程式，這可能需要一點時間。"
     }
   },
   "assistantsScreen": {

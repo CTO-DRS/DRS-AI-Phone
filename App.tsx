@@ -48,6 +48,7 @@ import {
   DownloadOverlay,
   HubRunSheetHost,
   ToastHost,
+  GlobalErrorBoundary,
 } from './src/components';
 import {MarkdownProvider} from './src/components/MarkdownView';
 import {AutomationBridge, BenchmarkRunnerScreen} from './src/__automation__';
@@ -348,17 +349,32 @@ const HydrationHold = () => (
   />
 );
 
-// Wrap the App component with AppWithMigration to show migration UI when
-// needed. Gates the first render of any theme-consuming subtree on
-// mobx-persist-store hydration so persisted `language` and `colorScheme`
-// are observed on first paint.
-//
-// The gate must wrap App itself (App calls useTheme() BEFORE <PaperProvider>
-// mounts), so AppWithMigrationWrapper — which sits above App and has no
-// theme dependency — is the chosen host. While unhydrated it renders the
-// neutral background-only hold above.
+// Safety net against a forever-blank launch screen: mobx-persist-store
+// hydration normally finishes in well under a second, but if AsyncStorage
+// wedges (rare driver/hardware states, pathological storage) the app would
+// otherwise sit on the hold above indefinitely. After the watchdog window
+// we proceed with persisted-at-default values; if hydration completes
+// later, makePersistable applies the stored values and the observers
+// re-render as usual.
+const HYDRATION_WATCHDOG_MS = 12000;
+
 const AppWithMigrationWrapper = observer(() => {
-  if (!isHydrated(uiStore)) {
+  const [hydrationTimedOut, setHydrationTimedOut] = React.useState(false);
+
+  React.useEffect(() => {
+    if (isHydrated(uiStore)) {
+      return;
+    }
+    const timer = setTimeout(() => {
+      console.warn(
+        `[startup] UIStore hydration did not complete within ${HYDRATION_WATCHDOG_MS}ms — proceeding with defaults`,
+      );
+      setHydrationTimedOut(true);
+    }, HYDRATION_WATCHDOG_MS);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (!isHydrated(uiStore) && !hydrationTimedOut) {
     return <HydrationHold />;
   }
   return (
@@ -368,4 +384,12 @@ const AppWithMigrationWrapper = observer(() => {
   );
 });
 
-export default AppWithMigrationWrapper;
+// Root crash shield: without it, a render error in a release build is a
+// silent freeze (nothing painted) instead of a visible, reportable screen.
+const Root = () => (
+  <GlobalErrorBoundary>
+    <AppWithMigrationWrapper />
+  </GlobalErrorBoundary>
+);
+
+export default Root;

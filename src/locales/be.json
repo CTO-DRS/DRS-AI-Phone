@@ -1350,6 +1350,10 @@
       "inputLabel": "Тэгі",
       "inputPlaceholder": "Праз коскі, напрыклад: праца, ідэі",
       "suggestions": "Наяўныя тэгі"
+    },
+    "databaseMigrating": {
+      "title": "Абнаўленне базы дадзеных...",
+      "subText": "Калі ласка, не закрывайце прыкладанне. Гэта зойме крыху часу."
     }
   },
   "assistantsScreen": {

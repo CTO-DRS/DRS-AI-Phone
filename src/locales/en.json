@@ -1350,6 +1350,10 @@
       "inputLabel": "Tags",
       "inputPlaceholder": "Comma separated, e.g. work, ideas",
       "suggestions": "Existing tags"
+    },
+    "databaseMigrating": {
+      "title": "Upgrading database...",
+      "subText": "Please don't close the app. This may take a moment."
     }
   },
   "assistantsScreen": {

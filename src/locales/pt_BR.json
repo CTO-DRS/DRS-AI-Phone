@@ -1350,6 +1350,10 @@
       "inputLabel": "Tags",
       "inputPlaceholder": "Separadas por vírgulas, ex.: trabalho, ideias",
       "suggestions": "Tags existentes"
+    },
+    "databaseMigrating": {
+      "title": "Atualizando o banco de dados...",
+      "subText": "Não feche o aplicativo. Isso pode demorar um momento."
     }
   },
   "assistantsScreen": {

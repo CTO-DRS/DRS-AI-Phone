@@ -1350,6 +1350,10 @@
       "inputLabel": "Etiquetas",
       "inputPlaceholder": "Separadas por vírgulas, p. ex. trabalho, ideias",
       "suggestions": "Etiquetas existentes"
+    },
+    "databaseMigrating": {
+      "title": "A atualizar a base de dados...",
+      "subText": "Não feches a aplicação. Isto pode demorar um momento."
     }
   },
   "assistantsScreen": {

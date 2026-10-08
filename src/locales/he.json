@@ -1350,6 +1350,10 @@
       "inputLabel": "תגיות",
       "inputPlaceholder": "מופרדות בפסיקים, למשל עבודה, רעיונות",
       "suggestions": "תגיות קיימות"
+    },
+    "databaseMigrating": {
+      "title": "מעדכן את מסד הנתונים...",
+      "subText": "נא לא לסגור את האפליקציה. זו עשויה להימשך רגע."
     }
   },
   "assistantsScreen": {

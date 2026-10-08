@@ -1350,6 +1350,10 @@
       "inputLabel": "Etiquetas",
       "inputPlaceholder": "Separadas por comas, p. ej. trabajo, ideas",
       "suggestions": "Etiquetas existentes"
+    },
+    "databaseMigrating": {
+      "title": "Actualizando la base de datos...",
+      "subText": "No cierres la aplicación. Esto puede tardar un momento."
     }
   },
   "assistantsScreen": {
