@@ -10,6 +10,7 @@ import {
   DuplicateIcon,
   EditBoxIcon,
   EditIcon,
+  FileTextIcon,
   GridIcon,
   SettingsIcon,
   ShareIcon,
@@ -28,6 +29,7 @@ import {importChatSessions} from '../../utils/importUtils';
 import {
   exportChatSession,
   exportChatSessionAsMarkdown,
+  exportChatSessionAsPdf,
   exportAllChatSessions,
 } from '../../utils/exportUtils';
 
@@ -124,6 +126,21 @@ export const HeaderRight: React.FC = observer(() => {
         await exportChatSessionAsMarkdown(session.id);
       } catch (error) {
         console.error('Error exporting current session as markdown:', error);
+        Alert.alert(
+          l10n.components.headerRight.exportErrorTitle,
+          l10n.components.headerRight.exportCurrentSessionError,
+        );
+      }
+    }
+    closeMenu();
+  };
+
+  const onPressExportCurrentSessionAsPdf = async () => {
+    if (session?.id) {
+      try {
+        await exportChatSessionAsPdf(session.id);
+      } catch (error) {
+        console.error('Error exporting current session as PDF:', error);
         Alert.alert(
           l10n.components.headerRight.exportErrorTitle,
           l10n.components.headerRight.exportCurrentSessionError,
@@ -268,6 +285,13 @@ export const HeaderRight: React.FC = observer(() => {
               key="export-current-markdown"
               onPress={onPressExportCurrentSessionAsMarkdown}
               label={l10n.components.headerRight.exportCurrentSessionMarkdown}
+            />,
+            <Menu.Item
+              disabled={!session?.id}
+              key="export-current-pdf"
+              onPress={onPressExportCurrentSessionAsPdf}
+              label={l10n.components.headerRight.exportCurrentSessionPdf}
+              leadingIcon={() => <FileTextIcon stroke={theme.colors.primary} />}
             />,
             <Menu.Item
               key="export-all"

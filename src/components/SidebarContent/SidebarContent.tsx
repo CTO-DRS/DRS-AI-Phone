@@ -19,14 +19,18 @@ import {Menu, RenameModal, Checkbox, BrandHeader} from '..';
 import {
   BenchmarkIcon,
   ChatIcon,
+  ChartBarIcon,
   CloseIcon,
   EditIcon,
+  FileTextIcon,
+  FolderIcon,
   ModelIcon,
   AssistantIcon,
   SearchIcon,
   SettingsIcon,
   ShareIcon,
   StarIcon,
+  TagIcon,
   TrashIcon,
   AppInfoIcon,
   MessageCircleLgIcon,
@@ -34,7 +38,11 @@ import {
 import {L10nContext} from '../../utils';
 import {t} from '../../locales';
 import {ROUTES} from '../../utils/navigationConstants';
-import {exportChatSession} from '../../utils/exportUtils';
+import {
+  exportChatSession,
+  exportChatSessionAsPdf,
+} from '../../utils/exportUtils';
+import {ChatStatsModal, FolderModal, TagsModal} from '..';
 
 // Check if app is in debug mode
 const isDebugMode = __DEV__;
@@ -73,6 +81,10 @@ interface SessionItemProps {
   onPressRename: (session: SessionMetaData) => void;
   onPressDelete: (sessionId: string) => void;
   onPressExport: (sessionId: string) => void;
+  onPressExportPdf: (sessionId: string) => void;
+  onPressStats: (session: SessionMetaData) => void;
+  onPressFolder: (session: SessionMetaData) => void;
+  onPressTags: (session: SessionMetaData) => void;
   onPressSelect: (sessionId: string) => void;
   isSelectionMode: boolean;
   isSelected: boolean;
@@ -97,6 +109,10 @@ const SessionItem = React.memo<SessionItemProps>(
     onPressRename,
     onPressDelete,
     onPressExport,
+    onPressExportPdf,
+    onPressStats,
+    onPressFolder,
+    onPressTags,
     onPressSelect,
     isSelectionMode,
     isSelected,
@@ -153,6 +169,27 @@ const SessionItem = React.memo<SessionItemProps>(
       () => <TrashIcon stroke={theme.colors.error} />,
       [theme],
     );
+    const renderFolderIcon = useCallback(
+      () => <FolderIcon stroke={theme.colors.primary} />,
+      [theme],
+    );
+    const renderTagIcon = useCallback(
+      () => <TagIcon stroke={theme.colors.primary} />,
+      [theme],
+    );
+    const renderStatsIcon = useCallback(
+      () => <ChartBarIcon stroke={theme.colors.primary} />,
+      [theme],
+    );
+    const renderFileTextIcon = useCallback(
+      () => <FileTextIcon stroke={theme.colors.primary} />,
+      [theme],
+    );
+
+    // Small folder/tags meta line under the session title.
+    const folderLabel = (session.folder ?? '').trim();
+    const tagList = session.tags ?? [];
+    const hasMeta = folderLabel.length > 0 || tagList.length > 0;
 
     return (
       <View style={styles.sessionItemContainer}>
@@ -175,6 +212,36 @@ const SessionItem = React.memo<SessionItemProps>(
             style={styles.sessionDrawerItem}
             right={isPinned ? renderPinnedIndicator : undefined}
           />
+          {hasMeta && (
+            <View
+              style={styles.sessionMetaRow}
+              testID={`session-meta-${session.id}`}>
+              {folderLabel.length > 0 && (
+                <View style={styles.sessionMetaChip}>
+                  <FolderIcon
+                    width={10}
+                    height={10}
+                    stroke={theme.colors.onSurfaceVariant}
+                  />
+                  <Text style={styles.sessionMetaText} numberOfLines={1}>
+                    {folderLabel}
+                  </Text>
+                </View>
+              )}
+              {tagList.map(tag => (
+                <View style={styles.sessionMetaChip} key={tag}>
+                  <TagIcon
+                    width={10}
+                    height={10}
+                    stroke={theme.colors.onSurfaceVariant}
+                  />
+                  <Text style={styles.sessionMetaText} numberOfLines={1}>
+                    {tag}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          )}
         </TouchableOpacity>
         {!isSelectionMode && (
           <Menu
@@ -208,11 +275,47 @@ const SessionItem = React.memo<SessionItemProps>(
             />
             <Menu.Item
               onPress={() => {
+                onPressFolder(session);
+                onMenuDismiss();
+              }}
+              label={l10n.components.sidebarContent.moveToFolder}
+              leadingIcon={renderFolderIcon}
+              testID={`session-folder-${session.id}`}
+            />
+            <Menu.Item
+              onPress={() => {
+                onPressTags(session);
+                onMenuDismiss();
+              }}
+              label={l10n.components.sidebarContent.editTags}
+              leadingIcon={renderTagIcon}
+              testID={`session-tags-${session.id}`}
+            />
+            <Menu.Item
+              onPress={() => {
+                onPressStats(session);
+                onMenuDismiss();
+              }}
+              label={l10n.components.sidebarContent.statistics}
+              leadingIcon={renderStatsIcon}
+              testID={`session-stats-${session.id}`}
+            />
+            <Menu.Item
+              onPress={() => {
                 onPressExport(session.id);
                 onMenuDismiss();
               }}
               label={l10n.common.export}
               leadingIcon={renderExportIcon}
+            />
+            <Menu.Item
+              onPress={() => {
+                onPressExportPdf(session.id);
+                onMenuDismiss();
+              }}
+              label={l10n.components.headerRight.exportCurrentSessionPdf}
+              leadingIcon={renderFileTextIcon}
+              testID={`session-export-pdf-${session.id}`}
             />
             <Menu.Item
               onPress={() => {
@@ -350,6 +453,11 @@ export const SidebarContent: React.FC<DrawerContentComponentProps> = observer(
     const [sessionToRename, setSessionToRename] =
       useState<SessionMetaData | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
+    // Organization / stats dialogs
+    const [folderSessionId, setFolderSessionId] = useState<string | null>(null);
+    const [tagsSessionId, setTagsSessionId] = useState<string | null>(null);
+    const [statsSessionId, setStatsSessionId] = useState<string | null>(null);
+    const [globalStatsVisible, setGlobalStatsVisible] = useState(false);
 
     const theme = useTheme();
     const styles = createStyles(theme);
@@ -483,6 +591,32 @@ export const SidebarContent: React.FC<DrawerContentComponentProps> = observer(
       [l10n],
     );
 
+    const handlePressExportPdf = React.useCallback(
+      async (sessionId: string) => {
+        try {
+          await exportChatSessionAsPdf(sessionId);
+        } catch {
+          Alert.alert(
+            l10n.common.error,
+            l10n.components.sidebarContent.exportError,
+          );
+        }
+      },
+      [l10n],
+    );
+
+    const handlePressStats = React.useCallback((session: SessionMetaData) => {
+      setStatsSessionId(session.id);
+    }, []);
+
+    const handlePressFolder = React.useCallback((session: SessionMetaData) => {
+      setFolderSessionId(session.id);
+    }, []);
+
+    const handlePressTags = React.useCallback((session: SessionMetaData) => {
+      setTagsSessionId(session.id);
+    }, []);
+
     const handlePressSelect = React.useCallback(
       (sessionId: string) => {
         chatSessionStore.enterSelectionMode(sessionId);
@@ -599,6 +733,129 @@ export const SidebarContent: React.FC<DrawerContentComponentProps> = observer(
       </View>
     );
 
+    // Folder/tag filter chips shown under the search bar.
+    const folders = chatSessionStore.folders ?? [];
+    const tags = chatSessionStore.tags ?? [];
+    const hasFilters = chatSessionStore.hasActiveFilters ?? false;
+    const renderFilterChips = () => {
+      if (folders.length === 0 && tags.length === 0 && !hasFilters) {
+        return null;
+      }
+      return (
+        <View style={styles.filterChipsContainer} testID="sidebar-filter-chips">
+          {hasFilters && (
+            <Text style={styles.filterHint}>
+              {l10n.components.sidebarContent.filteredBy}
+            </Text>
+          )}
+          <View style={styles.filterChipsRow}>
+            {folders.map(folder => {
+              const active =
+                chatSessionStore.activeFolderFilter === folder.name;
+              return (
+                <TouchableOpacity
+                  key={`folder-${folder.name}`}
+                  style={[styles.filterChip, active && styles.filterChipActive]}
+                  onPress={() =>
+                    chatSessionStore.setFolderFilter(
+                      active ? null : folder.name,
+                    )
+                  }
+                  onLongPress={() => {
+                    Alert.alert(
+                      l10n.components.sidebarContent.deleteFolderTitle,
+                      t(l10n.components.sidebarContent.deleteFolderMessage, {
+                        name: folder.name,
+                      }),
+                      [
+                        {text: l10n.common.cancel, style: 'cancel'},
+                        {
+                          text: l10n.common.delete,
+                          style: 'destructive',
+                          onPress: () =>
+                            chatSessionStore.deleteFolder(folder.name),
+                        },
+                      ],
+                    );
+                  }}
+                  testID={`filter-folder-${folder.name}`}>
+                  <FolderIcon
+                    width={12}
+                    height={12}
+                    stroke={theme.colors.primary}
+                  />
+                  <Text
+                    style={[
+                      styles.filterChipText,
+                      active && styles.filterChipTextActive,
+                    ]}>
+                    {folder.name} ({folder.count})
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+            {tags.map(tag => {
+              const active = chatSessionStore.activeTagFilter === tag.name;
+              return (
+                <TouchableOpacity
+                  key={`tag-${tag.name}`}
+                  style={[styles.filterChip, active && styles.filterChipActive]}
+                  onPress={() =>
+                    chatSessionStore.setTagFilter(active ? null : tag.name)
+                  }
+                  onLongPress={() => {
+                    Alert.alert(
+                      l10n.components.sidebarContent.deleteTagTitle,
+                      t(l10n.components.sidebarContent.deleteTagMessage, {
+                        name: tag.name,
+                      }),
+                      [
+                        {text: l10n.common.cancel, style: 'cancel'},
+                        {
+                          text: l10n.common.delete,
+                          style: 'destructive',
+                          onPress: () =>
+                            chatSessionStore.removeTagEverywhere(tag.name),
+                        },
+                      ],
+                    );
+                  }}
+                  testID={`filter-tag-${tag.name}`}>
+                  <TagIcon
+                    width={12}
+                    height={12}
+                    stroke={theme.colors.primary}
+                  />
+                  <Text
+                    style={[
+                      styles.filterChipText,
+                      active && styles.filterChipTextActive,
+                    ]}>
+                    {tag.name} ({tag.count})
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+            {hasFilters && (
+              <TouchableOpacity
+                style={styles.filterChipClear}
+                onPress={() => chatSessionStore.clearOrganizationFilters()}
+                testID="sidebar-clear-filters">
+                <CloseIcon
+                  stroke={theme.colors.onSurfaceVariant}
+                  width={12}
+                  height={12}
+                />
+                <Text style={styles.filterChipClearText}>
+                  {l10n.components.sidebarContent.clearFilters}
+                </Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        </View>
+      );
+    };
+
     // Render section header (date labels)
     const renderSectionHeader = React.useCallback(
       ({section}: {section: {title: string}}) => (
@@ -631,6 +888,10 @@ export const SidebarContent: React.FC<DrawerContentComponentProps> = observer(
             onPressRename={handlePressRename}
             onPressDelete={onPressDelete}
             onPressExport={handlePressExport}
+            onPressExportPdf={handlePressExportPdf}
+            onPressStats={handlePressStats}
+            onPressFolder={handlePressFolder}
+            onPressTags={handlePressTags}
             onPressSelect={handlePressSelect}
             isSelectionMode={chatSessionStore.isSelectionMode}
             isSelected={isSelected}
@@ -651,6 +912,10 @@ export const SidebarContent: React.FC<DrawerContentComponentProps> = observer(
         handlePressRename,
         onPressDelete,
         handlePressExport,
+        handlePressExportPdf,
+        handlePressStats,
+        handlePressFolder,
+        handlePressTags,
         handlePressSelect,
         handleToggleSelection,
         theme,
@@ -709,6 +974,13 @@ export const SidebarContent: React.FC<DrawerContentComponentProps> = observer(
               onPress={() => props.navigation.navigate(ROUTES.BENCHMARK)}
               style={styles.menuDrawerItem}
               testID="drawer-item-benchmark"
+            />
+            <Drawer.Item
+              label={l10n.components.sidebarContent.statistics}
+              icon={() => <ChartBarIcon stroke={theme.colors.primary} />}
+              onPress={() => setGlobalStatsVisible(true)}
+              style={styles.menuDrawerItem}
+              testID="drawer-item-statistics"
             />
             <Drawer.Item
               label={l10n.components.sidebarContent.menuItems.settings}
@@ -807,6 +1079,7 @@ export const SidebarContent: React.FC<DrawerContentComponentProps> = observer(
                   <>
                     {ListHeaderComponent}
                     {renderSearchBar()}
+                    {renderFilterChips()}
                   </>
                 }
                 ListEmptyComponent={
@@ -822,6 +1095,24 @@ export const SidebarContent: React.FC<DrawerContentComponentProps> = observer(
           visible={sessionToRename !== null}
           onClose={() => setSessionToRename(null)}
           session={sessionToRename}
+        />
+        <FolderModal
+          visible={folderSessionId !== null}
+          onClose={() => setFolderSessionId(null)}
+          sessionId={folderSessionId}
+        />
+        <TagsModal
+          visible={tagsSessionId !== null}
+          onClose={() => setTagsSessionId(null)}
+          sessionId={tagsSessionId}
+        />
+        <ChatStatsModal
+          visible={globalStatsVisible || statsSessionId !== null}
+          onClose={() => {
+            setGlobalStatsVisible(false);
+            setStatsSessionId(null);
+          }}
+          sessionId={statsSessionId}
         />
       </GestureHandlerRootView>
     );

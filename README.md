@@ -40,6 +40,9 @@ Most AI apps are a thin window onto someone else's server — every message you 
 - **🗣️ Text-to-speech** — give your assistant a voice with on-device neural TTS (Kokoro and other engines), no cloud calls.
 - **🎭 Assistants** — create personalized assistants with their own model, system prompt, and personality (Assistant and Roleplay types).
 - **🔎 Chat history search** — instantly filter your conversations by title or message content from the sidebar, with Arabic/RTL-aware layout.
+- **🗂️ Folders & tags** — organize chats into folders and tag them with keywords; one-tap filter chips live right under the search bar (long-press a chip to delete a folder or a tag everywhere).
+- **📊 Chat statistics** — see message/word counts per session or across all history, plus the most frequent topics you chat about.
+- **📄 PDF export** — export any chat as a print-ready PDF (alongside JSON and Markdown), with full right-to-left/Arabic typesetting powered by an embedded Amiri font.
 - **🛍️ Drshub** — discover and install community Assistants from the in-app marketplace (disabled by default in this build).
 - **🛠️ Talents & tools** — let capable Assistants call built-in tools (calculator, date/time, rich HTML rendering) inside a tool-use loop.
 - **📥 Hugging Face integration** — search and download GGUF models, including gated ones, directly from the HF Hub with your access token.
@@ -91,6 +94,17 @@ DRS AI is a four-layer stack, from the silicon up to the chat UI. Each layer has
 5. **Edit** any of your messages with a long-press — the AI regenerates from your change. Hit **retry** for a fresh answer, optionally with a different model.
 
 <img src="assets/images and logos/feature-chat.png" alt="Private chat" width="60%">
+</details>
+
+<details>
+<summary><strong>🗂️ Organize, export & stats</strong></summary>
+
+<br/>
+
+1. Open the sidebar (☰) to see your chat history.
+2. **Long-press a chat** for the full menu: pin, rename, **move to a folder**, **edit tags**, **statistics**, and **export** (JSON / Markdown / **PDF**).
+3. **Folders and tags** appear as filter chips under the search bar — tap one to filter the list, long-press one to remove it everywhere.
+4. The **Statistics** item in the sidebar menu shows totals across all chats: messages, words, and your most frequent topics.
 </details>
 
 <details>

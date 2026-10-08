@@ -137,6 +137,30 @@ class ChatSessionRepository {
   async updateSessionTitle(sessionId, newTitle) {
     return; // Mock: do nothing
   }
+
+  async setSessionFolder(sessionId, folder) {
+    return; // Mock: do nothing
+  }
+
+  async setSessionTags(sessionId, tags) {
+    return; // Mock: do nothing
+  }
+
+  async renameFolder(oldName, newName) {
+    return; // Mock: do nothing
+  }
+
+  async deleteFolder(name) {
+    return; // Mock: do nothing
+  }
+
+  async removeTagEverywhere(tag) {
+    return; // Mock: do nothing
+  }
+
+  async getAllMessages() {
+    return []; // Mock: no messages
+  }
 }
 
 export const chatSessionRepository = new ChatSessionRepository();

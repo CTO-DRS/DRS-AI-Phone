@@ -976,7 +976,8 @@
       "exportCurrentSessionError": "Failed to export the current session.",
       "exportAllError": "Failed to export all sessions.",
       "importSuccessTitle": "Import Success",
-      "importErrorTitle": "Import Error"
+      "importErrorTitle": "Import Error",
+      "exportCurrentSessionPdf": "Export as PDF"
     },
     "hfTokenSheet": {
       "title": "Hugging Face Token",
@@ -1215,7 +1216,18 @@
         "older": "Older"
       },
       "emptySessionsTitle": "No chats yet",
-      "emptySessionsHint": "Start a new conversation from the chat screen"
+      "emptySessionsHint": "Start a new conversation from the chat screen",
+      "statistics": "Statistics",
+      "moveToFolder": "Move to folder...",
+      "editTags": "Edit tags...",
+      "folders": "Folders",
+      "tags": "Tags",
+      "clearFilters": "Clear filters",
+      "filteredBy": "Filtered by",
+      "deleteFolderTitle": "Delete folder",
+      "deleteFolderMessage": "Sessions will be kept, but they will no longer belong to the \"{{name}}\" folder.",
+      "deleteTagTitle": "Remove tag",
+      "deleteTagMessage": "The tag \"{{name}}\" will be removed from all chats."
     },
     "usageStats": {
       "tooltip": {
@@ -1224,12 +1236,7 @@
         "total": "Total: ",
         "usage": "Usage: "
       },
-      "byteSizes": [
-        "Bytes",
-        "KB",
-        "MB",
-        "GB"
-      ]
+      "byteSizes": ["Bytes", "KB", "MB", "GB"]
     },
     "chatView": {
       "menuItems": {
@@ -1298,6 +1305,45 @@
       "switch": "Switch",
       "shareErrorTitle": "Share Error",
       "shareErrorMessage": "Failed to share assistant. Please try again."
+    },
+    "chatPdf": {
+      "exported": "Exported",
+      "user": "User",
+      "assistant": "Assistant",
+      "image": "image",
+      "page": "Page"
+    },
+    "chatStats": {
+      "title": "Chat statistics",
+      "globalTitle": "Overall statistics",
+      "sessionTitle": "Session statistics",
+      "sessions": "Sessions",
+      "totalMessages": "Messages",
+      "userMessages": "Your messages",
+      "assistantMessages": "Assistant messages",
+      "totalWords": "Words",
+      "userWords": "Your words",
+      "assistantWords": "Assistant words",
+      "totalChars": "Characters",
+      "topTopics": "Most frequent topics",
+      "noTopics": "Not enough messages to detect topics yet.",
+      "firstActivity": "First activity",
+      "lastActivity": "Last activity",
+      "emptySession": "This session has no messages yet.",
+      "loadError": "Could not load statistics."
+    },
+    "folderModal": {
+      "title": "Move to folder",
+      "inputLabel": "Folder name",
+      "inputPlaceholder": "Enter a folder name",
+      "existing": "Existing folders",
+      "remove": "Remove from folder"
+    },
+    "tagsModal": {
+      "title": "Edit tags",
+      "inputLabel": "Tags",
+      "inputPlaceholder": "Comma separated, e.g. work, ideas",
+      "suggestions": "Existing tags"
     }
   },
   "assistantsScreen": {

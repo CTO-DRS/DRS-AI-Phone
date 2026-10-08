@@ -184,6 +184,12 @@ class ChatSessionRepository {
     return sessions as unknown as ChatSession[];
   }
 
+  // Get every message row (for global chat statistics).
+  async getAllMessages(): Promise<Message[]> {
+    const messages = await database.collections.get('messages').query().fetch();
+    return messages as unknown as Message[];
+  }
+
   // Get a single session with its messages and settings
   async getSessionById(id: string): Promise<{
     session: ChatSession;
@@ -654,6 +660,84 @@ class ChatSessionRepository {
       await session.update((record: any) => {
         record.pinned = pinned;
       });
+    });
+  }
+
+  // Assign a session to a folder (null removes it from its folder).
+  async setSessionFolder(
+    sessionId: string,
+    folder: string | null,
+  ): Promise<void> {
+    const session = await database.collections
+      .get('chat_sessions')
+      .find(sessionId);
+
+    await database.write(async () => {
+      await session.update((record: any) => {
+        record.folder = folder;
+      });
+    });
+  }
+
+  // Replace the tag list of a session (empty array clears all tags).
+  async setSessionTags(sessionId: string, tags: string[]): Promise<void> {
+    const session = await database.collections
+      .get('chat_sessions')
+      .find(sessionId);
+
+    const normalized = [...new Set(tags.map(t => t.trim()).filter(Boolean))];
+
+    await database.write(async () => {
+      await session.update((record: any) => {
+        record.tags = normalized.length > 0 ? JSON.stringify(normalized) : null;
+      });
+    });
+  }
+
+  // Rename a folder across every session carrying it.
+  async renameFolder(oldName: string, newName: string): Promise<void> {
+    const sessions = await database.collections
+      .get('chat_sessions')
+      .query(Q.where('folder', oldName))
+      .fetch();
+
+    await database.write(async () => {
+      for (const session of sessions) {
+        await session.update((record: any) => {
+          record.folder = newName;
+        });
+      }
+    });
+  }
+
+  // Remove a folder from every session carrying it (sessions are kept).
+  async deleteFolder(name: string): Promise<void> {
+    const sessions = await database.collections
+      .get('chat_sessions')
+      .query(Q.where('folder', name))
+      .fetch();
+
+    await database.write(async () => {
+      for (const session of sessions) {
+        await session.update((record: any) => {
+          record.folder = null;
+        });
+      }
+    });
+  }
+
+  // Remove one tag from every session that carries it.
+  async removeTagEverywhere(tag: string): Promise<void> {
+    const sessions = (await this.getAllSessions()) as ChatSession[];
+    const affected = sessions.filter(session => session.tagList.includes(tag));
+
+    await database.write(async () => {
+      for (const session of affected) {
+        const next = session.tagList.filter(t => t !== tag);
+        await session.update((record: any) => {
+          record.tags = next.length > 0 ? JSON.stringify(next) : null;
+        });
+      }
     });
   }
 
