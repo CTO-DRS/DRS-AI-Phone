@@ -39,6 +39,7 @@ Most AI apps are a thin window onto someone else's server — every message you 
 - **🧠 On-device chat** — run GGUF language models (Gemma, Qwen, Phi, Llama, and more) fully offline.
 - **🗣️ Text-to-speech** — give your assistant a voice with on-device neural TTS (Kokoro and other engines), no cloud calls.
 - **🎭 Assistants** — create personalized assistants with their own model, system prompt, and personality (Assistant and Roleplay types).
+- **🔎 Chat history search** — instantly filter your conversations by title or message content from the sidebar, with Arabic/RTL-aware layout.
 - **🛍️ Drshub** — discover and install community Assistants from the in-app marketplace (disabled by default in this build).
 - **🛠️ Talents & tools** — let capable Assistants call built-in tools (calculator, date/time, rich HTML rendering) inside a tool-use loop.
 - **📥 Hugging Face integration** — search and download GGUF models, including gated ones, directly from the HF Hub with your access token.

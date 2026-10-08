@@ -107,6 +107,25 @@ export const createStyles = (theme: MD3Theme) =>
     selectAllCheckbox: {
       marginEnd: 12,
     },
+    searchContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+      marginHorizontal: 16,
+      marginBottom: 8,
+      paddingHorizontal: 12,
+      minHeight: 40,
+      borderRadius: 20,
+      backgroundColor: theme.colors.surfaceVariant,
+    },
+    searchInput: {
+      flex: 1,
+      fontSize: 14,
+      color: theme.colors.onSurface,
+      paddingVertical: 0,
+      minHeight: 36,
+      textAlignVertical: 'center',
+    },
     emptySessions: {
       alignItems: 'center',
       justifyContent: 'center',
