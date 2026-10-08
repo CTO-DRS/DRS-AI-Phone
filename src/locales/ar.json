@@ -976,7 +976,8 @@
       "exportCurrentSessionError": "فشل تصدير الجلسة الحالية.",
       "exportAllError": "فشل تصدير جميع الجلسات.",
       "importSuccessTitle": "تم الاستيراد بنجاح",
-      "importErrorTitle": "خطأ في الاستيراد"
+      "importErrorTitle": "خطأ في الاستيراد",
+      "exportCurrentSessionPdf": "تصدير PDF"
     },
     "hfTokenSheet": {
       "title": "توكن Hugging Face",
@@ -1215,7 +1216,18 @@
         "older": "أقدم"
       },
       "emptySessionsTitle": "لا توجد محادثات بعد",
-      "emptySessionsHint": "ابدأ محادثة جديدة من شاشة الدردشة"
+      "emptySessionsHint": "ابدأ محادثة جديدة من شاشة الدردشة",
+      "statistics": "الإحصاءات",
+      "moveToFolder": "نقل إلى مجلد...",
+      "editTags": "تعديل الوسوم...",
+      "folders": "المجلدات",
+      "tags": "الوسوم",
+      "clearFilters": "مسح عوامل التصفية",
+      "filteredBy": "مُصفّى حسب",
+      "deleteFolderTitle": "حذف المجلد",
+      "deleteFolderMessage": "ستُحفظ المحادثات لكنها لن تنتمي بعد الآن إلى مجلد \"{{name}}\".",
+      "deleteTagTitle": "إزالة الوسم",
+      "deleteTagMessage": "سيُزال الوسم \"{{name}}\" من جميع المحادثات."
     },
     "usageStats": {
       "tooltip": {
@@ -1224,12 +1236,7 @@
         "total": "الإجمالي: ",
         "usage": "الاستخدام: "
       },
-      "byteSizes": [
-        "Bytes",
-        "KB",
-        "MB",
-        "GB"
-      ]
+      "byteSizes": ["Bytes", "KB", "MB", "GB"]
     },
     "chatView": {
       "menuItems": {
@@ -1298,6 +1305,45 @@
       "switch": "تبديل",
       "shareErrorTitle": "خطأ في المشاركة",
       "shareErrorMessage": "فشل مشاركة المساعد. يرجى المحاولة مرة أخرى."
+    },
+    "chatPdf": {
+      "exported": "صُدرت في",
+      "user": "المستخدم",
+      "assistant": "المساعد",
+      "image": "صورة",
+      "page": "صفحة"
+    },
+    "chatStats": {
+      "title": "إحصاءات المحادثات",
+      "globalTitle": "الإحصاءات العامة",
+      "sessionTitle": "إحصاءات الجلسة",
+      "sessions": "الجلسات",
+      "totalMessages": "الرسائل",
+      "userMessages": "رسائلك",
+      "assistantMessages": "رسائل المساعد",
+      "totalWords": "الكلمات",
+      "userWords": "كلماتك",
+      "assistantWords": "كلمات المساعد",
+      "totalChars": "الأحرف",
+      "topTopics": "أشهر المواضيع",
+      "noTopics": "لا توجد رسائل كافية لاستخراج المواضيع بعد.",
+      "firstActivity": "أول نشاط",
+      "lastActivity": "آخر نشاط",
+      "emptySession": "لا تحتوي هذه الجلسة على رسائل بعد.",
+      "loadError": "تعذر تحميل الإحصاءات."
+    },
+    "folderModal": {
+      "title": "نقل إلى مجلد",
+      "inputLabel": "اسم المجلد",
+      "inputPlaceholder": "أدخل اسم المجلد",
+      "existing": "المجلدات الموجودة",
+      "remove": "إزالة من المجلد"
+    },
+    "tagsModal": {
+      "title": "تعديل الوسوم",
+      "inputLabel": "الوسوم",
+      "inputPlaceholder": "مفصولة بفواصل، مثل: عمل، أفكار",
+      "suggestions": "الوسوم الموجودة"
     }
   },
   "assistantsScreen": {

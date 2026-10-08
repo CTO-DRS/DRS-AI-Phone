@@ -16,7 +16,24 @@ export default class ChatSession extends Model {
   @text('date') date!: string;
   @text('active_assistant_id') activeAssistantId?: string;
   @text('settings_source') settingsSource?: string;
+  @text('folder') folder?: string;
+  @text('tags') tags?: string; // JSON stringified string[]
   @field('pinned') pinned!: boolean;
   @field('created_at') createdAt!: number;
   @field('updated_at') updatedAt!: number;
+
+  /** Parsed tag list; tolerant of corrupt/absent JSON. */
+  get tagList(): string[] {
+    if (!this.tags) {
+      return [];
+    }
+    try {
+      const parsed = JSON.parse(this.tags);
+      return Array.isArray(parsed)
+        ? parsed.filter(t => typeof t === 'string')
+        : [];
+    } catch {
+      return [];
+    }
+  }
 }

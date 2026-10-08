@@ -10,6 +10,8 @@ import {uiStore, assistantStore} from '../store';
 import {ensureLegacyStoragePermission} from './androidPermission';
 import {derivedText, userId} from './chat';
 import {getAbsoluteThumbnailPath, isLocalThumbnailPath} from './imageUtils';
+import {buildChatPdf} from './pdf/chatPdfBuilder';
+import {bytesToBase64} from './pdf/base64';
 import type {Assistant} from '../types/assistant';
 import type {Message} from '../database';
 
@@ -358,18 +360,63 @@ const shareJsonData = async (
     const tempFilePath = `${RNFS.CachesDirectoryPath}/${filename}`;
     await RNFS.writeFile(tempFilePath, jsonData, 'utf8');
 
-    // Share the file
-    if (Platform.OS === 'ios') {
-      // On iOS, use react-native-share
+    await sharePreparedFile(tempFilePath, filename, mimeType, jsonData);
+  } catch (error: any) {
+    console.error('Error sharing JSON data:', error);
+
+    // Show a more user-friendly error message
+    Alert.alert(
+      currentL10n.components.exportUtils.exportError,
+      currentL10n.components.exportUtils.exportErrorMessage,
+      [{text: currentL10n.components.exportUtils.ok}],
+    );
+
+    throw error;
+  }
+};
+
+/**
+ * Shared sharing pipeline for a file that already exists on disk.
+ * `fallbackText` (nullable) is offered as a plain-text share if file sharing
+ * fails — binary exports (PDF) pass null because raw bytes are meaningless
+ * as a message body.
+ */
+const sharePreparedFile = async (
+  tempFilePath: string,
+  filename: string,
+  mimeType: string,
+  fallbackText: string | null,
+): Promise<void> => {
+  const currentL10n = uiStore.l10n;
+  // Share the file
+  if (Platform.OS === 'ios') {
+    // On iOS, use react-native-share
+    await Share.open({
+      url: `file://${tempFilePath}`,
+      title: `Share ${filename}`,
+      type: mimeType,
+      failOnCancel: false,
+    });
+  } else if (Platform.OS === 'android' && Platform.Version === 29) {
+    // Special handling for Android 10 (API 29)
+    // Use direct sharing from temp directory instead of saving to Downloads
+    try {
       await Share.open({
         url: `file://${tempFilePath}`,
         title: `Share ${filename}`,
         type: mimeType,
         failOnCancel: false,
       });
-    } else if (Platform.OS === 'android' && Platform.Version === 29) {
-      // Special handling for Android 10 (API 29)
-      // Use direct sharing from temp directory instead of saving to Downloads
+      return; // Exit early after sharing
+    } catch (error) {
+      console.error('Error sharing on Android 10:', error);
+      throw error;
+    }
+  } else {
+    // On Android (not API 29), handle with storage permissions
+    const permissionGranted = await ensureLegacyStoragePermission();
+    if (!permissionGranted) {
+      // If permission denied, fall back to direct sharing
       try {
         await Share.open({
           url: `file://${tempFilePath}`,
@@ -379,133 +426,176 @@ const shareJsonData = async (
         });
         return; // Exit early after sharing
       } catch (error) {
-        console.error('Error sharing on Android 10:', error);
+        console.error('Error sharing after permission denied:', error);
         throw error;
       }
-    } else {
-      // On Android (not API 29), handle with storage permissions
-      const permissionGranted = await ensureLegacyStoragePermission();
-      if (!permissionGranted) {
-        // If permission denied, fall back to direct sharing
-        try {
-          await Share.open({
-            url: `file://${tempFilePath}`,
-            title: `Share ${filename}`,
-            type: mimeType,
-            failOnCancel: false,
-          });
-          return; // Exit early after sharing
-        } catch (error) {
-          console.error('Error sharing after permission denied:', error);
-          throw error;
-        }
-      }
+    }
 
-      try {
-        // Save to appropriate directory based on platform
-        const saveDir = getSaveDirectory();
-        const savePath = `${saveDir}/${filename}`;
-        await RNFS.copyFile(tempFilePath, savePath);
+    try {
+      // Save to appropriate directory based on platform
+      const saveDir = getSaveDirectory();
+      const savePath = `${saveDir}/${filename}`;
+      await RNFS.copyFile(tempFilePath, savePath);
 
-        // Show success message with the path
-        const fileSavedMsg =
-          currentL10n.components.exportUtils.fileSavedMessage.replace(
-            '{{filename}}',
-            filename,
-          );
-
-        Alert.alert(
-          currentL10n.components.exportUtils.fileSaved,
-          fileSavedMsg,
-          [
-            {
-              text: currentL10n.components.exportUtils.share,
-              onPress: async () => {
-                // Use react-native-share for both platforms
-                try {
-                  const options = {
-                    title: `Share ${filename}`,
-                    message: 'DRS AI Chat Export',
-                    url: `file://${savePath}`,
-                    type: mimeType,
-                    failOnCancel: false,
-                  };
-
-                  await Share.open(options);
-                } catch (error) {
-                  const shareError = error as any;
-                  console.error('Error sharing file:', shareError);
-
-                  // Fallback to sharing content directly if file sharing fails
-                  if (shareError.message !== 'User did not share') {
-                    try {
-                      await Share.open({
-                        title: `Share ${filename}`,
-                        message: jsonData,
-                      });
-                    } catch (err) {
-                      const fallbackError = err as any;
-                      console.error(
-                        'Error with fallback sharing:',
-                        fallbackError,
-                      );
-                      // Ignore cancellation errors
-                      if (fallbackError.message !== 'User did not share') {
-                        Alert.alert(
-                          currentL10n.components.exportUtils.shareError,
-                          currentL10n.components.exportUtils.shareErrorMessage,
-                          [{text: currentL10n.components.exportUtils.ok}],
-                        );
-                      }
-                    }
-                  }
-                }
-              },
-            },
-            {text: currentL10n.components.exportUtils.ok},
-          ],
+      // Show success message with the path
+      const fileSavedMsg =
+        currentL10n.components.exportUtils.fileSavedMessage.replace(
+          '{{filename}}',
+          filename,
         );
-      } catch (error) {
-        console.error('Error saving to Downloads:', error);
 
-        // Fallback to just sharing the file content
-        Alert.alert(
-          currentL10n.components.exportUtils.saveOptions,
-          currentL10n.components.exportUtils.saveOptionsMessage,
-          [
-            {
-              text: currentL10n.components.exportUtils.share,
-              onPress: async () => {
-                // For fallback, share the file content directly
+      Alert.alert(currentL10n.components.exportUtils.fileSaved, fileSavedMsg, [
+        {
+          text: currentL10n.components.exportUtils.share,
+          onPress: async () => {
+            // Use react-native-share for both platforms
+            try {
+              const options = {
+                title: `Share ${filename}`,
+                message: 'DRS AI Chat Export',
+                url: `file://${savePath}`,
+                type: mimeType,
+                failOnCancel: false,
+              };
+
+              await Share.open(options);
+            } catch (error) {
+              const shareError = error as any;
+              console.error('Error sharing file:', shareError);
+
+              // Fallback to sharing content directly if file sharing fails
+              if (
+                fallbackText !== null &&
+                shareError.message !== 'User did not share'
+              ) {
                 try {
                   await Share.open({
                     title: `Share ${filename}`,
-                    message: jsonData,
+                    message: fallbackText,
                   });
                 } catch (err) {
-                  const shareError = err as any;
-                  console.error('Error sharing content:', shareError);
+                  const fallbackError = err as any;
+                  console.error('Error with fallback sharing:', fallbackError);
                   // Ignore cancellation errors
-                  if (shareError.message !== 'User did not share') {
+                  if (fallbackError.message !== 'User did not share') {
                     Alert.alert(
                       currentL10n.components.exportUtils.shareError,
-                      currentL10n.components.exportUtils
-                        .shareContentErrorMessage,
+                      currentL10n.components.exportUtils.shareErrorMessage,
                       [{text: currentL10n.components.exportUtils.ok}],
                     );
                   }
                 }
-              },
-            },
-            {text: currentL10n.components.exportUtils.cancel},
-          ],
-        );
-      }
-    }
-  } catch (error: any) {
-    console.error('Error sharing JSON data:', error);
+              }
+            }
+          },
+        },
+        {text: currentL10n.components.exportUtils.ok},
+      ]);
+    } catch (error) {
+      console.error('Error saving to Downloads:', error);
 
-    // Show a more user-friendly error message
+      // Fallback to just sharing the file content
+      Alert.alert(
+        currentL10n.components.exportUtils.saveOptions,
+        currentL10n.components.exportUtils.saveOptionsMessage,
+        [
+          {
+            text: currentL10n.components.exportUtils.share,
+            onPress: async () => {
+              if (fallbackText === null) {
+                return;
+              }
+              // For fallback, share the file content directly
+              try {
+                await Share.open({
+                  title: `Share ${filename}`,
+                  message: fallbackText,
+                });
+              } catch (err) {
+                const shareError = err as any;
+                console.error('Error sharing content:', shareError);
+                // Ignore cancellation errors
+                if (shareError.message !== 'User did not share') {
+                  Alert.alert(
+                    currentL10n.components.exportUtils.shareError,
+                    currentL10n.components.exportUtils.shareContentErrorMessage,
+                    [{text: currentL10n.components.exportUtils.ok}],
+                  );
+                }
+              }
+            },
+          },
+          {text: currentL10n.components.exportUtils.cancel},
+        ],
+      );
+    }
+  }
+};
+
+/**
+ * Export a single chat session as a printable PDF document.
+ *
+ * Arabic/Latin mixed transcripts are fully supported: text is shaped to
+ * Unicode presentation forms and laid out with a pragmatic bidi engine
+ * (see src/utils/pdf), using the embedded Amiri font for Arabic runs and
+ * Helvetica for Latin runs.
+ */
+export const exportChatSessionAsPdf = async (
+  sessionId: string,
+): Promise<void> => {
+  try {
+    const sessionData = await chatSessionRepository.getSessionById(sessionId);
+    if (!sessionData) {
+      throw new Error('Session not found');
+    }
+
+    const {session, messages} = sessionData;
+    const currentL10n = uiStore.l10n;
+
+    // `getSessionById` returns newest-first to match the inverted chat list;
+    // a printable transcript needs chronological order.
+    const exportedMessages = [...messages].reverse().map(msg => {
+      const exported = toExportedMessage(msg);
+      const imageUris: unknown = exported.metadata?.imageUris;
+      return {
+        role:
+          exported.author === userId
+            ? ('user' as const)
+            : ('assistant' as const),
+        text: exported.text ?? '',
+        imageCount: Array.isArray(imageUris) ? imageUris.length : 0,
+        timestamp: format(new Date(exported.createdAt), 'yyyy-MM-dd HH:mm'),
+      };
+    });
+
+    const pdfLabels = currentL10n.components.chatPdf;
+    const pdfBytes = await buildChatPdf({
+      title: session.title.replace(/\s+/g, ' ').trim(),
+      exportedAt: format(new Date(), 'yyyy-MM-dd HH:mm'),
+      messages: exportedMessages,
+      labels: {
+        user: pdfLabels.user,
+        assistant: pdfLabels.assistant,
+        image: pdfLabels.image,
+        page: pdfLabels.page,
+        exported: pdfLabels.exported,
+      },
+    });
+
+    const timestamp = format(new Date(), 'yyyy-MM-dd_HH-mm-ss');
+    const sanitizedTitle = session.title
+      .replace(/[^a-z0-9]/gi, '_')
+      .toLowerCase();
+    const filename = `chat_${sanitizedTitle}_${timestamp}.pdf`;
+
+    const tempFilePath = `${RNFS.CachesDirectoryPath}/${filename}`;
+    await RNFS.writeFile(tempFilePath, bytesToBase64(pdfBytes), 'base64');
+
+    await sharePreparedFile(tempFilePath, filename, 'application/pdf', null);
+  } catch (error) {
+    console.error('Error exporting chat session as PDF:', error);
+
+    const currentL10n = uiStore.l10n;
     Alert.alert(
       currentL10n.components.exportUtils.exportError,
       currentL10n.components.exportUtils.exportErrorMessage,

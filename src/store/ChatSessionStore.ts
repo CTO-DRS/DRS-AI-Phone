@@ -33,6 +33,24 @@ type MessageUpdate =
 const NEW_SESSION_TITLE = 'New Session';
 const TITLE_LIMIT = 40;
 
+/** Tolerant parse of the JSON-stringified tags column. */
+const parseTagsJson = (json?: string | null): string[] => {
+  if (!json) {
+    return [];
+  }
+  try {
+    const parsed = JSON.parse(json);
+    if (!Array.isArray(parsed)) {
+      return [];
+    }
+    return parsed.filter(
+      (t): t is string => typeof t === 'string' && t.trim().length > 0,
+    );
+  } catch {
+    return [];
+  }
+};
+
 // Coalesce per-token writes into batched UI flushes (~33 Hz).
 const STREAMING_THROTTLE_MS = 30;
 
@@ -44,6 +62,8 @@ export interface SessionMetaData {
   completionSettings: CompletionParams;
   activeAssistantId?: string;
   pinned?: boolean;
+  folder?: string | null; // chat organization folder (v10)
+  tags?: string[]; // chat organization tags (v10, JSON column)
   settingsSource: 'assistant' | 'custom'; // Explicit choice: use assistant settings or custom settings
   messagesLoaded?: boolean; // Track if messages are loaded for lazy loading
 }
@@ -113,6 +133,10 @@ class ChatSessionStore {
   // Selection mode state
   isSelectionMode: boolean = false;
   selectedSessionIds: Set<string> = new Set();
+
+  // Chat organization (folders/tags) active filters
+  activeFolderFilter: string | null = null;
+  activeTagFilter: string | null = null;
 
   // UX state for the active agent run. Driven by `agentStateReducer`
   // from `AgentEvent`s emitted by the runner. The only writer is
@@ -308,6 +332,8 @@ class ChatSessionStore {
           settingsSource:
             (session.settingsSource as 'assistant' | 'custom') || 'assistant',
           pinned: session.pinned || false,
+          folder: (session as any).folder ?? null,
+          tags: parseTagsJson((session as any).tags),
           messagesLoaded: false, // Mark as not loaded for lazy loading
         });
       }
@@ -1138,8 +1164,17 @@ class ChatSessionStore {
   }
 
   get groupedSessions(): SessionGroup {
-    const pinnedSessions = this.sessions.filter(s => s.pinned);
-    const unpinnedSessions = this.sessions.filter(s => !s.pinned);
+    // Chat organization filters (folder/tag) restrict the pool before any
+    // pin/date grouping — a filtered view is a subset of the normal list.
+    const pool = this.sessions.filter(
+      session =>
+        (this.activeFolderFilter === null ||
+          (session.folder ?? null) === this.activeFolderFilter) &&
+        (this.activeTagFilter === null ||
+          (session.tags ?? []).includes(this.activeTagFilter)),
+    );
+    const pinnedSessions = pool.filter(s => s.pinned);
+    const unpinnedSessions = pool.filter(s => !s.pinned);
 
     const groups: SessionGroup = unpinnedSessions.reduce(
       (acc: SessionGroup, session) => {
@@ -1470,6 +1505,147 @@ class ChatSessionStore {
       });
     } catch (error) {
       console.error('Failed to toggle pin session:', error);
+    }
+  }
+
+  // ─── Chat organization: folders & tags ───────────────────────────────
+
+  /** Distinct folders across all sessions with their session counts. */
+  get folders(): {name: string; count: number}[] {
+    const counts = new Map<string, number>();
+    for (const session of this.sessions) {
+      const folder = (session.folder ?? '').trim();
+      if (folder) {
+        counts.set(folder, (counts.get(folder) ?? 0) + 1);
+      }
+    }
+    return [...counts.entries()]
+      .map(([name, count]) => ({name, count}))
+      .sort((a, b) => a.name.localeCompare(b.name));
+  }
+
+  /** Distinct tags across all sessions with their session counts. */
+  get tags(): {name: string; count: number}[] {
+    const counts = new Map<string, number>();
+    for (const session of this.sessions) {
+      for (const tag of session.tags ?? []) {
+        const t = tag.trim();
+        if (t) {
+          counts.set(t, (counts.get(t) ?? 0) + 1);
+        }
+      }
+    }
+    return [...counts.entries()]
+      .map(([name, count]) => ({name, count}))
+      .sort((a, b) => a.name.localeCompare(b.name));
+  }
+
+  get hasActiveFilters(): boolean {
+    return this.activeFolderFilter !== null || this.activeTagFilter !== null;
+  }
+
+  setFolderFilter(folder: string | null): void {
+    this.activeFolderFilter = folder;
+  }
+
+  setTagFilter(tag: string | null): void {
+    this.activeTagFilter = tag;
+  }
+
+  clearOrganizationFilters(): void {
+    this.activeFolderFilter = null;
+    this.activeTagFilter = null;
+  }
+
+  async setSessionFolder(
+    sessionId: string,
+    folder: string | null,
+  ): Promise<void> {
+    try {
+      await chatSessionRepository.setSessionFolder(sessionId, folder);
+      runInAction(() => {
+        const session = this.sessions.find(s => s.id === sessionId);
+        if (session) {
+          session.folder = folder;
+        }
+      });
+    } catch (error) {
+      console.error('Failed to set session folder:', error);
+    }
+  }
+
+  async setSessionTags(sessionId: string, tags: string[]): Promise<void> {
+    try {
+      await chatSessionRepository.setSessionTags(sessionId, tags);
+      runInAction(() => {
+        const session = this.sessions.find(s => s.id === sessionId);
+        if (session) {
+          session.tags = tags;
+        }
+      });
+    } catch (error) {
+      console.error('Failed to set session tags:', error);
+    }
+  }
+
+  /** Rename a folder everywhere; updates the active filter if it pointed at it. */
+  async renameFolder(oldName: string, newName: string): Promise<void> {
+    const trimmed = newName.trim();
+    if (!trimmed || trimmed === oldName) {
+      return;
+    }
+    try {
+      await chatSessionRepository.renameFolder(oldName, trimmed);
+      runInAction(() => {
+        for (const session of this.sessions) {
+          if (session.folder === oldName) {
+            session.folder = trimmed;
+          }
+        }
+        if (this.activeFolderFilter === oldName) {
+          this.activeFolderFilter = trimmed;
+        }
+      });
+    } catch (error) {
+      console.error('Failed to rename folder:', error);
+    }
+  }
+
+  /** Delete a folder everywhere (sessions stay, just become unfiled). */
+  async deleteFolder(name: string): Promise<void> {
+    try {
+      await chatSessionRepository.deleteFolder(name);
+      runInAction(() => {
+        for (const session of this.sessions) {
+          if (session.folder === name) {
+            session.folder = null;
+          }
+        }
+        if (this.activeFolderFilter === name) {
+          this.activeFolderFilter = null;
+        }
+      });
+    } catch (error) {
+      console.error('Failed to delete folder:', error);
+    }
+  }
+
+  /** Remove a tag from every session that carries it. */
+  async removeTagEverywhere(tag: string): Promise<void> {
+    try {
+      await chatSessionRepository.removeTagEverywhere(tag);
+      runInAction(() => {
+        for (const session of this.sessions) {
+          if ((session.tags ?? []).includes(tag)) {
+            session.tags = (session.tags ?? []).filter(t => t !== tag);
+          }
+        }
+        if (this.activeTagFilter === tag) {
+          this.activeTagFilter = null;
+        }
+      });
+    } catch (error) {
+      console.error('Failed to remove tag:', error);
     }
   }
 

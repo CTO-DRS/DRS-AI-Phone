@@ -154,4 +154,86 @@ export const createStyles = (theme: MD3Theme) =>
       backgroundColor: theme.colors.outline,
       opacity: 0.3,
     },
+    sessionMetaRow: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 4,
+      paddingHorizontal: 16,
+      paddingBottom: 6,
+      marginTop: -4,
+    },
+    sessionMetaChip: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 3,
+      paddingHorizontal: 6,
+      paddingVertical: 2,
+      borderRadius: 8,
+      backgroundColor: theme.dark
+        ? theme.colors.surfaceVariant + '80'
+        : theme.colors.surfaceVariant + '50',
+      maxWidth: 120,
+    },
+    sessionMetaText: {
+      fontSize: 10,
+      color: theme.colors.onSurfaceVariant,
+      flexShrink: 1,
+    },
+    filterChipsContainer: {
+      paddingHorizontal: 12,
+      paddingBottom: 8,
+    },
+    filterHint: {
+      fontSize: 11,
+      color: theme.colors.onSurfaceVariant,
+      marginBottom: 4,
+    },
+    filterChipsRow: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 6,
+    },
+    filterChip: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 4,
+      paddingHorizontal: 9,
+      paddingVertical: 5,
+      borderRadius: 13,
+      borderWidth: StyleSheet.hairlineWidth * 2,
+      borderColor: theme.dark
+        ? theme.colors.outline + '50'
+        : theme.colors.outline + '30',
+      backgroundColor: theme.dark
+        ? theme.colors.surfaceVariant + '60'
+        : theme.colors.surface,
+    },
+    filterChipActive: {
+      backgroundColor: theme.colors.primaryContainer,
+      borderColor: theme.colors.primary,
+    },
+    filterChipText: {
+      fontSize: 12,
+      color: theme.colors.onSurface,
+    },
+    filterChipTextActive: {
+      color: theme.colors.primary,
+      fontWeight: '600',
+    },
+    filterChipClear: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 4,
+      paddingHorizontal: 9,
+      paddingVertical: 5,
+      borderRadius: 13,
+      borderWidth: StyleSheet.hairlineWidth * 2,
+      borderColor: theme.dark
+        ? theme.colors.outline + '50'
+        : theme.colors.outline + '30',
+    },
+    filterChipClearText: {
+      fontSize: 12,
+      color: theme.colors.onSurfaceVariant,
+    },
   });

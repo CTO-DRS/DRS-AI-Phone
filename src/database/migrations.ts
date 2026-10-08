@@ -230,5 +230,21 @@ export default schemaMigrations({
         }),
       ],
     },
+    // Migration to version 10: Chat organization — folder + tags columns
+    // on chat_sessions. `folder` holds the folder name directly (folders
+    // are virtual: their list is the distinct set across sessions);
+    // `tags` is a JSON stringified string[].
+    {
+      toVersion: 10,
+      steps: [
+        addColumns({
+          table: 'chat_sessions',
+          columns: [
+            {name: 'folder', type: 'string', isOptional: true},
+            {name: 'tags', type: 'string', isOptional: true}, // JSON stringified string[]
+          ],
+        }),
+      ],
+    },
   ],
 });
