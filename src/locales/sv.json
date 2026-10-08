@@ -1350,6 +1350,10 @@
       "inputLabel": "Taggar",
       "inputPlaceholder": "Kommaseparerade, t.ex. arbete, idéer",
       "suggestions": "Befintliga taggar"
+    },
+    "databaseMigrating": {
+      "title": "Uppgraderar databasen...",
+      "subText": "Stäng inte appen. Detta kan ta en stund."
     }
   },
   "assistantsScreen": {

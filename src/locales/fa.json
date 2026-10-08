@@ -1350,6 +1350,10 @@
       "inputLabel": "برچسب‌ها",
       "inputPlaceholder": "با کاما جدا کنید، مثلا: کار، ایده‌ها",
       "suggestions": "برچسب‌های موجود"
+    },
+    "databaseMigrating": {
+      "title": "در حال ارتقای پایگاه داده...",
+      "subText": "لطفاً برنامه را نبندید. این ممکن است لحظه‌ای طول بکشد."
     }
   },
   "assistantsScreen": {

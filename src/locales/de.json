@@ -1350,6 +1350,10 @@
       "inputLabel": "Tags",
       "inputPlaceholder": "Komma-getrennt, z. B. Arbeit, Ideen",
       "suggestions": "Vorhandene Tags"
+    },
+    "databaseMigrating": {
+      "title": "Datenbank wird aktualisiert...",
+      "subText": "Bitte schließe die App nicht. Dies kann einen Moment dauern."
     }
   },
   "assistantsScreen": {

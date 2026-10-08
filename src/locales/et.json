@@ -1350,6 +1350,10 @@
       "inputLabel": "Sildid",
       "inputPlaceholder": "Komadega eraldatud, nt töö, ideed",
       "suggestions": "Olemasolevad sildid"
+    },
+    "databaseMigrating": {
+      "title": "Andmebaasi uuendamine...",
+      "subText": "Palun ära sulge rakendust. See võib võtta hetke."
     }
   },
   "assistantsScreen": {

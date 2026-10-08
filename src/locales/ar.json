@@ -1350,6 +1350,10 @@
       "inputLabel": "الوسوم",
       "inputPlaceholder": "مفصولة بفواصل، مثل: عمل، أفكار",
       "suggestions": "الوسوم الموجودة"
+    },
+    "databaseMigrating": {
+      "title": "جارٍ ترقية قاعدة البيانات...",
+      "subText": "يرجى عدم إغلاق التطبيق. قد يستغرق ذلك لحظة."
     }
   },
   "assistantsScreen": {

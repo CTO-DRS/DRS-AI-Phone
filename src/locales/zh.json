@@ -1350,6 +1350,10 @@
       "inputLabel": "标签",
       "inputPlaceholder": "用逗号分隔，例如：工作, 想法",
       "suggestions": "现有标签"
+    },
+    "databaseMigrating": {
+      "title": "正在升级数据库...",
+      "subText": "请勿关闭应用，这可能需要一点时间。"
     }
   },
   "assistantsScreen": {

@@ -1350,6 +1350,10 @@
       "inputLabel": "Теги",
       "inputPlaceholder": "Через кому, наприклад: робота, ідеї",
       "suggestions": "Наявні теги"
+    },
+    "databaseMigrating": {
+      "title": "Оновлення бази даних...",
+      "subText": "Будь ласка, не закривайте застосунок. Це займе небагато часу."
     }
   },
   "assistantsScreen": {

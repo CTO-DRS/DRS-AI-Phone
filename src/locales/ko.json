@@ -1350,6 +1350,10 @@
       "inputLabel": "태그",
       "inputPlaceholder": "쉼표로 구분, 예: 작업, 아이디어",
       "suggestions": "기존 태그"
+    },
+    "databaseMigrating": {
+      "title": "데이터베이스 업그레이드 중...",
+      "subText": "앱을 닫지 마세요. 잠시 걸릴 수 있습니다."
     }
   },
   "assistantsScreen": {

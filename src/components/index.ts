@@ -84,3 +84,5 @@ export * from './RemoteModelSheet';
 export * from './ServerDetailsSheet';
 
 export * from './ToastHost';
+
+export * from './GlobalErrorBoundary';

@@ -1,6 +1,8 @@
 package com.drsai
 
 import android.content.Intent
+import android.os.Handler
+import android.os.Looper
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.module.annotations.ReactModule
 import com.drsai.specs.NativeRestartSpec
@@ -24,6 +26,10 @@ class RestartModule(reactContext: ReactApplicationContext) :
     )
     activity.finish()
     activity.startActivity(intent)
-    Runtime.getRuntime().exit(0)
+    // Give the system time to process the activity start before killing
+    // the process. Exiting synchronously races ActivityManager: if the
+    // process dies before the new activity is scheduled, the relaunch is
+    // dropped and the app simply closes (or loops) instead of restarting.
+    Handler(Looper.getMainLooper()).postDelayed({ Runtime.getRuntime().exit(0) }, 150)
   }
 }

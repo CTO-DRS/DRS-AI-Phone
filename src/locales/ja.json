@@ -1350,6 +1350,10 @@
       "inputLabel": "タグ",
       "inputPlaceholder": "カンマ区切りで入力（例: 仕事, アイデア）",
       "suggestions": "既存のタグ"
+    },
+    "databaseMigrating": {
+      "title": "データベースをアップグレードしています...",
+      "subText": "アプリを閉じないでください。しばらくお待ちください。"
     }
   },
   "assistantsScreen": {

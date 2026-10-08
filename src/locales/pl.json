@@ -1350,6 +1350,10 @@
       "inputLabel": "Tagi",
       "inputPlaceholder": "Rozdzielone przecinkami, np. praca, pomysły",
       "suggestions": "Istniejące tagi"
+    },
+    "databaseMigrating": {
+      "title": "Aktualizacja bazy danych...",
+      "subText": "Nie zamykaj aplikacji. To może chwilę potrwać."
     }
   },
   "assistantsScreen": {
