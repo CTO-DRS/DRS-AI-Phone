@@ -237,4 +237,76 @@ describe('SidebarContent Component', () => {
       expect(chatSessionStore.toggleSessionSelection).not.toHaveBeenCalled();
     });
   });
+
+  describe('Session search', () => {
+    it('renders the session search bar', () => {
+      const {getByTestId} = render(<TestNavigator />);
+
+      expect(getByTestId('sidebar-session-search-input')).toBeTruthy();
+    });
+
+    it('filters sessions by title', () => {
+      const {getByTestId, getByText, queryByText} = render(<TestNavigator />);
+
+      fireEvent.changeText(
+        getByTestId('sidebar-session-search-input'),
+        'Session 1',
+      );
+
+      expect(getByText('Session 1')).toBeTruthy();
+      expect(queryByText('Session 2')).toBeNull();
+      expect(getByText('Search results')).toBeTruthy();
+    });
+
+    it('filters sessions by message content (case-insensitive)', () => {
+      const {getByTestId, getByText, queryByText} = render(<TestNavigator />);
+
+      // "Hello!" only exists in session-1's messages
+      fireEvent.changeText(
+        getByTestId('sidebar-session-search-input'),
+        'hello',
+      );
+
+      expect(getByText('Session 1')).toBeTruthy();
+      expect(queryByText('Session 2')).toBeNull();
+    });
+
+    it('matches message content across groups', () => {
+      const {getByTestId, getByText} = render(<TestNavigator />);
+
+      // "Hey there!" only exists in session-2 (Yesterday group)
+      fireEvent.changeText(
+        getByTestId('sidebar-session-search-input'),
+        'hey there',
+      );
+
+      expect(getByText('Session 2')).toBeTruthy();
+      expect(getByText('Search results')).toBeTruthy();
+    });
+
+    it('shows the no-results state when nothing matches', () => {
+      const {getByTestId, queryByText} = render(<TestNavigator />);
+
+      fireEvent.changeText(
+        getByTestId('sidebar-session-search-input'),
+        'zzz-no-match',
+      );
+
+      expect(getByTestId('sidebar-no-search-results')).toBeTruthy();
+      expect(queryByText('Session 1')).toBeNull();
+      expect(queryByText('Session 2')).toBeNull();
+    });
+
+    it('restores the full list when the query is cleared', () => {
+      const {getByTestId, getByText, queryByText} = render(<TestNavigator />);
+
+      const input = getByTestId('sidebar-session-search-input');
+      fireEvent.changeText(input, 'Session 1');
+      expect(queryByText('Session 2')).toBeNull();
+
+      fireEvent.press(getByTestId('sidebar-session-search-clear'));
+      expect(getByText('Session 1')).toBeTruthy();
+      expect(getByText('Session 2')).toBeTruthy();
+    });
+  });
 });

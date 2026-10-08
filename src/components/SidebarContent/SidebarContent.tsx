@@ -1,5 +1,11 @@
 import React, {useCallback, useContext, useEffect, useState} from 'react';
-import {TouchableOpacity, View, Alert, SectionList} from 'react-native';
+import {
+  TouchableOpacity,
+  View,
+  Alert,
+  SectionList,
+  TextInput,
+} from 'react-native';
 import {observer} from 'mobx-react';
 import {Divider, Drawer, Text} from 'react-native-paper';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
@@ -13,9 +19,11 @@ import {Menu, RenameModal, Checkbox, BrandHeader} from '..';
 import {
   BenchmarkIcon,
   ChatIcon,
+  CloseIcon,
   EditIcon,
   ModelIcon,
   AssistantIcon,
+  SearchIcon,
   SettingsIcon,
   ShareIcon,
   StarIcon,
@@ -30,6 +38,26 @@ import {exportChatSession} from '../../utils/exportUtils';
 
 // Check if app is in debug mode
 const isDebugMode = __DEV__;
+
+/**
+ * Extract the searchable text of a session (message bodies only — reasoning
+ * and tool plumbing are intentionally excluded so search stays predictable).
+ */
+export const extractSessionSearchText = (session: SessionMetaData): string => {
+  const parts: string[] = [];
+  for (const message of session.messages) {
+    if (message.type === 'text') {
+      parts.push(message.text);
+    } else if (message.type === 'assistant_turn') {
+      for (const step of message.steps) {
+        if (step.content) {
+          parts.push(step.content);
+        }
+      }
+    }
+  }
+  return parts.join('\n').toLowerCase();
+};
 
 // Session item props interface
 interface SessionItemProps {
@@ -321,6 +349,7 @@ export const SidebarContent: React.FC<DrawerContentComponentProps> = observer(
     const [menuPosition, setMenuPosition] = useState({x: 0, y: 0});
     const [sessionToRename, setSessionToRename] =
       useState<SessionMetaData | null>(null);
+    const [searchQuery, setSearchQuery] = useState('');
 
     const theme = useTheme();
     const styles = createStyles(theme);
@@ -329,12 +358,43 @@ export const SidebarContent: React.FC<DrawerContentComponentProps> = observer(
 
     // Convert groupedSessions to SectionList format
     // observer() HOC handles MobX reactivity, transformation is cheap
-    const sections = Object.entries(chatSessionStore.groupedSessions).map(
-      ([dateLabel, sessions]) => ({
-        title: dateLabel,
-        data: sessions,
-      }),
+    const groupedSessions = chatSessionStore.groupedSessions;
+    const sections = React.useMemo(
+      () =>
+        Object.entries(groupedSessions).map(([dateLabel, sessions]) => ({
+          title: dateLabel,
+          data: sessions,
+        })),
+      [groupedSessions],
     );
+
+    // When a search query is active, flatten the groups into a single
+    // "Search results" section filtered by title and message content.
+    const normalizedQuery = searchQuery.trim().toLowerCase();
+    const visibleSections = React.useMemo(() => {
+      if (!normalizedQuery) {
+        return sections;
+      }
+      const matched = sections
+        .flatMap(section => section.data)
+        .filter(
+          session =>
+            session.title.toLowerCase().includes(normalizedQuery) ||
+            extractSessionSearchText(session).includes(normalizedQuery),
+        );
+      // Return an empty sections array when nothing matches so the
+      // SectionList renders the "no results" empty state (an empty-data
+      // section would still render its header and suppress the empty state).
+      if (matched.length === 0) {
+        return [];
+      }
+      return [
+        {
+          title: l10n.components.sidebarContent.searchResults,
+          data: matched,
+        },
+      ];
+    }, [normalizedQuery, sections, l10n]);
 
     useEffect(() => {
       chatSessionStore.loadSessionList();
@@ -485,6 +545,58 @@ export const SidebarContent: React.FC<DrawerContentComponentProps> = observer(
     const keyExtractor = React.useCallback(
       (item: SessionMetaData) => item.id,
       [],
+    );
+
+    // Empty state shown when a search query matches nothing.
+    const renderNoSearchResults = () => (
+      <View style={styles.emptySessions} testID="sidebar-no-search-results">
+        <SearchIcon
+          stroke={theme.colors.onSurfaceVariant}
+          width={32}
+          height={32}
+        />
+        <Text style={styles.emptySessionsTitle}>
+          {l10n.components.sidebarContent.noSearchResults}
+        </Text>
+        <Text style={styles.emptySessionsHint}>
+          {l10n.components.sidebarContent.noSearchResultsHint}
+        </Text>
+      </View>
+    );
+
+    // Search bar shown between the main menu and the session list.
+    const renderSearchBar = () => (
+      <View style={styles.searchContainer} testID="sidebar-session-search">
+        <SearchIcon
+          stroke={theme.colors.onSurfaceVariant}
+          width={18}
+          height={18}
+        />
+        <TextInput
+          style={styles.searchInput}
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+          placeholder={l10n.components.sidebarContent.searchSessions}
+          placeholderTextColor={theme.colors.onSurfaceVariant}
+          underlineColorAndroid="transparent"
+          autoCorrect={false}
+          autoCapitalize="none"
+          testID="sidebar-session-search-input"
+        />
+        {searchQuery.length > 0 && (
+          <TouchableOpacity
+            onPress={() => setSearchQuery('')}
+            testID="sidebar-session-search-clear"
+            accessibilityRole="button"
+            accessibilityLabel={l10n.common.clear}>
+            <CloseIcon
+              stroke={theme.colors.onSurfaceVariant}
+              width={16}
+              height={16}
+            />
+          </TouchableOpacity>
+        )}
+      </View>
     );
 
     // Render section header (date labels)
@@ -685,16 +797,25 @@ export const SidebarContent: React.FC<DrawerContentComponentProps> = observer(
               />
             </>
           ) : (
-            <SectionList
-              sections={sections}
-              keyExtractor={keyExtractor}
-              renderItem={renderItem}
-              renderSectionHeader={renderSectionHeader}
-              ListHeaderComponent={ListHeaderComponent}
-              ListEmptyComponent={renderEmptySessions}
-              stickySectionHeadersEnabled={false}
-              contentContainerStyle={styles.scrollViewContent}
-            />
+            <>
+              <SectionList
+                sections={visibleSections}
+                keyExtractor={keyExtractor}
+                renderItem={renderItem}
+                renderSectionHeader={renderSectionHeader}
+                ListHeaderComponent={
+                  <>
+                    {ListHeaderComponent}
+                    {renderSearchBar()}
+                  </>
+                }
+                ListEmptyComponent={
+                  normalizedQuery ? renderNoSearchResults : renderEmptySessions
+                }
+                stickySectionHeadersEnabled={false}
+                contentContainerStyle={styles.scrollViewContent}
+              />
+            </>
           )}
         </View>
         <RenameModal

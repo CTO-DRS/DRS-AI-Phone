@@ -1174,6 +1174,10 @@
       }
     },
     "sidebarContent": {
+      "searchSessions": "ابحث في المحادثات",
+      "searchResults": "نتائج البحث",
+      "noSearchResults": "لا توجد محادثات مطابقة",
+      "noSearchResultsHint": "جرّب كلمة مختلفة",
       "menuItems": {
         "chat": "محادثة",
         "models": "النماذج",

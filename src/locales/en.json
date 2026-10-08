@@ -1174,6 +1174,10 @@
       }
     },
     "sidebarContent": {
+      "searchSessions": "Search chats",
+      "searchResults": "Search results",
+      "noSearchResults": "No chats found",
+      "noSearchResultsHint": "Try a different keyword",
       "menuItems": {
         "chat": "Chat",
         "models": "Models",
