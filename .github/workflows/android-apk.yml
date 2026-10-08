@@ -159,7 +159,11 @@ jobs:
           NODE_OPTIONS: --max-old-space-size=5120
         run: |
           set -uo pipefail
-          ./gradlew assembleProdRelease --no-daemon --stacktrace 2>&1 | tee android-build.log
+          # -Parm64Only=true drops the emulator-only x86_64 .so files (~28MB) from
+          # the downloadable APK: big files get truncated on phones and install
+          # as "package appears to be invalid". Emulator/e2e builds elsewhere do
+          # NOT set it, so they keep x86_64.
+          ./gradlew assembleProdRelease -Parm64Only=true -PreactNativeArchitectures=arm64-v8a --no-daemon --stacktrace 2>&1 | tee android-build.log
           EXIT=$?
           tail -200 android-build.log || true
           exit $EXIT
@@ -181,6 +185,31 @@ jobs:
           echo "--- SHA256 ---"
           sha256sum "$APK"
 
+      - name: Verify APK structure (zipalign + arm64-only)
+        run: |
+          APK=android/app/build/outputs/apk/prod/release/app-prod-release.apk
+          BUILD_TOOLS=$(ls -d $ANDROID_HOME/build-tools/* | sort -V | tail -1)
+          # 4-byte alignment of uncompressed resources.arsc is REQUIRED for
+          # targetSdk>=30; if broken, Android 11+ rejects the install with
+          # "package appears to be invalid".
+          "$BUILD_TOOLS/zipalign" -c 4 "$APK"
+          echo "zipalign check: OK"
+          if unzip -l "$APK" 'lib/x86_64/*' | grep -q 'lib/x86_64/'; then
+            echo "::error::x86_64 libs leaked into the arm64-only release APK"
+            exit 1
+          fi
+          echo "ABI check: arm64-only OK"
+
+      - name: Export checksums for release notes
+        run: |
+          APK=android/app/build/outputs/apk/prod/release/app-prod-release.apk
+          SIZE=$(stat -c%s "$APK")
+          {
+            echo "APK_SHA256=$(sha256sum "$APK" | cut -d' ' -f1)"
+            echo "APK_SIZE_BYTES=${SIZE}"
+            echo "APK_SIZE_MB=$(awk "BEGIN{printf \"%.1f\", ${SIZE}/1048576}")"
+          } >> "$GITHUB_ENV"
+
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
@@ -201,7 +230,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ env.VERSION }}
-          name: "DRS AI v${{ env.VERSION }} — إزالة القيود واستكمال المميزات"
+          name: "DRS AI v${{ env.VERSION }}"
           files: DRS-AI-v*.apk
           draft: false
           prerelease: false
@@ -209,11 +238,15 @@ jobs:
           body: |
             ## DRS AI v${{ env.VERSION }}
 
-            تحسين الشريطين أعلى لوحة المحادثة بلمسات العلامة:
+            ملف APK موقّع بنفس شهادة الإصدار، يثبّت مباشرة فوق النسخ السابقة.
 
-            - 🎨 **شريط العنوان**: غسلة تدرج بنفسجي←أزرق من حافة شريط الحالة + خط شعر متدرج بتوقيع العلامة
-            - 🟢 **نقطة حالة النموذج**: نبضة حية بجانب اسم النموذج النشط
-            - ✨ **زر القائمة**: هالة بنفسجية تتفتح عند الضغط
-            - 🪧 **شريط تنبيهات السياق**: تصميم بطاقة مستديرة، شارة أيقونة، حبة نسبة مئوية، ودخول متحرك ناعم
+            ### المتطلبات
+            - أندرويد 7.0 أو أحدث
+            - معالج 64 بت (ARM64) — جميع الهواتف الحديثة
+            - مساحة تخزين فارغة لا تقل عن 400MB
 
-            محمّل وموقّع بنفس شهادة الإصدار — يثبّت مباشرة فوق النسخ السابقة.
+            ### التحقق من اكتمال التنزيل قبل التثبيت
+            - الحجم الصحيح للملف: **${{ env.APK_SIZE_BYTES }}** بايت (≈ ${{ env.APK_SIZE_MB }} ميجابايت)
+            - SHA-256: `${{ env.APK_SHA256 }}`
+
+            إن ظهرت رسالة «لم يتم تثبيت التطبيق لأن الحزمة غير صالحة» فالسبب في الغالب أن التنزيل لم يكتمل أو تغيّر أثناء النقل، وليس خللًا في الملف: أعد التنزيل عبر شبكة مستقرة، وتأكد من حجم الملف قبل التثبيت. هذا الإصدار أصغر بنحو 25% بعد إزالة مكتبات المحاكي (x86_64) غير اللازمة للهواتف.
