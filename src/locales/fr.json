@@ -1182,7 +1182,8 @@
         "benchmark": "Benchmark",
         "settings": "Paramètres",
         "appInfo": "Info application",
-        "testCompletion": "Test de complétion"
+        "testCompletion": "Test de complétion",
+        "diagnostics": "Diagnostic"
       },
       "deleteChatTitle": "Supprimer la discussion",
       "deleteChatMessage": "Êtes-vous sûr de vouloir supprimer cette discussion ?",
@@ -1506,7 +1507,8 @@
     "benchmark": "Benchmark",
     "settings": "Paramètres",
     "appInfo": "Info application",
-    "testCompletion": "Test de complétion"
+    "testCompletion": "Test de complétion",
+    "diagnostics": "Diagnostic"
   },
   "chat": {
     "conversationReset": "Conversation réinitialisée !",
@@ -1921,5 +1923,18 @@
     "titleByAssistant": "Téléchargement de {{name}}",
     "titleByModel": "Téléchargement de {{name}}",
     "extraInProgress": "+{{count}} autres en cours"
+  },
+  "diagnostics": {
+    "title": "Diagnostic",
+    "description": "Rapport technique sur le démarrage de l'application et les erreurs récentes. Partagez-le lorsque l'application se fige ou se ferme de manière inattendue.",
+    "sectionStartup": "Chronologie du démarrage",
+    "sectionPrevious": "Session précédente",
+    "sectionErrors": "Erreurs récentes",
+    "noErrors": "Aucune erreur enregistrée",
+    "copy": "Copier le rapport",
+    "copied": "Rapport copié",
+    "share": "Partager le rapport",
+    "refresh": "Actualiser",
+    "clear": "Effacer le journal"
   }
 }

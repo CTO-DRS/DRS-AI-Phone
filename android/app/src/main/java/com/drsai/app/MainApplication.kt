@@ -18,6 +18,7 @@ import com.drsai.StorefrontPackage
 import com.drsai.AuthSessionPackage
 import com.drsai.ExternalContentLinkPackage
 import com.drsai.RestartPackage
+import com.drsai.DiagnosticsPackage
 import com.drsai.download.DownloadPackage
 
 class MainApplication : Application(), ReactApplication {
@@ -34,6 +35,7 @@ class MainApplication : Application(), ReactApplication {
               add(AuthSessionPackage())
               add(ExternalContentLinkPackage())
               add(RestartPackage())
+              add(DiagnosticsPackage())
               add(DownloadPackage())
             }
 

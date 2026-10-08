@@ -1182,7 +1182,8 @@
         "benchmark": "基準測試",
         "settings": "設定",
         "appInfo": "應用程式資訊",
-        "testCompletion": "測試完成"
+        "testCompletion": "測試完成",
+        "diagnostics": "診斷"
       },
       "deleteChatTitle": "刪除聊天",
       "deleteChatMessage": "您確定要刪除此聊天嗎？",
@@ -1506,7 +1507,8 @@
     "benchmark": "基準測試",
     "settings": "設定",
     "appInfo": "應用程式資訊",
-    "testCompletion": "測試完成"
+    "testCompletion": "測試完成",
+    "diagnostics": "診斷"
   },
   "chat": {
     "conversationReset": "對話已重置！",
@@ -1921,5 +1923,18 @@
     "titleByAssistant": "{{name}} 正在下載中",
     "titleByModel": "{{name}} 正在下載中",
     "extraInProgress": "還有 {{count}} 個正在處理中"
+  },
+  "diagnostics": {
+    "title": "診斷",
+    "description": "關於應用程式啟動與最近錯誤的技術報告。當應用程式凍結或意外關閉時，請分享此報告。",
+    "sectionStartup": "啟動時間軸",
+    "sectionPrevious": "上次工作階段",
+    "sectionErrors": "最近錯誤",
+    "noErrors": "未記錄到錯誤",
+    "copy": "複製報告",
+    "copied": "報告已複製",
+    "share": "分享報告",
+    "refresh": "重新整理",
+    "clear": "清除日誌"
   }
 }

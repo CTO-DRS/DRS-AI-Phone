@@ -1182,7 +1182,8 @@
         "benchmark": "Jõudlustest",
         "settings": "Seaded",
         "appInfo": "Rakenduse teave",
-        "testCompletion": "Completioni test"
+        "testCompletion": "Completioni test",
+        "diagnostics": "Diagnostika"
       },
       "deleteChatTitle": "Kustuta vestlus",
       "deleteChatMessage": "Kas oled kindel, et soovid selle vestluse kustutada?",
@@ -1506,7 +1507,8 @@
     "benchmark": "Jõudlustest",
     "settings": "Seaded",
     "appInfo": "Rakenduse teave",
-    "testCompletion": "Completioni test"
+    "testCompletion": "Completioni test",
+    "diagnostics": "Diagnostika"
   },
   "chat": {
     "conversationReset": "Vestlus lähtestati!",
@@ -1921,5 +1923,18 @@
     "titleByAssistant": "{{name}} laaditakse alla",
     "titleByModel": "{{name}} laaditakse alla",
     "extraInProgress": "+{{count}} veel käimas"
+  },
+  "diagnostics": {
+    "title": "Diagnostika",
+    "description": "Tehniline aruanne rakendi käivitumise ja hiljutiste veckohte kohta. Jaga seda, kui rakend jääb kinni või sulgub ootamatult.",
+    "sectionStartup": "Käivitumise ajajoon",
+    "sectionPrevious": "Eelmine seanss",
+    "sectionErrors": "Hiljutised vead",
+    "noErrors": "Vead puuduvad",
+    "copy": "Kopeeri aruanne",
+    "copied": "Aruanne kopeeritud",
+    "share": "Jaga aruannet",
+    "refresh": "Värskenda",
+    "clear": "Tühjenda logi"
   }
 }

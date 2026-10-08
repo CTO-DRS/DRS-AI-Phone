@@ -7,7 +7,10 @@ import {
   View,
 } from 'react-native';
 
+import Share from 'react-native-share';
+
 import NativeRestart from '../../specs/NativeRestart';
+import {buildDiagnosticsReport, recordError} from '../../utils/diagnostics';
 
 interface State {
   hasError: boolean;
@@ -49,6 +52,10 @@ export class GlobalErrorBoundary extends React.Component<
         : String(error ?? 'unknown');
     const component = info?.componentStack ?? '';
 
+    // Feed the diagnostics system (breadcrumb + persisted log) so the
+    // error is part of the shareable report.
+    recordError(error, 'error-boundary');
+
     console.error(
       '[GlobalErrorBoundary]',
       message,
@@ -74,6 +81,20 @@ export class GlobalErrorBoundary extends React.Component<
     }
   };
 
+  private shareDiagnostics = () => {
+    buildDiagnosticsReport()
+      .then(report => {
+        Share.open({
+          title: 'DRS AI diagnostics',
+          message: report,
+          failOnCancel: false,
+        }).catch(() => undefined);
+      })
+      .catch(() => {
+        // Share sheet unavailable — nothing else to do on this screen.
+      });
+  };
+
   render() {
     if (!this.state.hasError) {
       return this.props.children;
@@ -93,6 +114,13 @@ export class GlobalErrorBoundary extends React.Component<
           <TouchableOpacity style={styles.button} onPress={this.restart}>
             <Text style={styles.buttonText}>
               إعادة تشغيل التطبيق · Restart app
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.secondary}
+            onPress={this.shareDiagnostics}>
+            <Text style={styles.secondaryText}>
+              مشاركة التشخيص · Share diagnostics
             </Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.secondary} onPress={this.reset}>

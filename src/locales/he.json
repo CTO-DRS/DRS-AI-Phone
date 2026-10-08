@@ -1182,7 +1182,8 @@
         "benchmark": "מבחן ביצועים",
         "settings": "הגדרות",
         "appInfo": "מידע על האפליקציה",
-        "testCompletion": "בדיקת השלמת טקסט"
+        "testCompletion": "בדיקת השלמת טקסט",
+        "diagnostics": "אבחון"
       },
       "deleteChatTitle": "מחק צ'אט",
       "deleteChatMessage": "האם אתה בטוח שאתה רוצה למחוק את הצ'אט הזה?",
@@ -1506,7 +1507,8 @@
     "benchmark": "מבחן ביצועים",
     "settings": "הגדרות",
     "appInfo": "מידע על האפליקציה",
-    "testCompletion": "בדיקת השלמת טקסט"
+    "testCompletion": "בדיקת השלמת טקסט",
+    "diagnostics": "אבחון"
   },
   "chat": {
     "conversationReset": "שיחה אופסה!",
@@ -1921,5 +1923,18 @@
     "titleByAssistant": "{{name}} בהורדה",
     "titleByModel": "{{name}} בהורדה",
     "extraInProgress": "+{{count}} נוספים בתהליך"
+  },
+  "diagnostics": {
+    "title": "אבחון",
+    "description": "דוח טכני על הפעלת האפליקציה ושגיאות אחרונות. שתפו אותו כשהאפליקציה נתקעת או נסגרת באופן בלתי צפוי.",
+    "sectionStartup": "ציר זמן של ההפעלה",
+    "sectionPrevious": "הפעלה קודמת",
+    "sectionErrors": "שגיאות אחרונות",
+    "noErrors": "לא נרשמו שגיאות",
+    "copy": "העתקת דוח",
+    "copied": "הדוח הועתק",
+    "share": "שיתוף דוח",
+    "refresh": "רענון",
+    "clear": "ניקוי יומן"
   }
 }

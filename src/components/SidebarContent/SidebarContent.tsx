@@ -33,6 +33,7 @@ import {
   TagIcon,
   TrashIcon,
   AppInfoIcon,
+  AlertIcon,
   MessageCircleLgIcon,
 } from '../../assets/icons';
 import {L10nContext} from '../../utils';
@@ -1027,6 +1028,19 @@ export const SidebarContent: React.FC<DrawerContentComponentProps> = observer(
               )}
               onPress={() => props.navigation.navigate(ROUTES.APP_INFO)}
               style={styles.menuDrawerItem}
+            />
+            <Drawer.Item
+              label={l10n.components.sidebarContent.menuItems.diagnostics}
+              icon={() => (
+                <AlertIcon
+                  width={24}
+                  height={24}
+                  stroke={theme.colors.primary}
+                />
+              )}
+              onPress={() => props.navigation.navigate(ROUTES.DIAGNOSTICS)}
+              style={styles.menuDrawerItem}
+              testID="drawer-item-diagnostics"
             />
             {/* Only show Dev Tools in debug mode */}
             {isDebugMode && (

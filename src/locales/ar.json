@@ -1186,7 +1186,8 @@
         "benchmark": "اختبار الأداء",
         "settings": "الإعدادات",
         "appInfo": "معلومات التطبيق",
-        "testCompletion": "اختبار الإكمال"
+        "testCompletion": "اختبار الإكمال",
+        "diagnostics": "التشخيص"
       },
       "deleteChatTitle": "حذف المحادثة",
       "deleteChatMessage": "هل أنت متأكد أنك تريد حذف هذه المحادثة؟",
@@ -1506,7 +1507,8 @@
     "benchmark": "اختبار الأداء",
     "settings": "الإعدادات",
     "appInfo": "معلومات التطبيق",
-    "testCompletion": "اختبار الإكمال"
+    "testCompletion": "اختبار الإكمال",
+    "diagnostics": "التشخيص"
   },
   "chat": {
     "conversationReset": "تمت إعادة تعيين المحادثة!",
@@ -1921,5 +1923,18 @@
     "titleByAssistant": "جارٍ تنزيل {{name}}",
     "titleByModel": "جارٍ تنزيل {{name}}",
     "extraInProgress": "+{{count}} أخرى قيد التنزيل"
+  },
+  "diagnostics": {
+    "title": "التشخيص",
+    "description": "تقرير فني عن بدء تشغيل التطبيق وآخر الأخطاء. شاركه عندما يتوقف التطبيق أو يُغلق فجأة.",
+    "sectionStartup": "خط زمني لبدء التشغيل",
+    "sectionPrevious": "الجلسة السابقة",
+    "sectionErrors": "الأخطاء الأخيرة",
+    "noErrors": "لا أخطاء مسجلة",
+    "copy": "نسخ التقرير",
+    "copied": "تم نسخ التقرير",
+    "share": "مشاركة التقرير",
+    "refresh": "تحديث",
+    "clear": "مسح السجل"
   }
 }

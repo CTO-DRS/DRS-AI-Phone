@@ -1182,7 +1182,8 @@
         "benchmark": "Benchmark",
         "settings": "Ustawienia",
         "appInfo": "Informacje o Aplikacji",
-        "testCompletion": "Test generowania"
+        "testCompletion": "Test generowania",
+        "diagnostics": "Diagnostyka"
       },
       "deleteChatTitle": "Usuń Czat",
       "deleteChatMessage": "Czy na pewno chcesz usunąć tę rozmowę?",
@@ -1506,7 +1507,8 @@
     "benchmark": "Benchmark",
     "settings": "Ustawienia",
     "appInfo": "Informacje o Aplikacji",
-    "testCompletion": "Test generowania"
+    "testCompletion": "Test generowania",
+    "diagnostics": "Diagnostyka"
   },
   "chat": {
     "conversationReset": "Rozmowa zresetowana!",
@@ -1921,5 +1923,18 @@
     "titleByAssistant": "{{name}} jest w trakcie pobierania",
     "titleByModel": "{{name}} jest w trakcie pobierania",
     "extraInProgress": "+{{count}} kolejnych w trakcie realizacji"
+  },
+  "diagnostics": {
+    "title": "Diagnostyka",
+    "description": "Raport techniczny o uruchamianiu aplikacji i ostatnich błędach. Udostępnij go, gdy aplikacja się zawiesza lub nieoczekiwanie się zamyka.",
+    "sectionStartup": "Oś czasu uruchamiania",
+    "sectionPrevious": "Poprzednia sesja",
+    "sectionErrors": "Ostatnie błędy",
+    "noErrors": "Brak zarejestrowanych błędów",
+    "copy": "Kopiuj raport",
+    "copied": "Raport skopiowany",
+    "share": "Udostępnij raport",
+    "refresh": "Odśwież",
+    "clear": "Wyczyść dziennik"
   }
 }
