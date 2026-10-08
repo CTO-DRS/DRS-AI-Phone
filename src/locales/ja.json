@@ -1742,7 +1742,26 @@
     "cameraErrorTitle": "カメラエラー",
     "cameraErrorMessage": "写真撮影に失敗しました",
     "galleryErrorTitle": "ギャラリーエラー",
-    "galleryErrorMessage": "画像選択に失敗しました"
+    "galleryErrorMessage": "画像選択に失敗しました",
+    "dbUpgrade": {
+      "title": "データベースをアップグレードしています...",
+      "subTitle": "アプリを閉じないでください。しばらく時間がかかる場合があります。",
+      "progress": "セッション {{done}} / {{total}}"
+    },
+    "dbRecovery": {
+      "title": "データベースのアップグレードが停止しています",
+      "body": "データベースのアップグレードが完了しませんでした。チャットは安全に保存されています。もう一度お試しください。解決しない場合は、アプリのデータをリセットしてください（すべてのチャット、アシスタント、設定が消去されます）。",
+      "lastPhase": "最後に記録されたステップ",
+      "retry": "再試行",
+      "reset": "アプリのデータをリセット",
+      "resetConfirmTitle": "アプリのデータをリセットしますか？",
+      "resetConfirmBody": "この端末上のすべてのチャット、アシスタント、設定が完全に消去されます。この操作は取り消せません。",
+      "resetAll": "すべて消去",
+      "cancel": "キャンセル",
+      "shareDiagnostics": "診断情報を共有",
+      "resetFailedHint": "自動リセットに失敗しました。Android の設定 → アプリ → DRS AI → ストレージ → データを消去 から手動で削除し、アプリを開き直してください。",
+      "resetting": "リセット中..."
+    }
   },
   "simulator": {
     "cameraNotAvailable": "シミュレーターではカメラを使用できません、実機をご使用ください"

@@ -19,53 +19,168 @@ import {
 } from '../utils/completionSettingsVersions';
 import {logger} from '../utils/logger';
 import {ensureLegacyDataMigrated} from '../database/legacyDataMigration';
+import {withTimeout, yieldToUI} from '../utils/asyncGuard';
+import {recordPhase, recordError, recordWarning} from '../utils/diagnostics';
 
 // Default completion settings without prompt and stop
 const defaultCompletionSettings = {...defaultCompletionParams};
 delete defaultCompletionSettings.prompt;
 delete defaultCompletionSettings.stop;
 
+// --- JSON → WatermelonDB migration tuning -------------------------------
+const MIGRATION_FLAG = 'db-migration-complete.flag';
+const MIGRATION_RESUME_FILE = 'db-migration-progress.json';
+const MIGRATION_IN_PROGRESS_FLAG = 'db-migration-in-progress.flag';
+const LEGACY_DATA_MIGRATION_FLAG = 'drs-legacy-data-migration-complete.flag';
+
+// The raw-SQL legacy migration crosses the native bridge once per
+// statement group. A lost callback must surface as a recoverable error
+// after 30s, never as an eternal spinner.
+const LEGACY_MIGRATION_TIMEOUT_MS = 30_000;
+
+// Message records are persisted with `database.batch` in chunks; one
+// native round-trip per 200 messages instead of one per message.
+const MESSAGES_PER_BATCH = 200;
+
+/** Live progress of the JSON → WatermelonDB migration. */
+export interface MigrationProgress {
+  /** Sessions fully committed (DB write + resume marker done). */
+  done: number;
+  total: number;
+  /** Messages committed so far (including previously resumed ones). */
+  messages: number;
+}
+
+/** Optional hooks for the caller driving/observing the migration run. */
+export interface MigrationRunControl {
+  /** Called after each committed session. */
+  onProgress?: (progress: MigrationProgress) => void;
+  /** Polled between sessions; a `true` result aborts the run cleanly. */
+  shouldStop?: () => boolean;
+}
+
 class ChatSessionRepository {
   // Check if we need to migrate from JSON files
-  async checkAndMigrateFromJSON(): Promise<boolean> {
+  async checkAndMigrateFromJSON(
+    control?: MigrationRunControl,
+  ): Promise<boolean> {
+    const doc = RNFS.DocumentDirectoryPath;
+    const flagPath = `${doc}/${MIGRATION_FLAG}`;
+    const resumePath = `${doc}/${MIGRATION_RESUME_FILE}`;
+    const inProgressPath = `${doc}/${MIGRATION_IN_PROGRESS_FLAG}`;
+    const oldDataPath = `${doc}/session-metadata.json`;
+
     try {
       // Move any pre-v9 legacy tables/columns/values into their renamed
-      // counterparts before touching the collections below.
-      await ensureLegacyDataMigrated();
+      // counterparts before touching the collections below. Bounded by a
+      // timeout: a lost native callback must become a recoverable error,
+      // not an eternal spinner.
+      recordPhase('db:legacy-migration-start');
+      await withTimeout(
+        ensureLegacyDataMigrated(),
+        LEGACY_MIGRATION_TIMEOUT_MS,
+        'legacy-data-migration',
+      );
+      recordPhase('db:legacy-migration-done');
 
       // Check if we've already migrated
-      const migrationFlagPath = `${RNFS.DocumentDirectoryPath}/db-migration-complete.flag`;
-      const migrationComplete = await RNFS.exists(migrationFlagPath);
-
-      if (migrationComplete) {
+      if (await RNFS.exists(flagPath)) {
         logger.debug('Database migration already completed');
         return false;
       }
 
-      // Check if old JSON data exists
-      const oldDataPath = `${RNFS.DocumentDirectoryPath}/session-metadata.json`;
-      const oldDataExists = await RNFS.exists(oldDataPath);
+      // A leftover in-progress marker means the previous launch was killed
+      // mid-migration (crash, force close). The resume marker makes the
+      // next attempt skip what was already committed.
+      try {
+        if (await RNFS.exists(inProgressPath)) {
+          recordWarning(
+            'db:previous-run-interrupted',
+            'migration was killed mid-run on a previous launch',
+          );
+        }
+      } catch {
+        // Ignore.
+      }
 
-      if (!oldDataExists) {
+      // Mark this run as in progress so an interrupted attempt is visible
+      // to the next launch (and to diagnostics).
+      try {
+        await RNFS.writeFile(inProgressPath, 'true');
+      } catch (error) {
+        recordWarning('db:in-progress-flag-write-failed', String(error));
+      }
+
+      // Check if old JSON data exists
+      if (!(await RNFS.exists(oldDataPath))) {
         // No old data to migrate, mark as complete
-        await RNFS.writeFile(migrationFlagPath, 'true');
+        await RNFS.writeFile(flagPath, 'true');
+        recordPhase('db:no-legacy-json-marked-done');
         return false;
       }
 
       logger.debug('Starting migration from JSON to WatermelonDB...');
 
       // Read old data
+      recordPhase('db:json-read-start');
       const jsonData = await RNFS.readFile(oldDataPath);
+      recordPhase('db:json-read-done', `${jsonData.length} chars`);
       const sessions: SessionMetaData[] = JSON.parse(jsonData);
 
-      // Begin database transaction for atomic migration
-      await database.write(async () => {
-        // Migrate each session
-        for (const session of sessions) {
-          // Create session record
-          const newSession = await database.collections
+      const totalMessages = sessions.reduce(
+        (sum, s) => sum + (s.messages?.length ?? 0),
+        0,
+      );
+      recordPhase(
+        'db:json-parsed',
+        `${sessions.length} sessions, ${totalMessages} messages`,
+      );
+
+      // Resume support: sessions already committed by a previous attempt
+      // are skipped, so a retried migration neither duplicates data nor
+      // re-does work.
+      let committed = 0;
+      try {
+        if (await RNFS.exists(resumePath)) {
+          const marker = JSON.parse(await RNFS.readFile(resumePath));
+          if (typeof marker?.committed === 'number' && marker.committed >= 0) {
+            committed = Math.min(marker.committed, sessions.length);
+          }
+        }
+      } catch {
+        committed = 0; // corrupt marker → start over
+      }
+      if (committed > 0) {
+        recordPhase('db:resume', `skipping ${committed} committed sessions`);
+      }
+
+      let messagesDone = 0;
+      for (let i = 0; i < committed; i++) {
+        messagesDone += sessions[i]?.messages?.length ?? 0;
+      }
+
+      // Import session-by-session, each in its own transaction, with a
+      // resumable marker and a progress event after every commit. The old
+      // single monolithic transaction was the freeze: one lost native
+      // round-trip among thousands of per-message awaits left the
+      // "Upgrading database..." spinner running forever, with nothing
+      // recoverable on disk and no error to catch.
+      for (let index = committed; index < sessions.length; index++) {
+        if (control?.shouldStop?.()) {
+          recordPhase('db:migration-aborted-by-caller', `at ${index}`);
+          return false;
+        }
+
+        const session = sessions[index];
+        const sessionMessages = session.messages ?? [];
+        const migratedSettings = migrateCompletionSettings(
+          session.completionSettings,
+        );
+
+        await database.write(async () => {
+          const newSession = database.collections
             .get('chat_sessions')
-            .create((record: any) => {
+            .prepareCreate((record: any) => {
               record.title = session.title;
               record.date = session.date;
               if (session.activeAssistantId) {
@@ -73,106 +188,187 @@ class ChatSessionRepository {
               }
             });
 
-          // Ensure the completion settings have a version
-          const migratedSettings = migrateCompletionSettings(
-            session.completionSettings,
-          );
-
-          await database.collections
+          const sessionSettings = database.collections
             .get('completion_settings')
-            .create((record: any) => {
+            .prepareCreate((record: any) => {
               record.sessionId = newSession.id;
               record.settings = JSON.stringify(migratedSettings);
             });
 
-          for (let i = 0; i < session.messages.length; i++) {
-            const msg = session.messages[i];
-
-            // Extract author ID and prepare metadata with author data
-            // Handle both string authors and object authors
-            const authorId =
-              typeof msg.author === 'string'
-                ? msg.author
-                : msg.author?.id || 'unknown';
-            const metadata = msg.metadata || {};
-
-            // Store author data in metadata for reconstruction
-            if (typeof msg.author === 'object' && msg.author !== null) {
-              if (
-                msg.author.firstName ||
-                msg.author.lastName ||
-                msg.author.imageUrl
-              ) {
-                metadata.authorData = {
-                  firstName: msg.author.firstName,
-                  lastName: msg.author.lastName,
-                  imageUrl: msg.author.imageUrl,
-                  role: msg.author.role,
-                };
-              }
-            }
-
-            try {
-              // Check if createdAt is valid
-              if (!msg.createdAt) {
-                console.warn(
-                  'Message has no createdAt timestamp, using current time',
+          const messageRecords = sessionMessages.map((msg, i) =>
+            database.collections
+              .get('messages')
+              .prepareCreate((record: any) => {
+                // Use sessionId (JavaScript property), not session_id (DB column)
+                record.sessionId = newSession.id;
+                record.author =
+                  typeof msg.author === 'string'
+                    ? msg.author
+                    : msg.author?.id || 'unknown';
+                if (msg.type === 'text') {
+                  record.text = msg.text;
+                }
+                record.type = msg.type;
+                record.metadata = JSON.stringify(
+                  this.buildMigrationMetadata(msg),
                 );
-              }
+                record.position = sessionMessages.length - i;
+                record.createdAt = msg.createdAt || Date.now();
+              }),
+          );
 
-              await database.collections
-                .get('messages')
-                .create((record: any) => {
-                  record.sessionId = newSession.id; // Use sessionId (JavaScript property), not session_id (DB column)
-                  record.author = authorId;
-                  if (msg.type === 'text') {
-                    record.text = msg.text;
-                  }
-                  record.type = msg.type;
-                  record.metadata = JSON.stringify(metadata);
-                  record.position = session.messages.length - i; // Reverse order for correct sorting
-                  record.createdAt = msg.createdAt || Date.now(); // Use createdAt, not created_at
-                });
-            } catch (error) {
-              console.error('Error creating message record:', error);
-              throw error; // Re-throw to stop the migration
-            }
+          // One native round-trip per chunk instead of one per message.
+          const batched = [newSession, sessionSettings, ...messageRecords];
+          for (
+            let start = 0;
+            start < batched.length;
+            start += MESSAGES_PER_BATCH
+          ) {
+            await database.batch(
+              ...batched.slice(start, start + MESSAGES_PER_BATCH),
+            );
           }
+        });
+
+        messagesDone += sessionMessages.length;
+        committed = index + 1;
+
+        // Commit marker AFTER the transaction resolved, so a crash can
+        // never leave the marker ahead of the actual data.
+        try {
+          await RNFS.writeFile(resumePath, JSON.stringify({committed}));
+        } catch (error) {
+          recordWarning('db:resume-write-failed', String(error));
         }
+        control?.onProgress?.({
+          done: committed,
+          total: sessions.length,
+          messages: messagesDone,
+        });
+        // Let pending frames render between sessions so the UI keeps
+        // breathing even during a long import.
+        await yieldToUI();
+      }
 
-        // Migrate global settings if they exist
-        const globalSettingsPath = `${RNFS.DocumentDirectoryPath}/global-completion-settings.json`;
-        const globalSettingsExist = await RNFS.exists(globalSettingsPath);
+      // Global settings, guarded so a resumed run cannot duplicate them.
+      await this.importGlobalSettingsIfNeeded();
 
-        if (globalSettingsExist) {
-          const globalSettingsData = await RNFS.readFile(globalSettingsPath);
-          const globalSettings: CompletionParams =
-            JSON.parse(globalSettingsData);
-
-          // Ensure the global settings have a version
-          const migratedGlobalSettings =
-            migrateCompletionSettings(globalSettings);
-
-          await database.collections
-            .get('global_settings')
-            .create((record: any) => {
-              record.key = 'newChatCompletionSettings';
-              record.value = JSON.stringify(migratedGlobalSettings);
-            });
-        }
-      });
-
-      // Mark migration as complete
-      await RNFS.writeFile(migrationFlagPath, 'true');
+      // Mark migration as complete and clear the resume bookkeeping.
+      await RNFS.writeFile(flagPath, 'true');
+      await RNFS.unlink(resumePath).catch(() => undefined);
       logger.debug(
         'Migration from JSON to WatermelonDB completed successfully',
       );
-
+      recordPhase('db:migration-done', `${committed} sessions committed`);
       return true;
     } catch (error) {
+      // Surface the failure to the caller (the store shows the recovery
+      // UI). Swallowing here used to leave the app running against a
+      // half-migrated database with no visible signal.
+      recordError(error, 'db:migration');
       console.error('Error during migration:', error);
-      return false;
+      throw error instanceof Error ? error : new Error(String(error));
+    } finally {
+      // The run is over (success or JS-visible failure). Only a process
+      // kill mid-migration should leave the marker behind.
+      try {
+        if (await RNFS.exists(inProgressPath)) {
+          await RNFS.unlink(inProgressPath);
+        }
+      } catch {
+        // Ignore.
+      }
     }
+  }
+
+  /** Normalizes author data into the persisted metadata shape. */
+  private buildMigrationMetadata(
+    msg: SessionMetaData['messages'][number],
+  ): string {
+    const metadata = {...(msg.metadata || {})};
+
+    if (typeof msg.author === 'object' && msg.author !== null) {
+      if (msg.author.firstName || msg.author.lastName || msg.author.imageUrl) {
+        metadata.authorData = {
+          firstName: msg.author.firstName,
+          lastName: msg.author.lastName,
+          imageUrl: msg.author.imageUrl,
+          role: msg.author.role,
+        };
+      }
+    }
+
+    return JSON.stringify(metadata);
+  }
+
+  /**
+   * Imports the legacy global completion settings JSON (if present) into
+   * `global_settings`, exactly once even across resumed runs.
+   */
+  private async importGlobalSettingsIfNeeded(): Promise<void> {
+    const globalSettingsPath = `${RNFS.DocumentDirectoryPath}/global-completion-settings.json`;
+    if (!(await RNFS.exists(globalSettingsPath))) {
+      return;
+    }
+
+    const existing = await database.collections
+      .get('global_settings')
+      .query(Q.where('key', 'newChatCompletionSettings'))
+      .fetch();
+    if (existing.length > 0) {
+      return;
+    }
+
+    const globalSettingsData = await RNFS.readFile(globalSettingsPath);
+    const globalSettings: CompletionParams = JSON.parse(globalSettingsData);
+    const migratedGlobalSettings = migrateCompletionSettings(globalSettings);
+
+    await database.write(async () => {
+      await database.collections
+        .get('global_settings')
+        .create((record: any) => {
+          record.key = 'newChatCompletionSettings';
+          record.value = JSON.stringify(migratedGlobalSettings);
+        });
+    });
+  }
+
+  /**
+   * Destructive recovery — the WatermelonDB equivalent of Room's
+   * `.fallbackToDestructiveMigration()`. Wipes every row and recreates the
+   * schema, removes the legacy JSON sources so the migration does not
+   * re-run, and flags both one-time migrations complete. Only invoked
+   * from the user-visible recovery UI after a migration stall or failure,
+   * with an explicit confirmation.
+   */
+  async resetDatabaseDestructively(): Promise<void> {
+    recordPhase('db:destructive-reset-start');
+    await withTimeout(
+      database.adapter.unsafeResetDatabase(),
+      45_000,
+      'destructive-db-reset',
+    );
+
+    const doc = RNFS.DocumentDirectoryPath;
+    const leftovers = [
+      `${doc}/session-metadata.json`,
+      `${doc}/global-completion-settings.json`,
+      `${doc}/${MIGRATION_RESUME_FILE}`,
+      `${doc}/${MIGRATION_IN_PROGRESS_FLAG}`,
+    ];
+    for (const path of leftovers) {
+      try {
+        if (await RNFS.exists(path)) {
+          await RNFS.unlink(path);
+        }
+      } catch (error) {
+        recordWarning('db:reset-unlink-failed', `${path}: ${String(error)}`);
+      }
+    }
+
+    await RNFS.writeFile(`${doc}/${MIGRATION_FLAG}`, 'true');
+    await RNFS.writeFile(`${doc}/${LEGACY_DATA_MIGRATION_FLAG}`, 'true');
+    recordPhase('db:destructive-reset-done');
   }
 
   // Get all sessions grouped by date

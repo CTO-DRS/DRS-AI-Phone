@@ -1742,7 +1742,26 @@
     "cameraErrorTitle": "Kesalahan Kamera",
     "cameraErrorMessage": "Gagal mengambil foto",
     "galleryErrorTitle": "Kesalahan Galeri",
-    "galleryErrorMessage": "Gagal memilih gambar"
+    "galleryErrorMessage": "Gagal memilih gambar",
+    "dbUpgrade": {
+      "title": "Memperbarui basis data...",
+      "subTitle": "Jangan tutup aplikasi. Ini mungkin butuh beberapa saat.",
+      "progress": "Sesi {{done}} dari {{total}}"
+    },
+    "dbRecovery": {
+      "title": "Pembaruan basis data macet",
+      "body": "Pembaruan basis data tidak selesai. Obrolan Anda aman. Coba lagi — jika tetap gagal, atur ulang data aplikasi (ini menghapus semua obrolan, asisten, dan pengaturan).",
+      "lastPhase": "Langkah terakhir yang tercatat",
+      "retry": "Coba lagi",
+      "reset": "Atur ulang data aplikasi",
+      "resetConfirmTitle": "Atur ulang data aplikasi?",
+      "resetConfirmBody": "Ini akan menghapus permanen semua obrolan, asisten, dan pengaturan di perangkat ini. Tidak dapat dibatalkan.",
+      "resetAll": "Hapus semuanya",
+      "cancel": "Batal",
+      "shareDiagnostics": "Bagikan diagnostik",
+      "resetFailedHint": "Pengaturan ulang otomatis gagal. Hapus penyimpanan DRS AI secara manual: Setelan Android → Aplikasi → DRS AI → Penyimpanan → Hapus data, lalu buka kembali aplikasinya.",
+      "resetting": "Mengatur ulang..."
+    }
   },
   "simulator": {
     "cameraNotAvailable": "Kamera tidak tersedia di simulator. Harap gunakan perangkat fisik."

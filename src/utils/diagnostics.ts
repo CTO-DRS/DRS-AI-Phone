@@ -134,7 +134,8 @@ export function recordEvent(
   }
 }
 
-export const recordPhase = (msg: string) => recordEvent('phase', msg);
+export const recordPhase = (msg: string, detail?: string) =>
+  recordEvent('phase', msg, detail);
 export const recordWarning = (msg: string, detail?: string) =>
   recordEvent('warn', msg, detail);
 

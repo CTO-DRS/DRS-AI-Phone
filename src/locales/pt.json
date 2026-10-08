@@ -1742,7 +1742,26 @@
     "cameraErrorTitle": "Erro de Câmara",
     "cameraErrorMessage": "Falha ao tirar a foto",
     "galleryErrorTitle": "Erro da Galeria",
-    "galleryErrorMessage": "Falha ao selecionar imagens"
+    "galleryErrorMessage": "Falha ao selecionar imagens",
+    "dbUpgrade": {
+      "title": "A atualizar a base de dados...",
+      "subTitle": "Não feche a aplicação. Isto pode demorar um momento.",
+      "progress": "Sessão {{done}} de {{total}}"
+    },
+    "dbRecovery": {
+      "title": "A atualização da base de dados está bloqueada",
+      "body": "A atualização da base de dados não foi concluída. As suas conversas estão seguras. Tente novamente — se continuar a falhar, reponha os dados da aplicação (isto apaga todas as conversas, assistentes e definições).",
+      "lastPhase": "Último passo registado",
+      "retry": "Tentar novamente",
+      "reset": "Repor dados da aplicação",
+      "resetConfirmTitle": "Repor os dados da aplicação?",
+      "resetConfirmBody": "Esta ação apaga definitivamente todas as conversas, assistentes e definições neste dispositivo. Não pode ser anulada.",
+      "resetAll": "Apagar tudo",
+      "cancel": "Cancelar",
+      "shareDiagnostics": "Partilhar diagnóstico",
+      "resetFailedHint": "A reposição automática falhou. Limpe manualmente o armazenamento do DRS AI: Definições Android → Aplicações → DRS AI → Armazenamento → Limpar dados e volte a abrir a aplicação.",
+      "resetting": "A repor..."
+    }
   },
   "simulator": {
     "cameraNotAvailable": "Câmara não disponível no simulador. Use um dispositivo físico."

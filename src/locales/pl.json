@@ -1742,7 +1742,26 @@
     "cameraErrorTitle": "Błąd Aparatu",
     "cameraErrorMessage": "Nie udało się zrobić zdjęcia",
     "galleryErrorTitle": "Błąd Galerii",
-    "galleryErrorMessage": "Nie udało się wybrać zdjęć"
+    "galleryErrorMessage": "Nie udało się wybrać zdjęć",
+    "dbUpgrade": {
+      "title": "Uaktualnianie bazy danych...",
+      "subTitle": "Nie zamykaj aplikacji. To może chwilę potrwać.",
+      "progress": "Sesja {{done}} z {{total}}"
+    },
+    "dbRecovery": {
+      "title": "Aktualizacja bazy danych utknęła",
+      "body": "Aktualizacja bazy danych nie została ukończona. Twoje czaty są bezpieczne. Spróbuj ponownie — jeśli błąd się powtarza, zresetuj dane aplikacji (spowoduje to usunięcie wszystkich czatów, asystentów i ustawień).",
+      "lastPhase": "Ostatni zarejestrowany krok",
+      "retry": "Spróbuj ponownie",
+      "reset": "Zresetuj dane aplikacji",
+      "resetConfirmTitle": "Zresetować dane aplikacji?",
+      "resetConfirmBody": "Ta operacja trwale usuwa wszystkie czaty, asystentów i ustawienia na tym urządzeniu. Nie można jej cofnąć.",
+      "resetAll": "Usuń wszystko",
+      "cancel": "Anuluj",
+      "shareDiagnostics": "Udostępnij diagnostykę",
+      "resetFailedHint": "Automatyczny reset nie powiódł się. Ręcznie wyczyść pamięć DRS AI: Ustawienia Androida → Aplikacje → DRS AI → Pamięć → Wyczyść dane, a następnie otwórz aplikację ponownie.",
+      "resetting": "Resetowanie..."
+    }
   },
   "simulator": {
     "cameraNotAvailable": "Aparat nie jest dostępny w symulatorze. Proszę skorzystać z urządzenia fizycznego."

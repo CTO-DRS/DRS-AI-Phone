@@ -1742,7 +1742,26 @@
     "cameraErrorTitle": "Erreur de caméra",
     "cameraErrorMessage": "Échec de la prise de photo",
     "galleryErrorTitle": "Erreur de galerie",
-    "galleryErrorMessage": "Échec de la sélection d'images"
+    "galleryErrorMessage": "Échec de la sélection d'images",
+    "dbUpgrade": {
+      "title": "Mise à jour de la base de données…",
+      "subTitle": "Veuillez ne pas fermer l'application. Cela peut prendre un instant.",
+      "progress": "Session {{done}} sur {{total}}"
+    },
+    "dbRecovery": {
+      "title": "La mise à jour de la base de données est bloquée",
+      "body": "La mise à jour de la base de données ne s'est pas terminée. Vos discussions sont en sécurité. Réessayez — si le problème persiste, réinitialisez les données de l'application (cela efface toutes les discussions, les assistants et les réglages).",
+      "lastPhase": "Dernière étape enregistrée",
+      "retry": "Réessayer",
+      "reset": "Réinitialiser les données de l'app",
+      "resetConfirmTitle": "Réinitialiser les données de l’app ?",
+      "resetConfirmBody": "Cette action efface définitivement toutes les discussions, tous les assistants et tous les réglages sur cet appareil. Elle est irréversible.",
+      "resetAll": "Tout effacer",
+      "cancel": "Annuler",
+      "shareDiagnostics": "Partager le diagnostic",
+      "resetFailedHint": "La réinitialisation automatique a échoué. Effacez manuellement le stockage de DRS AI : Réglages Android → Applications → DRS AI → Stockage → Effacer les données, puis rouvrez l'application.",
+      "resetting": "Réinitialisation…"
+    }
   },
   "simulator": {
     "cameraNotAvailable": "Caméra non disponible dans le simulateur. Veuillez utiliser un appareil physique."

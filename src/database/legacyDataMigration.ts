@@ -11,7 +11,6 @@
  * Only this module and src/database/migrations.ts may reference the
  * legacy names — see src/database/legacyCompat.ts.
  */
-import SQLiteAdapter from '@nozbe/watermelondb/adapters/sqlite';
 import type {SQLiteQuery} from '@nozbe/watermelondb/adapters/sqlite';
 import * as RNFS from '@dr.pogodin/react-native-fs';
 import {database} from './index';
@@ -24,12 +23,17 @@ import {
 
 const MIGRATION_FLAG = 'drs-legacy-data-migration-complete.flag';
 
-/** Promisified raw-SQL execution on the SQLite adapter. */
+/** Raw-SQL execution on the adapter via its promise API.
+ *
+ * The previous hand-rolled callback wrapper was a startup-freeze
+ * suspect: a lost native callback left the returned promise pending
+ * forever. `database.adapter` (the compat layer) exposes the same
+ * operation as a promise; combined with the `withTimeout` race in
+ * ChatSessionRepository, a lost callback now surfaces as a catchable
+ * TimeoutError instead of an eternal spinner.
+ */
 const executeSqls = (sqls: SQLiteQuery[]): Promise<void> =>
-  new Promise((resolve, reject) => {
-    const adapter = database.adapter as unknown as SQLiteAdapter;
-    adapter.unsafeExecute({sqls}, error => (error ? reject(error) : resolve()));
-  });
+  database.adapter.unsafeExecute({sqls});
 
 /** A statement failing because its legacy source no longer exists. */
 const isExpectedMiss = (error: unknown): boolean => {

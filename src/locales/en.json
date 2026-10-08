@@ -1742,7 +1742,26 @@
     "cameraErrorTitle": "Camera Error",
     "cameraErrorMessage": "Failed to take photo",
     "galleryErrorTitle": "Gallery Error",
-    "galleryErrorMessage": "Failed to select images"
+    "galleryErrorMessage": "Failed to select images",
+    "dbUpgrade": {
+      "title": "Upgrading database...",
+      "subTitle": "Please don't close the app. This may take a moment.",
+      "progress": "Session {{done}} of {{total}}"
+    },
+    "dbRecovery": {
+      "title": "Database upgrade is stuck",
+      "body": "The database upgrade didn't finish. Your chats are safe. Try again — if it keeps failing, reset app data (this erases all chats, assistants and settings).",
+      "lastPhase": "Last recorded step",
+      "retry": "Try again",
+      "reset": "Reset app data",
+      "resetConfirmTitle": "Reset app data?",
+      "resetConfirmBody": "This permanently erases all chats, assistants and settings on this device. This cannot be undone.",
+      "resetAll": "Erase everything",
+      "cancel": "Cancel",
+      "shareDiagnostics": "Share diagnostics",
+      "resetFailedHint": "Automatic reset failed. Clear DRS AI's storage manually: Android Settings → Apps → DRS AI → Storage → Clear data, then reopen the app.",
+      "resetting": "Resetting..."
+    }
   },
   "simulator": {
     "cameraNotAvailable": "Camera not available in simulator. Please use a physical device."
