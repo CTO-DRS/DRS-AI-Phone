@@ -11,6 +11,11 @@ class ChatSessionRepository {
     return false; // Mock: no migration needed
   }
 
+  // Destructive recovery used by the migration watchdog UI (v1.34.0)
+  async resetDatabaseDestructively() {
+    return undefined; // Mock: reset is a no-op
+  }
+
   // Get all sessions grouped by date
   async getAllSessions() {
     return []; // Mock: return empty array

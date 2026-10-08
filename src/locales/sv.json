@@ -1742,7 +1742,26 @@
     "cameraErrorTitle": "Kamerafel",
     "cameraErrorMessage": "Det gick inte att ta fotot",
     "galleryErrorTitle": "Gallerifel",
-    "galleryErrorMessage": "Det gick inte att välja bilder"
+    "galleryErrorMessage": "Det gick inte att välja bilder",
+    "dbUpgrade": {
+      "title": "Uppgraderar databasen...",
+      "subTitle": "Stäng inte appen. Det kan ta en stund.",
+      "progress": "Session {{done}} av {{total}}"
+    },
+    "dbRecovery": {
+      "title": "Databasuppgraderingen har fastnat",
+      "body": "Databasuppgraderingen slutfördes inte. Dina chattar är säkra. Försök igen — om det fortsätter att misslyckas, återställ appdata (detta raderar alla chattar, assistenter och inställningar).",
+      "lastPhase": "Senast registrerade steg",
+      "retry": "Försök igen",
+      "reset": "Återställ appdata",
+      "resetConfirmTitle": "Återställa appdata?",
+      "resetConfirmBody": "Detta raderar permanent alla chattar, assistenter och inställningar på den här enheten. Det går inte att ångra.",
+      "resetAll": "Radera allt",
+      "cancel": "Avbryt",
+      "shareDiagnostics": "Dela diagnostik",
+      "resetFailedHint": "Den automatiska återställningen misslyckades. Rensa DRS AI:s lagring manuellt: Android-inställningar → Appar → DRS AI → Lagring → Rensa data och öppna sedan appen igen.",
+      "resetting": "Återställer..."
+    }
   },
   "simulator": {
     "cameraNotAvailable": "Kameran är inte tillgänglig i simulatorn. Använd en fysisk enhet."

@@ -1742,7 +1742,26 @@
     "cameraErrorTitle": "Ralat Kamera",
     "cameraErrorMessage": "Gagal mengambil gambar",
     "galleryErrorTitle": "Ralat Galeri",
-    "galleryErrorMessage": "Gagal memilih imej"
+    "galleryErrorMessage": "Gagal memilih imej",
+    "dbUpgrade": {
+      "title": "Menaik taraf pangkalan data...",
+      "subTitle": "Jangan tutup aplikasi. Ini mungkin mengambil sedikit masa.",
+      "progress": "Sesi {{done}} daripada {{total}}"
+    },
+    "dbRecovery": {
+      "title": "Penaiktarafan pangkalan data tersekat",
+      "body": "Penaiktarafan pangkalan data tidak selesai. Sembang anda selamat. Cuba lagi — jika ia masih gagal, set semula data aplikasi (ini memadam semua sembang, pembantu dan tetapan).",
+      "lastPhase": "Langkah terakhir direkodkan",
+      "retry": "Cuba lagi",
+      "reset": "Set semula data aplikasi",
+      "resetConfirmTitle": "Set semula data aplikasi?",
+      "resetConfirmBody": "Ini akan memadam secara kekal semua sembang, pembantu dan tetapan pada peranti ini. Tidak boleh diundur.",
+      "resetAll": "Padam semuanya",
+      "cancel": "Batal",
+      "shareDiagnostics": "Kongsi diagnostik",
+      "resetFailedHint": "Set semula automatik gagal. Padam storan DRS AI secara manual: Tetapan Android → Aplikasi → DRS AI → Storan → Padam data, kemudian buka semula aplikasi.",
+      "resetting": "Menetap semula..."
+    }
   },
   "simulator": {
     "cameraNotAvailable": "Kamera tidak tersedia dalam simulator. Sila gunakan peranti fizikal."

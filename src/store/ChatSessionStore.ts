@@ -19,6 +19,20 @@ import {derivedText} from '../utils/chat';
 import {assistantStore} from './AssistantStore';
 import {deriveToolSchemas} from '../services/talents';
 import {AgentUiState, initialAgentUiState} from '../services/agent';
+import {withTimeout} from '../utils/asyncGuard';
+import {recordPhase, recordError} from '../utils/diagnostics';
+import type {MigrationProgress} from '../repositories/ChatSessionRepository';
+
+// --- Startup migration watchdog tuning ---------------------------------
+// The DatabaseMigration overlay's watchdog: if a migration run shows no
+// progress for this long, switch the overlay from the spinner to the
+// recovery UI instead of spinning forever.
+export const MIGRATION_HEARTBEAT_TIMEOUT_MS = 45_000;
+// Absolute ceiling for one migration attempt at store level. The migration
+// itself is resumable, so a timed-out attempt can be retried safely.
+export const MIGRATION_TOTAL_TIMEOUT_MS = 180_000;
+// Ceiling for the destructive reset (fallbackToDestructiveMigration path).
+const RESET_DB_TIMEOUT_MS = 60_000;
 
 /**
  * Update payload accepted by `updateMessage` / `updateMessageStreaming`.
@@ -128,6 +142,21 @@ class ChatSessionStore {
   // Migration status
   isMigrating: boolean = false;
   migrationComplete: boolean = false;
+  // Recovery state for the migration watchdog UI (v1.34.0):
+  // - migrationError: message of a failed/thrown migration or init step.
+  // - migrationStalled: set by the UI watchdog when no progress heartbeat
+  //   arrives within MIGRATION_HEARTBEAT_TIMEOUT_MS.
+  // Either one switches the overlay from the spinner to the recovery UI
+  // (retry / reset app data / share diagnostics) — the UI must never sit
+  // on an eternal spinner.
+  migrationError: string | null = null;
+  migrationStalled: boolean = false;
+  migrationProgress: MigrationProgress | null = null;
+  isResettingData: boolean = false;
+  resetFailed: boolean = false;
+  // Increments on every initialize() so a timed-out or superseded run can
+  // never overwrite a newer run's state.
+  initRunId: number = 0;
   // Draft autosave: ephemeral map of sessionId → unsent input text
   sessionDrafts: Map<string, string> = new Map();
   // Selection mode state
@@ -165,24 +194,54 @@ class ChatSessionStore {
   }
 
   async initialize() {
+    const runId = ++this.initRunId;
+    const stale = () => runId !== this.initRunId;
+
     try {
       // First check if migration is needed without setting isMigrating flag
       // This is a quick check that just looks for the flag file
       const migrationNeeded = await this.isMigrationNeeded();
+      if (stale()) {
+        return;
+      }
 
       if (migrationNeeded) {
         // Only set isMigrating to true if migration is actually needed
         runInAction(() => {
           this.isMigrating = true;
+          this.migrationProgress = null;
         });
+        recordPhase('db:chat-migration-start');
 
-        // Perform the actual migration
-        await chatSessionRepository.checkAndMigrateFromJSON();
+        // Two layers of protection:
+        // 1. The store-level deadline keeps the total wait finite.
+        // 2. Per-step timeouts inside the repository turn lost native
+        //    callbacks into real, catchable errors.
+        // The migration is resumable, so a timed-out attempt can be
+        // retried (or destructively reset) from the recovery UI.
+        await withTimeout(
+          chatSessionRepository.checkAndMigrateFromJSON({
+            onProgress: progress => {
+              if (!stale()) {
+                runInAction(() => {
+                  this.migrationProgress = progress;
+                });
+              }
+            },
+            shouldStop: () => stale(),
+          }),
+          MIGRATION_TOTAL_TIMEOUT_MS,
+          'chat-db-migration',
+        );
+        if (stale()) {
+          return;
+        }
 
         runInAction(() => {
           this.isMigrating = false;
           this.migrationComplete = true;
         });
+        recordPhase('db:chat-migration-done');
       } else {
         // Migration not needed, just mark as complete
         runInAction(() => {
@@ -194,10 +253,87 @@ class ChatSessionStore {
       await this.loadSessionList();
       await this.loadGlobalSettings();
     } catch (error) {
+      recordError(error, 'chat-session-init');
       console.error('Failed to initialize ChatSessionStore:', error);
+      if (stale()) {
+        return;
+      }
+      // Keep the migration overlay mounted and switch it from the spinner
+      // to the recovery UI. Never leave the user on an eternal spinner,
+      // and never silently continue against a half-migrated database.
       runInAction(() => {
-        this.isMigrating = false;
+        this.isMigrating = true;
         this.migrationComplete = false;
+        this.migrationError =
+          error instanceof Error ? error.message : String(error);
+      });
+    }
+  }
+
+  /**
+   * Called by the migration overlay's watchdog when no progress heartbeat
+   * has been observed for MIGRATION_HEARTBEAT_TIMEOUT_MS. Switches the
+   * overlay to the recovery UI.
+   */
+  markMigrationStalled() {
+    if (!this.isMigrating || this.migrationError || this.migrationStalled) {
+      return;
+    }
+    recordPhase('db:migration-stalled');
+    runInAction(() => {
+      this.migrationStalled = true;
+    });
+  }
+
+  /** Recovery action: start the migration attempt over. */
+  retryMigration() {
+    recordPhase('db:migration-retry');
+    runInAction(() => {
+      this.migrationError = null;
+      this.migrationStalled = false;
+      this.resetFailed = false;
+      this.migrationProgress = null;
+      this.isMigrating = true;
+    });
+    this.initialize();
+  }
+
+  /**
+   * Recovery action: destructively wipe the local database and legacy JSON
+   * sources, then restart as a clean first launch. This erases chats,
+   * assistants and settings — it is only reachable behind an explicit
+   * confirmation dialog in the recovery UI.
+   */
+  async resetAppData() {
+    runInAction(() => {
+      this.isResettingData = true;
+      this.resetFailed = false;
+    });
+    recordPhase('db:reset-app-data-start');
+    try {
+      await withTimeout(
+        chatSessionRepository.resetDatabaseDestructively(),
+        RESET_DB_TIMEOUT_MS,
+        'reset-app-data',
+      );
+      recordPhase('db:reset-app-data-done');
+      runInAction(() => {
+        this.isResettingData = false;
+        this.migrationError = null;
+        this.migrationStalled = false;
+        this.migrationProgress = null;
+      });
+      // Same path as a clean first launch.
+      await this.initialize();
+    } catch (error) {
+      recordError(error, 'db:reset-app-data');
+      console.error('Failed to reset app data:', error);
+      runInAction(() => {
+        this.isResettingData = false;
+        this.resetFailed = true;
+        // Keep the recovery UI up and point the user at the OS-level
+        // "Clear storage" escape hatch.
+        this.isMigrating = true;
       });
     }
   }

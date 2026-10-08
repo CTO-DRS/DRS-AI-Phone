@@ -1742,7 +1742,26 @@
     "cameraErrorTitle": "相機錯誤",
     "cameraErrorMessage": "拍照失敗",
     "galleryErrorTitle": "圖庫錯誤",
-    "galleryErrorMessage": "選擇圖片失敗"
+    "galleryErrorMessage": "選擇圖片失敗",
+    "dbUpgrade": {
+      "title": "正在升級資料庫...",
+      "subTitle": "請不要關閉應用程式。這可能需要一點時間。",
+      "progress": "第 {{done}} 個會話，共 {{total}} 個"
+    },
+    "dbRecovery": {
+      "title": "資料庫升級已停滯",
+      "body": "資料庫升級未完成。你的聊天記錄是安全的。請重試——如果仍然失敗，請重設應用程式資料（這將清除所有聊天、助理和設定）。",
+      "lastPhase": "最後記錄的步驟",
+      "retry": "重試",
+      "reset": "重設應用程式資料",
+      "resetConfirmTitle": "重設應用程式資料？",
+      "resetConfirmBody": "這將永久刪除此裝置上的所有聊天、助理和設定，且無法復原。",
+      "resetAll": "清除全部",
+      "cancel": "取消",
+      "shareDiagnostics": "分享診斷資訊",
+      "resetFailedHint": "自動重設失敗。請手動清除 DRS AI 的儲存空間：Android 設定 → 應用程式 → DRS AI → 儲存空間 → 清除資料，然後重新開啟應用程式。",
+      "resetting": "正在重設..."
+    }
   },
   "simulator": {
     "cameraNotAvailable": "模擬器中沒有相機可用。請使用實體設備。"

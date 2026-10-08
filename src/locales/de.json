@@ -1742,7 +1742,26 @@
     "cameraErrorTitle": "Kamerafehler",
     "cameraErrorMessage": "Foto konnte nicht aufgenommen werden",
     "galleryErrorTitle": "Galeriefehler",
-    "galleryErrorMessage": "Bilder konnten nicht ausgewählt werden"
+    "galleryErrorMessage": "Bilder konnten nicht ausgewählt werden",
+    "dbUpgrade": {
+      "title": "Datenbank wird aktualisiert...",
+      "subTitle": "Bitte schließen Sie die App nicht. Dies kann einen Moment dauern.",
+      "progress": "Sitzung {{done}} von {{total}}"
+    },
+    "dbRecovery": {
+      "title": "Datenbank-Aktualisierung hängt",
+      "body": "Die Datenbank-Aktualisierung wurde nicht abgeschlossen. Ihre Chats sind sicher. Versuchen Sie es erneut — falls es weiter fehlschlägt, setzen Sie die App-Daten zurück (dabei werden alle Chats, Assistenten und Einstellungen gelöscht).",
+      "lastPhase": "Letzter aufgezeichneter Schritt",
+      "retry": "Erneut versuchen",
+      "reset": "App-Daten zurücksetzen",
+      "resetConfirmTitle": "App-Daten zurücksetzen?",
+      "resetConfirmBody": "Alle Chats, Assistenten und Einstellungen auf diesem Gerät werden dauerhaft gelöscht. Dies kann nicht rückgängig gemacht werden.",
+      "resetAll": "Alles löschen",
+      "cancel": "Abbrechen",
+      "shareDiagnostics": "Diagnose teilen",
+      "resetFailedHint": "Automatische Zurücksetzung fehlgeschlagen. Löschen Sie den Speicher von DRS AI manuell: Android-Einstellungen → Apps → DRS AI → Speicher → Daten löschen, und öffnen Sie die App dann erneut.",
+      "resetting": "Zurücksetzen..."
+    }
   },
   "simulator": {
     "cameraNotAvailable": "Kamera im Simulator nicht verfügbar. Bitte verwende ein physisches Gerät."

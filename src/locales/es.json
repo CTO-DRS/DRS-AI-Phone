@@ -1742,7 +1742,26 @@
     "cameraErrorTitle": "Error de la cámara",
     "cameraErrorMessage": "No se pudo tomar la foto",
     "galleryErrorTitle": "Error de la galería",
-    "galleryErrorMessage": "No se pudieron seleccionar las imágenes"
+    "galleryErrorMessage": "No se pudieron seleccionar las imágenes",
+    "dbUpgrade": {
+      "title": "Actualizando base de datos...",
+      "subTitle": "No cierres la aplicación. Esto puede tardar un momento.",
+      "progress": "Sesión {{done}} de {{total}}"
+    },
+    "dbRecovery": {
+      "title": "La actualización de la base de datos está atascada",
+      "body": "La actualización de la base de datos no terminó. Tus chats están a salvo. Inténtalo de nuevo; si sigue fallando, restablece los datos de la aplicación (esto borra todos los chats, asistentes y ajustes).",
+      "lastPhase": "Último paso registrado",
+      "retry": "Reintentar",
+      "reset": "Restablecer datos de la app",
+      "resetConfirmTitle": "¿Restablecer datos de la app?",
+      "resetConfirmBody": "Esto borra permanentemente todos los chats, asistentes y ajustes en este dispositivo. No se puede deshacer.",
+      "resetAll": "Borrar todo",
+      "cancel": "Cancelar",
+      "shareDiagnostics": "Compartir diagnóstico",
+      "resetFailedHint": "El restablecimiento automático falló. Borra manualmente el almacenamiento de DRS AI: Ajustes de Android → Aplicaciones → DRS AI → Almacenamiento → Borrar datos y vuelve a abrir la aplicación.",
+      "resetting": "Restableciendo..."
+    }
   },
   "simulator": {
     "cameraNotAvailable": "La cámara no está disponible en el simulador. Usa un dispositivo físico."

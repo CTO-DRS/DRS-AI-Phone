@@ -1742,7 +1742,26 @@
     "cameraErrorTitle": "摄像头错误",
     "cameraErrorMessage": "拍照失败",
     "galleryErrorTitle": "图库错误",
-    "galleryErrorMessage": "选择图片失败"
+    "galleryErrorMessage": "选择图片失败",
+    "dbUpgrade": {
+      "title": "正在升级数据库...",
+      "subTitle": "请不要关闭应用。这可能需要一点时间。",
+      "progress": "第 {{done}} 个会话，共 {{total}} 个"
+    },
+    "dbRecovery": {
+      "title": "数据库升级已卡住",
+      "body": "数据库升级未完成。你的聊天记录是安全的。请重试——如果仍然失败，请重置应用数据（这将清除所有聊天、助手和设置）。",
+      "lastPhase": "最后记录的步骤",
+      "retry": "重试",
+      "reset": "重置应用数据",
+      "resetConfirmTitle": "重置应用数据？",
+      "resetConfirmBody": "这将永久删除此设备上的所有聊天、助手和设置，且无法撤销。",
+      "resetAll": "清除全部",
+      "cancel": "取消",
+      "shareDiagnostics": "分享诊断信息",
+      "resetFailedHint": "自动重置失败。请手动清除 DRS AI 的存储：Android 设置 → 应用 → DRS AI → 存储 → 清除数据，然后重新打开应用。",
+      "resetting": "正在重置..."
+    }
   },
   "simulator": {
     "cameraNotAvailable": "模拟器无法调用相机，请使用实体设备运行。"

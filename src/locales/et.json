@@ -1742,7 +1742,26 @@
     "cameraErrorTitle": "Kaamera viga",
     "cameraErrorMessage": "Foto tegemine ebaõnnestus",
     "galleryErrorTitle": "Galerii viga",
-    "galleryErrorMessage": "Piltide valimine ebaõnnestus"
+    "galleryErrorMessage": "Piltide valimine ebaõnnestus",
+    "dbUpgrade": {
+      "title": "Andmebaasi uuendamine...",
+      "subTitle": "Palun ära sulge rakendust. See võib võtta mõne hetke.",
+      "progress": "Sessioon {{done}} / {{total}}"
+    },
+    "dbRecovery": {
+      "title": "Andmebaasi uuendamine on seiskunud",
+      "body": "Andmebaasi uuendamine ei lõppenud. Sinu vestlused on turvaliselt salvestatud. Proovi uuesti — kui see ikka ebaõnnestub, lähtesta rakenduse andmed (see kustutab kõik vestlused, assistendid ja seaded).",
+      "lastPhase": "Viimane salvestatud samm",
+      "retry": "Proovi uuesti",
+      "reset": "Lähtesta rakenduse andmed",
+      "resetConfirmTitle": "Lähtestada rakenduse andmed?",
+      "resetConfirmBody": "See kustutab seadmesse salvestatud kõik vestlused, assistendid ja seaded jäädavalt. Seda ei saa tagasi võtta.",
+      "resetAll": "Kustuta kõik",
+      "cancel": "Tühista",
+      "shareDiagnostics": "Jaga diagnostikat",
+      "resetFailedHint": "Automaatne lähtestamine ebaõnnestus. Kustuta DRS AI andmed käsitsi: Androidi seaded → Rakendused → DRS AI → Salvestusruum → Kustuta andmed, seejärel ava rakendus uuesti.",
+      "resetting": "Lähtestamine..."
+    }
   },
   "simulator": {
     "cameraNotAvailable": "Kaamera pole emulaatoris saadaval. Palun kasuta füüsilist seadet."
