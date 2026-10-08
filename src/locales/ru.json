@@ -1182,7 +1182,8 @@
         "benchmark": "Бенчмарк",
         "settings": "Настройки",
         "appInfo": "О приложении",
-        "testCompletion": "Завершение теста"
+        "testCompletion": "Завершение теста",
+        "diagnostics": "Диагностика"
       },
       "deleteChatTitle": "Удалить чат",
       "deleteChatMessage": "Вы уверены, что хотите удалить этот чат?",
@@ -1506,7 +1507,8 @@
     "benchmark": "Бенчмарк",
     "settings": "Настройки",
     "appInfo": "О приложении",
-    "testCompletion": "Завершение теста"
+    "testCompletion": "Завершение теста",
+    "diagnostics": "Диагностика"
   },
   "chat": {
     "conversationReset": "Контекст диалога сброшен!",
@@ -1921,5 +1923,18 @@
     "titleByAssistant": "{{name}} загружается",
     "titleByModel": "{{name}} загружается",
     "extraInProgress": "+{{count}} в очереди"
+  },
+  "diagnostics": {
+    "title": "Диагностика",
+    "description": "Технический отчёт о запуске приложения и последних ошибках. Поделитесь им, если приложение зависает или неожиданно закрывается.",
+    "sectionStartup": "Хронология запуска",
+    "sectionPrevious": "Прошлый сеанс",
+    "sectionErrors": "Последние ошибки",
+    "noErrors": "Ошибок не зафиксировано",
+    "copy": "Скопировать отчёт",
+    "copied": "Отчёт скопирован",
+    "share": "Поделиться отчётом",
+    "refresh": "Обновить",
+    "clear": "Очистить журнал"
   }
 }

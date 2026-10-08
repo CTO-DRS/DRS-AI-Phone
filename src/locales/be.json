@@ -1182,7 +1182,8 @@
         "benchmark": "Параўнаўчы тэст",
         "settings": "Налады",
         "appInfo": "Звесткі пра праграму",
-        "testCompletion": "Завяршэнне тэста"
+        "testCompletion": "Завяршэнне тэста",
+        "diagnostics": "Дыягностыка"
       },
       "deleteChatTitle": "Выдаліць чат",
       "deleteChatMessage": "Вы ўпэўнены, што хочаце выдаліць гэты чат?",
@@ -1506,7 +1507,8 @@
     "benchmark": "Параўнаўчы тэст",
     "settings": "Налады",
     "appInfo": "Звесткі пра праграму",
-    "testCompletion": "Завяршэнне тэста"
+    "testCompletion": "Завяршэнне тэста",
+    "diagnostics": "Дыягностыка"
   },
   "chat": {
     "conversationReset": "Размову скінута!",
@@ -1921,5 +1923,18 @@
     "titleByAssistant": "{{name}} спампоўваецца",
     "titleByModel": "{{name}} спампоўваецца",
     "extraInProgress": "+{{count}} яшчэ ў працэсе"
+  },
+  "diagnostics": {
+    "title": "Дыягностыка",
+    "description": "Тэхнічная справа аб запуску праграмы і апошніх памылках. Падзяліцеся ёй, калі праграма завісае або нечакана зачыняецца.",
+    "sectionStartup": "Храналогія запуску",
+    "sectionPrevious": "Мінулы сеанс",
+    "sectionErrors": "Апошнія памылкі",
+    "noErrors": "Памылак не зафіксавана",
+    "copy": "Скапіяваць справу",
+    "copied": "Справа скапіявана",
+    "share": "Падзяліцца справай",
+    "refresh": "Абнавіць",
+    "clear": "Ачысціць часопіс"
   }
 }

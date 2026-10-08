@@ -1182,7 +1182,8 @@
         "benchmark": "Tolok Ukur",
         "settings": "Tetapan",
         "appInfo": "Maklumat Aplikasi",
-        "testCompletion": "Uji Penyiapan"
+        "testCompletion": "Uji Penyiapan",
+        "diagnostics": "Diagnostik"
       },
       "deleteChatTitle": "Padam Sembang",
       "deleteChatMessage": "Pasti mahu memadam sembang ini?",
@@ -1506,7 +1507,8 @@
     "benchmark": "Tolok Ukur",
     "settings": "Tetapan",
     "appInfo": "Maklumat Aplikasi",
-    "testCompletion": "Uji Penyiapan"
+    "testCompletion": "Uji Penyiapan",
+    "diagnostics": "Diagnostik"
   },
   "chat": {
     "conversationReset": "Sembang telah ditetapkan semula!",
@@ -1921,5 +1923,18 @@
     "titleByAssistant": "{{name}} sedang dimuat turun",
     "titleByModel": "{{name}} sedang dimuat turun",
     "extraInProgress": "+{{count}} lagi sedang berjalan"
+  },
+  "diagnostics": {
+    "title": "Diagnostik",
+    "description": "Laporan teknikal tentang permulaan aplikasi dan ralat terkini. Kongsi apabila aplikasi terbekal atau tertutup tanpa dijangka.",
+    "sectionStartup": "Garis masa permulaan",
+    "sectionPrevious": "Sesi sebelumnya",
+    "sectionErrors": "Ralat terkini",
+    "noErrors": "Tiada ralat direkodkan",
+    "copy": "Salin laporan",
+    "copied": "Laporan disalin",
+    "share": "Kongsi laporan",
+    "refresh": "Muat semula",
+    "clear": "Kosongkan log"
   }
 }

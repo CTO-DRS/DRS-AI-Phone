@@ -1182,7 +1182,8 @@
         "benchmark": "Benchmark",
         "settings": "Inställningar",
         "appInfo": "Om appen",
-        "testCompletion": "Testkomplettering"
+        "testCompletion": "Testkomplettering",
+        "diagnostics": "Diagnostik"
       },
       "deleteChatTitle": "Ta bort chatt",
       "deleteChatMessage": "Är du säker på att du vill ta bort den här chatten?",
@@ -1506,7 +1507,8 @@
     "benchmark": "Benchmark",
     "settings": "Inställningar",
     "appInfo": "Om appen",
-    "testCompletion": "Testkomplettering"
+    "testCompletion": "Testkomplettering",
+    "diagnostics": "Diagnostik"
   },
   "chat": {
     "conversationReset": "Samtalet har återställts!",
@@ -1921,5 +1923,18 @@
     "titleByAssistant": "{{name}} laddas ner",
     "titleByModel": "{{name}} laddas ner",
     "extraInProgress": "+{{count}} fler pågår"
+  },
+  "diagnostics": {
+    "title": "Diagnostik",
+    "description": "Teknisk rapport om appens start och senaste fel. Dela den när appen fryser eller stänger oväntat.",
+    "sectionStartup": "Starttidslinje",
+    "sectionPrevious": "Föregående session",
+    "sectionErrors": "Senaste felen",
+    "noErrors": "Inga fel registrerade",
+    "copy": "Kopiera rapport",
+    "copied": "Rapport kopierad",
+    "share": "Dela rapport",
+    "refresh": "Uppdatera",
+    "clear": "Rensa logg"
   }
 }

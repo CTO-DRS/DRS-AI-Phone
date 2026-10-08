@@ -1182,7 +1182,8 @@
         "benchmark": "基准测试",
         "settings": "设置",
         "appInfo": "关于",
-        "testCompletion": "测试完成"
+        "testCompletion": "测试完成",
+        "diagnostics": "诊断"
       },
       "deleteChatTitle": "删除聊天",
       "deleteChatMessage": "确定要删除这个聊天记录吗？",
@@ -1506,7 +1507,8 @@
     "benchmark": "基准测试",
     "settings": "设置",
     "appInfo": "关于",
-    "testCompletion": "测试完成"
+    "testCompletion": "测试完成",
+    "diagnostics": "诊断"
   },
   "chat": {
     "conversationReset": "对话已重置！",
@@ -1921,5 +1923,18 @@
     "titleByAssistant": "{{name}} 正在下载",
     "titleByModel": "{{name}} 正在下载",
     "extraInProgress": "另有 {{count}} 个正在进行"
+  },
+  "diagnostics": {
+    "title": "诊断",
+    "description": "关于应用启动和最近错误的技术报告。当应用卡死或意外关闭时，请分享此报告。",
+    "sectionStartup": "启动时间线",
+    "sectionPrevious": "上次会话",
+    "sectionErrors": "最近错误",
+    "noErrors": "未记录到错误",
+    "copy": "复制报告",
+    "copied": "报告已复制",
+    "share": "分享报告",
+    "refresh": "刷新",
+    "clear": "清除日志"
   }
 }

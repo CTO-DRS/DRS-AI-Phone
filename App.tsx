@@ -26,6 +26,7 @@ import {ttsStore, uiStore, UIStore} from './src/store';
 import {useTheme} from './src/hooks';
 import {useDeepLinking} from './src/hooks/useDeepLinking';
 import {Theme} from './src/utils/types';
+import {recordPhase} from './src/utils/diagnostics';
 
 import {
   l10n,
@@ -57,6 +58,7 @@ import {
   SettingsScreen,
   BenchmarkScreen,
   AboutScreen,
+  DiagnosticsScreen,
 
   // Dev tools screen. Only available in debug mode.
   DevToolsScreen,
@@ -104,6 +106,7 @@ const App = observer(() => {
 
   // Initialize locale with the current language
   React.useEffect(() => {
+    recordPhase('startup:app-mounted');
     initLocale(uiStore.language);
   }, []);
 
@@ -181,7 +184,10 @@ const App = observer(() => {
           <PaperProvider theme={theme}>
             <L10nContext.Provider value={currentL10n}>
               <MarkdownProvider>
-                <NavigationContainer>
+                <NavigationContainer
+                  onReady={() => {
+                    recordPhase('startup:navigation-ready');
+                  }}>
                   <DeepLinkHandler />
                   <BottomSheetModalProvider>
                     <SwitchPoint
@@ -250,6 +256,14 @@ const App = observer(() => {
                             options={{
                               headerStyle: styles.headerWithoutDivider,
                               title: currentL10n.screenTitles.appInfo,
+                            }}
+                          />
+                          <Drawer.Screen
+                            name={ROUTES.DIAGNOSTICS}
+                            component={gestureHandlerRootHOC(DiagnosticsScreen)}
+                            options={{
+                              headerStyle: styles.headerWithoutDivider,
+                              title: currentL10n.screenTitles.diagnostics,
                             }}
                           />
 
@@ -363,12 +377,14 @@ const AppWithMigrationWrapper = observer(() => {
 
   React.useEffect(() => {
     if (isHydrated(uiStore)) {
+      recordPhase('startup:hydrated');
       return;
     }
     const timer = setTimeout(() => {
       console.warn(
         `[startup] UIStore hydration did not complete within ${HYDRATION_WATCHDOG_MS}ms — proceeding with defaults`,
       );
+      recordPhase('startup:hydration-watchdog-fired');
       setHydrationTimedOut(true);
     }, HYDRATION_WATCHDOG_MS);
     return () => clearTimeout(timer);

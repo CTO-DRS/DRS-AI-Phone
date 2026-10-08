@@ -1182,7 +1182,8 @@
         "benchmark": "ベンチマーク",
         "settings": "設定",
         "appInfo": "アプリ情報",
-        "testCompletion": "テスト完了"
+        "testCompletion": "テスト完了",
+        "diagnostics": "診断"
       },
       "deleteChatTitle": "チャットを削除",
       "deleteChatMessage": "このチャットを削除してもよろしいですか？",
@@ -1506,7 +1507,8 @@
     "benchmark": "ベンチマーク",
     "settings": "設定",
     "appInfo": "アプリ情報",
-    "testCompletion": "テスト完了"
+    "testCompletion": "テスト完了",
+    "diagnostics": "診断"
   },
   "chat": {
     "conversationReset": "会話をリセットしました",
@@ -1921,5 +1923,18 @@
     "titleByAssistant": "{{name}}をダウンロード中",
     "titleByModel": "{{name}}をダウンロード中",
     "extraInProgress": "他に{{count}}件進行中"
+  },
+  "diagnostics": {
+    "title": "診断",
+    "description": "アプリの起動と最近のエラーに関する技術レポート。アプリが固まったり突然終了したりしたときに共有してください。",
+    "sectionStartup": "起動のタイムライン",
+    "sectionPrevious": "前回のセッション",
+    "sectionErrors": "最近のエラー",
+    "noErrors": "記録されたエラーはありません",
+    "copy": "レポートをコピー",
+    "copied": "レポートをコピーしました",
+    "share": "レポートを共有",
+    "refresh": "更新",
+    "clear": "ログを消去"
   }
 }

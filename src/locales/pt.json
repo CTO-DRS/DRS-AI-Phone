@@ -1182,7 +1182,8 @@
         "benchmark": "Benchmark",
         "settings": "Configurações",
         "appInfo": "Sobre a App",
-        "testCompletion": "Testar Completação"
+        "testCompletion": "Testar Completação",
+        "diagnostics": "Diagnóstico"
       },
       "deleteChatTitle": "Apagar Chat",
       "deleteChatMessage": "Tem certeza que deseja apagar este chat?",
@@ -1506,7 +1507,8 @@
     "benchmark": "Benchmark",
     "settings": "Configurações",
     "appInfo": "Sobre a App",
-    "testCompletion": "Testar Completação"
+    "testCompletion": "Testar Completação",
+    "diagnostics": "Diagnóstico"
   },
   "chat": {
     "conversationReset": "Conversa reiniciada!",
@@ -1921,5 +1923,18 @@
     "titleByAssistant": "{{name}} está a ser descarregado",
     "titleByModel": "{{name}} está a ser descarregado",
     "extraInProgress": "+{{count}} mais em andamento"
+  },
+  "diagnostics": {
+    "title": "Diagnóstico",
+    "description": "Relatório técnico sobre o arranque da aplicação e os erros recentes. Partilhe-o quando a aplicação bloquear ou fechar inesperadamente.",
+    "sectionStartup": "Cronologia do arranque",
+    "sectionPrevious": "Sessão anterior",
+    "sectionErrors": "Erros recentes",
+    "noErrors": "Sem erros registados",
+    "copy": "Copiar relatório",
+    "copied": "Relatório copiado",
+    "share": "Partilhar relatório",
+    "refresh": "Atualizar",
+    "clear": "Limpar registo"
   }
 }
