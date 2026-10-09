@@ -4,7 +4,14 @@ import type {Theme} from '../../../../utils/types';
 
 // Figma palette for the recommended (Balanced) card — sourced from
 // the canonical file's `Color/Yellow/*` band.
-const RECOMMENDED_BG = '#F5DBBC'; // Color/yellow/subtle
+//
+// Theme-paired (v1.36.0): the card previously painted the hardcoded light
+// cream `#F5DBBC` in BOTH themes, while title/subtitle kept the theme's
+// `onBackground` — near-white in dark theme, i.e. invisible text on the
+// recommended card. Dark mode now gets a dark-amber surface of the same
+// hue family, and the amber border/badge stay fixed (they read on both).
+const RECOMMENDED_BG_LIGHT = '#F5DBBC'; // Color/yellow/subtle
+const RECOMMENDED_BG_DARK = '#3A2A14'; // dark-amber wash, same hue family
 const RECOMMENDED_BORDER = '#A86C34'; // Color/yellow/highest-contrast
 const RECOMMENDED_BADGE_TEXT = '#F8F1E2'; // Color/yellow/mute
 
@@ -23,7 +30,11 @@ export const createStyles = (
       borderRadius: theme.radius.l,
       borderWidth: recommended ? theme.stroke.sm : 0,
       borderColor: recommended ? RECOMMENDED_BORDER : 'transparent',
-      backgroundColor: recommended ? RECOMMENDED_BG : theme.colors.background,
+      backgroundColor: recommended
+        ? theme.dark
+          ? RECOMMENDED_BG_DARK
+          : RECOMMENDED_BG_LIGHT
+        : theme.colors.background,
       marginBottom: theme.spacing.s,
       // Card drop shadow — Figma "Subtle Shadow" 0/2/4 8% black.
       shadowColor: theme.colors.shadow,

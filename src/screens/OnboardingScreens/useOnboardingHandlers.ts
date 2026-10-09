@@ -5,6 +5,7 @@ import {uiStore, assistantStore, modelStore} from '../../store';
 import {L10nContext} from '../../utils';
 import {ROUTES} from '../../utils/navigationConstants';
 import {
+  buildPipGreeting,
   entryId,
   resolveAssistantForTopic,
 } from '../../store/onboarding/onboardingAssistants';
@@ -94,12 +95,18 @@ export const useOnboardingHandlers = (step: OnboardingStep) => {
       const picked = entry
         ? await modelStore.registerOnboardingAssistantModel(entry)
         : undefined;
+      // Greeting resolution: static English definitions (Codie/Sage/Echo/
+      // Muse) copy as-is; Pip has no static copy — its curated greeting is
+      // built from the ACTIVE locale at materialize time so the first empty
+      // chat opens with a localized welcome + starter chips (v1.36.0).
       const greeting = assistantDef.greeting
         ? {
             text: assistantDef.greeting.text,
             suggestedPrompts: [...assistantDef.greeting.suggestedPrompts],
           }
-        : undefined;
+        : assistantDef.key === 'pip'
+          ? buildPipGreeting(l10n)
+          : undefined;
       const existing = assistantStore.assistants.find(
         p => p.name === assistantDef.name && p.source === 'local',
       );
@@ -151,7 +158,7 @@ export const useOnboardingHandlers = (step: OnboardingStep) => {
       finishingRef.current = false;
       setIsFinishing(false);
     }
-  }, []);
+  }, [l10n]);
 
   return {l10n, next, goBack, skip, finish, selectTopic, isFinishing};
 };

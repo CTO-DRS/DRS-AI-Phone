@@ -21,6 +21,11 @@ class ChatSessionRepository {
     return []; // Mock: return empty array
   }
 
+  // Batched startup sweep (v1.36.0) — join shape mirrors the real method.
+  async getAllSessionsWithSettings() {
+    return []; // Mock: return empty join list
+  }
+
   // Get a single session with its messages and settings
   async getSessionById(id) {
     return {

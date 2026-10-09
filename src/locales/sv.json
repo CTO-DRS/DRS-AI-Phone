@@ -1923,7 +1923,14 @@
       "subtitleTemplate": "{{name}} tänker med en liten AI-modell i din telefon – välj en som passar.",
       "assistant": {
         "pip": {
-          "body": "Vi hittade en perfekt assistent åt dig – en vänlig vardagsföljeslagare. Smart nog för det mesta, lätt nog för vilken telefon som helst."
+          "body": "Vi hittade en perfekt assistent åt dig – en vänlig vardagsföljeslagare. Smart nog för det mesta, lätt nog för vilken telefon som helst.",
+          "greeting": {
+            "text": "Hej, jag är Pip 👋 Din personliga assistent som körs direkt i din telefon. Fråga mig vad som helst — utan internet.",
+            "prompt1": "Ge mig 3 snabba idéer till middagen",
+            "prompt2": "Skriv ett vänligt födelsedagsmeddelande",
+            "prompt3": "Förklara enkelt vad Wi-Fi är",
+            "prompt4": "Hjälp mig planera min dag"
+          }
         },
         "codie": {
           "body": "Möt Codie – din lokala programmeringspartner. Läser kod, skriver kod och förklarar knepiga detaljer utan att någonsin lämna din telefon."

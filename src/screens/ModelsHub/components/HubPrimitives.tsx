@@ -17,8 +17,9 @@ import {
   isUnavailableOnDeviceEngine,
 } from '../../../utils/modelTaxonomy';
 import {CompatibilityLevel} from '../../../utils/compatibility';
-import {HuggingFaceModel, Model, ModelFile} from '../../../utils/types';
+import {HuggingFaceModel, Model, ModelFile, Theme} from '../../../utils/types';
 import {modelHubStore} from '../../../store';
+import {hubStatusColors} from '../hubStatus';
 import {formatBytes} from '../../../utils';
 import {extractFamilyLabel} from '../../../utils/modelTaxonomy';
 
@@ -141,6 +142,30 @@ export const COMPAT_COLORS: Record<CompatibilityLevel, string> = {
   unknown: '#94A3B8',
 };
 
+/**
+ * Theme-paired TEXT ink for compatibility levels (v1.36.0). The map above
+ * stays for saturated fills (dots/badges); labels rendered as text on themed
+ * cards must use the theme-aware palette or they collapse on dark canvas.
+ */
+export const compatTextInk = (
+  theme: Theme,
+  level: CompatibilityLevel | null,
+): string => {
+  const palette = hubStatusColors(theme);
+  switch (level) {
+    case 'excellent':
+      return palette.ok;
+    case 'good':
+      return palette.info;
+    case 'limited':
+      return palette.warn;
+    case 'notRecommended':
+      return palette.danger;
+    default:
+      return palette.neutral;
+  }
+};
+
 // ── Catalog card (HF repo card) ────────────────────────────────────────────
 
 export interface CatalogCardProps {
@@ -168,7 +193,7 @@ export const HubCatalogCard: React.FC<CatalogCardProps> = memo(
       backgroundColor: compatibility ? COMPAT_COLORS[compatibility] : '#94A3B8',
     };
     const compatTextStyle = {
-      color: compatibility ? COMPAT_COLORS[compatibility] : '#94A3B8',
+      color: compatTextInk(theme, compatibility ?? null),
     };
 
     // i18n: modelsHub.compat.<level>

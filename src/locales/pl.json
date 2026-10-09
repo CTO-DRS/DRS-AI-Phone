@@ -1923,7 +1923,14 @@
       "subtitleTemplate": "{{name}} myśli za pomocą niewielkiego modelu sztucznej inteligencji na telefonie – wybierz taki, który Ci odpowiada.",
       "assistant": {
         "pip": {
-          "body": "Znaleźliśmy dla Ciebie idealnego kumpla - przyjaznego towarzysza na co dzień. Wystarczająco inteligentny, by poradzić sobie z większością zadań, i wystarczająco lekki, by pasować do każdego telefonu."
+          "body": "Znaleźliśmy dla Ciebie idealnego kumpla - przyjaznego towarzysza na co dzień. Wystarczająco inteligentny, by poradzić sobie z większością zadań, i wystarczająco lekki, by pasować do każdego telefonu.",
+          "greeting": {
+            "text": "Cześć, jestem Pip 👋 Twój prywatny asystent działający bezpośrednio na telefonie. Zapytaj mnie o cokolwiek — bez internetu.",
+            "prompt1": "Podaj 3 szybkie pomysły na kolację",
+            "prompt2": "Napisz przyjazną wiadomość urodzinową",
+            "prompt3": "Wyjaśnij prosto, czym jest Wi-Fi",
+            "prompt4": "Pomóż mi zaplanować dzień"
+          }
         },
         "codie": {
           "body": "Poznaj Codie — Twojego lokalnego partnera do programowania. Czyta kod, pisze kod i wyjaśnia skomplikowane fragmenty, nie opuszczając przy tym nigdy Twojego telefonu."

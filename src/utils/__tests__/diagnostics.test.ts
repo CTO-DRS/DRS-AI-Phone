@@ -103,11 +103,11 @@ describe('diagnostics', () => {
 
   describe('global handlers', () => {
     it('is idempotent across repeated installs', () => {
-      diag.installGlobalErrorHandlers();
+      diag.installGlobalErrorHandlers({previousSessionLoadDelayMs: 0});
       const countAfterFirst = diag
         .getEvents()
         .filter(e => e.msg === 'app:bootstrap').length;
-      diag.installGlobalErrorHandlers();
+      diag.installGlobalErrorHandlers({previousSessionLoadDelayMs: 0});
       const countAfterSecond = diag
         .getEvents()
         .filter(e => e.msg === 'app:bootstrap').length;
@@ -132,7 +132,7 @@ describe('diagnostics', () => {
         installed = h as typeof installed;
       };
 
-      diag.installGlobalErrorHandlers();
+      diag.installGlobalErrorHandlers({previousSessionLoadDelayMs: 0});
       expect(installed).toBeTruthy();
 
       const fatal = new Error('fatal-js');
@@ -146,7 +146,7 @@ describe('diagnostics', () => {
     });
 
     it('captures console.error output as error events', () => {
-      diag.installGlobalErrorHandlers();
+      diag.installGlobalErrorHandlers({previousSessionLoadDelayMs: 0});
       console.error('Something blew up', 'bad state');
       const errors = diag.getEvents().filter(e => e.kind === 'error');
       expect(errors).toHaveLength(1);
@@ -155,7 +155,7 @@ describe('diagnostics', () => {
     });
 
     it('does not double-record the error boundary output', () => {
-      diag.installGlobalErrorHandlers();
+      diag.installGlobalErrorHandlers({previousSessionLoadDelayMs: 0});
       console.error('[GlobalErrorBoundary]', 'msg');
       const errors = diag.getEvents().filter(e => e.kind === 'error');
       expect(errors).toHaveLength(0);
@@ -187,7 +187,9 @@ describe('diagnostics', () => {
           ],
         }),
       );
-      diag.installGlobalErrorHandlers();
+      // v1.36.0: the previous-session read is deferred 8s in production;
+      // collapse the delay so the await below flushes the load.
+      diag.installGlobalErrorHandlers({previousSessionLoadDelayMs: 0});
       // Flush the async previous-session load (exists -> readFile chain).
       await new Promise(resolve => setTimeout(resolve, 0));
       const report = await diag.buildDiagnosticsReport();

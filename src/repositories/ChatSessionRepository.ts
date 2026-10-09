@@ -380,6 +380,45 @@ class ChatSessionRepository {
     return sessions as unknown as ChatSession[];
   }
 
+  /**
+   * Batched variant of `getAllSessions` + per-session
+   * `getSessionMetadataWithSettings` for the startup sweep (v1.36.0).
+   * The old path issued 1 + 2N sequential queries (a `find` and a settings
+   * fetch per session); this performs exactly two — one for every session
+   * row and one `IN` query for every settings row — and joins in memory,
+   * so cold-start cost stops scaling linearly with chat history size.
+   */
+  async getAllSessionsWithSettings(): Promise<
+    {session: ChatSession; completionSettings: CompletionSetting | null}[]
+  > {
+    const sessions = (await database.collections
+      .get('chat_sessions')
+      .query()
+      .fetch()) as unknown as ChatSession[];
+
+    const ids = sessions.map(s => s.id);
+    const settingsRows = ids.length
+      ? ((await database.collections
+          .get('completion_settings')
+          .query(Q.where('session_id', Q.oneOf(ids)))
+          .fetch()) as unknown as CompletionSetting[])
+      : [];
+
+    const settingsBySessionId = new Map<string, CompletionSetting>();
+    for (const row of settingsRows) {
+      const key = row.sessionId;
+      // First row wins, mirroring the `[0]` pick in the per-session path.
+      if (key && !settingsBySessionId.has(key)) {
+        settingsBySessionId.set(key, row);
+      }
+    }
+
+    return sessions.map(session => ({
+      session,
+      completionSettings: settingsBySessionId.get(session.id) ?? null,
+    }));
+  }
+
   // Get every message row (for global chat statistics).
   async getAllMessages(): Promise<Message[]> {
     const messages = await database.collections.get('messages').query().fetch();

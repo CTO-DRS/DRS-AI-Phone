@@ -3,6 +3,7 @@ import {
   Appearance,
   Dimensions,
   I18nManager,
+  InteractionManager,
   NativeModules,
   StyleSheet,
   View,
@@ -170,10 +171,15 @@ const App = observer(() => {
 
   // Initialize TTS store (memory gate + AppState/session listeners).
   // Fire-and-forget: `init()` is idempotent and swallows its own errors.
+  // v1.36.0: deferred — it probes total RAM plus three engine-install disk
+  // checks, none of which can matter before the user can reach a TTS chip.
   React.useEffect(() => {
-    ttsStore.init().catch(() => {
-      // init() swallows its own errors; catch to satisfy no-floating-promises.
+    const task = InteractionManager.runAfterInteractions(() => {
+      ttsStore.init().catch(() => {
+        // init() swallows its own errors; catch to satisfy no-floating-promises.
+      });
     });
+    return () => task.cancel();
   }, []);
 
   return (

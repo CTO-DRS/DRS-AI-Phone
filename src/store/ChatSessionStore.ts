@@ -1,4 +1,5 @@
 import {makeAutoObservable, runInAction} from 'mobx';
+import {InteractionManager} from 'react-native';
 import {isToday, isYesterday} from 'date-fns';
 import * as RNFS from '@dr.pogodin/react-native-fs';
 
@@ -249,8 +250,18 @@ class ChatSessionStore {
         });
       }
 
-      // Load data from database (whether migration happened or not)
-      await this.loadSessionList();
+      // Load data from database (whether migration happened or not).
+      // v1.36.0: the session sweep no longer gates chat usability — the
+      // chat screen renders fine with an empty list and the drawer hydrates
+      // reactively (SidebarContent re-checks when empty). Defer the batched
+      // read until the first frame settles; global settings stay eager
+      // because the very first send needs them.
+      InteractionManager.runAfterInteractions(() => {
+        if (stale()) {
+          return;
+        }
+        this.loadSessionList();
+      });
       await this.loadGlobalSettings();
     } catch (error) {
       recordError(error, 'chat-session-init');
@@ -430,28 +441,20 @@ class ChatSessionStore {
 
   async loadSessionList(): Promise<void> {
     try {
-      const sessions = await chatSessionRepository.getAllSessions();
+      // v1.36.0: single batched read instead of 1 + 2N sequential queries.
+      const rows = await chatSessionRepository.getAllSessionsWithSettings();
 
       // Convert to SessionMetaData format
       const sessionMetadata: SessionMetaData[] = [];
 
-      for (const session of sessions) {
-        // Use metadata-only method instead of full getSessionById
-        const sessionData =
-          await chatSessionRepository.getSessionMetadataWithSettings(
-            session.id,
-          );
-        if (!sessionData) {
-          continue;
-        }
-
+      for (const {session, completionSettings: settingsRow} of rows) {
         // DON'T load messages - leave array empty
         const messages: MessageType.Any[] = [];
 
         // Handle case where completionSettings might be null
         let completionSettings = defaultCompletionSettings;
-        if (sessionData.completionSettings) {
-          completionSettings = sessionData.completionSettings.getSettings();
+        if (settingsRow) {
+          completionSettings = settingsRow.getSettings();
         } else {
           console.warn(
             `No completion settings found for session ${session.id}, using defaults`,

@@ -11,12 +11,19 @@ on:
 permissions:
   contents: read
 
+# Cancel superseded runs on rapid pushes: every superseded run wastes up to
+# ~50 min of queued runner time and only the latest commit's verdict matters.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   # Detect if changes are translation-only (src/locales/ files)
   detect-changes:
     runs-on: ubuntu-latest
     outputs:
       translation_only: ${{ steps.check.outputs.translation_only }}
+      ios_relevant: ${{ steps.check.outputs.ios_relevant }}
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -49,6 +56,24 @@ jobs:
 
           echo "translation_only=$TRANSLATION_ONLY" >> "$GITHUB_OUTPUT"
           echo "Translation only: $TRANSLATION_ONLY"
+
+          # v1.36.0: skip the ~30-min macOS simulator compile unless at least
+          # one changed file can genuinely affect an iOS build. Anything NOT
+          # in the ignore list still counts as relevant (fail-open).
+          IOS_IGNORE_RE='^(src/locales/|docs/|fastlane/metadata/|assets/|e2e/|android/)|\.md$|^LICENSE$'
+          IOS_RELEVANT="false"
+          while IFS= read -r file; do
+            if [ -z "$file" ]; then
+              continue
+            fi
+            if ! echo "$file" | grep -qE "$IOS_IGNORE_RE"; then
+              IOS_RELEVANT="true"
+              break
+            fi
+          done <<< "$CHANGED"
+
+          echo "ios_relevant=$IOS_RELEVANT" >> "$GITHUB_OUTPUT"
+          echo "iOS relevant: $IOS_RELEVANT"
 
   # Job for linting, type checking, unit testing
   build-and-test:
@@ -334,7 +359,9 @@ jobs:
   build-ios:
     runs-on: macos-26  # Keep CI on the same Xcode major as the release workflow
     needs: [build-and-test, detect-changes]
-    if: needs.detect-changes.outputs.translation_only != 'true'
+    if: >-
+      needs.detect-changes.outputs.translation_only != 'true' &&
+      needs.detect-changes.outputs.ios_relevant == 'true'
     env:
       NODE_OPTIONS: '--max-old-space-size=8192'
     steps:
@@ -432,6 +459,15 @@ jobs:
           </dict>
           </plist>
           EOL
+
+      # v1.36.0: cold `pod install` re-resolves every spec on every run;
+      # keying on the lockfile makes the ~3-6 min restore a cache hit unless
+      # the Podfile actually changed.
+      - name: Cache CocoaPods
+        uses: actions/cache@v4
+        with:
+          path: ios/Pods
+          key: ${{ runner.os }}-pods-${{ hashFiles('ios/Podfile.lock', 'ios/Podfile') }}
 
       - name: Install CocoaPods dependencies
         run: |

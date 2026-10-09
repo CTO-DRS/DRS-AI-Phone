@@ -59,6 +59,9 @@ jest.mock('../../services', () => ({
 // Mock MobX persist
 jest.mock('mobx-persist-store', () => ({
   makePersistable: jest.fn(),
+  // The v1.36.0 Pip-greeting backfill parks on uiStore hydration; report
+  // hydrated so the backfill runs synchronously under test.
+  isHydrated: jest.fn(() => true),
 }));
 
 // Eligibility writer dependencies: iOS StoreKit storefront + Android probe.
@@ -494,6 +497,110 @@ describe('AssistantStore', () => {
 
       expect(assistantRepository.createAssistant).toHaveBeenCalledTimes(2);
       expect(assistantStore.assistants[0].name).toBe(name);
+    });
+  });
+
+  describe('Pip greeting backfill (v1.36.0)', () => {
+    const callBackfill = async () =>
+      (assistantStore as any).backfillPipGreeting();
+
+    beforeEach(() => {
+      runInAction(() => {
+        assistantStore.assistants = [];
+      });
+      (assistantRepository.updateAssistant as jest.Mock).mockImplementation(
+        async (id: string, updates: any) => ({
+          ...mockAssistant,
+          id,
+          ...updates,
+          updated_at: '2026-10-09T00:00:00Z',
+        }),
+      );
+    });
+
+    it('backfills the localized greeting for a greeting-less Pip', async () => {
+      runInAction(() => {
+        assistantStore.assistants = [
+          {...mockAssistant, id: 'pip-1', name: 'Pip', source: 'local'} as any,
+        ];
+      });
+
+      await callBackfill();
+
+      expect(assistantRepository.updateAssistant).toHaveBeenCalledTimes(1);
+      const [, updates] = (assistantRepository.updateAssistant as jest.Mock)
+        .mock.calls[0];
+      expect(updates.greeting.text).toBeDefined();
+      expect(updates.greeting.suggestedPrompts).toHaveLength(4);
+    });
+
+    it('never clobbers a deliberately cleared greeting (sentinel)', async () => {
+      runInAction(() => {
+        assistantStore.assistants = [
+          {
+            ...mockAssistant,
+            id: 'pip-2',
+            name: 'Pip',
+            source: 'local',
+            greeting: {text: '', suggestedPrompts: []},
+          } as any,
+        ];
+      });
+
+      await callBackfill();
+
+      expect(assistantRepository.updateAssistant).not.toHaveBeenCalled();
+      expect(
+        await AsyncStorage.getItem('AssistantStore.builtin.Pip.greeting.v1'),
+      ).toBe('true');
+    });
+
+    it('never clobbers a customized greeting', async () => {
+      runInAction(() => {
+        assistantStore.assistants = [
+          {
+            ...mockAssistant,
+            id: 'pip-3',
+            name: 'Pip',
+            source: 'local',
+            greeting: {text: 'my custom hello', suggestedPrompts: ['hi']},
+          } as any,
+        ];
+      });
+
+      await callBackfill();
+
+      expect(assistantRepository.updateAssistant).not.toHaveBeenCalled();
+    });
+
+    it('is one-shot: the second run is a no-op', async () => {
+      runInAction(() => {
+        assistantStore.assistants = [
+          {...mockAssistant, id: 'pip-4', name: 'Pip', source: 'local'} as any,
+        ];
+      });
+
+      await callBackfill();
+      await callBackfill();
+
+      expect(assistantRepository.updateAssistant).toHaveBeenCalledTimes(1);
+    });
+
+    it('ignores non-Pip assistants', async () => {
+      runInAction(() => {
+        assistantStore.assistants = [
+          {
+            ...mockAssistant,
+            id: 'other-1',
+            name: 'Other',
+            source: 'local',
+          } as any,
+        ];
+      });
+
+      await callBackfill();
+
+      expect(assistantRepository.updateAssistant).not.toHaveBeenCalled();
     });
   });
 

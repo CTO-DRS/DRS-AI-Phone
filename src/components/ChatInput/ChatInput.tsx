@@ -38,6 +38,7 @@ import {
 
 import {MessageType} from '../../utils/types';
 import {L10nContext, UserContext} from '../../utils';
+import {getContrastColor} from '../../utils/colorUtils';
 import {t} from '../../locales';
 
 import {SendButton, StopButton, Menu, VoiceChip} from '..';
@@ -379,6 +380,13 @@ export const ChatInput = observer(
 
     const onSurfaceColor =
       currentActiveAssistant?.color?.[0] || theme.colors.text;
+    // Video CTA paints the assistant's primary accent as its background —
+    // which can be a LIGHT pastel (palette entries like #A2D29E/#FFBBFE),
+    // so the icon/label must derive their ink from that accent instead of
+    // hardcoding white (v1.36.0 contrast fix).
+    const videoAccentColor =
+      currentActiveAssistant?.color?.[0] || theme.colors.primary;
+    const videoOnAccentColor = getContrastColor(videoAccentColor);
     const onSurfaceColorVariant = onSurfaceColor + '55'; // for disabled state or placeholder text
     // // Plus button state
     const isPlusButtonEnabled = !isStreaming && isVisionEnabled;
@@ -671,7 +679,7 @@ export const ChatInput = observer(
                   style={[
                     styles.compactVideoButton,
                     {
-                      backgroundColor: onSurfaceColor,
+                      backgroundColor: videoAccentColor,
                     },
                   ]}
                   onPress={onStartCamera}
@@ -680,10 +688,14 @@ export const ChatInput = observer(
                   <VideoRecorderIcon
                     width={16}
                     height={16}
-                    stroke="white"
+                    stroke={videoOnAccentColor}
                     strokeWidth={2}
                   />
-                  <Text style={styles.compactButtonText}>
+                  <Text
+                    style={[
+                      styles.compactButtonText,
+                      {color: videoOnAccentColor},
+                    ]}>
                     {l10n.video.startCamera}
                   </Text>
                 </TouchableOpacity>

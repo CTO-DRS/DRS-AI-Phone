@@ -1923,7 +1923,14 @@
       "subtitleTemplate": "{{name}} mõtleb sinu telefonis asuva väikese AI-mudeliga – vali endale sobiv.",
       "assistant": {
         "pip": {
-          "body": "Leidsime sinule ideaalse abilise – sõbraliku igapäevakaaslase. Piisavalt nutik enamus asjade jaoks, piisavalt kerge igale telefonile."
+          "body": "Leidsime sinule ideaalse abilise – sõbraliku igapäevakaaslase. Piisavalt nutik enamus asjade jaoks, piisavalt kerge igale telefonile.",
+          "greeting": {
+            "text": "Tere, mina olen Pip 👋 Teie isiklik abiline, mis töötab otse teie telefonis. Küsige mis iganes — internet pole vajalik.",
+            "prompt1": "Anna mulle 3 kiiret õhtusöögi ideed",
+            "prompt2": "Kirjuta sõbralik sünnipäevasoov",
+            "prompt3": "Selgita lihtsalt, mis on Wi-Fi",
+            "prompt4": "Aita mul oma päev planeerida"
+          }
         },
         "codie": {
           "body": "Tutvu Codiega – sinu kohalik koodikaaslane. Loeb koodi, kirjutab koodi ja selgitab keerukaid kohti, ilma et peaks telefonist lahkuma."

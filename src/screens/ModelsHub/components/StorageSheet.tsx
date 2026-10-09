@@ -12,6 +12,7 @@ import {observer} from 'mobx-react-lite';
 import * as RNFS from '@dr.pogodin/react-native-fs';
 
 import {useTheme} from '../../../hooks';
+import {hubStatusColors} from '../hubStatus';
 import {L10nContext} from '../../../utils';
 import {modelStore} from '../../../store';
 import {Model} from '../../../utils/types';
@@ -227,7 +228,14 @@ export const StorageSheet: React.FC<StorageSheetProps> = observer(
               <Text style={[theme.typography.captionM, mutedText]}>
                 {t.storage?.available}
               </Text>
-              <Text style={[theme.typography.titleM, styles.freeValue]}>
+              <Text
+                style={[
+                  theme.typography.titleM,
+                  styles.freeValue,
+                  // Module-level styles can't see the theme; the status ink
+                  // is applied inline (v1.36.0 dark-contrast fix).
+                  {color: hubStatusColors(theme).ok},
+                ]}>
                 {stats.loading ? '…' : freeLabel}
               </Text>
             </View>
