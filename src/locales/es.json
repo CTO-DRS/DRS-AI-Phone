@@ -809,7 +809,9 @@
       "activateModelButton": "Seleccionar modelo",
       "loading": "Cargando...",
       "gettingReadyTitle": "{{name}} se está preparando",
-      "gettingReadyDescription": "Te avisaremos en cuanto DRS AI (tu amigo de bolsillo) pueda chatear. Toca el banner de arriba para ver cómo va."
+      "gettingReadyDescription": "Te avisaremos en cuanto DRS AI (tu amigo de bolsillo) pueda chatear. Toca el banner de arriba para ver cómo va.",
+      "readyTitle": "{{name}} está listo",
+      "readyDescription": "El modelo está cargado en tu dispositivo. Escribe un mensaje abajo para empezar a chatear."
     },
     "chatInput": {
       "inputPlaceholder": "Mensaje",

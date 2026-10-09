@@ -5,7 +5,7 @@ import {observer} from 'mobx-react';
 
 import {useTheme} from '../../hooks';
 import {createStyles} from './styles';
-import {modelStore, assistantStore} from '../../store';
+import {modelStore, assistantStore, chatSessionStore} from '../../store';
 import {useNavigation} from '@react-navigation/native';
 import {NavigationProp} from '@react-navigation/native';
 import {L10nContext} from '../../utils';
@@ -78,8 +78,41 @@ export const ChatEmptyPlaceholder = observer(
 
     const {title, description, buttonText, onPress} = getContent();
 
+    // Model active — the old behaviour returned an empty <View />, which
+    // (for assistants without a greeting, e.g. the onboarding default Pip)
+    // left the whole chat area as a blank void right after activation and
+    // looked like "the UI disappeared" (v1.35.0 report). Render a compact
+    // "ready to chat" state instead.
     if (hasActiveModel) {
-      return <View />;
+      const activeAssistant = assistantStore.assistants.find(
+        p => p.id === chatSessionStore.activeAssistantId,
+      );
+      const assistantName = activeAssistant?.name ?? 'DRS AI';
+      const readyTitle =
+        l10n.components.chatEmptyPlaceholder.readyTitle?.replace(
+          '{{name}}',
+          assistantName,
+        ) ?? `${assistantName} is ready`;
+      const readyDescription =
+        l10n.components.chatEmptyPlaceholder.readyDescription ??
+        'Model loaded on-device. Type a message below to start chatting.';
+      return (
+        <View
+          style={[
+            styles.container,
+            {marginBottom: bottomComponentHeight + 100},
+          ]}>
+          <Image
+            source={require('../../assets/drs-ai-dark.png')}
+            style={styles.logo}
+            resizeMode="contain"
+          />
+          <View>
+            <Text style={styles.title}>{readyTitle}</Text>
+            <Text style={styles.description}>{readyDescription}</Text>
+          </View>
+        </View>
+      );
     }
     return (
       <View

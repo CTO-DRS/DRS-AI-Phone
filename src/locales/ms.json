@@ -809,7 +809,9 @@
       "activateModelButton": "Pilih Model",
       "loading": "Memuat...",
       "gettingReadyTitle": "{{name}} sedang bersedia",
-      "gettingReadyDescription": "Kami akan beritahu anda sebaik sahaja assistant anda boleh bersembang. Ketik sepanduk di atas untuk melihat perkembangannya."
+      "gettingReadyDescription": "Kami akan beritahu anda sebaik sahaja assistant anda boleh bersembang. Ketik sepanduk di atas untuk melihat perkembangannya.",
+      "readyTitle": "{{name}} sedia untuk berbual",
+      "readyDescription": "Model telah dimuatkan pada peranti anda. Taip mesej di bawah untuk mula berbual."
     },
     "chatInput": {
       "inputPlaceholder": "Mesej",

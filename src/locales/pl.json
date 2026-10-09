@@ -809,7 +809,9 @@
       "activateModelButton": "Wybierz Model",
       "loading": "Ładowanie...",
       "gettingReadyTitle": "{{name}} przygotowuje się",
-      "gettingReadyDescription": "Poinformujemy Cię, gdy tylko Twój asystent będzie mógł rozpocząć czat. Kliknij baner u góry, aby sprawdzić, jak mu idzie."
+      "gettingReadyDescription": "Poinformujemy Cię, gdy tylko Twój asystent będzie mógł rozpocząć czat. Kliknij baner u góry, aby sprawdzić, jak mu idzie.",
+      "readyTitle": "{{name}} jest gotowy",
+      "readyDescription": "Model został wczytany na Twoim urządzeniu. Wpisz wiadomość poniżej, aby rozpocząć rozmowę."
     },
     "chatInput": {
       "inputPlaceholder": "Wiadomość",

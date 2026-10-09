@@ -809,7 +809,9 @@
       "activateModelButton": "Select Model",
       "loading": "Loading...",
       "gettingReadyTitle": "{{name}} is getting ready",
-      "gettingReadyDescription": "We’ll let you know the moment your assistant can chat. Tap the banner up top to see how it’s going."
+      "gettingReadyDescription": "We’ll let you know the moment your assistant can chat. Tap the banner up top to see how it’s going.",
+      "readyTitle": "{{name}} is ready",
+      "readyDescription": "The model is loaded on your device. Type a message below to start chatting."
     },
     "chatInput": {
       "inputPlaceholder": "Message",

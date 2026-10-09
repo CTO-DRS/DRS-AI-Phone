@@ -809,7 +809,9 @@
       "activateModelButton": "בחר מודל",
       "loading": "טוען...",
       "gettingReadyTitle": "{{name}} מתכונן",
-      "gettingReadyDescription": "נודיע לך ברגע שה-assistant שלך יהיה מוכן לשיחה. הקש על הבאנר למעלה כדי לראות איך מתקדם."
+      "gettingReadyDescription": "נודיע לך ברגע שה-assistant שלך יהיה מוכן לשיחה. הקש על הבאנר למעלה כדי לראות איך מתקדם.",
+      "readyTitle": "{{name}} מוכן לצ'אט",
+      "readyDescription": "המודל נטען במכשיר שלך. כתבו הודעה למטה כדי להתחיל לשוחח."
     },
     "chatInput": {
       "inputPlaceholder": "הודעה",
