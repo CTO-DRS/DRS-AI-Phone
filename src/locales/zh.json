@@ -809,7 +809,9 @@
       "activateModelButton": "选择模型",
       "loading": "加载中...",
       "gettingReadyTitle": "{{name}} 正在准备中",
-      "gettingReadyDescription": "我们会在您的 助手 可以开始聊天时通知您，点击顶部的横幅可以查看进度。"
+      "gettingReadyDescription": "我们会在您的 助手 可以开始聊天时通知您，点击顶部的横幅可以查看进度。",
+      "readyTitle": "{{name}} 已就绪",
+      "readyDescription": "模型已加载到您的设备上。在下方输入消息即可开始聊天。"
     },
     "chatInput": {
       "inputPlaceholder": "消息",

@@ -809,7 +809,9 @@
       "activateModelButton": "Välj modell",
       "loading": "Läser in...",
       "gettingReadyTitle": "{{name}} gör sig redo",
-      "gettingReadyDescription": "Vi hör av oss så snart din assistent är redo att chatta. Tryck på banderollen längst upp för att se hur det går."
+      "gettingReadyDescription": "Vi hör av oss så snart din assistent är redo att chatta. Tryck på banderollen längst upp för att se hur det går.",
+      "readyTitle": "{{name}} är redo",
+      "readyDescription": "Modellen är laddad på din enhet. Skriv ett meddelande nedan för att börja chatta."
     },
     "chatInput": {
       "inputPlaceholder": "Meddelande",

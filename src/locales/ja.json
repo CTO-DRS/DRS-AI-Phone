@@ -809,7 +809,9 @@
       "activateModelButton": "モデルを選択",
       "loading": "読み込み中...",
       "gettingReadyTitle": "{{name}}が準備中です",
-      "gettingReadyDescription": "アシスタントがチャットできるようになったらすぐにお知らせします。上部のバナーをタップすると進み具合を確認できます。"
+      "gettingReadyDescription": "アシスタントがチャットできるようになったらすぐにお知らせします。上部のバナーをタップすると進み具合を確認できます。",
+      "readyTitle": "{{name}}の準備ができました",
+      "readyDescription": "モデルがデバイスに読み込まれました。下にメッセージを入力してチャットを始めましょう。"
     },
     "chatInput": {
       "inputPlaceholder": "メッセージを入力",

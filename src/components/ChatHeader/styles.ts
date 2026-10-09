@@ -52,9 +52,16 @@ export const createStyles = ({
       elevation: 0,
       shadowOpacity: 0,
       borderBottomWidth: 0,
-      backgroundColor: 'transparent',
+      // Opaque theme surface — NEVER transparent. The header sits above a
+      // root container that is tinted with the active assistant's accent
+      // color (see ChatView `inputBackgroundColor`); a transparent header
+      // would expose that tint and put theme `onSurface` text on an
+      // assistant-controlled background. With Pip (#FAFAFA) in dark theme
+      // this rendered near-white text on a near-white bar — the reported
+      // "white screen, all texts disappear" bug (v1.35.0).
+      backgroundColor: theme.colors.background,
     },
     headerWithDivider: {
-      backgroundColor: 'transparent',
+      backgroundColor: theme.colors.background,
     },
   });

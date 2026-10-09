@@ -809,7 +809,9 @@
       "activateModelButton": "모델 선택",
       "loading": "로딩 중...",
       "gettingReadyTitle": "{{name}}이 준비 중임",
-      "gettingReadyDescription": "어시스턴트이 채팅할 수 있게 준비되면 바로 알려드릴게요. 위쪽 배너를 탭하여 진행 상황을 확인하세요."
+      "gettingReadyDescription": "어시스턴트이 채팅할 수 있게 준비되면 바로 알려드릴게요. 위쪽 배너를 탭하여 진행 상황을 확인하세요.",
+      "readyTitle": "{{name}}이(가) 준비되었습니다",
+      "readyDescription": "모델이 기기에 로드되었습니다. 아래에 메시지를 입력하여 대화를 시작하세요."
     },
     "chatInput": {
       "inputPlaceholder": "메시지",

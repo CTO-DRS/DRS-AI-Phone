@@ -924,16 +924,20 @@ export const ChatView = observer(
         );
       }
 
+      // Assistants that define a greeting own the empty state themselves —
+      // the bubble IS the welcome content, don't stack the ready panel under
+      // it. Greeting-less assistants (e.g. Pip) fall through to the
+      // placeholder, which renders an explicit "ready to chat" state once a
+      // model is active instead of an empty void.
+      if (activeAssistant?.greeting?.text && modelStore.activeModelId) {
+        return <GreetingBubble text={activeAssistant.greeting.text} />;
+      }
+
       return (
-        <>
-          {activeAssistant?.greeting?.text && modelStore.activeModelId ? (
-            <GreetingBubble text={activeAssistant.greeting.text} />
-          ) : null}
-          <ChatEmptyPlaceholder
-            bottomComponentHeight={bottomComponentHeight}
-            onSelectModel={() => setIsPickerVisible(true)}
-          />
-        </>
+        <ChatEmptyPlaceholder
+          bottomComponentHeight={bottomComponentHeight}
+          onSelectModel={() => setIsPickerVisible(true)}
+        />
       );
     }, [bottomComponentHeight, setIsPickerVisible, activeAssistant]);
 
@@ -1130,7 +1134,12 @@ export const ChatView = observer(
     return (
       <UserContext.Provider value={user}>
         <View
-          style={[styles.container, {backgroundColor: inputBackgroundColor}]}
+          // Theme background — NOT `inputBackgroundColor`. The assistant
+          // accent tint belongs to the input frame only (below); painting
+          // the whole screen with it let Pip's near-white `color[1]`
+          // bleed through the header and wash out every top-bar text in
+          // dark theme (v1.35.0 regression root).
+          style={[styles.container, {backgroundColor: theme.colors.background}]}
           onLayout={onLayout}>
           {/* Header */}
           <View style={styles.headerWrapper}>

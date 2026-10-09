@@ -809,7 +809,9 @@
       "activateModelButton": "Vali mudel",
       "loading": "Laadin...",
       "gettingReadyTitle": "{{name}} valmistub",
-      "gettingReadyDescription": "Anname kohe märku, kui sinu abiline saab vestelda. Puuduta üleval olevat bännerit, et näha, kuidas läheb."
+      "gettingReadyDescription": "Anname kohe märku, kui sinu abiline saab vestelda. Puuduta üleval olevat bännerit, et näha, kuidas läheb.",
+      "readyTitle": "{{name}} on valmis",
+      "readyDescription": "Mudel on sinu seadmesse laaditud. Kirjuta allpool sõnum, et vestlust alustada."
     },
     "chatInput": {
       "inputPlaceholder": "Sõnum",

@@ -809,7 +809,9 @@
       "activateModelButton": "اختيار نموذج",
       "loading": "جارٍ التحميل...",
       "gettingReadyTitle": "{{name}} يستعد",
-      "gettingReadyDescription": "سنخبرك لحظة جاهزية مساعدك للمحادثة. اضغط اللافتة في الأعلى لمتابعة التقدم."
+      "gettingReadyDescription": "سنخبرك لحظة جاهزية مساعدك للمحادثة. اضغط اللافتة في الأعلى لمتابعة التقدم.",
+      "readyTitle": "{{name}} جاهز للدردشة",
+      "readyDescription": "تم تحميل النموذج على جهازك. اكتب رسالتك بالأسفل لبدء المحادثة."
     },
     "chatInput": {
       "inputPlaceholder": "رسالة",

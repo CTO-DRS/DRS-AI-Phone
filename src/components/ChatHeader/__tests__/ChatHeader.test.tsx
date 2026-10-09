@@ -1,5 +1,6 @@
 import React from 'react';
 import {render} from '../../../../jest/test-utils';
+import {themeFixtures} from '../../../../jest/fixtures/theme';
 import {ChatHeader} from '../ChatHeader';
 
 // Mock the child components
@@ -55,11 +56,16 @@ describe('ChatHeader', () => {
     const {getByTestId} = render(<ChatHeader />, {withSafeArea: true});
 
     const headerView = getByTestId('header-view');
+    // Regression (v1.35.0): the header background MUST be the opaque theme
+    // background. It was 'transparent' for a while, which let the root
+    // container's assistant accent tint (e.g. Pip's near-white #FAFAFA)
+    // bleed through and made the theme-colored title texts invisible in
+    // dark theme.
     expect(headerView.props.style[1]).toMatchObject({
       elevation: 0,
       shadowOpacity: 0,
       borderBottomWidth: 0,
-      backgroundColor: expect.any(String),
+      backgroundColor: themeFixtures.lightTheme.colors.background,
     });
   });
 
@@ -69,7 +75,7 @@ describe('ChatHeader', () => {
 
     const headerView = getByTestId('header-view');
     expect(headerView.props.style[1]).toMatchObject({
-      backgroundColor: expect.any(String),
+      backgroundColor: themeFixtures.lightTheme.colors.background,
     });
   });
 });
