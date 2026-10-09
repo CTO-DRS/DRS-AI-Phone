@@ -2,6 +2,7 @@ import {StyleSheet, TextStyle, ViewStyle} from 'react-native';
 
 import {Theme} from '../../utils/types';
 import {BRAND_PURPLE, BRAND_BLUE} from '../../theme/tokens/brand';
+import {hubStatusColors} from './hubStatus';
 
 /**
  * Models Hub styling — premium, gradient-tinted surfaces built on the brand
@@ -281,7 +282,7 @@ export const createStyles = (theme: Theme) =>
       marginTop: 2,
     } as TextStyle,
     summaryStatValueGpuOk: {
-      color: '#059669',
+      color: hubStatusColors(theme).ok,
     } as TextStyle,
     summaryStatValueGpuNo: {
       color: theme.colors.onSurface,
@@ -336,7 +337,7 @@ export const createStyles = (theme: Theme) =>
       borderRadius: 10,
     } as ViewStyle,
     wifiChipActive: {
-      backgroundColor: '#2563EB22',
+      backgroundColor: hubStatusColors(theme).infoSoft,
     } as ViewStyle,
     wifiChipInactive: {
       backgroundColor: 'transparent',
@@ -344,7 +345,7 @@ export const createStyles = (theme: Theme) =>
     wifiChipTextActive: {
       ...theme.typography.captionM,
       fontWeight: '700',
-      color: '#2563EB',
+      color: hubStatusColors(theme).info,
     } as TextStyle,
     wifiChipTextInactive: {
       ...theme.typography.captionM,

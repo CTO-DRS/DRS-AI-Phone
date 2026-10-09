@@ -1923,7 +1923,14 @@
       "subtitleTemplate": "{{name}} berpikir menggunakan model AI kecil di ponsel Anda — pilih yang cocok.",
       "assistant": {
         "pip": {
-          "body": "Kami menemukan assistant yang sempurna untuk Anda — teman sehari-hari yang ramah. Cukup pintar untuk sebagian besar hal, cukup ringan untuk ponsel mana pun."
+          "body": "Kami menemukan assistant yang sempurna untuk Anda — teman sehari-hari yang ramah. Cukup pintar untuk sebagian besar hal, cukup ringan untuk ponsel mana pun.",
+          "greeting": {
+            "text": "Hai, saya Pip 👋 Asisten pribadi Anda yang berjalan langsung di ponsel Anda. Tanyakan apa saja — tanpa perlu internet.",
+            "prompt1": "Beri saya 3 ide makan malam cepat",
+            "prompt2": "Tulis pesan ulang tahun yang ramah",
+            "prompt3": "Jelaskan dengan sederhana apa itu Wi-Fi",
+            "prompt4": "Bantu saya merencanakan hari saya"
+          }
         },
         "codie": {
           "body": "Kenali Codie — pair-programmer lokal Anda. Membaca kode, menulis kode, menjelaskan bagian rumit tanpa meninggalkan ponsel Anda."

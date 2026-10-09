@@ -1923,7 +1923,14 @@
       "subtitleTemplate": "{{name}} ragiona usando un piccolo modello IA sul tuo telefono: scegline uno adatto.",
       "assistant": {
         "pip": {
-          "body": "Abbiamo trovato l'assistente perfetto per te — un compagno quotidiano e gentile. Sufficientemente intelligente per quasi tutto, abbastanza leggero per qualsiasi telefono."
+          "body": "Abbiamo trovato l'assistente perfetto per te — un compagno quotidiano e gentile. Sufficientemente intelligente per quasi tutto, abbastanza leggero per qualsiasi telefono.",
+          "greeting": {
+            "text": "Ciao, sono Pip 👋 Il tuo assistente personale, che funziona direttamente sul tuo telefono. Chiedimi qualsiasi cosa — senza bisogno di internet.",
+            "prompt1": "Dammi 3 idee veloci per la cena",
+            "prompt2": "Scrivi un messaggio di compleanno gentile",
+            "prompt3": "Spiega in parole semplici cos'è il Wi-Fi",
+            "prompt4": "Aiutami a organizzare la mia giornata"
+          }
         },
         "codie": {
           "body": "Ti presento Codie — il tuo programmatore in coppia locale. Legge codice, scrive codice e spiega i passaggi difficili senza mai lasciare il tuo telefono."

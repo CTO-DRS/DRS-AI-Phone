@@ -62,6 +62,9 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
+          # v1.36.0: mirrors ci.yml — saves ~2-4 min of dependency downloads
+          # on every release build.
+          cache: 'gradle'
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -83,6 +86,14 @@ jobs:
             && echo "runner sha512: $(openssl dgst -sha512 -binary /tmp/srt.tgz | openssl base64 -A)" \
             || echo "curl download failed"
           echo "expected      : x/+Cz4YrimQxQccJf5mKEbIa1NzeCRNI5Ecl/ekmlYaampdNLPalVyIcCZNNH3MvmqBugV5TMYZXv0ljslUlaw=="
+
+      # v1.36.0: reuse the install tree keyed on the lockfile; the
+      # integrity-diagnostics + retry steps below stay authoritative.
+      - name: Cache node_modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-apk-node-${{ hashFiles('yarn.lock') }}
 
       - name: Install dependencies
         run: |

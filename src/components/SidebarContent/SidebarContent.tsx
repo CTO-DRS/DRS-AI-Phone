@@ -509,7 +509,14 @@ export const SidebarContent: React.FC<DrawerContentComponentProps> = observer(
     }, [normalizedQuery, sections, l10n]);
 
     useEffect(() => {
-      chatSessionStore.loadSessionList();
+      // v1.36.0: the session list is already loaded (and kept reactive by
+      // MobX) by ChatSessionStore.initialize — re-running the full sweep on
+      // every drawer mount duplicated 1+2N sequential DB queries on every
+      // cold start. Only hydrate when the store genuinely came up empty
+      // (e.g. an init race), never as an unconditional refresh.
+      if (chatSessionStore.sessions.length === 0) {
+        chatSessionStore.loadSessionList();
+      }
 
       // Set localized date group names whenever the component mounts
       chatSessionStore.setDateGroupNames(

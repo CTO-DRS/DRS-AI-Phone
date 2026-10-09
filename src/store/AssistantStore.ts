@@ -17,11 +17,13 @@
  */
 
 import {v4 as uuidv4} from 'uuid';
-import {makeAutoObservable, runInAction} from 'mobx';
-import {Platform} from 'react-native';
+import {makeAutoObservable, runInAction, when} from 'mobx';
+import {InteractionManager, Platform} from 'react-native';
+import {isHydrated} from 'mobx-persist-store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import {HF_DOMAIN} from '../config/urls';
+import {l10n} from '../locales';
 
 import {assistantRepository} from '../repositories/AssistantRepository';
 
@@ -32,6 +34,8 @@ import NativeExternalContentLink from '../specs/NativeExternalContentLink';
 import {drshubService} from '../services';
 import {registerDefaultTalents} from '../services/talents';
 import {LOOKIE_DEFAULT_MODEL} from './builtinAssistantModels';
+import {uiStore} from './UIStore';
+import {buildPipGreeting} from './onboarding/onboardingAssistants';
 import {chatTemplates} from '../utils/chat';
 import {defaultCompletionParams} from '../utils/completionSettingsVersions';
 import {parseDrshubTemplate} from '../utils/drshub-template-parser';
@@ -58,6 +62,9 @@ import {logger} from '../utils/logger';
 // (check key, find existing, create, set key) instead of a third copy.
 const LOOKIE_SEEDED_KEY = 'AssistantStore.builtin.Lookie.seeded';
 const PIP_SEEDED_KEY = 'AssistantStore.builtin.Pip.seeded';
+// One-shot: give already-materialized Pip assistants the curated greeting
+// introduced in v1.36.0 (installs that predate it never had one).
+const PIP_GREETING_BACKFILL_KEY = 'AssistantStore.builtin.Pip.greeting.v1';
 
 class AssistantStore {
   // Core assistants storage
@@ -104,11 +111,20 @@ class AssistantStore {
       // Initialize Pip assistant (idempotent — see initializePipAssistant).
       await this.initializePipAssistant();
 
+      // One-shot greeting backfill for Pips created before v1.36.0.
+      // Fire-and-forget: it parks on uiStore hydration (up to 15s) and must
+      // NOT hold `initialize()` — isMigrating gates the migration overlay.
+      this.backfillPipGreeting();
+
       // Register talent engines (idempotent)
       registerDefaultTalents();
 
-      // Check checkout eligibility for buy button gating
-      this.checkCheckoutEligibility();
+      // Check checkout eligibility for buy button gating — deferred off the
+      // startup burst: it probes native storefront APIs and only gates a buy
+      // button that is unreachable during the first seconds anyway.
+      InteractionManager.runAfterInteractions(() => {
+        this.checkCheckoutEligibility();
+      });
 
       logger.debug('Assistant store initialization completed');
 
@@ -779,6 +795,41 @@ class AssistantStore {
       await AsyncStorage.setItem(LOOKIE_SEEDED_KEY, 'true');
     } catch (error) {
       console.error('Error initializing Lookie assistant:', error);
+    }
+  }
+
+  /**
+   * One-shot greeting backfill for existing Pip assistants (v1.36.0).
+   *
+   * Installs that materialized Pip before curated greetings existed have
+   * `greeting === undefined`, so their first empty chat showed the generic
+   * ready state instead of a welcome. Two safety properties:
+   *  - `greeting === undefined` is the ONLY backfilled state: a deliberately
+   *    cleared greeting persists the `{text:'', suggestedPrompts:[]}`
+   *    sentinel and any user customization persists real text — both are
+   *    left untouched.
+   *  - Runs only after `uiStore` hydration (bounded 15s) so the greeting
+   *    snapshots the user's real locale, not the pre-hydration default.
+   */
+  private async backfillPipGreeting(): Promise<void> {
+    try {
+      if ((await AsyncStorage.getItem(PIP_GREETING_BACKFILL_KEY)) === 'true') {
+        return;
+      }
+      await when(() => isHydrated(uiStore), {timeout: 15000});
+      const translations = l10n[uiStore.language];
+      const existing = this.assistants.find(
+        p => p.name === 'Pip' && p.source === 'local',
+      );
+      if (existing && existing.greeting === undefined) {
+        await this.updateAssistant(existing.id, {
+          greeting: buildPipGreeting(translations),
+        });
+      }
+      await AsyncStorage.setItem(PIP_GREETING_BACKFILL_KEY, 'true');
+      logger.debug('Pip greeting backfill completed');
+    } catch (error) {
+      console.error('Error backfilling Pip greeting:', error);
     }
   }
 

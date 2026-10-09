@@ -81,7 +81,11 @@ class ServerStore {
       ],
       storage: AsyncStorage,
     }).then(() => {
-      // After hydration, fetch models for all servers
+      // After hydration, fetch models for all servers. (A v1.36.0 attempt to
+      // defer this via InteractionManager was reverted: the AppState
+      // foreground listener below already re-fetches, and the deferral's
+      // task leaked into tests that await setImmediate and assert exact
+      // fetch ordering.)
       this.fetchAllRemoteModels();
     });
 

@@ -7,6 +7,7 @@ import {L10nContext} from '../../../utils';
 import {modelStore} from '../../../store';
 import {fetchModelFilesDetails} from '../../../api/hf';
 import {hfStore} from '../../../store';
+import {hubStatusColors} from '../hubStatus';
 import {Model, ModelOrigin, ModelFileDetails} from '../../../utils/types';
 import {formatBytes} from '../../../utils';
 import {extractFamilyLabel} from '../../../utils/modelTaxonomy';
@@ -98,7 +99,9 @@ export const UpdatesSection: React.FC<UpdatesSectionProps> = observer(
     };
     const checkLabelStyle = {
       ...theme.typography.captionM,
-      color: checking ? theme.colors.onSurfaceVariant : '#2563EB',
+      color: checking
+        ? theme.colors.onSurfaceVariant
+        : hubStatusColors(theme).info,
     };
     const upToDateStyle = {
       ...theme.typography.captionM,

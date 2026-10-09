@@ -1,4 +1,10 @@
-import {AppState, AppStateStatus, Platform, Alert} from 'react-native';
+import {
+  AppState,
+  AppStateStatus,
+  InteractionManager,
+  Platform,
+  Alert,
+} from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 
 import {v4 as uuidv4} from 'uuid';
@@ -797,7 +803,12 @@ export class ModelStore {
 
     // Upgrade past the bundled floor to the online rules override in the
     // background; reconcile (id-keyed, dedup) folds in any newer set.
-    this.upgradeToFetchedRules();
+    // v1.36.0: pushed off the launch window — this performs a network fetch
+    // (10s timeout) plus rules parsing on EVERY startup, while the bundled
+    // floor already resolved above keeps presets usable in the meantime.
+    InteractionManager.runAfterInteractions(() => {
+      this.upgradeToFetchedRules();
+    });
 
     await this.initializeGpuSettings(); // Should be awaited to ensure GPU settings are applied before initializing context
 

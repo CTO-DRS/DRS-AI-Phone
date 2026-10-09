@@ -11,6 +11,7 @@ import {waitFor} from '@testing-library/react-native';
 
 // Make the repository methods mockable
 jest.spyOn(chatSessionRepository, 'getAllSessions');
+jest.spyOn(chatSessionRepository, 'getAllSessionsWithSettings');
 jest.spyOn(chatSessionRepository, 'getSessionById');
 jest.spyOn(chatSessionRepository, 'getSessionMetadataWithSettings');
 jest.spyOn(chatSessionRepository, 'createSession');
@@ -45,31 +46,34 @@ describe('chatSessionStore', () => {
   });
 
   describe('loadSessionList', () => {
-    it('loads session list from database successfully', async () => {
+    it('loads the session list via the batched settings join', async () => {
       const mockSession = {
         id: '1',
         title: 'Session 1',
         date: new Date().toISOString(),
+        activeAssistantId: undefined,
+        settingsSource: 'assistant',
+        pinned: false,
       };
 
       const mockCompletionSettings = {
+        sessionId: '1',
         getSettings: () => ({
           ...defaultCompletionSettings,
           temperature: 0.7,
         }),
       };
 
-      const mockSessionData = {
-        session: mockSession,
-        completionSettings: mockCompletionSettings,
-      };
-
-      (chatSessionRepository.getAllSessions as jest.Mock).mockResolvedValue([
-        mockSession,
-      ]);
+      // v1.36.0: loadSessionList consumes the single batched join
+      // (sessions × settings) instead of per-session finds.
       (
-        chatSessionRepository.getSessionMetadataWithSettings as jest.Mock
-      ).mockResolvedValue(mockSessionData);
+        chatSessionRepository.getAllSessionsWithSettings as jest.Mock
+      ).mockResolvedValue([
+        {
+          session: mockSession,
+          completionSettings: mockCompletionSettings,
+        },
+      ]);
 
       await chatSessionStore.loadSessionList();
 
@@ -77,21 +81,50 @@ describe('chatSessionStore', () => {
       expect(chatSessionStore.sessions[0].title).toBe('Session 1');
       expect(chatSessionStore.sessions[0].messages).toEqual([]);
       expect(chatSessionStore.sessions[0].messagesLoaded).toBe(false);
-      expect(chatSessionRepository.getAllSessions).toHaveBeenCalled();
+      expect(chatSessionStore.sessions[0].completionSettings.temperature).toBe(
+        0.7,
+      );
       expect(
-        chatSessionRepository.getSessionMetadataWithSettings,
-      ).toHaveBeenCalledWith('1');
+        chatSessionRepository.getAllSessionsWithSettings,
+      ).toHaveBeenCalled();
+    });
+
+    it('falls back to defaults when a session has no settings row', async () => {
+      const mockSession = {
+        id: '2',
+        title: 'Session 2',
+        date: new Date().toISOString(),
+        activeAssistantId: undefined,
+        settingsSource: 'assistant',
+        pinned: false,
+      };
+
+      (
+        chatSessionRepository.getAllSessionsWithSettings as jest.Mock
+      ).mockResolvedValue([{session: mockSession, completionSettings: null}]);
+
+      const warnSpy = jest.spyOn(console, 'warn').mockImplementation();
+      await chatSessionStore.loadSessionList();
+      warnSpy.mockRestore();
+
+      expect(chatSessionStore.sessions.length).toBe(1);
+      expect(chatSessionStore.sessions[0].id).toBe('2');
+      expect(chatSessionStore.sessions[0].completionSettings).toEqual(
+        defaultCompletionSettings,
+      );
     });
 
     it('handles database error gracefully', async () => {
-      (chatSessionRepository.getAllSessions as jest.Mock).mockRejectedValue(
-        new Error('Database error'),
-      );
+      (
+        chatSessionRepository.getAllSessionsWithSettings as jest.Mock
+      ).mockRejectedValue(new Error('Database error'));
 
       await chatSessionStore.loadSessionList();
 
       expect(chatSessionStore.sessions).toEqual([]);
-      expect(chatSessionRepository.getAllSessions).toHaveBeenCalled();
+      expect(
+        chatSessionRepository.getAllSessionsWithSettings,
+      ).toHaveBeenCalled();
     });
   });
 
@@ -2555,15 +2588,15 @@ describe('chatSessionStore', () => {
           date: new Date().toISOString(),
           pinned,
         };
-        (chatSessionRepository.getAllSessions as jest.Mock).mockResolvedValue([
-          session,
-        ]);
+        // v1.36.0: loadSessionList reads the batched join.
         (
-          chatSessionRepository.getSessionMetadataWithSettings as jest.Mock
-        ).mockResolvedValue({
-          session,
-          completionSettings: {getSettings: () => defaultCompletionSettings},
-        });
+          chatSessionRepository.getAllSessionsWithSettings as jest.Mock
+        ).mockResolvedValue([
+          {
+            session,
+            completionSettings: {getSettings: () => defaultCompletionSettings},
+          },
+        ]);
 
         await chatSessionStore.loadSessionList();
       };

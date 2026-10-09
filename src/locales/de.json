@@ -1923,7 +1923,14 @@
       "subtitleTemplate": "{{name}} denkt mit einem kleinen KI-Modell auf deinem Telefon - wähle eines, das passt.",
       "assistant": {
         "pip": {
-          "body": "Wir haben einen perfekten Assistenten für dich gefunden - einen freundlichen Begleiter für den Alltag. Schlau genug für fast alles, leicht genug für jedes Telefon."
+          "body": "Wir haben einen perfekten Assistenten für dich gefunden - einen freundlichen Begleiter für den Alltag. Schlau genug für fast alles, leicht genug für jedes Telefon.",
+          "greeting": {
+            "text": "Hallo, ich bin Pip 👋 Dein persönlicher Assistent, direkt auf deinem Handy. Frag mich alles – ganz ohne Internet.",
+            "prompt1": "Gib mir 3 schnelle Ideen fürs Abendessen",
+            "prompt2": "Schreibe eine freundliche Geburtstagsnachricht",
+            "prompt3": "Erkläre mir einfach, was WLAN ist",
+            "prompt4": "Hilf mir, meinen Tag zu planen"
+          }
         },
         "codie": {
           "body": "Das ist Codie — dein lokaler Pair-Programmer. Liest Code, schreibt Code und erklärt knifflige Stellen, ohne jemals dein Telefon zu verlassen."

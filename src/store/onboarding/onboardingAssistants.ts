@@ -22,6 +22,7 @@
  */
 
 import type {TopicKey} from './types';
+import type {Translations} from '../../locales/types';
 
 export type OnboardingModelTier = 'quick' | 'balanced' | 'best';
 
@@ -368,3 +369,21 @@ export const TOPIC_TO_ASSISTANT: Record<TopicKey, OnboardingAssistantDef> = {
 export const resolveAssistantForTopic = (
   topic: TopicKey | null,
 ): OnboardingAssistantDef => TOPIC_TO_ASSISTANT[topic ?? 'else'];
+
+/**
+ * Resolve Pip's curated first-run greeting in the ACTIVE locale at
+ * materialize/backfill time. Pip ships without a static `greeting` (unlike
+ * Codie/Sage/Echo/Muse whose copy is English-only); this builder pulls the
+ * l10n block at `onboarding.screen6.assistant.pip.greeting` so every user
+ * gets a localized welcome bubble + one-tap starter chips on the first
+ * empty chat (v1.36.0).
+ */
+export const buildPipGreeting = (
+  translations: Translations,
+): {text: string; suggestedPrompts: string[]} => {
+  const g = translations.onboarding.screen6.assistant.pip.greeting;
+  return {
+    text: g.text,
+    suggestedPrompts: [g.prompt1, g.prompt2, g.prompt3, g.prompt4],
+  };
+};

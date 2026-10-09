@@ -15,6 +15,7 @@ import {useTheme} from '../../../hooks';
 import {L10nContext} from '../../../utils';
 import {modelStore, modelHubStore, hfStore} from '../../../store';
 import {HuggingFaceModel, ModelFile, Theme} from '../../../utils/types';
+import {hubStatusColors} from '../hubStatus';
 import {
   classifyHfModel,
   isUnavailableOnDeviceEngine,
@@ -648,9 +649,9 @@ const reasonMarkColorStyle = (
     severity === 'error'
       ? theme.colors.error
       : severity === 'warning'
-        ? '#F59E0B'
+        ? hubStatusColors(theme).warn
         : severity === 'ok'
-          ? '#059669'
+          ? hubStatusColors(theme).ok
           : theme.colors.onSurfaceVariant,
 });
 
@@ -816,10 +817,10 @@ const createStyles = (theme: Theme) =>
       fontWeight: '700',
     } as TextStyle,
     capMarkOk: {
-      color: '#059669',
+      color: hubStatusColors(theme).ok,
     } as TextStyle,
     capMarkWarn: {
-      color: '#F59E0B',
+      color: hubStatusColors(theme).warn,
     } as TextStyle,
     capLabel: {
       ...theme.typography.captionM,

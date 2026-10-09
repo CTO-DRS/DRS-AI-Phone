@@ -11,6 +11,7 @@ import {observer} from 'mobx-react-lite';
 import LinearGradient from 'react-native-linear-gradient';
 
 import {useTheme} from '../../../hooks';
+import {hubStatusColors} from '../hubStatus';
 import {L10nContext} from '../../../utils';
 import {modelStore, modelHubStore} from '../../../store';
 import {downloadManager} from '../../../services/downloads';
@@ -236,13 +237,19 @@ export const DownloadsSheet: React.FC<DownloadsSheetProps> = observer(
 const Section: React.FC<{title: string; children: React.ReactNode}> = ({
   title,
   children,
-}) =>
-  title ? (
+}) => {
+  const theme = useTheme();
+  return title ? (
     <View style={styles.sectionWrap}>
-      <Text style={styles.sectionTitle}>{title}</Text>
+      {/* Inline status ink: module-level styles are theme-blind (v1.36.0). */}
+      <Text
+        style={[styles.sectionTitle, {color: hubStatusColors(theme).accent}]}>
+        {title}
+      </Text>
       {children}
     </View>
   ) : null;
+};
 
 const JobCard: React.FC<{
   theme: any;
@@ -280,7 +287,12 @@ const JobCard: React.FC<{
             {subtitle}
           </Text>
         </View>
-        <Text style={[theme.typography.titleS, styles.jobPercent]}>
+        <Text
+          style={[
+            theme.typography.titleS,
+            styles.jobPercent,
+            {color: hubStatusColors(theme).accent},
+          ]}>
           {progress}%
         </Text>
       </View>

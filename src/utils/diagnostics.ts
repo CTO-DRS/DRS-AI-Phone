@@ -28,6 +28,9 @@ export interface DiagEvent {
 const MAX_EVENTS = 250;
 const MAX_PREVIOUS_EVENTS = 100;
 const PERSIST_DEBOUNCE_MS = 1200;
+// v1.36.0: defer the previous-session log read (only consumed by report
+// viewing) out of the launch window.
+const PREVIOUS_SESSION_LOAD_DELAY_MS = 8000;
 const LOGCAT_TAIL_LINES = 200;
 
 /** Current session's events (bounded ring buffer, newest last). */
@@ -263,7 +266,9 @@ interface GlobalErrorUtils {
   setGlobalHandler?(handler: (error: unknown, isFatal?: boolean) => void): void;
 }
 
-export function installGlobalErrorHandlers(): void {
+export function installGlobalErrorHandlers(
+  options: {previousSessionLoadDelayMs?: number} = {},
+): void {
   if (handlersInstalled) {
     return;
   }
@@ -272,7 +277,16 @@ export function installGlobalErrorHandlers(): void {
   recordEvent('session', 'app:bootstrap');
 
   try {
-    loadPreviousSession().catch(() => undefined);
+    // v1.36.0: the previous-session log is only read when a report is
+    // viewed — delaying the read+JSON.parse a few seconds keeps it off the
+    // launch window without changing behavior (crash events that arrive in
+    // the interim are appended to the in-memory buffer, not the file).
+    // Tests collapse the delay to flush the load synchronously.
+    const delayMs =
+      options.previousSessionLoadDelayMs ?? PREVIOUS_SESSION_LOAD_DELAY_MS;
+    setTimeout(() => {
+      loadPreviousSession().catch(() => undefined);
+    }, delayMs);
   } catch {
     // Ignore.
   }

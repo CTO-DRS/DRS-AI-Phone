@@ -744,7 +744,9 @@ export const ModelsHubScreen: React.FC = observer(() => {
               width={18}
               height={18}
               stroke={
-                downloadsActive ? '#7C3AED' : theme.colors.onSurfaceVariant
+                downloadsActive
+                  ? theme.colors.primary
+                  : theme.colors.onSurfaceVariant
               }
               fill="none"
             />

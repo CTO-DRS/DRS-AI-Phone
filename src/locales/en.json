@@ -1923,7 +1923,14 @@
       "subtitleTemplate": "{{name}} thinks using a small AI model on your phone - pick one that fits.",
       "assistant": {
         "pip": {
-          "body": "We found a perfect assistant for you - a friendly everyday companion. Smart enough for most things, light enough for any phone."
+          "body": "We found a perfect assistant for you - a friendly everyday companion. Smart enough for most things, light enough for any phone.",
+          "greeting": {
+            "text": "Hey, I'm Pip 👋 Your private assistant, running right on your phone. Ask me anything — no internet needed.",
+            "prompt1": "Give me 3 quick dinner ideas",
+            "prompt2": "Write a friendly birthday message",
+            "prompt3": "Explain what Wi-Fi is in simple words",
+            "prompt4": "Help me plan my day"
+          }
         },
         "codie": {
           "body": "Meet Codie — your local pair-programmer. Reads code, writes code, explains tricky bits without ever leaving your phone."

@@ -13,11 +13,13 @@ export const createStyles = (theme: Theme) =>
       height: 28,
       borderRadius: 100,
       borderWidth: 1,
-      borderColor: '#222222',
+      // Theme-aware chrome (v1.36.0): hardcoded near-black border on a
+      // hardcoded white disc glared on the dark-themed sheet.
+      borderColor: theme.colors.outlineVariant,
       padding: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: 'white',
+      backgroundColor: theme.colors.surfaceContainerHighest,
     },
     colorButton: {
       width: 24,
@@ -33,7 +35,7 @@ export const createStyles = (theme: Theme) =>
     },
     rightHalf: {
       borderLeftWidth: 0.5,
-      borderLeftColor: '#E0E0E0',
+      borderLeftColor: theme.colors.outlineVariant,
     },
     selectedColorButtonContainer: {
       width: 30,

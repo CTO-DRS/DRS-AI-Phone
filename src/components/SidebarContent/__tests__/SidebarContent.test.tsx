@@ -34,11 +34,26 @@ const TestNavigator = () => (
 );
 
 describe('SidebarContent Component', () => {
-  it('calls loadSessionList on mount', () => {
+  it('calls loadSessionList on mount when the store came up empty', () => {
+    // v1.36.0: the drawer only hydrates an EMPTY session list — the store's
+    // own initialize already loaded it, so a non-empty store must NOT
+    // trigger the duplicate startup sweep.
+    const originalSessions = chatSessionStore.sessions;
+    (chatSessionStore as any).sessions = [];
+    try {
+      render(<TestNavigator />);
+
+      // loadSessionList is called when the component mounts
+      expect(chatSessionStore.loadSessionList).toHaveBeenCalledTimes(1);
+    } finally {
+      (chatSessionStore as any).sessions = originalSessions;
+    }
+  });
+
+  it('does not re-sweep the session list when sessions are already loaded', () => {
     render(<TestNavigator />);
 
-    // loadSessionList is called when the component mounts
-    expect(chatSessionStore.loadSessionList).toHaveBeenCalledTimes(1);
+    expect(chatSessionStore.loadSessionList).not.toHaveBeenCalled();
   });
 
   it('renders session groups and items correctly', () => {
