@@ -226,7 +226,15 @@
     "backupExportAssistants": "匯出助理",
     "backupExportAssistantsDescription": "儲存所有助理的 JSON 備份，方便分享或保存。",
     "backupImportAssistants": "還原助理",
-    "backupImportAssistantsDescription": "從此應用程式建立的備份檔匯入助理。"
+    "backupImportAssistantsDescription": "從此應用程式建立的備份檔匯入助理。",
+    "updateAlertLater": "稍後",
+    "fullBackupExport": "完整備份",
+    "fullBackupExportDescription": "一個檔案包含聊天、助理與設定",
+    "fullBackupImport": "還原完整備份",
+    "fullBackupImportDescription": "只補足缺少的內容，絕不覆寫",
+    "fullBackupRestoreSuccess": "已還原 {{chats}} 個聊天、{{messages}} 則訊息、{{assistants}} 個助理與 {{settings}} 項設定",
+    "fullBackupRestoreError": "無法還原備份檔案",
+    "fullBackupExportError": "無法建立備份檔案"
   },
   "memory": {
     "shortWarning": "記憶體警告",
@@ -1989,5 +1997,13 @@
   "notifications": {
     "generating": "正在產生回覆…",
     "responseReady": "回覆已就緒"
+  },
+  "widgets": {
+    "idle": "沒有使用中的模型",
+    "ready": "就緒",
+    "loading": "正在載入模型…",
+    "generating": "正在產生回覆…",
+    "downloadingProgress": "下載中 {{progress}}%",
+    "error": "錯誤"
   }
 }

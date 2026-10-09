@@ -226,7 +226,15 @@
     "backupExportAssistants": "Eksportuj asystentów",
     "backupExportAssistantsDescription": "Zapisz kopię zapasową JSON wszystkich asystentów, aby udostępnić ją lub przechować.",
     "backupImportAssistants": "Przywróć asystentów",
-    "backupImportAssistantsDescription": "Importuj asystentów z pliku kopii zapasowej utworzonego przez tę aplikację."
+    "backupImportAssistantsDescription": "Importuj asystentów z pliku kopii zapasowej utworzonego przez tę aplikację.",
+    "updateAlertLater": "Później",
+    "fullBackupExport": "Pełna kopia zapasowa",
+    "fullBackupExportDescription": "Jeden plik z czatami, asystentami i ustawieniami",
+    "fullBackupImport": "Przywróć pełną kopię",
+    "fullBackupImportDescription": "Uzupełnia braki, nigdy nie nadpisuje",
+    "fullBackupRestoreSuccess": "Przywrócono czaty: {{chats}}, wiadomości: {{messages}}, asystentów: {{assistants}}, ustawienia: {{settings}}",
+    "fullBackupRestoreError": "Nie udało się przywrócić kopii zapasowej",
+    "fullBackupExportError": "Nie udało się utworzyć kopii zapasowej"
   },
   "memory": {
     "shortWarning": "Ostrzeżenie o Braku Pamięci",
@@ -1989,5 +1997,13 @@
   "notifications": {
     "generating": "Generowanie odpowiedzi…",
     "responseReady": "Odpowiedź gotowa"
+  },
+  "widgets": {
+    "idle": "Brak aktywnego modelu",
+    "ready": "Gotowe",
+    "loading": "Wczytywanie modelu…",
+    "generating": "Generowanie odpowiedzi…",
+    "downloadingProgress": "Pobieranie {{progress}}%",
+    "error": "Błąd"
   }
 }

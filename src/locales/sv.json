@@ -226,7 +226,15 @@
     "backupExportAssistants": "Exportera assistenter",
     "backupExportAssistantsDescription": "Spara en JSON-säkerhetskopia av alla dina assistenter för att dela eller behålla den.",
     "backupImportAssistants": "Återställ assistenter",
-    "backupImportAssistantsDescription": "Importera assistenter från en säkerhetskopia som skapats av den här appen."
+    "backupImportAssistantsDescription": "Importera assistenter från en säkerhetskopia som skapats av den här appen.",
+    "updateAlertLater": "Senare",
+    "fullBackupExport": "Full säkerhetskopiering",
+    "fullBackupExportDescription": "En fil med chattar, assistenter och inställningar",
+    "fullBackupImport": "Återställ full säkerhetskopia",
+    "fullBackupImportDescription": "Fyller i det som saknas, skriver aldrig över",
+    "fullBackupRestoreSuccess": "Återställde {{chats}} chattar, {{messages}} meddelanden, {{assistants}} assistenter och {{settings}} inställningar",
+    "fullBackupRestoreError": "Kunde inte återställa säkerhetskopian",
+    "fullBackupExportError": "Kunde inte skapa säkerhetskopian"
   },
   "memory": {
     "shortWarning": "Minnesvarning",
@@ -1989,5 +1997,13 @@
   "notifications": {
     "generating": "Genererar svar…",
     "responseReady": "Svaret är klart"
+  },
+  "widgets": {
+    "idle": "Ingen aktiv modell",
+    "ready": "Redo",
+    "loading": "Laddar modell…",
+    "generating": "Genererar svar…",
+    "downloadingProgress": "Laddar ner {{progress}}%",
+    "error": "Fel"
   }
 }

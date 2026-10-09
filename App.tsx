@@ -1,9 +1,11 @@
 import * as React from 'react';
 import {
+  Alert,
   Appearance,
   Dimensions,
   I18nManager,
   InteractionManager,
+  Linking,
   NativeModules,
   StyleSheet,
   View,
@@ -28,6 +30,15 @@ import {useTheme} from './src/hooks';
 import {useDeepLinking} from './src/hooks/useDeepLinking';
 import {Theme} from './src/utils/types';
 import {recordPhase} from './src/utils/diagnostics';
+import {startWidgetBridge} from './src/services/widget';
+import {checkForAppUpdate} from './src/utils/appUpdate';
+import {
+  dismissUpdateVersion,
+  getDismissedUpdateVersion,
+  getLastUpdateAlertAt,
+  markUpdateAlerted,
+  shouldShowUpdateAlert,
+} from './src/utils/updateAlert';
 
 import {
   l10n,
@@ -179,6 +190,68 @@ const App = observer(() => {
       });
     });
     return () => task.cancel();
+  }, []);
+
+  // v1.40.0: home-screen widget mirror + one-per-day startup update alert.
+  // Both are deferred off the startup critical path and never throw.
+  React.useEffect(() => {
+    const timers: ReturnType<typeof setTimeout>[] = [];
+    const task = InteractionManager.runAfterInteractions(() => {
+      try {
+        startWidgetBridge();
+      } catch {
+        recordPhase('widget-bridge-start-failed');
+      }
+
+      timers.push(
+        setTimeout(() => {
+          (async () => {
+            const update = await checkForAppUpdate();
+            if (!update) {
+              return;
+            }
+            const [dismissed, lastAlertAt] = await Promise.all([
+              getDismissedUpdateVersion(),
+              getLastUpdateAlertAt(),
+            ]);
+            if (!shouldShowUpdateAlert(update, dismissed, lastAlertAt)) {
+              return;
+            }
+            await markUpdateAlerted();
+            Alert.alert(
+              currentL10n.about.updateAvailableTitle.replace(
+                '{{version}}',
+                update.latestVersion,
+              ),
+              currentL10n.about.updateAvailableDescription.replace(
+                '{{current}}',
+                update.currentVersion,
+              ),
+              [
+                {
+                  text: currentL10n.settings.updateAlertLater,
+                  style: 'cancel',
+                },
+                {
+                  text: currentL10n.about.updateAvailableAction,
+                  onPress: () => {
+                    // Opening the release page also silences this version
+                    // — the user acted on the alert.
+                    dismissUpdateVersion(update.latestVersion);
+                    Linking.openURL(update.releaseUrl).catch(() => {});
+                  },
+                },
+              ],
+            );
+          })().catch(() => {});
+        }, 6000),
+      );
+    });
+    return () => {
+      task.cancel();
+      timers.forEach(clearTimeout);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

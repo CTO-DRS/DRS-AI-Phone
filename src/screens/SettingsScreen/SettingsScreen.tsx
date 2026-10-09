@@ -74,6 +74,8 @@ import {
   exportAllAssistants,
 } from '../../utils/exportUtils';
 import {importChatSessions, importAssistants} from '../../utils/importUtils';
+import {createBackupFile, restoreFromBackupFile} from '../../services/backup';
+import DeviceInfo from 'react-native-device-info';
 import {getDeviceOptions, DeviceOption} from '../../utils/deviceSelection';
 import {
   inferBackendType,
@@ -124,6 +126,54 @@ export const SettingsScreen: React.FC = observer(() => {
       modelStore.setNContext(value);
     }, 500),
   ).current;
+
+  // v1.40.0: one comprehensive backup file (chats + assistants + settings).
+  const [isFullBackupBusy, setIsFullBackupBusy] = useState(false);
+
+  const handleExportFullBackup = async () => {
+    if (isFullBackupBusy) {
+      return;
+    }
+    setIsFullBackupBusy(true);
+    try {
+      await createBackupFile(DeviceInfo.getVersion());
+    } catch (error) {
+      const message = (error as {message?: string})?.message ?? '';
+      if (message !== 'User did not share') {
+        console.error('Failed to export full backup:', error);
+        Alert.alert(l10n.common.error, l10n.settings.fullBackupExportError);
+      }
+    } finally {
+      setIsFullBackupBusy(false);
+    }
+  };
+
+  const handleImportFullBackup = async () => {
+    if (isFullBackupBusy) {
+      return;
+    }
+    setIsFullBackupBusy(true);
+    try {
+      const {inserted} = await restoreFromBackupFile();
+      Alert.alert(
+        l10n.settings.backupRestore,
+        t(l10n.settings.fullBackupRestoreSuccess, {
+          chats: String(inserted.chat_sessions ?? 0),
+          messages: String(inserted.messages ?? 0),
+          assistants: String(inserted.local_assistants ?? 0),
+          settings: String(inserted.global_settings ?? 0),
+        }),
+      );
+    } catch (error) {
+      const message = (error as {message?: string})?.message ?? '';
+      if (message !== 'No file selected') {
+        console.error('Failed to restore full backup:', error);
+        Alert.alert(l10n.common.error, l10n.settings.fullBackupRestoreError);
+      }
+    } finally {
+      setIsFullBackupBusy(false);
+    }
+  };
 
   useEffect(() => {
     setContextSize(modelStore.contextInitParams.n_ctx.toString());
@@ -1550,6 +1600,47 @@ export const SettingsScreen: React.FC = observer(() => {
             <Card.Title title={l10n.settings.backupRestore} />
             <Card.Content>
               <View style={styles.settingItemContainer}>
+                {/* Full backup (v1.40.0) — ONE file with chats, assistants
+                    and settings; additive restore. */}
+                <View style={styles.switchContainer}>
+                  <View style={styles.textContainer}>
+                    <Text variant="titleMedium" style={styles.textLabel}>
+                      {l10n.settings.fullBackupExport}
+                    </Text>
+                    <Text variant="labelSmall" style={styles.textDescription}>
+                      {l10n.settings.fullBackupExportDescription}
+                    </Text>
+                  </View>
+                  <Button
+                    mode="outlined"
+                    testID="backup-export-full-button"
+                    onPress={handleExportFullBackup}
+                    disabled={isFullBackupBusy}
+                    style={styles.menuButton}>
+                    {l10n.settings.exportButton}
+                  </Button>
+                </View>
+                <Divider />
+                <View style={styles.switchContainer}>
+                  <View style={styles.textContainer}>
+                    <Text variant="titleMedium" style={styles.textLabel}>
+                      {l10n.settings.fullBackupImport}
+                    </Text>
+                    <Text variant="labelSmall" style={styles.textDescription}>
+                      {l10n.settings.fullBackupImportDescription}
+                    </Text>
+                  </View>
+                  <Button
+                    mode="outlined"
+                    testID="backup-import-full-button"
+                    onPress={handleImportFullBackup}
+                    disabled={isFullBackupBusy}
+                    style={styles.menuButton}>
+                    {l10n.settings.backupRestoreButton}
+                  </Button>
+                </View>
+                <Divider />
+
                 {/* Export all chats = one-tap full backup */}
                 <View style={styles.switchContainer}>
                   <View style={styles.textContainer}>

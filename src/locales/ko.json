@@ -226,7 +226,15 @@
     "backupExportAssistants": "어시스턴트 내보내기",
     "backupExportAssistantsDescription": "모든 어시스턴트의 JSON 백업을 저장하여 공유하거나 보관하세요.",
     "backupImportAssistants": "어시스턴트 복원",
-    "backupImportAssistantsDescription": "이 앱에서 만든 백업 파일에서 어시스턴트를 가져옵니다."
+    "backupImportAssistantsDescription": "이 앱에서 만든 백업 파일에서 어시스턴트를 가져옵니다.",
+    "updateAlertLater": "나중에",
+    "fullBackupExport": "전체 백업",
+    "fullBackupExportDescription": "채팅·어시스턴트·설정을 하나의 파일로",
+    "fullBackupImport": "전체 백업 복원",
+    "fullBackupImportDescription": "누락된 것만 채우고 절대 덮어쓰지 않습니다",
+    "fullBackupRestoreSuccess": "채팅 {{chats}}개, 메시지 {{messages}}개, 어시스턴트 {{assistants}}개, 설정 {{settings}}개 복원됨",
+    "fullBackupRestoreError": "백업 파일을 복원할 수 없습니다",
+    "fullBackupExportError": "백업 파일을 만들 수 없습니다"
   },
   "memory": {
     "shortWarning": "메모리 부족 주의",
@@ -1989,5 +1997,13 @@
   "notifications": {
     "generating": "응답 생성 중…",
     "responseReady": "응답 준비 완료"
+  },
+  "widgets": {
+    "idle": "활성 모델 없음",
+    "ready": "준비됨",
+    "loading": "모델 로드 중…",
+    "generating": "답변 생성 중…",
+    "downloadingProgress": "다운로드 중 {{progress}}%",
+    "error": "오류"
   }
 }

@@ -10,13 +10,18 @@ import android.net.Uri
 import android.widget.RemoteViews
 
 /**
- * DRS AI home-screen widget (v1.39.0).
+ * DRS AI home-screen widget (v1.39.0, dynamic content v1.40.0).
  *
- * A static, brand-gradient launcher card: tapping the card body opens the
- * app, the "New chat" chip launches [drsai://newchat] (the JS side resets to
+ * Brand-gradient launcher card: tapping the card body opens the app, the
+ * "New chat" chip launches [drsai://newchat] (the JS side resets to
  * a fresh chat on the staged assistant) and the "Models" chip launches
- * [drsai://models]. Content is static, so we keep updatePeriodMillis at 0
- * and only push views on update/delete cycles requested by the system.
+ * [drsai://models].
+ *
+ * v1.40.0: the card title/subtitle mirror the ACTIVE MODEL SNAPSHOT
+ * pushed from JS through [WidgetBridgeModule] (SharedPreferences
+ * "drs_widget_state"). With no snapshot the card falls back to the
+ * static v1.39 branding, and the system-driven update cycles keep
+ * working because buildViews always re-reads the stored snapshot.
  */
 class DRSWidgetProvider : AppWidgetProvider() {
 
@@ -41,6 +46,21 @@ class DRSWidgetProvider : AppWidgetProvider() {
 
   private fun buildViews(context: Context): RemoteViews {
     val views = RemoteViews(context.packageName, R.layout.drs_widget)
+
+    // Dynamic snapshot (v1.40.0): active model name as the title, its
+    // live status as the subtitle. Empty values fall back to the static
+    // v1.39 branding so a fresh widget never looks broken.
+    val prefs = WidgetBridgeModule.prefs(context)
+    val modelName = prefs.getString(WidgetBridgeModule.KEY_MODEL, "") ?: ""
+    val statusText = prefs.getString(WidgetBridgeModule.KEY_STATUS, "") ?: ""
+    val statusKind = prefs.getString(WidgetBridgeModule.KEY_KIND, "") ?: ""
+    if (modelName.isNotBlank()) {
+      views.setTextViewText(R.id.drs_widget_title, modelName)
+    }
+    if (statusText.isNotBlank()) {
+      views.setTextViewText(R.id.drs_widget_subtitle, statusText)
+      views.setTextColor(R.id.drs_widget_subtitle, statusColor(statusKind))
+    }
 
     // Card body → cold/warm launch of the main activity.
     val openIntent =
@@ -73,6 +93,15 @@ class DRSWidgetProvider : AppWidgetProvider() {
 
     return views
   }
+
+  private fun statusColor(kind: String): Int =
+      when (kind) {
+        "ready" -> android.graphics.Color.parseColor("#A7F3D0")
+        "loading", "downloading" -> android.graphics.Color.parseColor("#FDE68A")
+        "generating" -> android.graphics.Color.parseColor("#BFDBFE")
+        "error" -> android.graphics.Color.parseColor("#FECACA")
+        else -> android.graphics.Color.parseColor("#C8FFFFFF") // idle: default white 78%
+      }
 
   private fun deepLinkPendingIntent(
       context: Context,

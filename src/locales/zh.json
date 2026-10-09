@@ -226,7 +226,15 @@
     "backupExportAssistants": "导出助手",
     "backupExportAssistantsDescription": "将所有助手的 JSON 备份保存起来，方便分享或留存。",
     "backupImportAssistants": "恢复助手",
-    "backupImportAssistantsDescription": "从本应用创建的备份文件中导入助手。"
+    "backupImportAssistantsDescription": "从本应用创建的备份文件中导入助手。",
+    "updateAlertLater": "稍后",
+    "fullBackupExport": "完整备份",
+    "fullBackupExportDescription": "一个文件包含聊天、助手和设置",
+    "fullBackupImport": "恢复完整备份",
+    "fullBackupImportDescription": "只补充缺失内容，绝不覆盖",
+    "fullBackupRestoreSuccess": "已恢复 {{chats}} 个聊天、{{messages}} 条消息、{{assistants}} 个助手和 {{settings}} 项设置",
+    "fullBackupRestoreError": "无法恢复备份文件",
+    "fullBackupExportError": "无法创建备份文件"
   },
   "memory": {
     "shortWarning": "内存警告",
@@ -1989,5 +1997,13 @@
   "notifications": {
     "generating": "正在生成回复…",
     "responseReady": "回复已就绪"
+  },
+  "widgets": {
+    "idle": "没有活动模型",
+    "ready": "就绪",
+    "loading": "正在加载模型…",
+    "generating": "正在生成回复…",
+    "downloadingProgress": "下载中 {{progress}}%",
+    "error": "错误"
   }
 }

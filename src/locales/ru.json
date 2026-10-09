@@ -226,7 +226,15 @@
     "backupExportAssistants": "Экспортировать помощников",
     "backupExportAssistantsDescription": "Сохраните JSON-резервную копию всех помощников, чтобы поделиться ею или сохранить.",
     "backupImportAssistants": "Восстановить помощников",
-    "backupImportAssistantsDescription": "Импортируйте помощников из файла резервной копии, созданного этим приложением."
+    "backupImportAssistantsDescription": "Импортируйте помощников из файла резервной копии, созданного этим приложением.",
+    "updateAlertLater": "Позже",
+    "fullBackupExport": "Полная резервная копия",
+    "fullBackupExportDescription": "Один файл с чатами, ассистентами и настройками",
+    "fullBackupImport": "Восстановить полную копию",
+    "fullBackupImportDescription": "Восполняет недостающее, ничего не перезаписывает",
+    "fullBackupRestoreSuccess": "Восстановлено: чатов {{chats}}, сообщений {{messages}}, ассистентов {{assistants}}, настроек {{settings}}",
+    "fullBackupRestoreError": "Не удалось восстановить резервную копию",
+    "fullBackupExportError": "Не удалось создать резервную копию"
   },
   "memory": {
     "shortWarning": "Предупреждение о памяти",
@@ -1989,5 +1997,13 @@
   "notifications": {
     "generating": "Генерация ответа…",
     "responseReady": "Ответ готов"
+  },
+  "widgets": {
+    "idle": "Нет активной модели",
+    "ready": "Готово",
+    "loading": "Загрузка модели…",
+    "generating": "Генерация ответа…",
+    "downloadingProgress": "Загрузка {{progress}}%",
+    "error": "Ошибка"
   }
 }

@@ -226,7 +226,15 @@
     "backupExportAssistants": "ייצוא העוזרים",
     "backupExportAssistantsDescription": "שמור גיבוי JSON של כל העוזרים שלך לשיתוף או לשמירה.",
     "backupImportAssistants": "שחזור העוזרים",
-    "backupImportAssistantsDescription": "ייבא עוזרים מקובץ גיבוי שנוצר על ידי האפליקציה הזו."
+    "backupImportAssistantsDescription": "ייבא עוזרים מקובץ גיבוי שנוצר על ידי האפליקציה הזו.",
+    "updateAlertLater": "מאוחר יותר",
+    "fullBackupExport": "גיבוי מלא",
+    "fullBackupExportDescription": "קובץ אחד עם צ׳אטים, עוזרים והגדרות",
+    "fullBackupImport": "שחזור גיבוי מלא",
+    "fullBackupImportDescription": "משלים את החסר, לעולם לא דורס",
+    "fullBackupRestoreSuccess": "שוחזרו {{chats}} צ׳אטים, {{messages}} הודעות, {{assistants}} עוזרים ו{{settings}} הגדרות",
+    "fullBackupRestoreError": "לא ניתן לשחזר את קובץ הגיבוי",
+    "fullBackupExportError": "לא ניתן ליצור את קובץ הגיבוי"
   },
   "memory": {
     "shortWarning": "אזהרת זיכרון",
@@ -1989,5 +1997,13 @@
   "notifications": {
     "generating": "מייצר תשובה…",
     "responseReady": "התשובה מוכנה"
+  },
+  "widgets": {
+    "idle": "אין מודל פעיל",
+    "ready": "מוכן",
+    "loading": "טוען מודל…",
+    "generating": "מפיק תשובה…",
+    "downloadingProgress": "מוריד {{progress}}%",
+    "error": "שגיאה"
   }
 }

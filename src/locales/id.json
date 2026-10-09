@@ -226,7 +226,15 @@
     "backupExportAssistants": "Ekspor asisten",
     "backupExportAssistantsDescription": "Simpan cadangan JSON dari semua asisten Anda untuk dibagikan atau disimpan.",
     "backupImportAssistants": "Pulihkan asisten",
-    "backupImportAssistantsDescription": "Impor asisten dari file cadangan yang dibuat oleh aplikasi ini."
+    "backupImportAssistantsDescription": "Impor asisten dari file cadangan yang dibuat oleh aplikasi ini.",
+    "updateAlertLater": "Nanti",
+    "fullBackupExport": "Cadangan lengkap",
+    "fullBackupExportDescription": "Satu file berisi obrolan, asisten, dan pengaturan",
+    "fullBackupImport": "Pulihkan cadangan lengkap",
+    "fullBackupImportDescription": "Menambahkan yang kurang, tidak pernah menimpa",
+    "fullBackupRestoreSuccess": "Dipulihkan {{chats}} obrolan, {{messages}} pesan, {{assistants}} asisten, {{settings}} pengaturan",
+    "fullBackupRestoreError": "Tidak dapat memulihkan file cadangan",
+    "fullBackupExportError": "Tidak dapat membuat file cadangan"
   },
   "memory": {
     "shortWarning": "Peringatan Memori",
@@ -1989,5 +1997,13 @@
   "notifications": {
     "generating": "Sedang membuat respons…",
     "responseReady": "Respons siap"
+  },
+  "widgets": {
+    "idle": "Tidak ada model aktif",
+    "ready": "Siap",
+    "loading": "Memuat model…",
+    "generating": "Menyusun balasan…",
+    "downloadingProgress": "Mengunduh {{progress}}%",
+    "error": "Kesalahan"
   }
 }

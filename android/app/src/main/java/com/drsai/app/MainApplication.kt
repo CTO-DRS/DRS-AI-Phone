@@ -20,6 +20,7 @@ import com.drsai.ExternalContentLinkPackage
 import com.drsai.RestartPackage
 import com.drsai.DiagnosticsPackage
 import com.drsai.download.DownloadPackage
+import com.drsai.WidgetBridgePackage
 
 class MainApplication : Application(), ReactApplication {
 
@@ -37,6 +38,7 @@ class MainApplication : Application(), ReactApplication {
               add(RestartPackage())
               add(DiagnosticsPackage())
               add(DownloadPackage())
+              add(WidgetBridgePackage())
             }
 
         override fun getJSMainModuleName(): String = "index"

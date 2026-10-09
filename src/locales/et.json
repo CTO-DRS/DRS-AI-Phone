@@ -226,7 +226,15 @@
     "backupExportAssistants": "Ekspordi abilised",
     "backupExportAssistantsDescription": "Salvesta kõigi abiliste JSON-varukoopia jagamiseks või hoidmiseks.",
     "backupImportAssistants": "Taasta abilised",
-    "backupImportAssistantsDescription": "Impordi abilised selle rakenduse loodud varukoopia failist."
+    "backupImportAssistantsDescription": "Impordi abilised selle rakenduse loodud varukoopia failist.",
+    "updateAlertLater": "Later",
+    "fullBackupExport": "Full backup",
+    "fullBackupExportDescription": "One file with chats, assistants and settings",
+    "fullBackupImport": "Restore full backup",
+    "fullBackupImportDescription": "Brings back what is missing, never overwrites",
+    "fullBackupRestoreSuccess": "Restored {{chats}} chats, {{messages}} messages, {{assistants}} assistants, {{settings}} settings",
+    "fullBackupRestoreError": "Could not restore the backup file",
+    "fullBackupExportError": "Could not create the backup file"
   },
   "memory": {
     "shortWarning": "Mälu hoiatus",
@@ -1989,5 +1997,13 @@
   "notifications": {
     "generating": "Vastuse genereerimine…",
     "responseReady": "Vastus on valmis"
+  },
+  "widgets": {
+    "idle": "No active model",
+    "ready": "Ready",
+    "loading": "Loading model…",
+    "generating": "Generating reply…",
+    "downloadingProgress": "Downloading {{progress}}%",
+    "error": "Error"
   }
 }

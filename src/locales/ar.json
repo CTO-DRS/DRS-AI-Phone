@@ -252,7 +252,15 @@
     "backupExportAssistants": "تصدير المساعدين",
     "backupExportAssistantsDescription": "احفظ نسخة احتياطية بصيغة JSON من جميع مساعديك لمشاركتها أو الاحتفاظ بها.",
     "backupImportAssistants": "استعادة المساعدين",
-    "backupImportAssistantsDescription": "استورد المساعدين من ملف نسخة احتياطية أنشأه هذا التطبيق."
+    "backupImportAssistantsDescription": "استورد المساعدين من ملف نسخة احتياطية أنشأه هذا التطبيق.",
+    "updateAlertLater": "لاحقًا",
+    "fullBackupExport": "نسخة احتياطية شاملة",
+    "fullBackupExportDescription": "ملف واحد يشمل المحادثات والمساعدين والإعدادات",
+    "fullBackupImport": "استعادة النسخة الشاملة",
+    "fullBackupImportDescription": "يعيد ما ينقص دون الكتابة فوق البيانات الحالية",
+    "fullBackupRestoreSuccess": "تمت استعادة {{chats}} محادثة، و{{messages}} رسالة، و{{assistants}} مساعد، و{{settings}} إعداد",
+    "fullBackupRestoreError": "تعذر استعادة ملف النسخة الاحتياطية",
+    "fullBackupExportError": "تعذر إنشاء ملف النسخة الاحتياطية"
   },
   "models": {
     "fileManagement": {
@@ -1989,5 +1997,13 @@
   "notifications": {
     "generating": "جارٍ توليد الرد…",
     "responseReady": "اكتمل الرد"
+  },
+  "widgets": {
+    "idle": "لا يوجد نموذج نشط",
+    "ready": "جاهز",
+    "loading": "جارٍ تحميل النموذج…",
+    "generating": "جارٍ توليد الرد…",
+    "downloadingProgress": "جارٍ التنزيل {{progress}}%",
+    "error": "خطأ"
   }
 }
