@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Brand gradient card background (mirrors BRAND_GRADIENT_RAMP from
+     src/theme/tokens/brand.ts: #7C3AED → #4F46E5 → #2563EB). -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <gradient
+        android:angle="45"
+        android:startColor="#7C3AED"
+        android:centerColor="#4F46E5"
+        android:endColor="#2563EB"
+        android:type="linear" />
+    <corners android:radius="20dp" />
+</shape>

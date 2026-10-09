@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- سلاسل تكامل المشغّل (الأداة + الاختصارات) لـ DRS AI — العربية. -->
+<resources>
+    <string name="widget_subtitle">مساعدك الذكي على جهازك</string>
+    <string name="widget_new_chat">محادثة جديدة</string>
+    <string name="widget_models">النماذج</string>
+    <string name="widget_description">وصول سريع لمحادثات ونماذج DRS AI</string>
+    <string name="shortcut_new_chat_short">محادثة جديدة</string>
+    <string name="shortcut_new_chat_long">ابدأ محادثة جديدة</string>
+    <string name="shortcut_new_chat_disabled">اختصار المحادثة الجديدة غير متاح</string>
+    <string name="shortcut_models_short">النماذج</string>
+    <string name="shortcut_models_long">استعرض نماذج الذكاء الاصطناعي</string>
+    <string name="shortcut_models_disabled">اختصار النماذج غير متاح</string>
+</resources>

@@ -222,7 +222,11 @@
     "backupExportAllChats": "خروجی گرفتن از همه گفتگوها",
     "backupExportAllChatsDescription": "از همه گفتگوهای خود نسخه پشتیبان JSON ذخیره کنید تا به اشتراک بگذارید یا نگه دارید.",
     "backupImportChats": "بازیابی گفتگوها",
-    "backupImportChatsDescription": "گفتگوها را از فایل پشتیبان ساخته‌شده توسط این برنامه وارد کنید."
+    "backupImportChatsDescription": "گفتگوها را از فایل پشتیبان ساخته‌شده توسط این برنامه وارد کنید.",
+    "backupExportAssistants": "دریافت خروجی دستیارها",
+    "backupExportAssistantsDescription": "یک نسخه پشتیبان JSON از همه دستیارهای خود ذخیره کنید تا هم‌رسانی یا نگه‌داری کنید.",
+    "backupImportAssistants": "بازیابی دستیارها",
+    "backupImportAssistantsDescription": "دستیارها را از فایل نسخه پشتیبانی که این برنامه ساخته است وارد کنید."
   },
   "memory": {
     "shortWarning": "هشدار حافظه",

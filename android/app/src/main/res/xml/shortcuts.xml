@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Long-press launcher shortcuts (v1.39.0). Both routes are handled in
+     JS by useDeepLinking: drsai://newchat resets to a fresh chat on the
+     staged assistant; drsai://models opens the model browser. targetPackage
+     must be the applicationId (com.drsai.app); targetClass is the activity
+     class declared as package com.drsai. -->
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="new_chat"
+        android:enabled="true"
+        android:icon="@mipmap/ic_launcher"
+        android:shortcutShortLabel="@string/shortcut_new_chat_short"
+        android:shortcutLongLabel="@string/shortcut_new_chat_long"
+        android:shortcutDisabledMessage="@string/shortcut_new_chat_disabled">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="drsai://newchat"
+            android:targetPackage="com.drsai.app"
+            android:targetClass="com.drsai.MainActivity" />
+    </shortcut>
+    <shortcut
+        android:shortcutId="models"
+        android:enabled="true"
+        android:icon="@mipmap/ic_launcher"
+        android:shortcutShortLabel="@string/shortcut_models_short"
+        android:shortcutLongLabel="@string/shortcut_models_long"
+        android:shortcutDisabledMessage="@string/shortcut_models_disabled">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="drsai://models"
+            android:targetPackage="com.drsai.app"
+            android:targetClass="com.drsai.MainActivity" />
+    </shortcut>
+</shortcuts>

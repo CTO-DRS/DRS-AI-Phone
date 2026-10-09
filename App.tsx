@@ -53,7 +53,6 @@ import {
   GlobalErrorBoundary,
 } from './src/components';
 import {MarkdownProvider} from './src/components/MarkdownView';
-import {AutomationBridge, BenchmarkRunnerScreen} from './src/__automation__';
 import {
   ChatScreen,
   SettingsScreen,
@@ -184,7 +183,7 @@ const App = observer(() => {
 
   return (
     <GestureHandlerRootView style={styles.root}>
-      {__E2E__ ? <AutomationBridge /> : null}
+      {__E2E__ ? require('./src/__automation__').AutomationBridge : null}
       <SafeAreaProvider>
         <KeyboardProvider statusBarTranslucent navigationBarTranslucent>
           <PaperProvider theme={theme}>
@@ -297,7 +296,8 @@ const App = observer(() => {
                             <Drawer.Screen
                               name={ROUTES.BENCHMARK_RUNNER}
                               component={gestureHandlerRootHOC(
-                                BenchmarkRunnerScreen,
+                                require('./src/__automation__')
+                                  .BenchmarkRunnerScreen,
                               )}
                               options={{
                                 headerStyle: styles.headerWithoutDivider,

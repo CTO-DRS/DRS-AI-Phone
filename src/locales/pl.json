@@ -222,7 +222,11 @@
     "backupExportAllChats": "Wyeksportuj wszystkie czaty",
     "backupExportAllChatsDescription": "Zapisz kopię zapasową JSON wszystkich czatów, aby udostępnić lub przechować.",
     "backupImportChats": "Przywróć czaty",
-    "backupImportChatsDescription": "Zaimportuj czaty z pliku kopii zapasowej utworzonego przez tę aplikację."
+    "backupImportChatsDescription": "Zaimportuj czaty z pliku kopii zapasowej utworzonego przez tę aplikację.",
+    "backupExportAssistants": "Eksportuj asystentów",
+    "backupExportAssistantsDescription": "Zapisz kopię zapasową JSON wszystkich asystentów, aby udostępnić ją lub przechować.",
+    "backupImportAssistants": "Przywróć asystentów",
+    "backupImportAssistantsDescription": "Importuj asystentów z pliku kopii zapasowej utworzonego przez tę aplikację."
   },
   "memory": {
     "shortWarning": "Ostrzeżenie o Braku Pamięci",

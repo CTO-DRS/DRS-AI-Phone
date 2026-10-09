@@ -135,13 +135,19 @@ export const Message = observer(
     const currentUserIsAuthor =
       message.type !== 'dateHeader' && user?.id === message.author.id;
 
-    const {container, contentContainer, dateHeader, pressable} = styles({
-      currentUserIsAuthor,
-      message,
-      messageWidth,
-      roundBorder,
-      theme,
-    });
+    // Memoized: rows re-render during scrolls and coalesced stream flushes;
+    // StyleSheet.create per render was pure allocation churn (v1.39.0).
+    const {container, contentContainer, dateHeader, pressable} = React.useMemo(
+      () =>
+        styles({
+          currentUserIsAuthor,
+          message,
+          messageWidth,
+          roundBorder,
+          theme,
+        }),
+      [currentUserIsAuthor, message, messageWidth, roundBorder, theme],
+    );
 
     const handlePressIn = () => {
       Animated.spring(scaleAnim, {

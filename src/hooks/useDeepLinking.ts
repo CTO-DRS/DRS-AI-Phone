@@ -116,6 +116,20 @@ export const useDeepLinking = () => {
         }
       }
 
+      // Home-screen widget / launcher shortcut launches (v1.39.0):
+      // `drsai://newchat` resets to a fresh chat on the staged assistant;
+      // `drsai://models` jumps straight to the model browser.
+      if (params.host === 'newchat') {
+        chatSessionStore.resetActiveSession();
+        (navigation as any).navigate(ROUTES.CHAT);
+        return;
+      }
+
+      if (params.host === 'models') {
+        (navigation as any).navigate(ROUTES.MODELS);
+        return;
+      }
+
       // Handle hub/run download deep links (iOS native-emitter path). Only the
       // exact hub/run route is handled; unknown hub paths are ignored silently,
       // matching the prod Linking path.
@@ -188,18 +202,34 @@ export const useDeepLinking = () => {
     };
   }, [handleDeepLink]);
 
-  // Prod, always-on delivery for the hub/run route. iOS arrives via the native
-  // emitter above; Android prod has no native deep-link bridge, so this RN
-  // Linking path (cold getInitialURL + warm 'url' event) is the only delivery.
-  // Gated by isHubLink so non-hub URLs (chat, e2e/benchmark, memory) and unknown
-  // hub paths are ignored silently — only the exact hub/run route reaches
-  // handleHubRunLink, matching the native emitter path. A malformed hub/run
-  // payload still alerts.
+  // Prod, always-on delivery for the hub/run route plus the v1.39.0
+  // launcher links (home-screen widget + app shortcuts). iOS arrives via
+  // the native emitter above; Android prod has no native deep-link bridge,
+  // so this RN Linking path (cold getInitialURL + warm 'url' event) is the
+  // only delivery. Gated per-route: only the exact hub/run route reaches
+  // handleHubRunLink, and the widget/shortcut hosts match by exact prefix —
+  // everything else is ignored silently. A malformed hub/run payload still
+  // alerts.
   useEffect(() => {
+    const routeLauncherLink = (url: string) => {
+      if (isHubLink(url)) {
+        handleHubRunLink(url);
+        return;
+      }
+      if (url === 'drsai://newchat' || url.startsWith('drsai://newchat?')) {
+        chatSessionStore.resetActiveSession();
+        (navigation as any).navigate(ROUTES.CHAT);
+        return;
+      }
+      if (url === 'drsai://models' || url.startsWith('drsai://models?')) {
+        (navigation as any).navigate(ROUTES.MODELS);
+      }
+    };
+
     Linking.getInitialURL()
       .then(url => {
-        if (url && isHubLink(url)) {
-          handleHubRunLink(url);
+        if (url) {
+          routeLauncherLink(url);
         }
       })
       .catch(() => {
@@ -211,8 +241,8 @@ export const useDeepLinking = () => {
     let sub: {remove: () => void} | null = null;
     try {
       sub = Linking.addEventListener('url', ({url}) => {
-        if (url && isHubLink(url)) {
-          handleHubRunLink(url);
+        if (url) {
+          routeLauncherLink(url);
         }
       });
     } catch {
@@ -222,7 +252,7 @@ export const useDeepLinking = () => {
     return () => {
       sub?.remove();
     };
-  }, [handleHubRunLink]);
+  }, [handleHubRunLink, navigation]);
 };
 
 /**

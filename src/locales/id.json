@@ -222,7 +222,11 @@
     "backupExportAllChats": "Ekspor semua obrolan",
     "backupExportAllChatsDescription": "Simpan cadangan JSON dari semua obrolan Anda untuk dibagikan atau disimpan.",
     "backupImportChats": "Pulihkan obrolan",
-    "backupImportChatsDescription": "Impor obrolan dari file cadangan yang dibuat oleh aplikasi ini."
+    "backupImportChatsDescription": "Impor obrolan dari file cadangan yang dibuat oleh aplikasi ini.",
+    "backupExportAssistants": "Ekspor asisten",
+    "backupExportAssistantsDescription": "Simpan cadangan JSON dari semua asisten Anda untuk dibagikan atau disimpan.",
+    "backupImportAssistants": "Pulihkan asisten",
+    "backupImportAssistantsDescription": "Impor asisten dari file cadangan yang dibuat oleh aplikasi ini."
   },
   "memory": {
     "shortWarning": "Peringatan Memori",

@@ -73,7 +73,41 @@
             <category android:name="android.intent.category.BROWSABLE" />
             <data android:scheme="drsai" android:host="checkout" />
         </intent-filter>
+        <!-- Home-screen widget / launcher shortcut links (v1.39.0).
+             host=newchat resets to a fresh chat; host=models opens the
+             model browser. Both are routed in JS by useDeepLinking. -->
+        <intent-filter>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="drsai" android:host="newchat" />
+        </intent-filter>
+        <intent-filter>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="drsai" android:host="models" />
+        </intent-filter>
+        <!-- Long-press launcher shortcuts (New chat / Models). -->
+        <meta-data
+            android:name="android.app.shortcuts"
+            android:resource="@xml/shortcuts" />
       </activity>
+
+        <!-- DRS AI home-screen widget (v1.39.0): static brand card with
+             New chat / Models actions. Exported=false — updates are
+             delivered by the system widget service, not raw broadcasts. -->
+        <receiver
+          android:name=".DRSWidgetProvider"
+          android:exported="false"
+          android:label="@string/app_name">
+          <intent-filter>
+            <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+          </intent-filter>
+          <meta-data
+            android:name="android.appwidget.provider"
+            android:resource="@xml/drs_widget_info" />
+        </receiver>
 
         <!-- Notifee foreground service: hosts the "Generating response…"
              ongoing notification while a completion runs, so the OS keeps

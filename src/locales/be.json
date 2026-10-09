@@ -222,7 +222,11 @@
     "backupExportAllChats": "Экспартаваць усе чаты",
     "backupExportAllChatsDescription": "Захаваць JSON-рэзервовую копію ўсіх чатаў для абмену або захавання.",
     "backupImportChats": "Аднавіць чаты",
-    "backupImportChatsDescription": "Імпартаваць чаты з файла рэзервовай копіі, створанага гэтым прыкладаннем."
+    "backupImportChatsDescription": "Імпартаваць чаты з файла рэзервовай копіі, створанага гэтым прыкладаннем.",
+    "backupExportAssistants": "Экспартаваць памочнікаў",
+    "backupExportAssistantsDescription": "Захаваць JSON-рэзервовую копію ўсіх памочнікаў для абмену або захавання.",
+    "backupImportAssistants": "Аднавіць памочнікаў",
+    "backupImportAssistantsDescription": "Імпартаваць памочнікаў з файла рэзервовай копіі, створанага гэтым прыкладаннем."
   },
   "memory": {
     "shortWarning": "Папярэджанне пра памяць",

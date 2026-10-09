@@ -10,8 +10,6 @@ import {uiStore, assistantStore} from '../store';
 import {ensureLegacyStoragePermission} from './androidPermission';
 import {derivedText, userId} from './chat';
 import {getAbsoluteThumbnailPath, isLocalThumbnailPath} from './imageUtils';
-import {buildChatPdf} from './pdf/chatPdfBuilder';
-import {bytesToBase64} from './pdf/base64';
 import type {Assistant} from '../types/assistant';
 import type {Message} from '../database';
 
@@ -567,6 +565,13 @@ export const exportChatSessionAsPdf = async (
         timestamp: format(new Date(exported.createdAt), 'yyyy-MM-dd HH:mm'),
       };
     });
+
+    // Lazy-load the PDF stack (pdf-lib + fontkit + the ~575 KB embedded
+    // Amiri font) only when a PDF export is actually requested. A static
+    // import here pulled the whole ~7 MB chain into the Hermes startup
+    // graph of every cold launch (v1.39.0 startup-perf fix).
+    const {buildChatPdf} = require('./pdf/chatPdfBuilder');
+    const {bytesToBase64} = require('./pdf/base64');
 
     const pdfLabels = currentL10n.components.chatPdf;
     const pdfBytes = await buildChatPdf({

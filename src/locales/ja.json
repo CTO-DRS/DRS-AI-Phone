@@ -222,7 +222,11 @@
     "backupExportAllChats": "すべてのチャットをエクスポート",
     "backupExportAllChatsDescription": "すべてのチャットのJSONバックアップを保存して、共有や保管ができます。",
     "backupImportChats": "チャットを復元",
-    "backupImportChatsDescription": "このアプリで作成されたバックアップファイルからチャットをインポートします。"
+    "backupImportChatsDescription": "このアプリで作成されたバックアップファイルからチャットをインポートします。",
+    "backupExportAssistants": "アシスタントをエクスポート",
+    "backupExportAssistantsDescription": "すべてのアシスタントのJSONバックアップを保存して、共有や保管ができます。",
+    "backupImportAssistants": "アシスタントを復元",
+    "backupImportAssistantsDescription": "このアプリで作成したバックアップファイルからアシスタントをインポートします。"
   },
   "memory": {
     "shortWarning": "メモリ警告",

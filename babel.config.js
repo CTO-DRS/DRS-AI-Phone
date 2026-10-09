@@ -27,6 +27,11 @@ module.exports = function (api) {
         : []),
       ['@babel/plugin-proposal-decorators', {legacy: true}],
       '@babel/plugin-transform-export-namespace-from', //Zod 4 uses modern JavaScript syntax (export * as) that needs to be transformed by Babel
+      // Release builds only: strip console.* (except error/warn, which the
+      // diagnostics layer relies on). Dev/test/E2E keep everything.
+      ...(envName === 'production'
+        ? [['transform-remove-console', {exclude: ['error', 'warn']}]]
+        : []),
       // 'react-native-reanimated/plugin', // this is not needed in 4.x
       'react-native-worklets/plugin', // must stay last
     ],

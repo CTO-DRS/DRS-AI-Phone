@@ -242,7 +242,9 @@ export const ChatView = observer(
     // ============ THEME & LOCALIZATION ============
     const l10n = React.useContext(L10nContext);
     const theme = useTheme();
-    const styles = createStyles({theme});
+    // Memoized: ChatView re-renders on every keystroke and streaming flush;
+    // rebuilding the StyleSheet each time was pure allocation churn.
+    const styles = React.useMemo(() => createStyles({theme}), [theme]);
     const insets = useSafeAreaInsets();
     const isFocused = useIsFocused();
 

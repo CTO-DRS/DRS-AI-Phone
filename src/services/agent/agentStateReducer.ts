@@ -46,6 +46,14 @@ export function agentStateReducer(
         if (alreadyGenerating && carryNames === state.pendingTalentNames) {
           return state;
         }
+        // Anonymous tool-call deltas (first delta carried no function name
+        // and later ones drop it too) allocated a fresh empty array per
+        // token, defeating the reducer's "same ref = skip publish" contract
+        // and re-rendering the list for the whole stream. Nothing new to
+        // name → keep the state exactly as-is.
+        if (alreadyGenerating && carryNames.length === 0) {
+          return state;
+        }
         return {
           ...state,
           status: 'generating_tool_call',
