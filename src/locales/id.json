@@ -714,7 +714,10 @@
     "privacyPolicy": "Kebijakan Privasi",
     "termsOfService": "Ketentuan Layanan",
     "versionFormat": "Versi {{version}} ({{build}})",
-    "successTitle": "Berhasil"
+    "successTitle": "Berhasil",
+    "updateAvailableTitle": "Versi baru tersedia (v{{version}})",
+    "updateAvailableDescription": "Anda menggunakan v{{current}}. Perbarui untuk mendapatkan perbaikan dan penyempurnaan terbaru.",
+    "updateAvailableAction": "Unduh pembaruan"
   },
   "feedback": {
     "title": "Kirim Masukan",
@@ -1253,8 +1256,13 @@
         "regenerate": "Hasilkan Ulang",
         "regenerateWith": "Hasilkan Ulang dengan",
         "edit": "Sunting",
-        "reportContent": "Laporkan Konten"
-      }
+        "reportContent": "Laporkan Konten",
+        "deleteFromHere": "Hapus dari sini"
+      },
+      "deleteConfirmTitle": "Hapus pesan?",
+      "deleteConfirmMessage": "Pesan ini dan semua pesan setelahnya akan dihapus dari obrolan ini. Tindakan ini tidak dapat dibatalkan.",
+      "deleteConfirmAction": "Hapus",
+      "deleteCancelAction": "Batal"
     },
     "assistantHeaderRight": {
       "exportAllAssistants": "Ekspor semua assistant",

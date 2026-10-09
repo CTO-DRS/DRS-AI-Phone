@@ -1,10 +1,13 @@
-import {useCallback} from 'react';
+import {useCallback, useContext} from 'react';
+
+import {Alert} from 'react-native';
 
 import Clipboard from '@react-native-clipboard/clipboard';
 
 import {chatSessionStore, modelStore} from '../store';
 
 import {derivedText} from '../utils/chat';
+import {L10nContext} from '../utils';
 import {MessageType, User} from '../utils/types';
 
 /**
@@ -30,6 +33,8 @@ export const useMessageActions = ({
   setInputText,
   setInputImages,
 }: UseMessageActionsProps) => {
+  const l10n = useContext(L10nContext);
+
   const handleCopy = useCallback((message: CopyableMessage) => {
     if (message.type !== 'text' && message.type !== 'assistant_turn') {
       return;
@@ -120,10 +125,41 @@ export const useMessageActions = ({
     [handleTryAgain],
   );
 
+  /**
+   * Delete the selected message and everything after it (conversation is
+   * stored newest-first, so this truncates the tail of the thread — the
+   * same primitive Regenerate/Edit already use). Destructive, hence the
+   * confirm dialog; the ChatView menu item disables itself while
+   * streaming so an in-flight writer can never target a removed row.
+   */
+  const handleDeleteFromHere = useCallback(
+    (message: CopyableMessage) => {
+      if (message.type !== 'text' && message.type !== 'assistant_turn') {
+        return;
+      }
+      const {chatView} = l10n.components;
+      Alert.alert(chatView.deleteConfirmTitle, chatView.deleteConfirmMessage, [
+        {
+          text: chatView.deleteCancelAction,
+          style: 'cancel',
+        },
+        {
+          text: chatView.deleteConfirmAction,
+          style: 'destructive',
+          onPress: () => {
+            chatSessionStore.removeMessagesFromId(message.id, true);
+          },
+        },
+      ]);
+    },
+    [l10n],
+  );
+
   return {
     handleCopy,
     handleEdit,
     handleTryAgain,
     handleTryAgainWith,
+    handleDeleteFromHere,
   };
 };

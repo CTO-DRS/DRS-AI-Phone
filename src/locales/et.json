@@ -714,7 +714,10 @@
     "privacyPolicy": "Privaatsuspoliitika",
     "termsOfService": "Teenuse tingimused",
     "versionFormat": "Versioon {{version}} ({{build}})",
-    "successTitle": "Õnnestus"
+    "successTitle": "Õnnestus",
+    "updateAvailableTitle": "Uus versioon on saadaval (v{{version}})",
+    "updateAvailableDescription": "Sa kasutad versiooni v{{current}}. Uuenda, et saada viimased parandused ja täiustused.",
+    "updateAvailableAction": "Laadi värskendus alla"
   },
   "feedback": {
     "title": "Saada tagasisidet",
@@ -1253,8 +1256,13 @@
         "regenerate": "Genereeri uuesti",
         "regenerateWith": "Genereeri uuesti mudeliga",
         "edit": "Muuda",
-        "reportContent": "Teata sisust"
-      }
+        "reportContent": "Teata sisust",
+        "deleteFromHere": "Kustuta siit"
+      },
+      "deleteConfirmTitle": "Kustutada sõnumid?",
+      "deleteConfirmMessage": "See sõnum ja kõik järgnevad eemaldatakse sellest vestlusest. Seda ei saa tagasi võtta.",
+      "deleteConfirmAction": "Kustuta",
+      "deleteCancelAction": "Tühista"
     },
     "assistantHeaderRight": {
       "exportAllAssistants": "Ekspordi kõik abilised",

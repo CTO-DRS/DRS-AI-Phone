@@ -714,7 +714,10 @@
     "privacyPolicy": "מדיניות הפרטיות",
     "termsOfService": "תנאי השירות",
     "versionFormat": "גרסה {{version}} ({{build}})",
-    "successTitle": "הצלחה"
+    "successTitle": "הצלחה",
+    "updateAvailableTitle": "גרסה חדשה זמינה (v{{version}})",
+    "updateAvailableDescription": "אתה משתמש בגרסה v{{current}}. עדכן כדי לקבל את התיקונים והשיפורים האחרונים.",
+    "updateAvailableAction": "הורד עדכון"
   },
   "feedback": {
     "title": "שלח משוב",
@@ -1253,8 +1256,13 @@
         "regenerate": "צור מחדש",
         "regenerateWith": "צור עם",
         "edit": "ערוך",
-        "reportContent": "דווח על תוכן"
-      }
+        "reportContent": "דווח על תוכן",
+        "deleteFromHere": "מחק מכאן"
+      },
+      "deleteConfirmTitle": "למחוק הודעות?",
+      "deleteConfirmMessage": "הודעה זו וכל מה שאחריה יוסרו מהצ'אט הזה. לא ניתן לבטל פעולה זו.",
+      "deleteConfirmAction": "מחק",
+      "deleteCancelAction": "ביטול"
     },
     "assistantHeaderRight": {
       "exportAllAssistants": "ייצוא כל ה-עוזרs",

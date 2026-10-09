@@ -714,7 +714,10 @@
     "privacyPolicy": "개인정보 처리방침",
     "termsOfService": "서비스 약관",
     "versionFormat": "버전 {{version}} ({{build}})",
-    "successTitle": "성공"
+    "successTitle": "성공",
+    "updateAvailableTitle": "새 버전 사용 가능 (v{{version}})",
+    "updateAvailableDescription": "현재 v{{current}}을(를) 사용 중입니다. 최신 수정 사항과 개선 사항을 받으려면 업데이트하세요.",
+    "updateAvailableAction": "업데이트 다운로드"
   },
   "feedback": {
     "title": "피드백 보내기",
@@ -1253,8 +1256,13 @@
         "regenerate": "다시 생성",
         "regenerateWith": "다른 모델로 다시 생성",
         "edit": "수정",
-        "reportContent": "콘텐츠 리포트"
-      }
+        "reportContent": "콘텐츠 리포트",
+        "deleteFromHere": "여기서부터 삭제"
+      },
+      "deleteConfirmTitle": "메시지를 삭제할까요?",
+      "deleteConfirmMessage": "이 메시지와 이후의 모든 메시지가 이 대화에서 삭제됩니다. 이 작업은 되돌릴 수 없습니다.",
+      "deleteConfirmAction": "삭제",
+      "deleteCancelAction": "취소"
     },
     "assistantHeaderRight": {
       "exportAllAssistants": "모든 어시스턴트 내보내기",

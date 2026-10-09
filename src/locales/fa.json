@@ -714,7 +714,10 @@
     "privacyPolicy": "سیاست حریم خصوصی",
     "termsOfService": "شرایط استفاده از خدمات",
     "versionFormat": "نسخه {{version}} ({{build}})",
-    "successTitle": "موفقیت"
+    "successTitle": "موفقیت",
+    "updateAvailableTitle": "نسخه جدید در دسترس است (v{{version}})",
+    "updateAvailableDescription": "شما از نسخه v{{current}} استفاده می‌کنید. برای دریافت آخرین اصلاحات و بهبودها به‌روزرسانی کنید.",
+    "updateAvailableAction": "دانلود به‌روزرسانی"
   },
   "feedback": {
     "title": "ارسال بازخورد",
@@ -1253,8 +1256,13 @@
         "regenerate": "تولید مجدد",
         "regenerateWith": "تولید مجدد با",
         "edit": "ویرایش",
-        "reportContent": "گزارش محتوا"
-      }
+        "reportContent": "گزارش محتوا",
+        "deleteFromHere": "حذف از اینجا"
+      },
+      "deleteConfirmTitle": "حذف پیام‌ها؟",
+      "deleteConfirmMessage": "این پیام و همه پیام‌های بعد از آن از این گفتگو حذف می‌شوند. این عمل قابل بازگشت نیست.",
+      "deleteConfirmAction": "حذف",
+      "deleteCancelAction": "لغو"
     },
     "assistantHeaderRight": {
       "exportAllAssistants": "خروجی از همه دستیارها",

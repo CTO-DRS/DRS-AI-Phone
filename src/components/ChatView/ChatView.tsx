@@ -88,6 +88,7 @@ import {
   GridIcon,
   PencilLineIcon,
   RefreshIcon,
+  TrashIcon,
 } from '../../assets/icons';
 
 type MenuItem = {
@@ -503,14 +504,32 @@ export const ChatView = observer(
     }, []);
 
     // ============ MESSAGE PROCESSING & CALCULATIONS ============
-    // Calculate chat messages with date headers and user names
-    const {chatMessages, gallery} = calculateChatMessages(messages, user, {
-      customDateHeaderText,
-      dateFormat,
-      showUserNames,
-      timeFormat,
-      showDateHeaders,
-    });
+    // Calculate chat messages with date headers and user names.
+    // Memoized: calculateChatMessages clones every message into a new
+    // derived object, so running it on each ChatView render (menu open,
+    // pagination state, keyboard chrome...) handed FlatList a brand-new
+    // `data` identity and forced a full row diff for unrelated renders.
+    // `messages` only changes identity when the session store actually
+    // updates the array, which is the only time we need to recompute.
+    const {chatMessages, gallery} = React.useMemo(
+      () =>
+        calculateChatMessages(messages, user, {
+          customDateHeaderText,
+          dateFormat,
+          showUserNames,
+          timeFormat,
+          showDateHeaders,
+        }),
+      [
+        messages,
+        user,
+        customDateHeaderText,
+        dateFormat,
+        showUserNames,
+        timeFormat,
+        showDateHeaders,
+      ],
+    );
 
     const previousChatMessages = usePrevious(chatMessages);
 
@@ -536,14 +555,19 @@ export const ChatView = observer(
       chatSessionStore.exitEditMode();
     }, []);
 
-    const {handleCopy, handleEdit, handleTryAgain, handleTryAgainWith} =
-      useMessageActions({
-        user,
-        messages,
-        handleSendPress: wrappedOnSendPress,
-        setInputText,
-        setInputImages,
-      });
+    const {
+      handleCopy,
+      handleEdit,
+      handleTryAgain,
+      handleTryAgainWith,
+      handleDeleteFromHere,
+    } = useMessageActions({
+      user,
+      messages,
+      handleSendPress: wrappedOnSendPress,
+      setInputText,
+      setInputImages,
+    });
 
     // ============ AUTO-SCROLL ON NEW USER MESSAGE ============
     // Scroll to bottom when user sends a new message
@@ -673,6 +697,7 @@ export const ChatView = observer(
       regenerateWith: regenerateWithLabel,
       edit: editLabel,
       reportContent: reportContentLabel,
+      deleteFromHere: deleteFromHereLabel,
     } = l10n.components.chatView.menuItems;
 
     const menuItems = React.useMemo((): MenuItem[] => {
@@ -748,6 +773,20 @@ export const ChatView = observer(
         disabled: false,
       });
 
+      // Deleting truncates the conversation from this message onward
+      // (destructive, confirm-guarded in the handler). Blocked while a
+      // turn is streaming so an in-flight writer can't target removed
+      // rows.
+      baseItems.push({
+        label: deleteFromHereLabel,
+        onPress: () => {
+          handleDeleteFromHere(selectedMessage);
+          handleMenuDismiss();
+        },
+        icon: () => <TrashIcon stroke={theme.colors.primary} />,
+        disabled: modelStore.isStreaming,
+      });
+
       return baseItems;
     }, [
       selectedMessage,
@@ -756,6 +795,7 @@ export const ChatView = observer(
       handleTryAgain,
       handleTryAgainWith,
       handleEdit,
+      handleDeleteFromHere,
       handleMenuDismiss,
       size.width,
       theme.colors.primary,
@@ -764,6 +804,7 @@ export const ChatView = observer(
       regenerateWithLabel,
       editLabel,
       reportContentLabel,
+      deleteFromHereLabel,
     ]);
 
     // ============ RENDER FUNCTIONS ============
@@ -1004,6 +1045,11 @@ export const ChatView = observer(
                 },
               ]}
               initialNumToRender={10}
+              // Default windowSize (21 viewports) keeps far too many
+              // rows mounted for long histories; 11 halves memory and
+              // mount cost while staying double-buffered around the
+              // viewport for fast scrolls (inverted list, both ends).
+              windowSize={11}
               ListEmptyComponent={renderListEmptyComponent}
               ListFooterComponent={renderListFooterComponent}
               ListHeaderComponent={renderListHeaderComponent}

@@ -1257,7 +1257,13 @@ describe('chatSessionStore', () => {
       expect(metadata?.newKey).toBe('new value');
     });
 
-    it('should persist updates to database asynchronously', () => {
+    it('should persist updates to database asynchronously (first write of a stream is immediate)', () => {
+      // v1.36.0: DB persistence is coalesced to one write per 1.5 s during
+      // streaming. The FIRST write of a stream still lands immediately
+      // (lastStreamingDbPersist starts at 0 for a fresh stream), so reset
+      // the internal timestamp to simulate the stream start.
+      (chatSessionStore as any).lastStreamingDbPersist = 0;
+      (chatSessionStore as any).forceStreamingDbPersist = false;
       const update = {text: 'Persisted text'};
 
       chatSessionStore.updateMessageStreaming(
@@ -1333,6 +1339,11 @@ describe('chatSessionStore', () => {
       const consoleErrorSpy = jest
         .spyOn(console, 'error')
         .mockImplementation(() => {});
+
+      // Force an immediate DB write for this fresh stream (see the
+      // coalescing note in the "persist updates asynchronously" test).
+      (chatSessionStore as any).lastStreamingDbPersist = 0;
+      (chatSessionStore as any).forceStreamingDbPersist = false;
 
       (chatSessionRepository.updateMessage as jest.Mock).mockRejectedValueOnce(
         new Error('DB write failed'),

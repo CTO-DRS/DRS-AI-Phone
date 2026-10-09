@@ -714,7 +714,10 @@
     "privacyPolicy": "Datenschutzrichtlinie",
     "termsOfService": "Nutzungsbedingungen",
     "versionFormat": "Version {{version}} ({{build}})",
-    "successTitle": "Erfolg"
+    "successTitle": "Erfolg",
+    "updateAvailableTitle": "Neue Version verfügbar (v{{version}})",
+    "updateAvailableDescription": "Du verwendest v{{current}}. Aktualisiere, um die neuesten Korrekturen und Verbesserungen zu erhalten.",
+    "updateAvailableAction": "Update herunterladen"
   },
   "feedback": {
     "title": "Feedback senden",
@@ -1253,8 +1256,13 @@
         "regenerate": "Erneuern",
         "regenerateWith": "Erneuer mit",
         "edit": "Bearbeiten",
-        "reportContent": "Bericht Inhalt"
-      }
+        "reportContent": "Bericht Inhalt",
+        "deleteFromHere": "Ab hier löschen"
+      },
+      "deleteConfirmTitle": "Nachrichten löschen?",
+      "deleteConfirmMessage": "Diese Nachricht und alle folgenden werden aus diesem Chat entfernt. Dies kann nicht rückgängig gemacht werden.",
+      "deleteConfirmAction": "Löschen",
+      "deleteCancelAction": "Abbrechen"
     },
     "assistantHeaderRight": {
       "exportAllAssistants": "Exportiere alle Assistents",

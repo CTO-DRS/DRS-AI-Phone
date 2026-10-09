@@ -410,6 +410,8 @@ describe('ChatSessionStore — AssistantTurn extensions', () => {
       jest.useFakeTimers();
       (chatSessionStore as any).lastStreamingUpdateTime = 0;
       (chatSessionStore as any).pendingStreamingUpdate = null;
+      (chatSessionStore as any).lastStreamingDbPersist = 0;
+      (chatSessionStore as any).forceStreamingDbPersist = false;
       if ((chatSessionStore as any).streamingThrottleTimer) {
         clearTimeout((chatSessionStore as any).streamingThrottleTimer);
         (chatSessionStore as any).streamingThrottleTimer = null;
@@ -497,6 +499,108 @@ describe('ChatSessionStore — AssistantTurn extensions', () => {
       expect((chatSessionStore as any).pendingStreamingUpdate.kind).toBe(
         'text',
       );
+    });
+
+    it('#9 coalesces DB persistence during streaming (UI flush 30 ms, DB persist 1.5 s)', () => {
+      const turn = makeAssistantTurn([{content: '', partial: true}]);
+      chatSessionStore.sessions = [
+        {
+          id: 'session1',
+          title: '',
+          date: '',
+          messages: [turn],
+          completionSettings: defaultCompletionSettings,
+          settingsSource: 'assistant',
+        },
+      ];
+      chatSessionStore.activeSessionId = 'session1';
+
+      // Anchor the fake-timer clock (it starts at real epoch time).
+      jest.setSystemTime(2000000);
+
+      // First token: applies AND persists (baseline write of the stream).
+      chatSessionStore.updateActiveStepStreaming(turn.id, 'session1', {
+        content: 'a',
+      });
+      expect(
+        (chatSessionStore.sessions[0].messages[0] as MessageType.AssistantTurn)
+          .steps[0].content,
+      ).toBe('a');
+      expect(chatSessionRepository.updateMessage).toHaveBeenCalledTimes(1);
+
+      // +30 ms: UI throttle elapsed → in-memory content updates, but the
+      // 1500 ms DB persist interval has NOT elapsed → no DB write.
+      jest.setSystemTime(2000000 + 30);
+      chatSessionStore.updateActiveStepStreaming(turn.id, 'session1', {
+        content: 'a-b',
+      });
+      expect(
+        (chatSessionStore.sessions[0].messages[0] as MessageType.AssistantTurn)
+          .steps[0].content,
+      ).toBe('a-b');
+      expect(chatSessionRepository.updateMessage).toHaveBeenCalledTimes(1);
+
+      // +1600 ms total: persist interval elapsed → applied AND persisted.
+      jest.setSystemTime(2000000 + 1600);
+      chatSessionStore.updateActiveStepStreaming(turn.id, 'session1', {
+        content: 'a-b-c',
+      });
+      expect(
+        (chatSessionStore.sessions[0].messages[0] as MessageType.AssistantTurn)
+          .steps[0].content,
+      ).toBe('a-b-c');
+      expect(chatSessionRepository.updateMessage).toHaveBeenCalledTimes(2);
+      expect(chatSessionRepository.updateMessage).toHaveBeenLastCalledWith(
+        turn.id,
+        {steps: expect.any(Array)},
+      );
+    });
+
+    it('#10 flushStreamingUpdate forces an immediate DB write even inside the persist interval', () => {
+      const turn = makeAssistantTurn([{content: '', partial: true}]);
+      chatSessionStore.sessions = [
+        {
+          id: 'session1',
+          title: '',
+          date: '',
+          messages: [turn],
+          completionSettings: defaultCompletionSettings,
+          settingsSource: 'assistant',
+        },
+      ];
+      chatSessionStore.activeSessionId = 'session1';
+
+      // Anchor the fake-timer clock (it starts at real epoch time).
+      jest.setSystemTime(2000000);
+
+      // Baseline: first token persists.
+      chatSessionStore.updateActiveStepStreaming(turn.id, 'session1', {
+        content: 'a',
+      });
+      expect(chatSessionRepository.updateMessage).toHaveBeenCalledTimes(1);
+
+      // +30 ms: inside the persist interval → write skipped.
+      jest.setSystemTime(2000000 + 30);
+      chatSessionStore.updateActiveStepStreaming(turn.id, 'session1', {
+        content: 'a-b',
+      });
+      expect(chatSessionRepository.updateMessage).toHaveBeenCalledTimes(1);
+
+      // Structural drain (pushAgentStep / finalizeActiveStep call
+      // flushStreamingUpdate): forces the write despite the fresh
+      // interval, so a crash cannot lose a whole step boundary.
+      (chatSessionStore as any).pendingStreamingUpdate = {
+        kind: 'step',
+        id: turn.id,
+        sessionId: 'session1',
+        partial: {content: 'final'},
+      };
+      (chatSessionStore as any).flushStreamingUpdate();
+      expect(
+        (chatSessionStore.sessions[0].messages[0] as MessageType.AssistantTurn)
+          .steps[0].content,
+      ).toBe('final');
+      expect(chatSessionRepository.updateMessage).toHaveBeenCalledTimes(2);
     });
   });
 

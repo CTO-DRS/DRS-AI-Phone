@@ -69,6 +69,14 @@ const parseTagsJson = (json?: string | null): string[] => {
 // Coalesce per-token writes into batched UI flushes (~33 Hz).
 const STREAMING_THROTTLE_MS = 30;
 
+// The in-memory MobX mutation is what the UI reads during streaming; the
+// DB copy is only a crash-recovery artifact. Persisting the full steps
+// array on every 30 ms flush rewrote the same row ~33x/second for the
+// whole generation (WAL churn + battery cost on long answers). DB writes
+// are additionally coalesced to this interval; structural changes (new
+// step, finalize) always force an immediate write via flushStreamingUpdate.
+const STREAMING_DB_PERSIST_INTERVAL_MS = 1500;
+
 export interface SessionMetaData {
   id: string;
   title: string;
@@ -813,6 +821,8 @@ class ChatSessionStore {
       }
     | null = null;
   private lastStreamingUpdateTime: number = 0;
+  private lastStreamingDbPersist: number = 0;
+  private forceStreamingDbPersist: boolean = false;
 
   /**
    * Schedule a throttled update through the shared throttle slot. The
@@ -863,6 +873,10 @@ class ChatSessionStore {
       this.streamingThrottleTimer = null;
     }
     if (this.pendingStreamingUpdate) {
+      // Structural callers (pushAgentStep, finalizeActiveStep, ...) need
+      // the DB copy to land immediately so a crash can't lose a whole
+      // step boundary.
+      this.forceStreamingDbPersist = true;
       this.applyStreamingUpdate();
       this.lastStreamingUpdateTime = Date.now();
     }
@@ -910,6 +924,18 @@ class ChatSessionStore {
     const pending = this.pendingStreamingUpdate;
     this.pendingStreamingUpdate = null;
 
+    // Coalesce DB persistence: throttle-timer flushes may skip the write
+    // (interval not elapsed), force flushes (structural changes) always
+    // write. In-memory state below is updated unconditionally either way.
+    const now = Date.now();
+    const shouldPersistToDb =
+      this.forceStreamingDbPersist ||
+      now - this.lastStreamingDbPersist >= STREAMING_DB_PERSIST_INTERVAL_MS;
+    if (shouldPersistToDb) {
+      this.lastStreamingDbPersist = now;
+    }
+    this.forceStreamingDbPersist = false;
+
     const targetSessionId = pending.sessionId || this.activeSessionId;
     if (!targetSessionId) {
       return;
@@ -944,11 +970,13 @@ class ChatSessionStore {
           };
         }
       });
-      chatSessionRepository
-        .updateMessage(pending.id, update)
-        .catch(error =>
-          console.error('Failed to persist streaming update to DB:', error),
-        );
+      if (shouldPersistToDb) {
+        chatSessionRepository
+          .updateMessage(pending.id, update)
+          .catch(error =>
+            console.error('Failed to persist streaming update to DB:', error),
+          );
+      }
       return;
     }
 
@@ -971,11 +999,16 @@ class ChatSessionStore {
         ...partial,
       };
     });
-    chatSessionRepository
-      .updateMessage(pending.id, {steps: turn.steps})
-      .catch(error =>
-        console.error('Failed to persist streaming step update to DB:', error),
-      );
+    if (shouldPersistToDb) {
+      chatSessionRepository
+        .updateMessage(pending.id, {steps: turn.steps})
+        .catch(error =>
+          console.error(
+            'Failed to persist streaming step update to DB:',
+            error,
+          ),
+        );
+    }
   }
 
   async updateMessage(

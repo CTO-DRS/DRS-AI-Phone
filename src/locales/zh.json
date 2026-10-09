@@ -714,7 +714,10 @@
     "privacyPolicy": "隐私政策",
     "termsOfService": "服务条款",
     "versionFormat": "版本 {{version}}（{{build}}）",
-    "successTitle": "成功"
+    "successTitle": "成功",
+    "updateAvailableTitle": "新版本可用（v{{version}}）",
+    "updateAvailableDescription": "你正在使用 v{{current}}。更新以获取最新的修复和改进。",
+    "updateAvailableAction": "下载更新"
   },
   "feedback": {
     "title": "发送反馈",
@@ -1253,8 +1256,13 @@
         "regenerate": "重新生成",
         "regenerateWith": "重新生成（重选模型）",
         "edit": "编辑",
-        "reportContent": "举报内容"
-      }
+        "reportContent": "举报内容",
+        "deleteFromHere": "从此处删除"
+      },
+      "deleteConfirmTitle": "删除消息？",
+      "deleteConfirmMessage": "此消息及其后的所有内容将从该对话中删除。此操作无法撤销。",
+      "deleteConfirmAction": "删除",
+      "deleteCancelAction": "取消"
     },
     "assistantHeaderRight": {
       "exportAllAssistants": "导出所有 助手",

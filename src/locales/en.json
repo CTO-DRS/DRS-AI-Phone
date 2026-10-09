@@ -714,7 +714,10 @@
     "privacyPolicy": "Privacy Policy",
     "termsOfService": "Terms of Service",
     "versionFormat": "Version {{version}} ({{build}})",
-    "successTitle": "Success"
+    "successTitle": "Success",
+    "updateAvailableTitle": "New version available (v{{version}})",
+    "updateAvailableDescription": "You are using v{{current}}. Update to get the latest fixes and improvements.",
+    "updateAvailableAction": "Download update"
   },
   "feedback": {
     "title": "Send Feedback",
@@ -1253,8 +1256,13 @@
         "regenerate": "Regenerate",
         "regenerateWith": "Regenerate with",
         "edit": "Edit",
-        "reportContent": "Report Content"
-      }
+        "reportContent": "Report Content",
+        "deleteFromHere": "Delete from here"
+      },
+      "deleteConfirmTitle": "Delete messages?",
+      "deleteConfirmMessage": "This message and everything after it will be removed from this chat. This cannot be undone.",
+      "deleteConfirmAction": "Delete",
+      "deleteCancelAction": "Cancel"
     },
     "assistantHeaderRight": {
       "exportAllAssistants": "Export all assistants",

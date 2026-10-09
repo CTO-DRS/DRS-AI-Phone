@@ -714,7 +714,10 @@
     "privacyPolicy": "Политика конфиденциальности",
     "termsOfService": "Условия использования",
     "versionFormat": "Версия {{version}} ({{build}})",
-    "successTitle": "Успешно"
+    "successTitle": "Успешно",
+    "updateAvailableTitle": "Доступна новая версия (v{{version}})",
+    "updateAvailableDescription": "Вы используете v{{current}}. Обновите приложение, чтобы получить последние исправления и улучшения.",
+    "updateAvailableAction": "Скачать обновление"
   },
   "feedback": {
     "title": "Оставить отзыв",
@@ -1253,8 +1256,13 @@
         "regenerate": "Сгенерировать заново",
         "regenerateWith": "Сгенерировать заново с",
         "edit": "Редактировать",
-        "reportContent": "Жалоба на контент"
-      }
+        "reportContent": "Жалоба на контент",
+        "deleteFromHere": "Удалить отсюда"
+      },
+      "deleteConfirmTitle": "Удалить сообщения?",
+      "deleteConfirmMessage": "Это сообщение и все последующие будут удалены из этого чата. Это действие нельзя отменить.",
+      "deleteConfirmAction": "Удалить",
+      "deleteCancelAction": "Отмена"
     },
     "assistantHeaderRight": {
       "exportAllAssistants": "Экспорт всех ассистентов",

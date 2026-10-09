@@ -714,7 +714,10 @@
     "privacyPolicy": "Integritetspolicy",
     "termsOfService": "Användarvillkor",
     "versionFormat": "Version {{version}} ({{build}})",
-    "successTitle": "Lyckades"
+    "successTitle": "Lyckades",
+    "updateAvailableTitle": "Ny version tillgänglig (v{{version}})",
+    "updateAvailableDescription": "Du använder v{{current}}. Uppdatera för att få de senaste korrigeringarna och förbättringarna.",
+    "updateAvailableAction": "Hämta uppdatering"
   },
   "feedback": {
     "title": "Skicka feedback",
@@ -1253,8 +1256,13 @@
         "regenerate": "Generera igen",
         "regenerateWith": "Generera igen med",
         "edit": "Redigera",
-        "reportContent": "Anmäl innehåll"
-      }
+        "reportContent": "Anmäl innehåll",
+        "deleteFromHere": "Ta bort härifrån"
+      },
+      "deleteConfirmTitle": "Ta bort meddelanden?",
+      "deleteConfirmMessage": "Detta meddelande och allt efteråt tas bort från den här chatten. Detta går inte att ångra.",
+      "deleteConfirmAction": "Ta bort",
+      "deleteCancelAction": "Avbryt"
     },
     "assistantHeaderRight": {
       "exportAllAssistants": "Exportera alla assistenter",
