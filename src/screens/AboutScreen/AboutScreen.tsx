@@ -8,8 +8,14 @@ import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import {BuildInfo} from 'llama.rn';
 
 import {submitFeedback} from '../../api/feedback';
+import {checkForAppUpdate, AppUpdateInfo} from '../../utils/appUpdate';
 
-import {CopyIcon, GithubIcon, ChevronRightIcon} from '../../assets/icons';
+import {
+  CopyIcon,
+  GithubIcon,
+  ChevronRightIcon,
+  XIcon,
+} from '../../assets/icons';
 
 import {Sheet, TextInput} from '../../components';
 import {useTheme} from '../../hooks';
@@ -38,6 +44,11 @@ export const AboutScreen: React.FC = () => {
     build: '',
   });
 
+  const [updateInfo, setUpdateInfo] = React.useState<AppUpdateInfo | null>(
+    null,
+  );
+  const [updateDismissed, setUpdateDismissed] = useState(false);
+
   const [useCase, setUseCase] = useState('');
   const [featureRequests, setFeatureRequests] = useState('');
   const [generalFeedback, setGeneralFeedback] = useState('');
@@ -51,6 +62,24 @@ export const AboutScreen: React.FC = () => {
       version,
       build: buildNumber,
     });
+  }, []);
+
+  // Self-update check: cached (6 h TTL), never throws, silent no-op when
+  // up to date or offline.
+  React.useEffect(() => {
+    let cancelled = false;
+    checkForAppUpdate()
+      .then(info => {
+        if (!cancelled && info) {
+          setUpdateInfo(info);
+        }
+      })
+      .catch(() => {
+        // Defensive: checkForAppUpdate already swallows its own errors.
+      });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const copyVersionToClipboard = () => {
@@ -127,6 +156,41 @@ export const AboutScreen: React.FC = () => {
               </Text>
             </View>
           </View>
+
+          {updateInfo && !updateDismissed && (
+            <View style={styles.updateBanner}>
+              <View style={styles.updateBannerHeader}>
+                <Text variant="titleSmall" style={styles.updateBannerTitle}>
+                  {t(l10n.about.updateAvailableTitle, {
+                    version: updateInfo.latestVersion,
+                  })}
+                </Text>
+                <TouchableOpacity
+                  accessibilityRole="button"
+                  onPress={() => setUpdateDismissed(true)}>
+                  <XIcon
+                    width={18}
+                    height={18}
+                    stroke={theme.colors.onPrimaryContainer}
+                  />
+                </TouchableOpacity>
+              </View>
+              <Text variant="bodySmall" style={styles.updateBannerDescription}>
+                {t(l10n.about.updateAvailableDescription, {
+                  current: updateInfo.currentVersion,
+                })}
+              </Text>
+              <Button
+                mode="contained"
+                compact
+                style={styles.updateBannerButton}
+                contentStyle={styles.feedbackButtonContent}
+                icon={ChevronRightButtonIcon}
+                onPress={() => Linking.openURL(updateInfo.releaseUrl)}>
+                {l10n.about.updateAvailableAction}
+              </Button>
+            </View>
+          )}
 
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>{l10n.about.supportProject}</Text>

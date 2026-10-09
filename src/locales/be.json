@@ -714,7 +714,10 @@
     "privacyPolicy": "Палітыка прыватнасці",
     "termsOfService": "Умовы выкарыстання",
     "versionFormat": "Версія {{version}} ({{build}})",
-    "successTitle": "Поспех"
+    "successTitle": "Поспех",
+    "updateAvailableTitle": "Даступная новая версія (v{{version}})",
+    "updateAvailableDescription": "Вы выкарыстоўваеце v{{current}}. Абнавіце, каб атрымаць апошнія выпраўленні і паляпшэнні.",
+    "updateAvailableAction": "Спампаваць абнаўленне"
   },
   "feedback": {
     "title": "Даслаць водгук",
@@ -1253,8 +1256,13 @@
         "regenerate": "Генераваць нанова",
         "regenerateWith": "Генераваць нанова праз",
         "edit": "Рэдагаваць",
-        "reportContent": "Паскардзіцца на змесціва"
-      }
+        "reportContent": "Паскардзіцца на змесціва",
+        "deleteFromHere": "Выдаліць адсюль"
+      },
+      "deleteConfirmTitle": "Выдаліць паведамленні?",
+      "deleteConfirmMessage": "Гэта паведамленне і ўсё пасля яго будзе выдалена з гэтай гутэркі. Гэта нельга адмяніць.",
+      "deleteConfirmAction": "Выдаліць",
+      "deleteCancelAction": "Скасаваць"
     },
     "assistantHeaderRight": {
       "exportAllAssistants": "Экспартаваць усе асістэнты",

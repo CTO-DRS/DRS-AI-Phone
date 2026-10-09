@@ -1,3 +1,7 @@
+import React from 'react';
+
+import {Alert} from 'react-native';
+
 import Clipboard from '@react-native-clipboard/clipboard';
 import {renderHook, act} from '@testing-library/react-hooks';
 
@@ -7,10 +11,14 @@ import {createModel} from '../../../jest/fixtures/models';
 import {useMessageActions} from '../useMessageActions';
 
 import {chatSessionStore, modelStore} from '../../store';
+import {L10nContext} from '../../utils';
+import {l10n} from '../../locales';
 
 jest.mock('@react-native-clipboard/clipboard', () => ({
   setString: jest.fn(),
 }));
+
+const alertSpy = jest.spyOn(Alert, 'alert');
 
 describe('useMessageActions', () => {
   const mockSetInputText = jest.fn();
@@ -368,6 +376,108 @@ describe('useMessageActions', () => {
         text: 'What is 2+2?',
         type: 'text',
       });
+    });
+  });
+
+  // ---------- handleDeleteFromHere ----------
+
+  describe('handleDeleteFromHere', () => {
+    const l10nWrapper = ({children}: {children: React.ReactNode}) =>
+      React.createElement(L10nContext.Provider, {value: l10n.en}, children);
+
+    const renderActions = () =>
+      renderHook(
+        () =>
+          useMessageActions({
+            user,
+            messages,
+            handleSendPress: mockHandleSendPress,
+            setInputText: mockSetInputText,
+          }),
+        {wrapper: l10nWrapper},
+      );
+
+    beforeEach(() => {
+      alertSpy.mockClear();
+      (chatSessionStore.removeMessagesFromId as jest.Mock).mockClear();
+    });
+    it('shows a localized confirmation and deletes on confirm', () => {
+      const {result} = renderActions();
+      const message = {
+        ...textMessage,
+        id: 'msg-7',
+        text: 'Delete me',
+        author: {id: 'assistant'},
+        type: 'text' as const,
+      };
+
+      act(() => {
+        result.current.handleDeleteFromHere(message);
+      });
+
+      expect(Alert.alert).toHaveBeenCalledTimes(1);
+      expect(Alert.alert).toHaveBeenCalledWith(
+        l10n.en.components.chatView.deleteConfirmTitle,
+        l10n.en.components.chatView.deleteConfirmMessage,
+        expect.arrayContaining([
+          expect.objectContaining({
+            text: l10n.en.components.chatView.deleteCancelAction,
+          }),
+          expect.objectContaining({
+            text: l10n.en.components.chatView.deleteConfirmAction,
+          }),
+        ]),
+      );
+
+      // Simulate the user confirming the destructive action.
+      const buttons = (Alert.alert as jest.Mock).mock.calls[0][2];
+      const confirmButton = buttons.find(
+        (b: {text: string}) =>
+          b.text === l10n.en.components.chatView.deleteConfirmAction,
+      );
+      act(() => {
+        confirmButton.onPress();
+      });
+      expect(chatSessionStore.removeMessagesFromId).toHaveBeenCalledWith(
+        'msg-7',
+        true,
+      );
+    });
+
+    it('cancel button does not remove anything', () => {
+      const {result} = renderActions();
+      act(() => {
+        result.current.handleDeleteFromHere({
+          ...textMessage,
+          id: 'msg-8',
+          text: 'Keep me',
+          author: {id: 'assistant'},
+          type: 'text',
+        });
+      });
+      const buttons = (Alert.alert as jest.Mock).mock.calls[0][2];
+      const cancelButton = buttons.find(
+        (b: {text: string}) =>
+          b.text === l10n.en.components.chatView.deleteCancelAction,
+      );
+      // Cancel is a no-op button (no onPress) — nothing may be removed.
+      expect(cancelButton.style).toBe('cancel');
+      expect(cancelButton.onPress).toBeUndefined();
+      expect(chatSessionStore.removeMessagesFromId).not.toHaveBeenCalled();
+    });
+
+    it('ignores non-text message shapes without opening a dialog', () => {
+      const {result} = renderActions();
+      act(() => {
+        result.current.handleDeleteFromHere({
+          ...textMessage,
+          id: 'img-1',
+          type: 'image',
+          uri: 'file:///tmp/img.png',
+        } as any);
+      });
+      expect(Alert.alert).not.toHaveBeenCalled();
+      expect(chatSessionStore.removeMessagesFromId).not.toHaveBeenCalled();
     });
   });
 });

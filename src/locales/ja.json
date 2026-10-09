@@ -714,7 +714,10 @@
     "privacyPolicy": "プライバシーポリシー",
     "termsOfService": "利用規約",
     "versionFormat": "バージョン{{version}}（{{build}}）",
-    "successTitle": "成功"
+    "successTitle": "成功",
+    "updateAvailableTitle": "新しいバージョンがあります（v{{version}}）",
+    "updateAvailableDescription": "現在v{{current}}を使用しています。最新の修正と改善を取得するにはアップデートしてください。",
+    "updateAvailableAction": "アップデートをダウンロード"
   },
   "feedback": {
     "title": "フィードバックを送信",
@@ -1253,8 +1256,13 @@
         "regenerate": "再生成",
         "regenerateWith": "再生成（モデル選択）",
         "edit": "編集",
-        "reportContent": "コンテンツを報告"
-      }
+        "reportContent": "コンテンツを報告",
+        "deleteFromHere": "ここから削除"
+      },
+      "deleteConfirmTitle": "メッセージを削除しますか？",
+      "deleteConfirmMessage": "このメッセージとそれ以降のメッセージがこのチャットから削除されます。この操作は元に戻せません。",
+      "deleteConfirmAction": "削除",
+      "deleteCancelAction": "キャンセル"
     },
     "assistantHeaderRight": {
       "exportAllAssistants": "すべてのアシスタントをエクスポート",

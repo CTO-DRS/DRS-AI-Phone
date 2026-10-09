@@ -714,7 +714,10 @@
     "privacyPolicy": "Політика конфіденційності",
     "termsOfService": "Умови надання послуг",
     "versionFormat": "Версія {{version}} ({{build}})",
-    "successTitle": "Успіх"
+    "successTitle": "Успіх",
+    "updateAvailableTitle": "Доступна нова версія (v{{version}})",
+    "updateAvailableDescription": "Ви використовуєте v{{current}}. Оновіть застосунок, щоб отримати останні виправлення та покращення.",
+    "updateAvailableAction": "Завантажити оновлення"
   },
   "feedback": {
     "title": "Надіслати Відгук",
@@ -1253,8 +1256,13 @@
         "regenerate": "Перегенерувати",
         "regenerateWith": "Перегенерувати з",
         "edit": "Редагувати",
-        "reportContent": "Зміст звіту"
-      }
+        "reportContent": "Зміст звіту",
+        "deleteFromHere": "Видалити звідси"
+      },
+      "deleteConfirmTitle": "Видалити повідомлення?",
+      "deleteConfirmMessage": "Це повідомлення та всі наступні буде видалено з цього чату. Цю дію не можна скасувати.",
+      "deleteConfirmAction": "Видалити",
+      "deleteCancelAction": "Скасувати"
     },
     "assistantHeaderRight": {
       "exportAllAssistants": "Експортувати всіх асистентів",

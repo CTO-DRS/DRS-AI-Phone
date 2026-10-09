@@ -714,7 +714,10 @@
     "privacyPolicy": "Política de Privacidade",
     "termsOfService": "Termos de Serviço",
     "versionFormat": "Versão {{version}} ({{build}})",
-    "successTitle": "Sucesso"
+    "successTitle": "Sucesso",
+    "updateAvailableTitle": "Nova versão disponível (v{{version}})",
+    "updateAvailableDescription": "Está a usar a v{{current}}. Atualize para obter as correções e melhorias mais recentes.",
+    "updateAvailableAction": "Descarregar atualização"
   },
   "feedback": {
     "title": "Enviar Feedback",
@@ -1253,8 +1256,13 @@
         "regenerate": "Regenerar",
         "regenerateWith": "Regenerar com",
         "edit": "Editar",
-        "reportContent": "Denunciar Conteúdo"
-      }
+        "reportContent": "Denunciar Conteúdo",
+        "deleteFromHere": "Eliminar a partir daqui"
+      },
+      "deleteConfirmTitle": "Eliminar mensagens?",
+      "deleteConfirmMessage": "Esta mensagem e tudo o que se segue serão removidos desta conversa. Esta ação não pode ser desfeita.",
+      "deleteConfirmAction": "Eliminar",
+      "deleteCancelAction": "Cancelar"
     },
     "assistantHeaderRight": {
       "exportAllAssistants": "Exportar todos os assistants",

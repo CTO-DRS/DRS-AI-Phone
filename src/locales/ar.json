@@ -714,7 +714,10 @@
     "privacyPolicy": "سياسة الخصوصية",
     "termsOfService": "شروط الخدمة",
     "versionFormat": "الإصدار {{version}} ({{build}})",
-    "successTitle": "نجاح"
+    "successTitle": "نجاح",
+    "updateAvailableTitle": "إصدار جديد متاح (v{{version}})",
+    "updateAvailableDescription": "أنت تستخدم الإصدار v{{current}}. حدِّث للحصول على أحدث الإصلاحات والتحسينات.",
+    "updateAvailableAction": "تنزيل التحديث"
   },
   "feedback": {
     "title": "إرسال ملاحظات",
@@ -1253,8 +1256,13 @@
         "regenerate": "إعادة التوليد",
         "regenerateWith": "إعادة التوليد باستخدام",
         "edit": "تعديل",
-        "reportContent": "الإبلاغ عن المحتوى"
-      }
+        "reportContent": "الإبلاغ عن المحتوى",
+        "deleteFromHere": "حذف من هنا"
+      },
+      "deleteConfirmTitle": "حذف الرسائل؟",
+      "deleteConfirmMessage": "ستُحذف هذه الرسالة وكل ما بعدها من هذه المحادثة. لا يمكن التراجع عن هذا الإجراء.",
+      "deleteConfirmAction": "حذف",
+      "deleteCancelAction": "إلغاء"
     },
     "assistantHeaderRight": {
       "exportAllAssistants": "تصدير جميع المساعدين",

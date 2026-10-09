@@ -714,7 +714,10 @@
     "privacyPolicy": "Dasar Privasi",
     "termsOfService": "Terma Perkhidmatan",
     "versionFormat": "Versi {{version}} ({{build}})",
-    "successTitle": "Berjaya"
+    "successTitle": "Berjaya",
+    "updateAvailableTitle": "Versi baharu tersedia (v{{version}})",
+    "updateAvailableDescription": "Anda menggunakan v{{current}}. Kemas kini untuk mendapatkan pembetulan dan penambahbaikan terkini.",
+    "updateAvailableAction": "Muat turun kemas kini"
   },
   "feedback": {
     "title": "Hantar Maklum Balas",
@@ -1253,8 +1256,13 @@
         "regenerate": "Jana Semula",
         "regenerateWith": "Jana Semula dengan",
         "edit": "Sunting",
-        "reportContent": "Laporkan Kandungan"
-      }
+        "reportContent": "Laporkan Kandungan",
+        "deleteFromHere": "Padam dari sini"
+      },
+      "deleteConfirmTitle": "Padam mesej?",
+      "deleteConfirmMessage": "Mesej ini dan semua mesej selepasnya akan dipadamkan daripada sembang ini. Tindakan ini tidak boleh dibatalkan.",
+      "deleteConfirmAction": "Padam",
+      "deleteCancelAction": "Batal"
     },
     "assistantHeaderRight": {
       "exportAllAssistants": "Eksport semua assistant",

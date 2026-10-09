@@ -72,6 +72,32 @@ export const createStyles = (theme: Theme, insets: EdgeInsets) =>
       marginTop: theme.spacing.default / 2,
       opacity: 0.7,
     },
+    updateBanner: {
+      padding: theme.spacing.default * 1.5,
+      backgroundColor: theme.colors.primaryContainer,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.surfaceVariant,
+      gap: theme.spacing.default / 2,
+    },
+    updateBannerHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    updateBannerTitle: {
+      ...theme.fonts.titleSmall,
+      color: theme.colors.onPrimaryContainer,
+      flex: 1,
+      marginRight: theme.spacing.default,
+    },
+    updateBannerDescription: {
+      color: theme.colors.onPrimaryContainer,
+      opacity: 0.85,
+    },
+    updateBannerButton: {
+      alignSelf: 'flex-start',
+      marginTop: theme.spacing.default / 2,
+    },
     section: {
       padding: theme.spacing.default * 2,
       borderBottomWidth: 1,
