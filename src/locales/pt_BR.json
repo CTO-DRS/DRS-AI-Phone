@@ -222,7 +222,11 @@
     "backupExportAllChats": "Exportar todas as conversas",
     "backupExportAllChatsDescription": "Salve um backup em JSON de todas as suas conversas para compartilhar ou guardar.",
     "backupImportChats": "Restaurar conversas",
-    "backupImportChatsDescription": "Importe conversas de um arquivo de backup criado por este aplicativo."
+    "backupImportChatsDescription": "Importe conversas de um arquivo de backup criado por este aplicativo.",
+    "backupExportAssistants": "Exportar assistentes",
+    "backupExportAssistantsDescription": "Salve um backup JSON de todos os seus assistentes para compartilhar ou manter.",
+    "backupImportAssistants": "Restaurar assistentes",
+    "backupImportAssistantsDescription": "Importe assistentes de um arquivo de backup criado por este aplicativo."
   },
   "memory": {
     "shortWarning": "Aviso de Memória",

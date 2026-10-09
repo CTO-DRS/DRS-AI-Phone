@@ -222,7 +222,11 @@
     "backupExportAllChats": "Ekspordi kõik vestlused",
     "backupExportAllChatsDescription": "Salvesta kõigi vestluste JSON-varukoopia jagamiseks või hoidmiseks.",
     "backupImportChats": "Taasta vestlused",
-    "backupImportChatsDescription": "Impordi vestlused selle rakenduse loodud varufailist."
+    "backupImportChatsDescription": "Impordi vestlused selle rakenduse loodud varufailist.",
+    "backupExportAssistants": "Ekspordi abilised",
+    "backupExportAssistantsDescription": "Salvesta kõigi abiliste JSON-varukoopia jagamiseks või hoidmiseks.",
+    "backupImportAssistants": "Taasta abilised",
+    "backupImportAssistantsDescription": "Impordi abilised selle rakenduse loodud varukoopia failist."
   },
   "memory": {
     "shortWarning": "Mälu hoiatus",

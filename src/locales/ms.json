@@ -222,7 +222,11 @@
     "backupExportAllChats": "Eksport semua sembang",
     "backupExportAllChatsDescription": "Simpan sandaran JSON semua sembang anda untuk dikongsi atau disimpan.",
     "backupImportChats": "Pulihkan sembang",
-    "backupImportChatsDescription": "Import sembang daripada fail sandaran yang dicipta oleh aplikasi ini."
+    "backupImportChatsDescription": "Import sembang daripada fail sandaran yang dicipta oleh aplikasi ini.",
+    "backupExportAssistants": "Eksport pembantu",
+    "backupExportAssistantsDescription": "Simpan sandaran JSON semua pembantu anda untuk dikongsi atau disimpan.",
+    "backupImportAssistants": "Pulihkan pembantu",
+    "backupImportAssistantsDescription": "Import pembantu daripada fail sandaran yang dibuat oleh aplikasi ini."
   },
   "memory": {
     "shortWarning": "Amaran Memori",

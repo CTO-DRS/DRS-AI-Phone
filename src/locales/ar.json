@@ -248,7 +248,11 @@
     "backupExportAllChats": "تصدير كل المحادثات",
     "backupExportAllChatsDescription": "احفظ نسخة احتياطية بصيغة JSON من جميع محادثاتك لمشاركتها أو الاحتفاظ بها.",
     "backupImportChats": "استعادة المحادثات",
-    "backupImportChatsDescription": "استورد المحادثات من ملف نسخة احتياطية أنشأه هذا التطبيق."
+    "backupImportChatsDescription": "استورد المحادثات من ملف نسخة احتياطية أنشأه هذا التطبيق.",
+    "backupExportAssistants": "تصدير المساعدين",
+    "backupExportAssistantsDescription": "احفظ نسخة احتياطية بصيغة JSON من جميع مساعديك لمشاركتها أو الاحتفاظ بها.",
+    "backupImportAssistants": "استعادة المساعدين",
+    "backupImportAssistantsDescription": "استورد المساعدين من ملف نسخة احتياطية أنشأه هذا التطبيق."
   },
   "models": {
     "fileManagement": {

@@ -100,11 +100,15 @@ export const TextMessage = ({
     imagePreviewModal,
     imagePreviewCloseButton,
     imagePreviewContent,
-  } = styles({
-    message,
-    theme,
-    user,
-  });
+  } = React.useMemo(
+    () =>
+      styles({
+        message,
+        theme,
+        user,
+      }),
+    [message, theme, user],
+  );
 
   // Extract imageUris from the message if available
   const imageUris = (message as any).imageUris || [];

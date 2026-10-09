@@ -69,8 +69,11 @@ import {
 import {t} from '../../locales';
 import {checkGpuSupport} from '../../utils/deviceCapabilities';
 import {exportLegacyChatSessions} from '../../utils/exportUtils';
-import {exportAllChatSessions} from '../../utils/exportUtils';
-import {importChatSessions} from '../../utils/importUtils';
+import {
+  exportAllChatSessions,
+  exportAllAssistants,
+} from '../../utils/exportUtils';
+import {importChatSessions, importAssistants} from '../../utils/importUtils';
 import {getDeviceOptions, DeviceOption} from '../../utils/deviceSelection';
 import {
   inferBackendType,
@@ -1609,6 +1612,79 @@ export const SettingsScreen: React.FC = observer(() => {
                         Alert.alert(
                           l10n.components.headerRight.importErrorTitle,
                           l10n.settings.importError,
+                        );
+                      }
+                    }}
+                    style={styles.menuButton}>
+                    {l10n.settings.backupRestoreButton}
+                  </Button>
+                </View>
+                <Divider />
+
+                {/* Export assistants (v1.39.0) — one-tap assistant backup */}
+                <View style={styles.switchContainer}>
+                  <View style={styles.textContainer}>
+                    <Text variant="titleMedium" style={styles.textLabel}>
+                      {l10n.settings.backupExportAssistants}
+                    </Text>
+                    <Text variant="labelSmall" style={styles.textDescription}>
+                      {l10n.settings.backupExportAssistantsDescription}
+                    </Text>
+                  </View>
+                  <Button
+                    mode="outlined"
+                    testID="backup-export-assistants-button"
+                    onPress={async () => {
+                      try {
+                        await exportAllAssistants();
+                      } catch (error) {
+                        console.error('Failed to export assistants:', error);
+                        Alert.alert(
+                          l10n.components.assistantHeaderRight.exportErrorTitle,
+                          l10n.components.assistantHeaderRight.exportAllError,
+                        );
+                      }
+                    }}
+                    style={styles.menuButton}>
+                    {l10n.settings.exportButton}
+                  </Button>
+                </View>
+                <Divider />
+
+                {/* Import/restore assistants from a backup file (v1.39.0) */}
+                <View style={styles.switchContainer}>
+                  <View style={styles.textContainer}>
+                    <Text variant="titleMedium" style={styles.textLabel}>
+                      {l10n.settings.backupImportAssistants}
+                    </Text>
+                    <Text variant="labelSmall" style={styles.textDescription}>
+                      {l10n.settings.backupImportAssistantsDescription}
+                    </Text>
+                  </View>
+                  <Button
+                    mode="outlined"
+                    testID="backup-import-assistants-button"
+                    onPress={async () => {
+                      try {
+                        const count = await importAssistants();
+                        if (count > 0) {
+                          Alert.alert(
+                            l10n.components.assistantHeaderRight
+                              .importSuccessTitle,
+                            t(
+                              l10n.components.assistantHeaderRight
+                                .importSuccess,
+                              {
+                                count: count.toString(),
+                              },
+                            ),
+                          );
+                        }
+                      } catch (error) {
+                        console.error('Failed to import assistants:', error);
+                        Alert.alert(
+                          l10n.components.assistantHeaderRight.importErrorTitle,
+                          l10n.components.assistantHeaderRight.importError,
                         );
                       }
                     }}

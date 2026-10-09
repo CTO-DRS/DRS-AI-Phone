@@ -222,7 +222,11 @@
     "backupExportAllChats": "匯出所有聊天",
     "backupExportAllChatsDescription": "將所有聊天儲存為 JSON 備份，以便分享或保存。",
     "backupImportChats": "還原聊天",
-    "backupImportChatsDescription": "由此應用程式建立的備份檔匯入聊天。"
+    "backupImportChatsDescription": "由此應用程式建立的備份檔匯入聊天。",
+    "backupExportAssistants": "匯出助理",
+    "backupExportAssistantsDescription": "儲存所有助理的 JSON 備份，方便分享或保存。",
+    "backupImportAssistants": "還原助理",
+    "backupImportAssistantsDescription": "從此應用程式建立的備份檔匯入助理。"
   },
   "memory": {
     "shortWarning": "記憶體警告",

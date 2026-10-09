@@ -222,7 +222,11 @@
     "backupExportAllChats": "ייצוא כל הצ׳אטים",
     "backupExportAllChatsDescription": "שמור גיבוי JSON של כל הצ׳אטים שלך לשיתוף או לשמירה.",
     "backupImportChats": "שחזור צ׳אטים",
-    "backupImportChatsDescription": "ייבא צ׳אטים מקובץ גיבוי שנוצר על ידי האפליקציה הזו."
+    "backupImportChatsDescription": "ייבא צ׳אטים מקובץ גיבוי שנוצר על ידי האפליקציה הזו.",
+    "backupExportAssistants": "ייצוא העוזרים",
+    "backupExportAssistantsDescription": "שמור גיבוי JSON של כל העוזרים שלך לשיתוף או לשמירה.",
+    "backupImportAssistants": "שחזור העוזרים",
+    "backupImportAssistantsDescription": "ייבא עוזרים מקובץ גיבוי שנוצר על ידי האפליקציה הזו."
   },
   "memory": {
     "shortWarning": "אזהרת זיכרון",

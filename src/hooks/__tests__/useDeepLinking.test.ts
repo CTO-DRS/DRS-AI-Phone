@@ -14,7 +14,7 @@
  */
 
 import {Alert, Linking} from 'react-native';
-import {renderHook} from '@testing-library/react-native';
+import {act, renderHook} from '@testing-library/react-native';
 
 import {useDeepLinking} from '../useDeepLinking';
 import {ROUTES} from '../../utils/navigationConstants';
@@ -319,5 +319,75 @@ describe('useDeepLinking — deep-link routing', () => {
     });
     expect(checkoutFlowStore.onReturn).not.toHaveBeenCalled();
     expect(chatSessionStore.setActiveAssistant).toHaveBeenCalledWith('p1');
+  });
+});
+
+describe('useDeepLinking — launcher links (v1.39.0 widget/shortcuts)', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    (global as any).__E2E__ = false;
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it('cold launch with drsai://newchat resets to a fresh chat and navigates to Chat', async () => {
+    jest.spyOn(Linking, 'getInitialURL').mockResolvedValue('drsai://newchat');
+
+    renderHook(() => useDeepLinking());
+    await Promise.resolve();
+    await Promise.resolve();
+
+    expect(chatSessionStore.resetActiveSession).toHaveBeenCalled();
+    expect(mockNavigate).toHaveBeenCalledWith(ROUTES.CHAT);
+  });
+
+  it('cold launch with drsai://models navigates to Models without touching chat state', async () => {
+    jest.spyOn(Linking, 'getInitialURL').mockResolvedValue('drsai://models');
+
+    renderHook(() => useDeepLinking());
+    await Promise.resolve();
+    await Promise.resolve();
+
+    expect(chatSessionStore.resetActiveSession).not.toHaveBeenCalled();
+    expect(mockNavigate).toHaveBeenCalledWith(ROUTES.MODELS);
+  });
+
+  it('cold launch with an unrelated URL does not route launcher links', async () => {
+    jest
+      .spyOn(Linking, 'getInitialURL')
+      .mockResolvedValue('https://example.com');
+
+    renderHook(() => useDeepLinking());
+    await Promise.resolve();
+    await Promise.resolve();
+
+    expect(chatSessionStore.resetActiveSession).not.toHaveBeenCalled();
+    expect(mockNavigate).not.toHaveBeenCalled();
+  });
+
+  it('warm launch: the url listener routes drsai://newchat the same way', async () => {
+    jest.spyOn(Linking, 'getInitialURL').mockResolvedValue(null);
+    let handler: ((event: {url: string}) => void) | undefined;
+    jest.spyOn(Linking, 'addEventListener').mockImplementation(((
+      event: string,
+      cb: (e: {url: string}) => void,
+    ) => {
+      if (event === 'url') {
+        handler = cb;
+      }
+      return {remove: () => {}};
+    }) as any);
+
+    renderHook(() => useDeepLinking());
+    await Promise.resolve();
+
+    act(() => {
+      handler?.({url: 'drsai://newchat'});
+    });
+
+    expect(chatSessionStore.resetActiveSession).toHaveBeenCalled();
+    expect(mockNavigate).toHaveBeenCalledWith(ROUTES.CHAT);
   });
 });

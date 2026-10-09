@@ -295,6 +295,37 @@ describe('agentStateReducer', () => {
     expect(next.pendingTalentNames).toEqual(['calculate']);
   });
 
+  it('anonymous tool-call stream keeps the same state ref (v1.39.0 no per-token re-render)', () => {
+    // First tool delta carries no name at all → status flips with an
+    // empty pendingTalentNames (a real state change).
+    const first = agentStateReducer(
+      {...initialAgentUiState, status: 'prefill'},
+      {
+        type: 'token',
+        delta: {
+          toolCalls: [{id: 'a0', function: {name: '', arguments: '{"x"'}}],
+        },
+      },
+    );
+    expect(first.status).toBe('generating_tool_call');
+    expect(first.pendingTalentNames).toEqual([]);
+
+    // Subsequent anonymous deltas (later chunks routinely drop the name)
+    // must return the SAME state object so the "same ref = skip publish"
+    // guard in useChatSession short-circuits instead of re-rendering the
+    // list for the whole stream.
+    let cur = first;
+    for (let i = 0; i < 5; i++) {
+      cur = agentStateReducer(cur, {
+        type: 'token',
+        delta: {
+          toolCalls: [{function: {name: '', arguments: `{"x":${i}}`}}],
+        },
+      } as AgentEvent);
+      expect(cur).toBe(first);
+    }
+  });
+
   it('idempotent: feeding the same event twice yields the same output', () => {
     const event: AgentEvent = {type: 'run_started', messageId: 'm-id'};
     const once = agentStateReducer(initialAgentUiState, event);

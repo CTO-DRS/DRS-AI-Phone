@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- DRS AI launcher-integration strings (widget + shortcuts), English. -->
+<resources>
+    <string name="widget_subtitle">Your on-device AI assistant</string>
+    <string name="widget_new_chat">New chat</string>
+    <string name="widget_models">Models</string>
+    <string name="widget_description">Quick access to DRS AI chats and models</string>
+    <string name="shortcut_new_chat_short">New chat</string>
+    <string name="shortcut_new_chat_long">Start a new chat</string>
+    <string name="shortcut_new_chat_disabled">New chat shortcut is unavailable</string>
+    <string name="shortcut_models_short">Models</string>
+    <string name="shortcut_models_long">Browse AI models</string>
+    <string name="shortcut_models_disabled">Models shortcut is unavailable</string>
+</resources>

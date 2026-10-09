@@ -222,7 +222,11 @@
     "backupExportAllChats": "Exportera alla chattar",
     "backupExportAllChatsDescription": "Spara en JSON-säkerhetskopia av alla dina chattar för att dela eller spara.",
     "backupImportChats": "Återställ chattar",
-    "backupImportChatsDescription": "Importera chattar från en säkerhetskopia skapad av den här appen."
+    "backupImportChatsDescription": "Importera chattar från en säkerhetskopia skapad av den här appen.",
+    "backupExportAssistants": "Exportera assistenter",
+    "backupExportAssistantsDescription": "Spara en JSON-säkerhetskopia av alla dina assistenter för att dela eller behålla den.",
+    "backupImportAssistants": "Återställ assistenter",
+    "backupImportAssistantsDescription": "Importera assistenter från en säkerhetskopia som skapats av den här appen."
   },
   "memory": {
     "shortWarning": "Minnesvarning",

@@ -222,7 +222,11 @@
     "backupExportAllChats": "Експортувати всі чати",
     "backupExportAllChatsDescription": "Збережіть JSON-резервну копію всіх чатів, щоб поділитися або зберегти.",
     "backupImportChats": "Відновити чати",
-    "backupImportChatsDescription": "Імпортуйте чати з файлу резервної копії, створеного цією програмою."
+    "backupImportChatsDescription": "Імпортуйте чати з файлу резервної копії, створеного цією програмою.",
+    "backupExportAssistants": "Експортувати помічників",
+    "backupExportAssistantsDescription": "Збережіть JSON-резервну копію всіх помічників, щоб поділитися нею або зберегти.",
+    "backupImportAssistants": "Відновити помічників",
+    "backupImportAssistantsDescription": "Імпортуйте помічників із файлу резервної копії, створеного цією програмою."
   },
   "memory": {
     "shortWarning": "Попередження про пам'ять",
