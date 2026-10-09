@@ -213,7 +213,16 @@
     "retryConnection": "Спробувати ще раз",
     "enterUrlManually": "Введіть URL-адресу вручну",
     "manageServers": "Управління серверами",
-    "exportLegacyError": "Не вдалося експортувати застарілі сеанси чату. Можливо, файл не існує."
+    "exportLegacyError": "Не вдалося експортувати застарілі сеанси чату. Можливо, файл не існує.",
+    "notifications": "Сповіщення",
+    "generationNotifications": "Сповіщення про завершення відповіді",
+    "generationNotificationsDescription": "Продовжує генерацію у фоновому режимі та після завершення показує сповіщення з попереднім переглядом відповіді.",
+    "backupRestore": "Резервне копіювання та відновлення",
+    "backupRestoreButton": "Відновити",
+    "backupExportAllChats": "Експортувати всі чати",
+    "backupExportAllChatsDescription": "Збережіть JSON-резервну копію всіх чатів, щоб поділитися або зберегти.",
+    "backupImportChats": "Відновити чати",
+    "backupImportChatsDescription": "Імпортуйте чати з файлу резервної копії, створеного цією програмою."
   },
   "memory": {
     "shortWarning": "Попередження про пам'ять",
@@ -1972,5 +1981,9 @@
     "share": "Поділитися звітом",
     "refresh": "Оновити",
     "clear": "Очистити журнал"
+  },
+  "notifications": {
+    "generating": "Генерація відповіді…",
+    "responseReady": "Відповідь готова"
   }
 }

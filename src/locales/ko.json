@@ -213,7 +213,16 @@
     "retryConnection": "재시도",
     "enterUrlManually": "URL 수동 입력",
     "manageServers": "서버 관리",
-    "exportLegacyError": "기존 채팅 세션을 내보내지 못했습니다. 파일이 존재하지 않을 수 있습니다."
+    "exportLegacyError": "기존 채팅 세션을 내보내지 못했습니다. 파일이 존재하지 않을 수 있습니다.",
+    "notifications": "알림",
+    "generationNotifications": "응답 완료 알림",
+    "generationNotificationsDescription": "백그라운드에서 생성을 계속하고 완료 시 응답 미리보기가 포함된 알림을 표시합니다.",
+    "backupRestore": "백업 및 복원",
+    "backupRestoreButton": "복원",
+    "backupExportAllChats": "모든 채팅 내보내기",
+    "backupExportAllChatsDescription": "모든 채팅의 JSON 백업을 저장하여 공유하거나 보관하세요.",
+    "backupImportChats": "채팅 복원",
+    "backupImportChatsDescription": "이 앱에서 만든 백업 파일에서 채팅을 가져옵니다."
   },
   "memory": {
     "shortWarning": "메모리 부족 주의",
@@ -1972,5 +1981,9 @@
     "share": "보고서 공유",
     "refresh": "새로 고침",
     "clear": "로그 지우기"
+  },
+  "notifications": {
+    "generating": "응답 생성 중…",
+    "responseReady": "응답 준비 완료"
   }
 }

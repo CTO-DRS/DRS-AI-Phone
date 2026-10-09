@@ -213,7 +213,16 @@
     "retryConnection": "Coba lagi",
     "enterUrlManually": "Masukkan URL secara manual",
     "manageServers": "Kelola Server",
-    "exportLegacyError": "Gagal mengekspor sesi obrolan lama. File mungkin tidak ada."
+    "exportLegacyError": "Gagal mengekspor sesi obrolan lama. File mungkin tidak ada.",
+    "notifications": "Notifikasi",
+    "generationNotifications": "Notifikasi respons selesai",
+    "generationNotificationsDescription": "Melanjutkan pembuatan di latar belakang dan menampilkan notifikasi dengan pratinjau balasan saat selesai.",
+    "backupRestore": "Pencadangan & pemulihan",
+    "backupRestoreButton": "Pulihkan",
+    "backupExportAllChats": "Ekspor semua obrolan",
+    "backupExportAllChatsDescription": "Simpan cadangan JSON dari semua obrolan Anda untuk dibagikan atau disimpan.",
+    "backupImportChats": "Pulihkan obrolan",
+    "backupImportChatsDescription": "Impor obrolan dari file cadangan yang dibuat oleh aplikasi ini."
   },
   "memory": {
     "shortWarning": "Peringatan Memori",
@@ -1972,5 +1981,9 @@
     "share": "Bagikan laporan",
     "refresh": "Muat ulang",
     "clear": "Hapus log"
+  },
+  "notifications": {
+    "generating": "Sedang membuat respons…",
+    "responseReady": "Respons siap"
   }
 }

@@ -213,7 +213,16 @@
     "retryConnection": "Повторить",
     "enterUrlManually": "Введите URL вручную",
     "manageServers": "Управление серверами",
-    "exportLegacyError": "Не удалось экспортировать старые сеансы чата. Возможно, файл не существует."
+    "exportLegacyError": "Не удалось экспортировать старые сеансы чата. Возможно, файл не существует.",
+    "notifications": "Уведомления",
+    "generationNotifications": "Уведомления о завершении ответа",
+    "generationNotificationsDescription": "Продолжает генерацию в фоне и по завершении показывает уведомление с предпросмотром ответа.",
+    "backupRestore": "Резервное копирование и восстановление",
+    "backupRestoreButton": "Восстановить",
+    "backupExportAllChats": "Экспортировать все чаты",
+    "backupExportAllChatsDescription": "Сохраните JSON-резервную копию всех чатов, чтобы поделиться или сохранить.",
+    "backupImportChats": "Восстановить чаты",
+    "backupImportChatsDescription": "Импортируйте чаты из файла резервной копии, созданного этим приложением."
   },
   "memory": {
     "shortWarning": "Предупреждение о памяти",
@@ -1972,5 +1981,9 @@
     "share": "Поделиться отчётом",
     "refresh": "Обновить",
     "clear": "Очистить журнал"
+  },
+  "notifications": {
+    "generating": "Генерация ответа…",
+    "responseReady": "Ответ готов"
   }
 }

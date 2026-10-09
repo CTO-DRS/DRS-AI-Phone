@@ -213,7 +213,16 @@
     "retryConnection": "Proovi uuesti",
     "enterUrlManually": "Sisesta URL käsitsi",
     "manageServers": "Halda servereid",
-    "exportLegacyError": "Vana vestlussessioonide eksportimine ebaõnnestus. Faili ei pruugi olla olemas."
+    "exportLegacyError": "Vana vestlussessioonide eksportimine ebaõnnestus. Faili ei pruugi olla olemas.",
+    "notifications": "Teavitused",
+    "generationNotifications": "Vastuse valmimise teavitused",
+    "generationNotificationsDescription": "Hoiab genereerimise taustal käimas ja näitab pärast valmimist teavitust vastuse eelvaatega.",
+    "backupRestore": "Varundamine ja taastamine",
+    "backupRestoreButton": "Taasta",
+    "backupExportAllChats": "Ekspordi kõik vestlused",
+    "backupExportAllChatsDescription": "Salvesta kõigi vestluste JSON-varukoopia jagamiseks või hoidmiseks.",
+    "backupImportChats": "Taasta vestlused",
+    "backupImportChatsDescription": "Impordi vestlused selle rakenduse loodud varufailist."
   },
   "memory": {
     "shortWarning": "Mälu hoiatus",
@@ -1972,5 +1981,9 @@
     "share": "Jaga aruannet",
     "refresh": "Värskenda",
     "clear": "Tühjenda logi"
+  },
+  "notifications": {
+    "generating": "Vastuse genereerimine…",
+    "responseReady": "Vastus on valmis"
   }
 }

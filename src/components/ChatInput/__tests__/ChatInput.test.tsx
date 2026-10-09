@@ -948,5 +948,87 @@ describe('input', () => {
         imageUris: undefined,
       });
     });
+
+    it('freezes send while the model context is loading (v1.38.0)', () => {
+      const onSendPress = jest.fn();
+
+      runInAction(() => {
+        modelStore.activeModelId = 'test-model';
+        modelStore.isContextLoading = true;
+        chatSessionStore.isGenerating = false;
+        chatSessionStore.isStopping = false;
+      });
+
+      try {
+        const {getByPlaceholderText, getByLabelText} = render(
+          <UserContext.Provider value={user}>
+            <ChatInput
+              {...{
+                onSendPress,
+                renderScrollable,
+                sendButtonVisibilityMode: 'editing',
+              }}
+            />
+          </UserContext.Provider>,
+        );
+
+        const input = getByPlaceholderText(
+          l10n.en.components.chatInput.inputPlaceholder,
+        );
+        fireEvent.changeText(input, 'Should not send');
+
+        const sendButton = getByLabelText(
+          l10n.en.components.sendButton.accessibilityLabel,
+        );
+        fireEvent.press(sendButton);
+
+        expect(onSendPress).not.toHaveBeenCalled();
+      } finally {
+        runInAction(() => {
+          modelStore.isContextLoading = false;
+        });
+      }
+    });
+
+    it('freezes send while a completion is running/stopping (v1.38.0)', () => {
+      const onSendPress = jest.fn();
+
+      runInAction(() => {
+        modelStore.activeModelId = 'test-model';
+        modelStore.isContextLoading = false;
+        chatSessionStore.isGenerating = true;
+      });
+
+      try {
+        const {getByPlaceholderText, getByLabelText} = render(
+          <UserContext.Provider value={user}>
+            <ChatInput
+              {...{
+                onSendPress,
+                renderScrollable,
+                sendButtonVisibilityMode: 'editing',
+              }}
+            />
+          </UserContext.Provider>,
+        );
+
+        const input = getByPlaceholderText(
+          l10n.en.components.chatInput.inputPlaceholder,
+        );
+        fireEvent.changeText(input, 'Should not send');
+
+        const sendButton = getByLabelText(
+          l10n.en.components.sendButton.accessibilityLabel,
+        );
+        fireEvent.press(sendButton);
+
+        expect(onSendPress).not.toHaveBeenCalled();
+      } finally {
+        runInAction(() => {
+          chatSessionStore.isGenerating = false;
+          chatSessionStore.isStopping = false;
+        });
+      }
+    });
   });
 });

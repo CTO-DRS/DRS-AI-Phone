@@ -213,7 +213,16 @@
     "retryConnection": "重試",
     "enterUrlManually": "手動輸入網址",
     "manageServers": "管理伺服器",
-    "exportLegacyError": "匯出舊版聊天記錄失敗。檔案可能不存在。"
+    "exportLegacyError": "匯出舊版聊天記錄失敗。檔案可能不存在。",
+    "notifications": "通知",
+    "generationNotifications": "回覆完成通知",
+    "generationNotificationsDescription": "在背景繼續生成，並在完成時顯示包含回覆預覽的通知。",
+    "backupRestore": "備份與還原",
+    "backupRestoreButton": "還原",
+    "backupExportAllChats": "匯出所有聊天",
+    "backupExportAllChatsDescription": "將所有聊天儲存為 JSON 備份，以便分享或保存。",
+    "backupImportChats": "還原聊天",
+    "backupImportChatsDescription": "由此應用程式建立的備份檔匯入聊天。"
   },
   "memory": {
     "shortWarning": "記憶體警告",
@@ -1972,5 +1981,9 @@
     "share": "分享報告",
     "refresh": "重新整理",
     "clear": "清除日誌"
+  },
+  "notifications": {
+    "generating": "正在產生回覆…",
+    "responseReady": "回覆已就緒"
   }
 }

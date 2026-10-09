@@ -239,7 +239,16 @@
     "retryConnection": "إعادة المحاولة",
     "enterUrlManually": "أدخل الرابط يدويًا",
     "manageServers": "إدارة الخوادم",
-    "exportLegacyError": "فشل تصدير جلسات المحادثة القديمة. قد يكون الملف غير موجود."
+    "exportLegacyError": "فشل تصدير جلسات المحادثة القديمة. قد يكون الملف غير موجود.",
+    "notifications": "الإشعارات",
+    "generationNotifications": "إشعار اكتمال الرد",
+    "generationNotificationsDescription": "يُبقي التوليد يعمل في الخلفية ويعرض إشعارًا يتضمن معاينة الرد عند اكتماله.",
+    "backupRestore": "النسخ الاحتياطي والاستعادة",
+    "backupRestoreButton": "استعادة",
+    "backupExportAllChats": "تصدير كل المحادثات",
+    "backupExportAllChatsDescription": "احفظ نسخة احتياطية بصيغة JSON من جميع محادثاتك لمشاركتها أو الاحتفاظ بها.",
+    "backupImportChats": "استعادة المحادثات",
+    "backupImportChatsDescription": "استورد المحادثات من ملف نسخة احتياطية أنشأه هذا التطبيق."
   },
   "models": {
     "fileManagement": {
@@ -1972,5 +1981,9 @@
     "share": "مشاركة التقرير",
     "refresh": "تحديث",
     "clear": "مسح السجل"
+  },
+  "notifications": {
+    "generating": "جارٍ توليد الرد…",
+    "responseReady": "اكتمل الرد"
   }
 }

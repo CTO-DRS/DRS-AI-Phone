@@ -213,7 +213,16 @@
     "retryConnection": "Tentar Novamente",
     "enterUrlManually": "Inserir URL manualmente",
     "manageServers": "Gerir Servidores",
-    "exportLegacyError": "Falha ao exportar as sessões de chat antigas. O ficheiro pode não existir."
+    "exportLegacyError": "Falha ao exportar as sessões de chat antigas. O ficheiro pode não existir.",
+    "notifications": "Notificações",
+    "generationNotifications": "Notificações de resposta concluída",
+    "generationNotificationsDescription": "Mantém a geração a correr em segundo plano e mostra uma notificação com uma pré-visualização da resposta ao concluir.",
+    "backupRestore": "Cópia de segurança e restauro",
+    "backupRestoreButton": "Restaurar",
+    "backupExportAllChats": "Exportar todas as conversas",
+    "backupExportAllChatsDescription": "Guarde uma cópia de segurança JSON de todas as suas conversas para partilhar ou guardar.",
+    "backupImportChats": "Restaurar conversas",
+    "backupImportChatsDescription": "Importe conversas de um ficheiro de cópia de segurança criado por esta aplicação."
   },
   "memory": {
     "shortWarning": "Aviso de Memória",
@@ -1972,5 +1981,9 @@
     "share": "Partilhar relatório",
     "refresh": "Atualizar",
     "clear": "Limpar registo"
+  },
+  "notifications": {
+    "generating": "A gerar resposta…",
+    "responseReady": "Resposta pronta"
   }
 }

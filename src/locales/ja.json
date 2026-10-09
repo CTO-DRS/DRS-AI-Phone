@@ -213,7 +213,16 @@
     "retryConnection": "再試行",
     "enterUrlManually": "URLを手動で入力",
     "manageServers": "サーバーを管理",
-    "exportLegacyError": "旧形式のチャットセッションのエクスポートに失敗しました。ファイルが存在しない可能性があります。"
+    "exportLegacyError": "旧形式のチャットセッションのエクスポートに失敗しました。ファイルが存在しない可能性があります。",
+    "notifications": "通知",
+    "generationNotifications": "応答完了通知",
+    "generationNotificationsDescription": "バックグラウンドでも生成を続行し、完了時に応答のプレビュー付き通知を表示します。",
+    "backupRestore": "バックアップと復元",
+    "backupRestoreButton": "復元",
+    "backupExportAllChats": "すべてのチャットをエクスポート",
+    "backupExportAllChatsDescription": "すべてのチャットのJSONバックアップを保存して、共有や保管ができます。",
+    "backupImportChats": "チャットを復元",
+    "backupImportChatsDescription": "このアプリで作成されたバックアップファイルからチャットをインポートします。"
   },
   "memory": {
     "shortWarning": "メモリ警告",
@@ -1972,5 +1981,9 @@
     "share": "レポートを共有",
     "refresh": "更新",
     "clear": "ログを消去"
+  },
+  "notifications": {
+    "generating": "応答を生成中…",
+    "responseReady": "応答の準備ができました"
   }
 }

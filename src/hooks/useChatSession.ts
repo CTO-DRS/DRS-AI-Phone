@@ -26,6 +26,11 @@ import {
 import {convertToChatMessages, removeThinkingParts} from '../utils/chat';
 import {activateKeepAwake, deactivateKeepAwake} from '../utils/keepAwake';
 import {
+  startGenerationNotification,
+  completeGenerationNotification,
+  cancelGenerationNotification,
+} from '../services/notificationService';
+import {
   toApiCompletionParams,
   ApiCompletionParams,
   CompletionParams,
@@ -553,6 +558,19 @@ export const useChatSession = (
     modelStore.setIsStreaming(false);
     chatSessionStore.setIsGenerating(true);
 
+    // Background-generation UX (v1.38.0): start the foreground-service
+    // notification immediately so (a) the user sees an ongoing
+    // "Generating…" bar and (b) leaving the app doesn't let Android
+    // freeze/kill inference. Fire-and-forget: never blocks the send path.
+    if (uiStore.generationNotificationsEnabled) {
+      startGenerationNotification(
+        'DRS AI',
+        l10n.notifications.generating,
+      ).catch(error =>
+        console.warn('[useChatSession] generation notification failed:', error),
+      );
+    }
+
     try {
       activateKeepAwake();
     } catch (error) {
@@ -596,6 +614,9 @@ export const useChatSession = (
     abortRef.current = new AbortController();
     const completionStartTime = Date.now();
     const timeToFirstTokenMs: {value: number | null} = {value: null};
+    // Captured from `run_finished` so the background completion
+    // notification can carry a preview of the final reply text.
+    let finalResponseText = '';
     const tts: TtsRunState = {
       enabled: ttsStore.autoSpeakEnabled,
       started: false,
@@ -674,6 +695,10 @@ export const useChatSession = (
           continue;
         }
 
+        if (event.type === 'run_finished') {
+          finalResponseText = event.result?.finalResult?.text ?? '';
+        }
+
         // Reference guard before MobX write: deep observables wrap
         // values in a proxy, so equality inside the setter can't see
         // "same object". The reducer returns the input ref when nothing
@@ -732,12 +757,30 @@ export const useChatSession = (
       modelStore.setIsStreaming(false);
       chatSessionStore.setIsGenerating(false);
       chatSessionStore.setIsStopping(false);
+      // Swap the ongoing "Generating…" bar for a completion notification
+      // (with the response preview) when the user is away; clean up
+      // silently when they're watching the chat. Fire-and-forget.
+      completeGenerationNotification(
+        'DRS AI',
+        l10n.notifications.responseReady,
+        finalResponseText,
+      ).catch(error =>
+        console.warn('[useChatSession] completion notification failed:', error),
+      );
     } catch (error) {
       console.error('Completion error:', error);
       modelStore.setInferencing(false);
       modelStore.setIsStreaming(false);
       chatSessionStore.setIsGenerating(false);
       chatSessionStore.setIsStopping(false);
+      // Kill the foreground-service notification without a completion
+      // post — the in-app error surface owns the messaging here.
+      cancelGenerationNotification().catch(cancelError =>
+        console.warn(
+          '[useChatSession] cancel notification failed:',
+          cancelError,
+        ),
+      );
       // Reset agentUiState back to idle so renderers don't get
       // stuck in a failed state across the next user message.
       chatSessionStore.setAgentUiState(initialAgentUiState);

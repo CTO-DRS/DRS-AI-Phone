@@ -213,7 +213,16 @@
     "retryConnection": "נסה שוב",
     "enterUrlManually": "הזן כתובת (URL) ידנית",
     "manageServers": "ניהול שרתים",
-    "exportLegacyError": "ייצוא סשני הצ'אט הישנים נכשל. ייתכן שהקובץ לא קיים."
+    "exportLegacyError": "ייצוא סשני הצ'אט הישנים נכשל. ייתכן שהקובץ לא קיים.",
+    "notifications": "התראות",
+    "generationNotifications": "התראות על השלמת תשובה",
+    "generationNotificationsDescription": "ממשיך את היצירה ברקע ומציג התראה עם תצוגה מקדימה של התשובה בסיום.",
+    "backupRestore": "גיבוי ושחזור",
+    "backupRestoreButton": "שחזר",
+    "backupExportAllChats": "ייצוא כל הצ׳אטים",
+    "backupExportAllChatsDescription": "שמור גיבוי JSON של כל הצ׳אטים שלך לשיתוף או לשמירה.",
+    "backupImportChats": "שחזור צ׳אטים",
+    "backupImportChatsDescription": "ייבא צ׳אטים מקובץ גיבוי שנוצר על ידי האפליקציה הזו."
   },
   "memory": {
     "shortWarning": "אזהרת זיכרון",
@@ -1972,5 +1981,9 @@
     "share": "שיתוף דוח",
     "refresh": "רענון",
     "clear": "ניקוי יומן"
+  },
+  "notifications": {
+    "generating": "מייצר תשובה…",
+    "responseReady": "התשובה מוכנה"
   }
 }

@@ -213,7 +213,16 @@
     "retryConnection": "تلاش مجدد",
     "enterUrlManually": "ورود دستی آدرس",
     "manageServers": "مدیریت سرورها",
-    "exportLegacyError": "خروجی‌گیری از جلسات چت قدیمی ناموفق بود. ممکن است فایل وجود نداشته باشد."
+    "exportLegacyError": "خروجی‌گیری از جلسات چت قدیمی ناموفق بود. ممکن است فایل وجود نداشته باشد.",
+    "notifications": "اعلان‌ها",
+    "generationNotifications": "اعلان تکمیل پاسخ",
+    "generationNotificationsDescription": "تولید را در پس‌زمینه ادامه می‌دهد و پس از تکمیل، اعلانی همراه با پیش‌نمایش پاسخ نشان می‌دهد.",
+    "backupRestore": "پشتیبان‌گیری و بازیابی",
+    "backupRestoreButton": "بازیابی",
+    "backupExportAllChats": "خروجی گرفتن از همه گفتگوها",
+    "backupExportAllChatsDescription": "از همه گفتگوهای خود نسخه پشتیبان JSON ذخیره کنید تا به اشتراک بگذارید یا نگه دارید.",
+    "backupImportChats": "بازیابی گفتگوها",
+    "backupImportChatsDescription": "گفتگوها را از فایل پشتیبان ساخته‌شده توسط این برنامه وارد کنید."
   },
   "memory": {
     "shortWarning": "هشدار حافظه",
@@ -1972,5 +1981,9 @@
     "share": "اشتراک‌گذاری گزارش",
     "refresh": "به‌روزرسانی",
     "clear": "پاک کردن گزارش"
+  },
+  "notifications": {
+    "generating": "در حال تولید پاسخ…",
+    "responseReady": "پاسخ آماده است"
   }
 }

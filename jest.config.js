@@ -50,6 +50,8 @@ module.exports = {
       '<rootDir>/__mocks__/external/@react-native-firebase/app.js',
     '@react-native-firebase/app-check':
       '<rootDir>/__mocks__/external/@react-native-firebase/app-check.js',
+    '@notifee/react-native':
+      '<rootDir>/__mocks__/external/@notifee/react-native.ts',
     '\\.svg': '<rootDir>/__mocks__/external/react-native-svg.js',
     'react-native-keychain':
       '<rootDir>/__mocks__/external/react-native-keychain.js',

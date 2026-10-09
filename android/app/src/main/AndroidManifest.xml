@@ -14,6 +14,17 @@
     <uses-feature android:name="android.hardware.camera" android:required="false" />
     <uses-feature android:name="android.hardware.camera.any" android:required="false" />
 
+    <!-- Local generation notifications (v1.38.0): completion preview +
+         foreground-service notification that keeps inference alive while
+         the app is backgrounded. POST_NOTIFICATIONS is runtime-scoped on
+         Android 13+; the app degrades gracefully when denied. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <!-- Android 14+ requires a typed FGS; on-device AI inference does not
+         fit the stock types, so it runs as specialUse (see the service
+         PROPERTY_SPECIAL_USE_FGS_SUBTYPE below). -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+
     <!-- Needed only for devices running Android 9 (API 28) or lower -->
     <!-- Currently used for storing chat sessions (/Download) -->
     <uses-permission
@@ -63,6 +74,19 @@
             <data android:scheme="drsai" android:host="checkout" />
         </intent-filter>
       </activity>
+
+        <!-- Notifee foreground service: hosts the "Generating response…"
+             ongoing notification while a completion runs, so the OS keeps
+             the process (and the native llama.cpp threads) alive when the
+             user leaves the app. specialUse type = on-device inference. -->
+        <service
+          android:name="app.notifee.core.ForegroundService"
+          android:exported="false"
+          android:foregroundServiceType="specialUse">
+          <property
+            android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+            android:value="ondevice_ai_inference" />
+        </service>
 
         <!-- Optional native library for OpenCL (GPU acceleration) -->
         <uses-native-library

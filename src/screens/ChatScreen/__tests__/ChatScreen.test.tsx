@@ -35,6 +35,14 @@ describe('ChatScreen', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     llamaRN = require('llama.rn');
+    // The store is a file-scoped singleton; tests below mutate the
+    // loading/generation flags directly. Reset them so leaked state from
+    // an earlier test can't freeze the send path (v1.38.0 send gate).
+    runInAction(() => {
+      modelStore.isContextLoading = false;
+      chatSessionStore.isGenerating = false;
+      chatSessionStore.isStopping = false;
+    });
   });
 
   it('renders correctly when model is not loaded', () => {

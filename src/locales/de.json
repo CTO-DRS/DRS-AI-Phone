@@ -213,7 +213,16 @@
     "retryConnection": "Wiederholen",
     "enterUrlManually": "URL manuell eingeben",
     "manageServers": "Server verwalten",
-    "exportLegacyError": "Export der alten Chat-Sitzungen fehlgeschlagen. Die Datei ist möglicherweise nicht vorhanden."
+    "exportLegacyError": "Export der alten Chat-Sitzungen fehlgeschlagen. Die Datei ist möglicherweise nicht vorhanden.",
+    "notifications": "Benachrichtigungen",
+    "generationNotifications": "Benachrichtigung bei abgeschlossenem Antwort",
+    "generationNotificationsDescription": "Lässt die Generierung im Hintergrund weiterlaufen und zeigt nach Abschluss eine Benachrichtigung mit einer Vorschau der Antwort.",
+    "backupRestore": "Sichern & Wiederherstellen",
+    "backupRestoreButton": "Wiederherstellen",
+    "backupExportAllChats": "Alle Chats exportieren",
+    "backupExportAllChatsDescription": "JSON-Backup aller Chats sichern, um es zu teilen oder aufzubewahren.",
+    "backupImportChats": "Chats wiederherstellen",
+    "backupImportChatsDescription": "Chats aus einer von dieser App erstellten Sicherungsdatei importieren."
   },
   "memory": {
     "shortWarning": "Speicherwarnung",
@@ -1972,5 +1981,9 @@
     "share": "Bericht teilen",
     "refresh": "Aktualisieren",
     "clear": "Protokoll löschen"
+  },
+  "notifications": {
+    "generating": "Antwort wird generiert…",
+    "responseReady": "Antwort bereit"
   }
 }

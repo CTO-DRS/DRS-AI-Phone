@@ -213,7 +213,16 @@
     "retryConnection": "Retry",
     "enterUrlManually": "Enter URL manually",
     "manageServers": "Manage Servers",
-    "exportLegacyError": "Failed to export legacy chat sessions. The file may not exist."
+    "exportLegacyError": "Failed to export legacy chat sessions. The file may not exist.",
+    "notifications": "Notifications",
+    "generationNotifications": "Response completion notifications",
+    "generationNotificationsDescription": "Keeps generation running in the background and shows a notification with a preview of the reply when it completes.",
+    "backupRestore": "Backup & restore",
+    "backupRestoreButton": "Restore",
+    "backupExportAllChats": "Export all chats",
+    "backupExportAllChatsDescription": "Save a JSON backup of all your chats to share or keep.",
+    "backupImportChats": "Restore chats",
+    "backupImportChatsDescription": "Import chats from a backup file created by this app."
   },
   "memory": {
     "shortWarning": "Memory Warning",
@@ -1972,5 +1981,9 @@
     "share": "Share report",
     "refresh": "Refresh",
     "clear": "Clear log"
+  },
+  "notifications": {
+    "generating": "Generating response…",
+    "responseReady": "Response ready"
   }
 }

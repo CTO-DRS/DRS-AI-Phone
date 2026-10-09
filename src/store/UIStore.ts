@@ -66,6 +66,13 @@ export class UIStore {
 
   iOSBackgroundDownloading = true;
 
+  // Generation notifications (v1.38.0): while ON, an ongoing foreground-
+  // service notification keeps inference alive in the background and a
+  // completion notification with the response preview is posted when the
+  // user is away. Persisted; default ON because it is the requested
+  // behaviour and the permission prompt only appears on first use.
+  generationNotificationsEnabled = true;
+
   benchmarkShareDialog = {
     shouldShow: true,
   };
@@ -154,6 +161,7 @@ export class UIStore {
         'colorScheme',
         'autoNavigatetoChat',
         'displayMemUsage',
+        'generationNotificationsEnabled',
         'benchmarkShareDialog',
         '_language',
         '_languageManuallySet',
@@ -231,6 +239,12 @@ export class UIStore {
   setDisplayMemUsage(value: boolean) {
     runInAction(() => {
       this.displayMemUsage = value;
+    });
+  }
+
+  setGenerationNotificationsEnabled(value: boolean) {
+    runInAction(() => {
+      this.generationNotificationsEnabled = value;
     });
   }
 

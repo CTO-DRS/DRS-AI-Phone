@@ -213,7 +213,16 @@
     "retryConnection": "Försök igen",
     "enterUrlManually": "Ange URL manuellt",
     "manageServers": "Hantera servrar",
-    "exportLegacyError": "Det gick inte att exportera äldre chattsessioner. Filen kanske inte finns."
+    "exportLegacyError": "Det gick inte att exportera äldre chattsessioner. Filen kanske inte finns.",
+    "notifications": "Aviseringar",
+    "generationNotifications": "Aviseringar när svaret är klart",
+    "generationNotificationsDescription": "Låter genereringen fortsätta i bakgrunden och visar en avisering med en förhandsgranskning av svaret när den är klar.",
+    "backupRestore": "Säkerhetskopiering och återställning",
+    "backupRestoreButton": "Återställ",
+    "backupExportAllChats": "Exportera alla chattar",
+    "backupExportAllChatsDescription": "Spara en JSON-säkerhetskopia av alla dina chattar för att dela eller spara.",
+    "backupImportChats": "Återställ chattar",
+    "backupImportChatsDescription": "Importera chattar från en säkerhetskopia skapad av den här appen."
   },
   "memory": {
     "shortWarning": "Minnesvarning",
@@ -1972,5 +1981,9 @@
     "share": "Dela rapport",
     "refresh": "Uppdatera",
     "clear": "Rensa logg"
+  },
+  "notifications": {
+    "generating": "Genererar svar…",
+    "responseReady": "Svaret är klart"
   }
 }
