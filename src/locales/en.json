@@ -226,7 +226,15 @@
     "backupExportAssistants": "Export assistants",
     "backupExportAssistantsDescription": "Save a JSON backup of all your assistants to share or keep.",
     "backupImportAssistants": "Restore assistants",
-    "backupImportAssistantsDescription": "Import assistants from a backup file created by this app."
+    "backupImportAssistantsDescription": "Import assistants from a backup file created by this app.",
+    "updateAlertLater": "Later",
+    "fullBackupExport": "Full backup",
+    "fullBackupExportDescription": "One file with chats, assistants and settings",
+    "fullBackupImport": "Restore full backup",
+    "fullBackupImportDescription": "Brings back what is missing, never overwrites",
+    "fullBackupRestoreSuccess": "Restored {{chats}} chats, {{messages}} messages, {{assistants}} assistants, {{settings}} settings",
+    "fullBackupRestoreError": "Could not restore the backup file",
+    "fullBackupExportError": "Could not create the backup file"
   },
   "memory": {
     "shortWarning": "Memory Warning",
@@ -1989,5 +1997,13 @@
   "notifications": {
     "generating": "Generating response…",
     "responseReady": "Response ready"
+  },
+  "widgets": {
+    "idle": "No active model",
+    "ready": "Ready",
+    "loading": "Loading model…",
+    "generating": "Generating reply…",
+    "downloadingProgress": "Downloading {{progress}}%",
+    "error": "Error"
   }
 }

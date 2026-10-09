@@ -226,7 +226,15 @@
     "backupExportAssistants": "Eksport pembantu",
     "backupExportAssistantsDescription": "Simpan sandaran JSON semua pembantu anda untuk dikongsi atau disimpan.",
     "backupImportAssistants": "Pulihkan pembantu",
-    "backupImportAssistantsDescription": "Import pembantu daripada fail sandaran yang dibuat oleh aplikasi ini."
+    "backupImportAssistantsDescription": "Import pembantu daripada fail sandaran yang dibuat oleh aplikasi ini.",
+    "updateAlertLater": "Nanti",
+    "fullBackupExport": "Sandaran penuh",
+    "fullBackupExportDescription": "Satu fail dengan sembang, pembantu dan tetapan",
+    "fullBackupImport": "Pulihkan sandaran penuh",
+    "fullBackupImportDescription": "Melengkapkan yang tiada, tidak pernah menimpa",
+    "fullBackupRestoreSuccess": "Dipulihkan {{chats}} sembang, {{messages}} mesej, {{assistants}} pembantu, {{settings}} tetapan",
+    "fullBackupRestoreError": "Fail sandaran tidak dapat dipulihkan",
+    "fullBackupExportError": "Fail sandaran tidak dapat dicipta"
   },
   "memory": {
     "shortWarning": "Amaran Memori",
@@ -1989,5 +1997,13 @@
   "notifications": {
     "generating": "Menjana respons…",
     "responseReady": "Respons sedia"
+  },
+  "widgets": {
+    "idle": "Tiada model aktif",
+    "ready": "Sedia",
+    "loading": "Memuatkan model…",
+    "generating": "Menjana balasan…",
+    "downloadingProgress": "Memuat turun {{progress}}%",
+    "error": "Ralat"
   }
 }

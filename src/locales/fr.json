@@ -226,7 +226,15 @@
     "backupExportAssistants": "Exporter les assistants",
     "backupExportAssistantsDescription": "Enregistrez une sauvegarde JSON de tous vos assistants pour la partager ou la conserver.",
     "backupImportAssistants": "Restaurer les assistants",
-    "backupImportAssistantsDescription": "Importez des assistants depuis un fichier de sauvegarde créé par cette application."
+    "backupImportAssistantsDescription": "Importez des assistants depuis un fichier de sauvegarde créé par cette application.",
+    "updateAlertLater": "Plus tard",
+    "fullBackupExport": "Sauvegarde complète",
+    "fullBackupExportDescription": "Un fichier avec discussions, assistants et réglages",
+    "fullBackupImport": "Restaurer la sauvegarde complète",
+    "fullBackupImportDescription": "Complète ce qui manque, n’écrase jamais",
+    "fullBackupRestoreSuccess": "{{chats}} discussions, {{messages}} messages, {{assistants}} assistants et {{settings}} réglages restaurés",
+    "fullBackupRestoreError": "Impossible de restaurer la sauvegarde",
+    "fullBackupExportError": "Impossible de créer la sauvegarde"
   },
   "memory": {
     "shortWarning": "Alerte mémoire",
@@ -1989,5 +1997,13 @@
   "notifications": {
     "generating": "Génération de la réponse…",
     "responseReady": "Réponse prête"
+  },
+  "widgets": {
+    "idle": "Aucun modèle actif",
+    "ready": "Prêt",
+    "loading": "Chargement du modèle…",
+    "generating": "Génération de la réponse…",
+    "downloadingProgress": "Téléchargement {{progress}}%",
+    "error": "Erreur"
   }
 }

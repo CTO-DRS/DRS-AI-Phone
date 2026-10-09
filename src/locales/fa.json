@@ -226,7 +226,15 @@
     "backupExportAssistants": "دریافت خروجی دستیارها",
     "backupExportAssistantsDescription": "یک نسخه پشتیبان JSON از همه دستیارهای خود ذخیره کنید تا هم‌رسانی یا نگه‌داری کنید.",
     "backupImportAssistants": "بازیابی دستیارها",
-    "backupImportAssistantsDescription": "دستیارها را از فایل نسخه پشتیبانی که این برنامه ساخته است وارد کنید."
+    "backupImportAssistantsDescription": "دستیارها را از فایل نسخه پشتیبانی که این برنامه ساخته است وارد کنید.",
+    "updateAlertLater": "بعداً",
+    "fullBackupExport": "پشتیبان کامل",
+    "fullBackupExportDescription": "یک فایل شامل گفتگوها، دستیارها و تنظیمات",
+    "fullBackupImport": "بازیابی پشتیبان کامل",
+    "fullBackupImportDescription": "فقدان‌ها را برمی‌گرداند و هرگز بازنویسی نمی‌کند",
+    "fullBackupRestoreSuccess": "{{chats}} گفتگو، {{messages}} پیام، {{assistants}} دستیار و {{settings}} تنظیم بازیابی شد",
+    "fullBackupRestoreError": "بازیابی فایل پشتیبان ممکن نشد",
+    "fullBackupExportError": "ایجاد فایل پشتیبان ممکن نشد"
   },
   "memory": {
     "shortWarning": "هشدار حافظه",
@@ -1989,5 +1997,13 @@
   "notifications": {
     "generating": "در حال تولید پاسخ…",
     "responseReady": "پاسخ آماده است"
+  },
+  "widgets": {
+    "idle": "مدل فعالی وجود ندارد",
+    "ready": "آماده",
+    "loading": "در حال بارگذاری مدل…",
+    "generating": "در حال تولید پاسخ…",
+    "downloadingProgress": "در حال دانلود {{progress}}%",
+    "error": "خطا"
   }
 }

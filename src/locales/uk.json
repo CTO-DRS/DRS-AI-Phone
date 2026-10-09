@@ -226,7 +226,15 @@
     "backupExportAssistants": "Експортувати помічників",
     "backupExportAssistantsDescription": "Збережіть JSON-резервну копію всіх помічників, щоб поділитися нею або зберегти.",
     "backupImportAssistants": "Відновити помічників",
-    "backupImportAssistantsDescription": "Імпортуйте помічників із файлу резервної копії, створеного цією програмою."
+    "backupImportAssistantsDescription": "Імпортуйте помічників із файлу резервної копії, створеного цією програмою.",
+    "updateAlertLater": "Пізніше",
+    "fullBackupExport": "Повна резервна копія",
+    "fullBackupExportDescription": "Один файл із чатами, асистентами та налаштуваннями",
+    "fullBackupImport": "Відновити повну копію",
+    "fullBackupImportDescription": "Відновлює відсутнє, ніколи не перезаписує",
+    "fullBackupRestoreSuccess": "Відновлено: чатів {{chats}}, повідомлень {{messages}}, асистентів {{assistants}}, налаштувань {{settings}}",
+    "fullBackupRestoreError": "Не вдалося відновити резервну копію",
+    "fullBackupExportError": "Не вдалося створити резервну копію"
   },
   "memory": {
     "shortWarning": "Попередження про пам'ять",
@@ -1989,5 +1997,13 @@
   "notifications": {
     "generating": "Генерація відповіді…",
     "responseReady": "Відповідь готова"
+  },
+  "widgets": {
+    "idle": "Немає активної моделі",
+    "ready": "Готово",
+    "loading": "Завантаження моделі…",
+    "generating": "Генерація відповіді…",
+    "downloadingProgress": "Завантаження {{progress}}%",
+    "error": "Помилка"
   }
 }
