@@ -226,6 +226,20 @@ android {
     }
 }
 
+// notifee pulls real Guava (33.3.1-android) + concurrent-futures, while
+// WorkManager's await() extensions compile against the empty
+// `listenablefuture:1.0` stub. Having BOTH the stub and real Guava on the
+// classpath makes `ListenableFuture` ambiguous for the Kotlin compiler
+// (":app:compileProdReleaseKotlin — Cannot access class 'ListenableFuture'").
+// Resolve every listenablefuture reference to real Guava instead.
+configurations.all {
+    resolutionStrategy.dependencySubstitution {
+        substitute(module("com.google.guava:listenablefuture"))
+            .using(module("com.google.guava:guava:33.3.1-android"))
+            .because("the 1.0 stub conflicts with real guava; DownloadModule needs ListenableFuture")
+    }
+}
+
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
@@ -250,6 +264,9 @@ dependencies {
     kapt("androidx.room:room-compiler:$room_version")
     // WorkManager for DownloadModule
     implementation "androidx.work:work-runtime-ktx:2.10.5"
+    // Real Guava for ListenableFuture (see configurations.all substitution
+    // above; notifee + WorkManager stub conflict, v1.38.0)
+    implementation("com.google.guava:guava:33.3.1-android")
     // Lifecycle for DownloadModule
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.9.4"
     // Coroutines for DownloadModule (wait)
