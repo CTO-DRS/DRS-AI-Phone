@@ -213,7 +213,16 @@
     "retryConnection": "Cuba Lagi",
     "enterUrlManually": "Masukkan URL secara manual",
     "manageServers": "Urus Pelayan",
-    "exportLegacyError": "Gagal mengeksport sesi sembang lama. Fail mungkin tidak wujud."
+    "exportLegacyError": "Gagal mengeksport sesi sembang lama. Fail mungkin tidak wujud.",
+    "notifications": "Pemberitahuan",
+    "generationNotifications": "Pemberitahuan respons selesai",
+    "generationNotificationsDescription": "Meneruskan penjanaan di latar belakang dan memaparkan pemberitahuan dengan pratonton balasan apabila selesai.",
+    "backupRestore": "Sandaran & pemulihan",
+    "backupRestoreButton": "Pulihkan",
+    "backupExportAllChats": "Eksport semua sembang",
+    "backupExportAllChatsDescription": "Simpan sandaran JSON semua sembang anda untuk dikongsi atau disimpan.",
+    "backupImportChats": "Pulihkan sembang",
+    "backupImportChatsDescription": "Import sembang daripada fail sandaran yang dicipta oleh aplikasi ini."
   },
   "memory": {
     "shortWarning": "Amaran Memori",
@@ -1972,5 +1981,9 @@
     "share": "Kongsi laporan",
     "refresh": "Muat semula",
     "clear": "Kosongkan log"
+  },
+  "notifications": {
+    "generating": "Menjana respons…",
+    "responseReady": "Respons sedia"
   }
 }

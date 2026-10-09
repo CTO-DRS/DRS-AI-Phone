@@ -213,7 +213,16 @@
     "retryConnection": "重试",
     "enterUrlManually": "手动输入URL",
     "manageServers": "管理服务器",
-    "exportLegacyError": "导出旧版聊天会话失败。文件可能不存在。"
+    "exportLegacyError": "导出旧版聊天会话失败。文件可能不存在。",
+    "notifications": "通知",
+    "generationNotifications": "回复完成通知",
+    "generationNotificationsDescription": "在后台继续生成，并在完成时显示包含回复预览的通知。",
+    "backupRestore": "备份与恢复",
+    "backupRestoreButton": "恢复",
+    "backupExportAllChats": "导出所有聊天",
+    "backupExportAllChatsDescription": "将所有聊天保存为 JSON 备份，以便分享或留存。",
+    "backupImportChats": "恢复聊天",
+    "backupImportChatsDescription": "从此应用创建的备份文件导入聊天。"
   },
   "memory": {
     "shortWarning": "内存警告",
@@ -1972,5 +1981,9 @@
     "share": "分享报告",
     "refresh": "刷新",
     "clear": "清除日志"
+  },
+  "notifications": {
+    "generating": "正在生成回复…",
+    "responseReady": "回复已就绪"
   }
 }

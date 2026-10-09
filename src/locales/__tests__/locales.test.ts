@@ -28,6 +28,7 @@ const EXPECTED_SECTIONS = [
   'validation',
   'camera',
   'video',
+  'notifications',
   'screenTitles',
   'chat',
   'benchmark',

@@ -166,6 +166,14 @@ export const ChatInput = observer(
 
     const hasActiveModel = !!modelStore.activeModelId;
 
+    // v1.38.0 send-freeze gates. The model "active" flag alone let users
+    // fire messages into a still-initializing context (contextId not yet
+    // set → "model not loaded" system message) and during the brief send-
+    // to-run handoff. Freeze on either; the tap gives haptic feedback.
+    const isModelLoading = modelStore.isContextLoading;
+    const isGenerationBusy =
+      chatSessionStore.isGenerating || chatSessionStore.isStopping;
+
     // Use `defaultValue` if provided
     const [text, setText] = React.useState(textInputProps?.defaultValue ?? '');
     // State for selected images - use external control when provided
@@ -242,6 +250,17 @@ export const ChatInput = observer(
           setShowModelWarning(true);
           // Auto-hide after 3 seconds
           setTimeout(() => setShowModelWarning(false), 3000);
+          return;
+        }
+
+        // Model still initializing its context, or a completion is
+        // already running/stopping: frozen send. Haptic-only feedback —
+        // the disabled button styling + placeholder already explain why.
+        if (isModelLoading || isGenerationBusy) {
+          ReactNativeHapticFeedback.trigger(
+            'notificationWarning',
+            hapticOptions,
+          );
           return;
         }
 
@@ -370,7 +389,15 @@ export const ChatInput = observer(
       user &&
       !isVideoCapable && // Hide send button for video-capable assistants
       (sendButtonVisibilityMode === 'always' || value.trim());
-    const isSendButtonEnabled = value.trim().length > 0 && hasActiveModel;
+    // Frozen while the model context is initializing or a completion is
+    // running/stopping (v1.38.0). The whole busy window is normally
+    // covered by the Stop button (isStopVisible = inferencing); this is
+    // the belt-and-braces gate for the handoff gaps around it.
+    const isSendButtonEnabled =
+      value.trim().length > 0 &&
+      hasActiveModel &&
+      !isModelLoading &&
+      !isGenerationBusy;
     const sendButtonOpacity = isSendButtonEnabled ? 1 : 0.4;
 
     const rotateInterpolate = iconRotation.interpolate({
@@ -388,8 +415,10 @@ export const ChatInput = observer(
       currentActiveAssistant?.color?.[0] || theme.colors.primary;
     const videoOnAccentColor = getContrastColor(videoAccentColor);
     const onSurfaceColorVariant = onSurfaceColor + '55'; // for disabled state or placeholder text
-    // // Plus button state
-    const isPlusButtonEnabled = !isStreaming && isVisionEnabled;
+    // // Plus button state — also frozen while generation runs (attaching
+    // images mid-completion would race the active run).
+    const isPlusButtonEnabled =
+      !isStreaming && !isGenerationBusy && isVisionEnabled;
     const plusColor = isPlusButtonEnabled
       ? onSurfaceColor
       : onSurfaceColorVariant;

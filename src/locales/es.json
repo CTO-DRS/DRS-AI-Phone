@@ -213,7 +213,16 @@
     "retryConnection": "Reintentar",
     "enterUrlManually": "Ingresar URL manualmente",
     "manageServers": "Administrar Servidores",
-    "exportLegacyError": "Error al exportar las sesiones de chat antiguas. Es posible que el archivo no exista."
+    "exportLegacyError": "Error al exportar las sesiones de chat antiguas. Es posible que el archivo no exista.",
+    "notifications": "Notificaciones",
+    "generationNotifications": "Notificaciones de respuesta completada",
+    "generationNotificationsDescription": "Mantiene la generación en segundo plano y muestra una notificación con una vista previa de la respuesta al completarse.",
+    "backupRestore": "Copia de seguridad y restauración",
+    "backupRestoreButton": "Restaurar",
+    "backupExportAllChats": "Exportar todos los chats",
+    "backupExportAllChatsDescription": "Guarda una copia de seguridad JSON de todos tus chats para compartir o conservar.",
+    "backupImportChats": "Restaurar chats",
+    "backupImportChatsDescription": "Importa chats desde un archivo de copia de seguridad creado por esta aplicación."
   },
   "memory": {
     "shortWarning": "Advertencia de memoria",
@@ -1972,5 +1981,9 @@
     "share": "Compartir informe",
     "refresh": "Actualizar",
     "clear": "Borrar registro"
+  },
+  "notifications": {
+    "generating": "Generando respuesta…",
+    "responseReady": "Respuesta lista"
   }
 }

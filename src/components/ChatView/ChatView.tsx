@@ -865,10 +865,16 @@ export const ChatView = observer(
     // and follow-up), generating_tool_call, executing_tool. Hidden in
     // streaming_text and done so it doesn't compete with the visible
     // token stream / final footer.
+    // v1.38.0: the window between the send tap and `run_started` (user
+    // message persist + jinja formatting + trigger-marker computation)
+    // leaves agentUiState at 'idle' while isGenerating is already true —
+    // previously NOTHING showed there and the chat felt frozen. Show the
+    // typing dots the instant the user sends.
     const isPending =
       agentStatus === 'prefill' ||
       agentStatus === 'generating_tool_call' ||
       agentStatus === 'executing_tool' ||
+      (chatSessionStore.isGenerating && agentStatus === 'idle') ||
       // Keep the indicator visible during the user-initiated stop
       // window so they see the "Stopping…" feedback even if status
       // had been `streaming_text` (no indicator) at the moment of the

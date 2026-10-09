@@ -213,7 +213,16 @@
     "retryConnection": "Powtórz",
     "enterUrlManually": "Wprowadź adres URL ręcznie",
     "manageServers": "Zarządzanie Serwerami",
-    "exportLegacyError": "Nie udało się wyeksportować starszych sesji czatu. Plik może nie istnieć."
+    "exportLegacyError": "Nie udało się wyeksportować starszych sesji czatu. Plik może nie istnieć.",
+    "notifications": "Powiadomienia",
+    "generationNotifications": "Powiadomienia o ukończeniu odpowiedzi",
+    "generationNotificationsDescription": "Kontynuuje generowanie w tle i po zakończeniu wyświetla powiadomienie z podglądem odpowiedzi.",
+    "backupRestore": "Kopia zapasowa i przywracanie",
+    "backupRestoreButton": "Przywróć",
+    "backupExportAllChats": "Wyeksportuj wszystkie czaty",
+    "backupExportAllChatsDescription": "Zapisz kopię zapasową JSON wszystkich czatów, aby udostępnić lub przechować.",
+    "backupImportChats": "Przywróć czaty",
+    "backupImportChatsDescription": "Zaimportuj czaty z pliku kopii zapasowej utworzonego przez tę aplikację."
   },
   "memory": {
     "shortWarning": "Ostrzeżenie o Braku Pamięci",
@@ -1972,5 +1981,9 @@
     "share": "Udostępnij raport",
     "refresh": "Odśwież",
     "clear": "Wyczyść dziennik"
+  },
+  "notifications": {
+    "generating": "Generowanie odpowiedzi…",
+    "responseReady": "Odpowiedź gotowa"
   }
 }

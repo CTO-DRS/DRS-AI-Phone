@@ -69,6 +69,8 @@ import {
 import {t} from '../../locales';
 import {checkGpuSupport} from '../../utils/deviceCapabilities';
 import {exportLegacyChatSessions} from '../../utils/exportUtils';
+import {exportAllChatSessions} from '../../utils/exportUtils';
+import {importChatSessions} from '../../utils/importUtils';
 import {getDeviceOptions, DeviceOption} from '../../utils/deviceSelection';
 import {
   inferBackendType,
@@ -1508,6 +1510,110 @@ export const SettingsScreen: React.FC = observer(() => {
                     }}
                     style={styles.menuButton}>
                     {l10n.settings.exportButton}
+                  </Button>
+                </View>
+              </View>
+            </Card.Content>
+          </Card>
+
+          {/* Notifications (v1.38.0) */}
+          <Card elevation={0} style={styles.card}>
+            <Card.Title title={l10n.settings.notifications} />
+            <Card.Content>
+              <View style={styles.settingItemContainer}>
+                <View style={styles.switchContainer}>
+                  <View style={styles.textContainer}>
+                    <Text variant="titleMedium" style={styles.textLabel}>
+                      {l10n.settings.generationNotifications}
+                    </Text>
+                    <Text variant="labelSmall" style={styles.textDescription}>
+                      {l10n.settings.generationNotificationsDescription}
+                    </Text>
+                  </View>
+                  <Switch
+                    testID="generation-notifications-switch"
+                    value={uiStore.generationNotificationsEnabled}
+                    onValueChange={value =>
+                      uiStore.setGenerationNotificationsEnabled(value)
+                    }
+                  />
+                </View>
+              </View>
+            </Card.Content>
+          </Card>
+
+          {/* Backup & Restore (v1.38.0) */}
+          <Card elevation={0} style={styles.card}>
+            <Card.Title title={l10n.settings.backupRestore} />
+            <Card.Content>
+              <View style={styles.settingItemContainer}>
+                {/* Export all chats = one-tap full backup */}
+                <View style={styles.switchContainer}>
+                  <View style={styles.textContainer}>
+                    <Text variant="titleMedium" style={styles.textLabel}>
+                      {l10n.settings.backupExportAllChats}
+                    </Text>
+                    <Text variant="labelSmall" style={styles.textDescription}>
+                      {l10n.settings.backupExportAllChatsDescription}
+                    </Text>
+                  </View>
+                  <Button
+                    mode="outlined"
+                    testID="backup-export-button"
+                    onPress={async () => {
+                      try {
+                        await exportAllChatSessions();
+                      } catch (error) {
+                        console.error(
+                          'Failed to export all chat sessions:',
+                          error,
+                        );
+                        Alert.alert(
+                          l10n.components.headerRight.exportErrorTitle,
+                          l10n.components.headerRight.exportAllError,
+                        );
+                      }
+                    }}
+                    style={styles.menuButton}>
+                    {l10n.settings.exportButton}
+                  </Button>
+                </View>
+                <Divider />
+
+                {/* Import/restore chats from a backup file */}
+                <View style={styles.switchContainer}>
+                  <View style={styles.textContainer}>
+                    <Text variant="titleMedium" style={styles.textLabel}>
+                      {l10n.settings.backupImportChats}
+                    </Text>
+                    <Text variant="labelSmall" style={styles.textDescription}>
+                      {l10n.settings.backupImportChatsDescription}
+                    </Text>
+                  </View>
+                  <Button
+                    mode="outlined"
+                    testID="backup-import-button"
+                    onPress={async () => {
+                      try {
+                        const count = await importChatSessions();
+                        if (count > 0) {
+                          Alert.alert(
+                            l10n.components.headerRight.importSuccessTitle,
+                            t(l10n.settings.importSuccess, {
+                              count: count.toString(),
+                            }),
+                          );
+                        }
+                      } catch (error) {
+                        console.error('Failed to import chat sessions:', error);
+                        Alert.alert(
+                          l10n.components.headerRight.importErrorTitle,
+                          l10n.settings.importError,
+                        );
+                      }
+                    }}
+                    style={styles.menuButton}>
+                    {l10n.settings.backupRestoreButton}
                   </Button>
                 </View>
               </View>
