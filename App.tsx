@@ -47,8 +47,12 @@ import {
   type AvailableLanguage,
 } from './src/locales';
 import {L10nContext} from './src/utils';
-import NativeRestart from './src/specs/NativeRestart';
 import {ROUTES} from './src/utils/navigationConstants';
+import {
+  bootHealthReady,
+  isSafeModeBoot,
+  markBootSuccess,
+} from './src/utils/bootHealth';
 
 import {
   SidebarContent,
@@ -168,11 +172,17 @@ const App = observer(() => {
         // on an LTR device (or vice versa).
         const targetRTL = UIStore.RTL_LANGUAGES.includes(target);
         if (targetRTL !== I18nManager.isRTL) {
+          // Persist the direction preference; Android applies it on the
+          // next cold start. v1.41.0: the first-launch adoption path no
+          // longer restarts the process. The old silent self-restart was
+          // the only code path that could close the app with no crash
+          // dialog on its very first open (exit(0) racing the relaunch
+          // intent) — reading to users exactly like "splash then force
+          // close". A one-session LTR layout for RTL text is the safe
+          // trade; manual language switches in Settings keep the explicit
+          // (now alarm-backed) restart.
           I18nManager.allowRTL(targetRTL);
           I18nManager.forceRTL(targetRTL);
-          // One-time silent restart during cold start so Android applies
-          // the new direction before the user reads anything.
-          setTimeout(() => NativeRestart.restart(), 600);
         }
       },
     );
@@ -194,64 +204,92 @@ const App = observer(() => {
 
   // v1.40.0: home-screen widget mirror + one-per-day startup update alert.
   // Both are deferred off the startup critical path and never throw.
+  // v1.41.0: gated behind boot health — when the previous two launches
+  // died before rendering, this boot runs without the non-critical
+  // subsystems so a failure in any of them cannot wedge the startup
+  // again, and the user at least reaches a usable app.
   React.useEffect(() => {
     const timers: ReturnType<typeof setTimeout>[] = [];
     const task = InteractionManager.runAfterInteractions(() => {
-      try {
-        startWidgetBridge();
-      } catch {
-        recordPhase('widget-bridge-start-failed');
-      }
+      bootHealthReady()
+        .then(() => {
+          if (isSafeModeBoot()) {
+            recordPhase('app:safe-mode-boot');
+            return;
+          }
+          try {
+            startWidgetBridge();
+          } catch {
+            recordPhase('widget-bridge-start-failed');
+          }
 
-      timers.push(
-        setTimeout(() => {
-          (async () => {
-            const update = await checkForAppUpdate();
-            if (!update) {
-              return;
-            }
-            const [dismissed, lastAlertAt] = await Promise.all([
-              getDismissedUpdateVersion(),
-              getLastUpdateAlertAt(),
-            ]);
-            if (!shouldShowUpdateAlert(update, dismissed, lastAlertAt)) {
-              return;
-            }
-            await markUpdateAlerted();
-            Alert.alert(
-              currentL10n.about.updateAvailableTitle.replace(
-                '{{version}}',
-                update.latestVersion,
-              ),
-              currentL10n.about.updateAvailableDescription.replace(
-                '{{current}}',
-                update.currentVersion,
-              ),
-              [
-                {
-                  text: currentL10n.settings.updateAlertLater,
-                  style: 'cancel',
-                },
-                {
-                  text: currentL10n.about.updateAvailableAction,
-                  onPress: () => {
-                    // Opening the release page also silences this version
-                    // — the user acted on the alert.
-                    dismissUpdateVersion(update.latestVersion);
-                    Linking.openURL(update.releaseUrl).catch(() => {});
-                  },
-                },
-              ],
-            );
-          })().catch(() => {});
-        }, 6000),
-      );
+          timers.push(
+            setTimeout(() => {
+              (async () => {
+                const update = await checkForAppUpdate();
+                if (!update) {
+                  return;
+                }
+                const [dismissed, lastAlertAt] = await Promise.all([
+                  getDismissedUpdateVersion(),
+                  getLastUpdateAlertAt(),
+                ]);
+                if (!shouldShowUpdateAlert(update, dismissed, lastAlertAt)) {
+                  return;
+                }
+                await markUpdateAlerted();
+                Alert.alert(
+                  currentL10n.about.updateAvailableTitle.replace(
+                    '{{version}}',
+                    update.latestVersion,
+                  ),
+                  currentL10n.about.updateAvailableDescription.replace(
+                    '{{current}}',
+                    update.currentVersion,
+                  ),
+                  [
+                    {
+                      text: currentL10n.settings.updateAlertLater,
+                      style: 'cancel',
+                    },
+                    {
+                      text: currentL10n.about.updateAvailableAction,
+                      onPress: () => {
+                        // Opening the release page also silences this version
+                        // — the user acted on the alert.
+                        dismissUpdateVersion(update.latestVersion);
+                        Linking.openURL(update.releaseUrl).catch(() => {});
+                      },
+                    },
+                  ],
+                );
+              })().catch(() => {});
+            }, 6000),
+          );
+        })
+        .catch(() => {
+          // Boot-health bookkeeping must never block the deferred effects.
+        });
     });
     return () => {
       task.cancel();
       timers.forEach(clearTimeout);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // v1.41.0: prove this boot healthy once the app has been up and
+  // interactive for a while. The delay is deliberate: crashes triggered
+  // by the deferred effects above still count toward the streak, while
+  // a user who simply backgrounded the app within the window gets the
+  // streak cleared on their next real session.
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      markBootSuccess().catch(() => {
+        // Best-effort — persistence failure leaves the in-memory clear.
+      });
+    }, 15000);
+    return () => clearTimeout(timer);
   }, []);
 
   return (
