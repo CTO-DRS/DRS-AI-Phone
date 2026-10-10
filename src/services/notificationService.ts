@@ -1,5 +1,5 @@
 /**
- * Generation notifications (v1.38.0).
+ * Generation notifications (v1.38.0, lazily bound since v1.41.0).
  *
  * A thin, failure-proof wrapper around `@notifee/react-native` that:
  * 1. Shows an ongoing low-importance notification backed by a foreground
@@ -16,16 +16,43 @@
  * break the chat flow, so everything is caught and logged. On platforms
  * or builds where notifee's native module is unavailable (e.g. unit
  * tests, iOS without pod install) the functions degrade to no-ops.
+ *
+ * v1.41.0: the package is resolved lazily on first use. Importing it
+ * eagerly used to run `new NativeEventEmitter(nativeModule)` at module
+ * scope, which THROWS ('Notifee native module not found.') whenever the
+ * native module cannot be resolved — and because useChatSession sits in
+ * the startup graph, that throw used to kill the entire boot with a bare
+ * splash. A lazy require confines any such failure to the notification
+ * surface, which is designed to degrade to no-ops.
  */
 
 import {AppState, Platform} from 'react-native';
 
-import notifee, {
-  AndroidImportance,
-  AndroidForegroundServiceType,
-  AuthorizationStatus,
-  type Notification,
-} from '@notifee/react-native';
+import type {Notification} from '@notifee/react-native';
+
+type NotifeeNamespace = typeof import('@notifee/react-native');
+
+let notifeeNamespace: NotifeeNamespace | null | undefined;
+
+/**
+ * Resolve the notifee package namespace (enums + default API) on first
+ * use; null on any resolution failure. Memoized — including the failure,
+ * so a broken install doesn't retry the throw on every call. The default
+ * export (the API object) is at `namespace.default`; enums live directly
+ * on the namespace.
+ */
+const getNotifee = (): NotifeeNamespace | null => {
+  if (notifeeNamespace !== undefined) {
+    return notifeeNamespace;
+  }
+  try {
+    notifeeNamespace = require('@notifee/react-native') as NotifeeNamespace;
+  } catch (error) {
+    console.warn('[notifications] notifee unavailable:', error);
+    notifeeNamespace = null;
+  }
+  return notifeeNamespace;
+};
 
 const CHANNEL_ID = 'drsai-generation';
 const GENERATION_NOTIFICATION_ID = 'drsai-generation-active';
@@ -46,10 +73,14 @@ const ensureChannel = (() => {
     if (done) {
       return;
     }
-    await notifee.createChannel({
+    const notifee = getNotifee();
+    if (!notifee) {
+      return;
+    }
+    await notifee.default.createChannel({
       id: CHANNEL_ID,
       name: 'DRS AI',
-      importance: AndroidImportance.LOW,
+      importance: notifee.AndroidImportance.LOW,
       vibration: false,
       vibrationPattern: undefined,
     });
@@ -64,10 +95,14 @@ const ensureChannel = (() => {
  */
 export const ensureNotificationPermission = async (): Promise<boolean> => {
   try {
-    const settings = await notifee.requestPermission();
+    const notifee = getNotifee();
+    if (!notifee) {
+      return false;
+    }
+    const settings = await notifee.default.requestPermission();
     return (
-      settings.authorizationStatus === AuthorizationStatus.AUTHORIZED ||
-      settings.authorizationStatus === AuthorizationStatus.PROVISIONAL
+      settings.authorizationStatus === notifee.AuthorizationStatus.AUTHORIZED ||
+      settings.authorizationStatus === notifee.AuthorizationStatus.PROVISIONAL
     );
   } catch (error) {
     console.warn('[notifications] permission request failed:', error);
@@ -90,6 +125,11 @@ export const startGenerationNotification = async (
     return;
   }
   try {
+    const namespace = getNotifee();
+    if (!namespace) {
+      return;
+    }
+    const notifee = namespace.default;
     const granted = await ensureNotificationPermission();
     if (!granted) {
       return;
@@ -106,11 +146,12 @@ export const startGenerationNotification = async (
         autoCancel: false,
         smallIcon: 'ic_launcher',
         pressAction: {id: 'default', launchActivity: 'default'},
-        importance: AndroidImportance.LOW,
+        importance: namespace.AndroidImportance.LOW,
         // Indeterminate progress = "alive" feedback without fake numbers.
         progress: {indeterminate: true},
         foregroundServiceTypes: [
-          AndroidForegroundServiceType.FOREGROUND_SERVICE_TYPE_SPECIAL_USE,
+          namespace.AndroidForegroundServiceType
+            .FOREGROUND_SERVICE_TYPE_SPECIAL_USE,
         ],
       },
     };
@@ -135,6 +176,11 @@ export const completeGenerationNotification = async (
   responsePreview: string,
 ): Promise<void> => {
   try {
+    const namespace = getNotifee();
+    if (!namespace) {
+      return;
+    }
+    const notifee = namespace.default;
     await notifee.stopForegroundService();
     await notifee.cancelNotification(GENERATION_NOTIFICATION_ID);
 
@@ -149,7 +195,7 @@ export const completeGenerationNotification = async (
           channelId: CHANNEL_ID,
           smallIcon: 'ic_launcher',
           pressAction: {id: 'default', launchActivity: 'default'},
-          importance: AndroidImportance.HIGH,
+          importance: namespace.AndroidImportance.HIGH,
           autoCancel: true,
         },
       });
@@ -165,6 +211,10 @@ export const completeGenerationNotification = async (
  */
 export const cancelGenerationNotification = async (): Promise<void> => {
   try {
+    const notifee = getNotifee()?.default;
+    if (!notifee) {
+      return;
+    }
     await notifee.stopForegroundService();
     await notifee.cancelNotification(GENERATION_NOTIFICATION_ID);
   } catch (error) {

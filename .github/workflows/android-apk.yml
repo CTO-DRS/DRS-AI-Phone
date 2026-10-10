@@ -234,15 +234,20 @@ jobs:
           VERSION=$(grep -m1 'versionName' android/app/build.gradle | sed -E 's/.*versionName "([^"]+)".*/\1/')
           echo "Building DRS-AI-v${VERSION}.apk"
           cp android/app/build/outputs/apk/prod/release/app-prod-release.apk "DRS-AI-v${VERSION}.apk"
+          # Sidecar checksum so the download can be verified on-device
+          # with a single sha256sum command (or any hash-checker app).
+          sha256sum "DRS-AI-v${VERSION}.apk" | awk '{print $1}' > "DRS-AI-v${VERSION}.apk.sha256"
           echo "VERSION=${VERSION}" >> "$GITHUB_ENV"
-          ls -la DRS-AI-v*.apk
+          ls -la DRS-AI-v*.apk DRS-AI-v*.apk.sha256
 
       - name: Create GitHub Release with signed APK
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ env.VERSION }}
           name: "DRS AI v${{ env.VERSION }}"
-          files: DRS-AI-v*.apk
+          files: |
+            DRS-AI-v*.apk
+            DRS-AI-v*.apk.sha256
           draft: false
           prerelease: false
           generate_release_notes: true
@@ -258,6 +263,12 @@ jobs:
 
             ### التحقق من اكتمال التنزيل قبل التثبيت
             - الحجم الصحيح للملف: **${{ env.APK_SIZE_BYTES }}** بايت (≈ ${{ env.APK_SIZE_MB }} ميجابايت)
-            - SHA-256: `${{ env.APK_SHA256 }}`
+            - SHA-256: `${{ env.APK_SHA256 }}` (ملف بصمة جانبي مرفق باسم `DRS-AI-v${{ env.VERSION }}.apk.sha256`)
 
-            إن ظهرت رسالة «لم يتم تثبيت التطبيق لأن الحزمة غير صالحة» فالسبب في الغالب أن التنزيل لم يكتمل أو تغيّر أثناء النقل، وليس خللًا في الملف: أعد التنزيل عبر شبكة مستقرة، وتأكد من حجم الملف قبل التثبيت. هذا الإصدار أصغر بنحو 25% بعد إزالة مكتبات المحاكي (x86_64) غير اللازمة للهواتف.
+            إن ظهرت رسالة «لم يتم تثبيت التطبيق لأن الحزمة تبدو غير صالحة» فالسبب في الغالب أن التنزيل لم يكتمل أو تغيّر أثناء النقل، وليس خللًا في الملف المنشور: أعد التنزيل عبر شبكة مستقرة، وتأكد من تطابق الحجم ثم البصمة قبل التثبيت. أجهزة 32 بت غير مدعومة منذ v1.32.0 وسيرفضها المثبّت.
+
+            ### ما الجديد في v${{ env.VERSION }}
+            - تحصين بدء التشغيل: إعادة إطلاق حتمية عبر AlarmManager بدل الإغلاق الصامت عند تبديل الاتجاه (RTL) لأول مرة.
+            - تبني لغة الجهاز عند أول تشغيل لم يعد يعيد تشغيل التطبيق قسراً — الاتجاه يُطبّق عند الفتح التالي.
+            - ربط notifee مؤجل ومحمي: تعذّر حل الموديول الأصلي لن يقتل الإقلاع بعد الآن.
+            - كاشف إقلاع فاشل متتالٍ (وضع آمن): بعد إقلاعين فاشلين يعمل التطبيق بدون الأنظمة غير الحرجة مع بقاء التشخيصات متاحة.
