@@ -5,7 +5,9 @@ import LinearGradient from 'react-native-linear-gradient';
 
 import {useTheme} from '../../../hooks';
 import {L10nContext} from '../../../utils';
-import {modelStore, modelHubStore, uiStore} from '../../../store';
+import {modelHubStore, uiStore} from '../../../store';
+
+import {downloadStore} from '../../../store/model/downloadStore';
 import {HuggingFaceModel, ModelFile} from '../../../utils/types';
 import {
   classifyHfModel,
@@ -143,7 +145,7 @@ export const DownloadConfirmDialog: React.FC<DownloadConfirmDialogProps> =
       }
       setStarting(true);
       try {
-        await modelStore.downloadHFModel(hfModel, modelFile, {
+        await downloadStore.downloadHFModel(hfModel, modelFile, {
           enableVision: true,
         });
         uiStore.showSuccess(

@@ -71,7 +71,9 @@ describe('facade contract — zero-logic pass-through', () => {
     for (const member of DOWNLOAD_MEMBERS) {
       expect(member in downloadStore).toBe(true);
       const facadeValue = (downloadStore as Record<string, unknown>)[member];
-      const sourceValue = (modelStore as Record<string, unknown>)[member];
+      const sourceValue = (modelStore as unknown as Record<string, unknown>)[
+        member
+      ];
       expect(kindOf(facadeValue)).toBe(kindOf(sourceValue));
     }
   });
@@ -80,13 +82,17 @@ describe('facade contract — zero-logic pass-through', () => {
     for (const member of CATALOG_MEMBERS) {
       expect(member in catalogStore).toBe(true);
       const facadeValue = (catalogStore as Record<string, unknown>)[member];
-      const sourceValue = (modelStore as Record<string, unknown>)[member];
+      const sourceValue = (modelStore as unknown as Record<string, unknown>)[
+        member
+      ];
       expect(kindOf(facadeValue)).toBe(kindOf(sourceValue));
     }
     for (const member of RUNTIME_MEMBERS) {
       expect(member in runtimeStore).toBe(true);
       const facadeValue = (runtimeStore as Record<string, unknown>)[member];
-      const sourceValue = (modelStore as Record<string, unknown>)[member];
+      const sourceValue = (modelStore as unknown as Record<string, unknown>)[
+        member
+      ];
       expect(kindOf(facadeValue)).toBe(kindOf(sourceValue));
     }
   });

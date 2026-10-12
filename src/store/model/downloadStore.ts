@@ -1,4 +1,10 @@
-import {modelStore, ModelStore} from '../ModelStore';
+import type {ModelStore} from '../ModelStore';
+// Barrel-routed ON PURPOSE: test suites mock the store barrel; a direct
+// '../ModelStore' import would bypass their mocks and construct the real
+// singleton (network fetch + DeviceInfo) inside every suite that renders
+// a migrated component. Type-only import keeps the Pick<ModelStore,...>
+// compile-time drift guard. Revisit at Phase 4 dissolution.
+import {modelStore} from '../';
 
 /**
  * downloadStore — Phase-1 scaffold (fix 4, stage 1 of 4).
