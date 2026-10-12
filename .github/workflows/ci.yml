@@ -104,6 +104,11 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
+      # Step 3b: Dependency drift guard — fail fast before any build/test
+      # (pinned native-ABI deps + aligned jest family; see scripts/verify-deps.js)
+      - name: Verify dependency constraints
+        run: yarn verify:deps
+
       # Step 4: Validate l10n files
       - name: Validate l10n files
         run: node scripts/validate-l10n.js

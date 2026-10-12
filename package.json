@@ -25,7 +25,8 @@
     "format": "prettier --write \"**/*.{js,ts,tsx,json,md}\"",
     "start": "react-native start",
     "start:reset": "react-native start --reset-cache",
-    "test": "jest"
+    "test": "jest",
+    "verify:deps": "node scripts/verify-deps.js"
   },
   "dependencies": {
     "@dr.pogodin/react-native-fs": "^2.36.0",
@@ -60,7 +61,7 @@
     "mobx-persist-store": "^1.1.8",
     "mobx-react": "^9.2.1",
     "mustache": "^4.2.0",
-    "onnxruntime-react-native": "^1.23.2",
+    "onnxruntime-react-native": "1.24.3",
     "pdf-lib": "^1.17.1",
     "react": "19.1.1",
     "react-hook-form": "^7.65.0",
@@ -117,7 +118,7 @@
     "@types/react-syntax-highlighter": "^15.5.13",
     "@types/react-test-renderer": "^19.0.0",
     "@types/uuid": "^11.0.0",
-    "babel-jest": "^30.2.0",
+    "babel-jest": "^29.7.0",
     "babel-plugin-transform-define": "^2.1.4",
     "babel-plugin-transform-remove-console": "^6.9.4",
     "eslint": "^8.57.0",
