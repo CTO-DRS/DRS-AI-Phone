@@ -36,6 +36,19 @@ module.exports = {
         message:
           'Imperative agent-status setters are banned. Drive agentUiState through agentStateReducer + chatSessionStore.setAgentUiState.',
       },
+      {
+        // Phase-2 store decomposition guard: new code must import
+        // downloadStore from its own file, never through the
+        // src/store/model facade barrel (see docs/audit-worklog.md).
+        // Severity is 'error' (not warn) because ESLint 8 cannot mix
+        // severities inside one rule and the root rule already guards an
+        // existing ban; the selector cannot fire on the Phase-3 deferred
+        // categories — no deferred file imports from store/model at all.
+        selector:
+          "ImportDeclaration[source.value=/model$/] ImportSpecifier[imported.name='downloadStore']",
+        message:
+          "استورد downloadStore من 'store/model/downloadStore' مباشرة — الاستيراد عبر فاصاد store/model ممنوع في الكود الجديد (مرحلة 2).",
+      },
     ],
   },
   overrides: [
