@@ -27,13 +27,9 @@ const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
 const allDeps = {...pkg.dependencies, ...pkg.devDependencies};
 
 // ── Guard configuration ────────────────────────────────────────────────
-const MUST_BE_PINNED = [
-  'onnxruntime-react-native',
-];
+const MUST_BE_PINNED = ['onnxruntime-react-native'];
 
-const MUST_BE_ALIGNED = [
-  ['jest', 'babel-jest', '@types/jest'],
-];
+const MUST_BE_ALIGNED = [['jest', 'babel-jest', '@types/jest']];
 // ───────────────────────────────────────────────────────────────────────
 
 let failed = false;
@@ -41,14 +37,16 @@ let failed = false;
 for (const name of MUST_BE_PINNED) {
   const spec = allDeps[name];
   if (spec === undefined) {
-    console.error(`[verify-deps] MUST_BE_PINNED: "${name}" not found in package.json`);
+    console.error(
+      `[verify-deps] MUST_BE_PINNED: "${name}" not found in package.json`,
+    );
     failed = true;
     continue;
   }
   if (/^[~^]/.test(spec)) {
     console.error(
       `[verify-deps] MUST_BE_PINNED: "${name}" is "${spec}" — must be an exact ` +
-      `version (no ^ / ~). Native ABI drift guard.`,
+        `version (no ^ / ~). Native ABI drift guard.`,
     );
     failed = true;
   } else {
@@ -61,7 +59,9 @@ for (const family of MUST_BE_ALIGNED) {
   for (const name of family) {
     const spec = allDeps[name];
     if (spec === undefined) {
-      console.error(`[verify-deps] MUST_BE_ALIGNED: "${name}" not found in package.json`);
+      console.error(
+        `[verify-deps] MUST_BE_ALIGNED: "${name}" not found in package.json`,
+      );
       failed = true;
       majors.push(null);
       continue;
@@ -73,8 +73,8 @@ for (const family of MUST_BE_ALIGNED) {
   if (distinct.size > 1) {
     console.error(
       `[verify-deps] MUST_BE_ALIGNED: family [${family.join(', ')}] spans majors ` +
-      `[${family.map((n, i) => `${n}=${majors[i]}`).join(', ')}] — align them on the ` +
-      `same major (RN preset breaks on jest-family drift).`,
+        `[${family.map((n, i) => `${n}=${majors[i]}`).join(', ')}] — align them on the ` +
+        `same major (RN preset breaks on jest-family drift).`,
     );
     failed = true;
   } else if (distinct.size === 1) {
