@@ -72,3 +72,38 @@
 | 5 | المرحلة 2: دفعة الفئة أ (4 ملفات) + @deprecated على دوال التنزيل في الفاصاد + قاعدة eslint تحذير |
 
 نقاط التفتيش: بعد (4): 312/4987/310 + lint/typecheck/verify:deps خضراء. بعد (5): العداد 1974→1968 + facade.test.ts أخضر + أمر CI الحقيقي EXIT=0.
+
+---
+
+## سجل تنفيذ الجلسة 3 (مكتمل)
+
+### الـ commits (كلها مدفوعة + bundle نجاة بعد كل واحد)
+| # | Hash | المحتوى |
+|---|---|---|
+| 0 | `5995560` | docs: سجل العمل |
+| 1 | `c234cdf` | fix: onnxruntime 1.24.3 exact + verify-deps (الفئتان) + CI fail-fast |
+| — | `4dfc469` | chore: prettier لسكربت الحارس (تصحيح انزلاق تنسيق من commit 1) |
+| 2 | `42fb37f` | fix: Keychain storage + ترحيل idempotent + اختبارات عقد nonce |
+| 3 | `fc92f8e` | fix: TS 5.9.3 + عائلة jest مثبتة 29.7.0 (ESLint يبقى 8) |
+| 4 | `b1ee42a` | chore(store): سقالة store/model — المخازن الثلاثة + الفاصاد + facade.test |
+| 5 | `a29e7cf` | chore(store): هجرة دفعة الفئة أ (4 ملفات) + @deprecated + قاعدة eslint |
+
+ملاحظة تصحيح تاريخ: commit برسالة chore محتواه fix-2 كاملاً (`834e59f`) أُعيد بناؤه عبر reset soft + force-with-lease فوراً قبل أي عمل آخر — الفرع نسخة احتياطية خاصة، والتصحيح موثق هنا.
+
+### مفاجآت موثقة وقراراتها
+1. **googleNonce موجود أصلاً upstream**: `src/utils/nonce.ts` + `sha256.ts` بنفس التصميم الخامل (v16 nonce-free) وsha256 مختبر — لم يُكرر؛ أُضيفا اختباران لعقدNonce (`nonce.contract.test.ts`).
+2. **commitlint يرفض refactor**: قائمة المستودع feat/fix/docs/chore فقط — استُخدم chore(store) وأصلح التزام المالك.
+3. **ESLint severity**: لا يمكن خلط warn/error في قاعدة واحدة (ESLint 8) — قاعدة الفاصاد دخلت error ضمن القاعدة الجذرية القائمة؛ لا يمكنها إطلاقاً إطلاق على الفئتين المؤجلتين (صفر استيرادات store/model عندها).
+4. **jest.mock factory لا يبلغ الوحدات المستوردة انتقالياً** عند وجود moduleNameMapper (4 م_validatorات مضبوطة) — اختبارات الهجرة تسخر واجهة الـ adapter بمسار نسبي (حتمي)، وسلوك الـ adapter الحقيقي مغطى في suiteه المباشر.
+5. **تسريب mock عبر السقالة (أخطر اكتشاف)**: استيراد السقالة `'../ModelStore'` مباشرة يجاوز السخرية البرميلية لأي suite يسخر البرميل فقط → المفرد الحقيقي يُبنى (شبكة + DeviceInfo) → فشل IncreaseContextSheet حتمي. **الإصلاح**: السقالة تستورد `'../'` (البرميل) عمداً + `import type` للكلاس يبقي حارس Pick وقت الترجمة. موثق داخل الملفات الثلاثة.
+6. **activeDownloads computed getter**: يبني مصفوفة جديدة كل وصول — هوية مرجعية مستحيلة تصميماً؛ عقد الفاصاد يفحص تطابق المحتوى.
+7. **عداد المواضع**: الخام الكلي 2113 يشمل 145 داخل السقالة (delegations بالتصميم)؛ **خارج السقالة: 1968 سطراً / 82 ملفاً = 1974 − 6 بالضبط** (مع false positive المعلوم).
+8. **فارق اختبارات +2 عن checkpoint**: 4989 بدل 4987 (اختباران لعقد nonce — القاعدة "نفس العدد أو أكثر" مستوفاة).
+
+### نقاط التفتيش النهائية (محققة)
+- بعد commit 4: **312 suites / 4989 passed / 310 snapshots** + lint + typecheck + verify:deps خضراء
+- بعد commit 5: العداد 1974→1968 خارج السقالة + facade.test أخضر + **أمر CI الحقيقي `yarn test --coverage` EXIT=0** (312/4989/310، 231 ث، workers وضع CI الفعلي) + verify:deps/l10n/fonts/lint/typecheck كلها خضراء
+- السلسلة الكاملة النهائية: verify:deps ✓ l10n ✓ fonts ✓ lint ✓ typecheck ✓ test --coverage ✓
+
+### الخطوة التالية (مرحلة 3)
+الهجرة المختلطة: 19 ملفاً إنتاجياً (236 موضعاً خارج جناحي المتجر الذاتيين) + مراجعة الانقسام المؤقت لعائلة projection.
