@@ -1,6 +1,43 @@
 import {renderHook, act} from '@testing-library/react-hooks';
 
-import {uiStore, assistantStore, modelStore} from '../../../store';
+import {uiStore, assistantStore} from '../../../store';
+
+import {catalogStore} from '../../../store/model/catalogStore';
+import {downloadStore} from '../../../store/model/downloadStore';
+
+jest.mock('../../../store/model/catalogStore', () => {
+  const real = jest.requireActual('../../../store/model/catalogStore');
+  return {
+    catalogStore: Object.assign(Object.create(real.catalogStore), {
+      registerOnboardingAssistantModel: jest.fn().mockImplementation(
+        async (entry: {
+          repo: string;
+          filename: string;
+          displayName: string;
+          sizeBytes: number;
+          params: number;
+        }) =>
+          ({
+            id: `${entry.repo}/${entry.filename}`,
+            name: entry.displayName,
+            size: entry.sizeBytes,
+            params: entry.params,
+            origin: 'HF',
+            isDownloaded: false,
+          }) as any,
+      ),
+    }),
+  };
+});
+
+jest.mock('../../../store/model/downloadStore', () => {
+  const real = jest.requireActual('../../../store/model/downloadStore');
+  return {
+    downloadStore: Object.assign(Object.create(real.downloadStore), {
+      checkSpaceAndDownload: jest.fn().mockResolvedValue(undefined),
+    }),
+  };
+});
 import {
   TOPIC_TO_ASSISTANT,
   entryId,
@@ -45,7 +82,7 @@ describe('useOnboardingHandlers', () => {
     assistantStore.assistants = [];
     (assistantStore.updateAssistant as jest.Mock).mockClear();
     (assistantStore.createAssistant as jest.Mock).mockClear();
-    (modelStore.checkSpaceAndDownload as jest.Mock).mockClear();
+    (downloadStore.checkSpaceAndDownload as jest.Mock).mockClear();
   });
 
   it('marks the current step on mount via the single-writer method', () => {
@@ -117,7 +154,7 @@ describe('useOnboardingHandlers', () => {
       });
       expect(assistantStore.updateAssistant).not.toHaveBeenCalled();
       expect(assistantStore.createAssistant).not.toHaveBeenCalled();
-      expect(modelStore.checkSpaceAndDownload).not.toHaveBeenCalled();
+      expect(downloadStore.checkSpaceAndDownload).not.toHaveBeenCalled();
     });
   });
 
@@ -153,7 +190,7 @@ describe('useOnboardingHandlers', () => {
         topic: 'smartchat',
         modelId: PIP_BALANCED_ID,
       });
-      expect(modelStore.checkSpaceAndDownload).toHaveBeenCalledWith(
+      expect(downloadStore.checkSpaceAndDownload).toHaveBeenCalledWith(
         PIP_BALANCED_ID,
       );
     });
@@ -183,7 +220,7 @@ describe('useOnboardingHandlers', () => {
         topic: 'coding',
         modelId: CODIE_BALANCED_ID,
       });
-      expect(modelStore.checkSpaceAndDownload).toHaveBeenCalledWith(
+      expect(downloadStore.checkSpaceAndDownload).toHaveBeenCalledWith(
         CODIE_BALANCED_ID,
       );
     });
@@ -222,7 +259,7 @@ describe('useOnboardingHandlers', () => {
         topic: 'smartchat',
         modelId: null,
       });
-      expect(modelStore.checkSpaceAndDownload).not.toHaveBeenCalled();
+      expect(downloadStore.checkSpaceAndDownload).not.toHaveBeenCalled();
     });
 
     it('hf pick routes through registerOnboardingAssistantModel and binds the synthesised Model', async () => {
@@ -237,14 +274,14 @@ describe('useOnboardingHandlers', () => {
         await result.current.finish();
       });
 
-      expect(modelStore.registerOnboardingAssistantModel).toHaveBeenCalledTimes(
-        1,
-      );
+      expect(
+        catalogStore.registerOnboardingAssistantModel,
+      ).toHaveBeenCalledTimes(1);
       const entryArg = (
-        modelStore.registerOnboardingAssistantModel as jest.Mock
+        catalogStore.registerOnboardingAssistantModel as jest.Mock
       ).mock.calls[0][0];
       expect(entryId(entryArg)).toBe(CODIE_BALANCED_ID);
-      expect(modelStore.checkSpaceAndDownload).toHaveBeenCalledWith(
+      expect(downloadStore.checkSpaceAndDownload).toHaveBeenCalledWith(
         CODIE_BALANCED_ID,
       );
     });
@@ -276,11 +313,11 @@ describe('useOnboardingHandlers', () => {
         await result.current.finish();
       });
 
-      expect(modelStore.registerOnboardingAssistantModel).toHaveBeenCalledTimes(
-        1,
-      );
+      expect(
+        catalogStore.registerOnboardingAssistantModel,
+      ).toHaveBeenCalledTimes(1);
       const registered = (
-        modelStore.registerOnboardingAssistantModel as jest.Mock
+        catalogStore.registerOnboardingAssistantModel as jest.Mock
       ).mock.calls[0][0];
       expect(entryId(registered)).toBe(sageBestId);
 
@@ -290,7 +327,9 @@ describe('useOnboardingHandlers', () => {
         .mock.calls[0];
       expect(assistantId).toBe('sage-id');
       expect(patch.defaultModel?.id).toBe(sageBestId);
-      expect(modelStore.checkSpaceAndDownload).toHaveBeenCalledWith(sageBestId);
+      expect(downloadStore.checkSpaceAndDownload).toHaveBeenCalledWith(
+        sageBestId,
+      );
     });
 
     it('checkSpaceAndDownload rejection (cancel mid-download) is swallowed; finish resolves cleanly', async () => {
@@ -301,7 +340,7 @@ describe('useOnboardingHandlers', () => {
       assistantStore.assistants = [];
       uiStore.onboardingState.selectedModelId = CODIE_BALANCED_ID;
       uiStore.onboardingState.selectedTopic = 'coding';
-      (modelStore.checkSpaceAndDownload as jest.Mock).mockRejectedValueOnce(
+      (downloadStore.checkSpaceAndDownload as jest.Mock).mockRejectedValueOnce(
         new Error('cancelled'),
       );
 
@@ -319,9 +358,9 @@ describe('useOnboardingHandlers', () => {
       // checkSpaceAndDownload is swallowed by the in-handler .catch.
       expect(threw).toBeNull();
       // Side-effects up to checkSpaceAndDownload still ran.
-      expect(modelStore.registerOnboardingAssistantModel).toHaveBeenCalledTimes(
-        1,
-      );
+      expect(
+        catalogStore.registerOnboardingAssistantModel,
+      ).toHaveBeenCalledTimes(1);
       expect(assistantStore.createAssistant).toHaveBeenCalledTimes(1);
       expect(uiStore.completeOnboarding).toHaveBeenCalled();
     });
@@ -339,11 +378,11 @@ describe('useOnboardingHandlers', () => {
       act(() => result.current.skip());
 
       expect(
-        modelStore.registerOnboardingAssistantModel,
+        catalogStore.registerOnboardingAssistantModel,
       ).not.toHaveBeenCalled();
       expect(assistantStore.createAssistant).not.toHaveBeenCalled();
       expect(assistantStore.updateAssistant).not.toHaveBeenCalled();
-      expect(modelStore.checkSpaceAndDownload).not.toHaveBeenCalled();
+      expect(downloadStore.checkSpaceAndDownload).not.toHaveBeenCalled();
       expect(uiStore.completeOnboarding).toHaveBeenCalledWith({
         topic: 'coding',
         modelId: null,
