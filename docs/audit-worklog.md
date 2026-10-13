@@ -107,3 +107,15 @@
 
 ### الخطوة التالية (مرحلة 3)
 الهجرة المختلطة: 19 ملفاً إنتاجياً (236 موضعاً خارج جناحي المتجر الذاتيين) + مراجعة الانقسام المؤقت لعائلة projection.
+
+## Phase 3 closing record (session 5 — head 1f2f1f6 + closing commit)
+
+- Class C fully migrated: 19 files (13 production + 6 test suites), batches 1-8.
+- Batch 6 re-applied from documented backup after environment reset #5 (BenchmarkRunnerScreen 21 events + ModelsHubScreen 25 events); cast-form remnant resolved by dropping provably-dead ErrorState.error access.
+- Batch 8 test migration used LOCAL sub-store mocks only (zero central test-utils changes, zero assertion deletions): requireActual + Object.create(real) inheritance + jest.fn overrides replicating central mock defaults + defineProperty for accessor-shadowed state (activeModelId, downloadError, models get/set).
+- @deprecated expansion: catalogStore/runtimeStore facade re-exports now carry the same facade-path deprecation as downloadStore (phase-2 pattern, phase-3 expansion). ESLint no-restricted-syntax facade rule unchanged (error severity, as-is).
+- madge circular: 42 chains at d68ebb9 == 42 chains at closing head, identical set — zero new cycles.
+- Final triple counter (recipe: official = rg 'modelStore\.[a-zA-Z]' lines outside src/store/model; real = official − FP(modelStore\.ts\b); raw = official + 145 scaffold delegation lines): raw 1878 / official 1733 / real 1732 — exact match with the approved plan table. FP=1 (BenchmarkRunnerScreen.test comment referencing __mocks__/stores/modelStore.ts).
+- Real CI command (test --coverage): EXIT=0 — 312 suites / 4989 passed + 2 skipped / 310 snapshots.
+- Untouched (verified byte-level per-file against d68ebb9): B-class (all surviving files' modelStore line counts identical), ModelStore.ts (2 lines incl. singleton export), ModelStore.test.ts (932 lines), ModelStore.localModelPath.test.ts (39 lines), scaffold (161 lines constant).
+- Deferred to Phase 4: ModelStore.ts self-reference (line 3577), ModelStore.test.ts, localModelPath.test, initializeStore cross-member, canDelete internal runtime read documentation.
