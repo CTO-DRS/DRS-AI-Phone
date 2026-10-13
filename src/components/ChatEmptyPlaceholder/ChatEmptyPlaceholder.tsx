@@ -5,7 +5,10 @@ import {observer} from 'mobx-react';
 
 import {useTheme} from '../../hooks';
 import {createStyles} from './styles';
-import {modelStore, assistantStore, chatSessionStore} from '../../store';
+import {assistantStore, chatSessionStore} from '../../store';
+import {catalogStore} from '../../store/model/catalogStore';
+import {downloadStore} from '../../store/model/downloadStore';
+import {runtimeStore} from '../../store/model/runtimeStore';
 import {useNavigation} from '@react-navigation/native';
 import {NavigationProp} from '@react-navigation/native';
 import {L10nContext} from '../../utils';
@@ -22,14 +25,14 @@ export const ChatEmptyPlaceholder = observer(
     const l10n = useContext(L10nContext);
     const styles = createStyles({theme});
 
-    const hasAvailableModels = modelStore.availableModels.length > 0;
-    const hasActiveModel = modelStore.activeModelId !== undefined;
+    const hasAvailableModels = catalogStore.availableModels.length > 0;
+    const hasActiveModel = runtimeStore.activeModelId !== undefined;
     // When the user lands here from onboarding-finish, the assistant exists
     // and its defaultModel is downloading. The DownloadOverlay banner is
     // already showing progress at the top of the screen — the empty
     // state's job is just to telegraph "your assistant is on the way, no
     // model picker needed."
-    const pendingAssistantDownload = modelStore.activeDownloads
+    const pendingAssistantDownload = downloadStore.activeDownloads
       .map(d =>
         assistantStore.assistants.find(
           p =>
@@ -131,9 +134,9 @@ export const ChatEmptyPlaceholder = observer(
             mode="contained"
             onPress={onPress}
             style={styles.button}
-            loading={modelStore.isContextLoading}
+            loading={runtimeStore.isContextLoading}
             disabled={hasActiveModel}>
-            {modelStore.isContextLoading
+            {runtimeStore.isContextLoading
               ? l10n.components?.chatEmptyPlaceholder?.loading
               : buttonText}
           </Button>
