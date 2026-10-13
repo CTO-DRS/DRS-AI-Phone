@@ -31,7 +31,11 @@ import {useTheme, useMemoryCheck, useStorageCheck} from '../../../hooks';
 
 import {createStyles} from './styles';
 
-import {uiStore, modelStore, serverStore} from '../../../store';
+import {uiStore, serverStore} from '../../../store';
+
+import {catalogStore} from '../../../store/model/catalogStore';
+import {downloadStore} from '../../../store/model/downloadStore';
+import {runtimeStore} from '../../../store/model/runtimeStore';
 import {t} from '../../../locales';
 
 import {
@@ -100,17 +104,17 @@ export const ModelCard: React.FC<ModelCardProps> = observer(
       () => {
         if (
           model.supportsMultimodal &&
-          modelStore.getModelVisionPreference(model) &&
+          catalogStore.getModelVisionPreference(model) &&
           model.defaultProjectionModel
         ) {
-          return modelStore.models.find(
+          return catalogStore.models.find(
             m => m.id === model.defaultProjectionModel,
           );
         }
         return undefined;
       },
       // eslint-disable-next-line react-hooks/exhaustive-deps -- MobX observable tracked by observer()
-      [model, modelStore.models],
+      [model, catalogStore.models],
     );
 
     const {memoryWarning, shortMemoryWarning, multimodalWarning} =
@@ -126,12 +130,12 @@ export const ModelCard: React.FC<ModelCardProps> = observer(
     const isActiveModel = activeModelId === model.id;
     const isDraftOnly = isDraftOnlyModel(model);
     const isDownloaded = model.isDownloaded;
-    const isDownloading = modelStore.isDownloading(model.id);
+    const isDownloading = downloadStore.isDownloading(model.id);
     const isHfModel = model.origin === ModelOrigin.HF;
     const isRemoteModel = model.origin === ModelOrigin.REMOTE;
     const cardId = model.filename || model.id;
 
-    const modelCaps = modelStore.capsFor(model);
+    const modelCaps = runtimeStore.capsFor(model);
     const visionLabel =
       modelCaps.vision === 'yes'
         ? l10n.models.modelCard.labels.visionSupported
@@ -140,11 +144,11 @@ export const ModelCard: React.FC<ModelCardProps> = observer(
           : l10n.models.modelCard.labels.visionUnknown;
 
     // Check projection model status for downloaded vision models
-    const projectionModelStatus = modelStore.getProjectionModelStatus(model);
+    const projectionModelStatus = downloadStore.getProjectionModelStatus(model);
     const hasProjectionModelWarning =
       isDownloaded &&
       model.supportsMultimodal &&
-      modelStore.getModelVisionPreference(model) && // Only show warning when vision is enabled
+      catalogStore.getModelVisionPreference(model) && // Only show warning when vision is enabled
       projectionModelStatus.state === 'missing';
 
     // Check integrity when model is downloaded (skip remote models — no local file)
@@ -162,7 +166,9 @@ export const ModelCard: React.FC<ModelCardProps> = observer(
       if (model.isDownloaded) {
         // Special handling for projection models
         if (model.modelType === ModelType.PROJECTION) {
-          const canDeleteResult = modelStore.canDeleteProjectionModel(model.id);
+          const canDeleteResult = downloadStore.canDeleteProjectionModel(
+            model.id,
+          );
 
           if (!canDeleteResult.canDelete) {
             // Show error dialog with specific reason
@@ -201,7 +207,7 @@ export const ModelCard: React.FC<ModelCardProps> = observer(
                 style: 'destructive',
                 onPress: async () => {
                   try {
-                    await modelStore.deleteModel(model);
+                    await downloadStore.deleteModel(model);
                   } catch (error) {
                     console.error('Failed to delete projection model:', error);
                     Alert.alert(
@@ -226,7 +232,7 @@ export const ModelCard: React.FC<ModelCardProps> = observer(
               {
                 text: l10n.common.delete,
                 onPress: async () => {
-                  await modelStore.deleteModel(model);
+                  await downloadStore.deleteModel(model);
                 },
               },
             ],
@@ -253,7 +259,7 @@ export const ModelCard: React.FC<ModelCardProps> = observer(
           {
             text: l10n.models.modelCard.buttons.remove,
             style: 'destructive',
-            onPress: () => modelStore.removeModelFromList(model),
+            onPress: () => catalogStore.removeModelFromList(model),
           },
         ],
       );
@@ -266,7 +272,7 @@ export const ModelCard: React.FC<ModelCardProps> = observer(
     const handleProjectionWarningPress = useCallback(() => {
       if (model.defaultProjectionModel) {
         // Try to download the missing projection model
-        modelStore.checkSpaceAndDownload(model.defaultProjectionModel);
+        downloadStore.checkSpaceAndDownload(model.defaultProjectionModel);
       }
       // Note: If no default projection model, user can manually select one in the vision controls
     }, [model.defaultProjectionModel]);
@@ -274,7 +280,7 @@ export const ModelCard: React.FC<ModelCardProps> = observer(
     const handleVisionToggle = useCallback(
       async (enabled: boolean) => {
         try {
-          await modelStore.setModelVisionEnabled(model.id, enabled);
+          await catalogStore.setModelVisionEnabled(model.id, enabled);
         } catch (error) {
           console.error('Failed to toggle vision setting:', error);
           // The error is already handled in setModelVisionEnabled (vision state is reverted)
@@ -285,7 +291,7 @@ export const ModelCard: React.FC<ModelCardProps> = observer(
 
     const handleProjectionModelSelect = useCallback(
       (projectionModelId: string) => {
-        modelStore.setDefaultProjectionModel(model.id, projectionModelId);
+        catalogStore.setDefaultProjectionModel(model.id, projectionModelId);
       },
       [model.id],
     );
@@ -364,7 +370,7 @@ export const ModelCard: React.FC<ModelCardProps> = observer(
             style: 'destructive',
             onPress: () => {
               if (isActiveModel) {
-                modelStore.manualReleaseContext();
+                runtimeStore.manualReleaseContext();
               }
               serverStore.removeUserSelectedModel(
                 model.serverId!,
@@ -439,7 +445,7 @@ export const ModelCard: React.FC<ModelCardProps> = observer(
               testID="cancel-button"
               icon="close"
               mode="outlined"
-              onPress={() => modelStore.cancelDownload(model.id)}
+              onPress={() => downloadStore.cancelDownload(model.id)}
               style={[
                 styles.primaryActionButton,
                 {
@@ -462,7 +468,7 @@ export const ModelCard: React.FC<ModelCardProps> = observer(
               testID="download-button"
               icon="download"
               mode="outlined"
-              onPress={() => modelStore.checkSpaceAndDownload(model.id)}
+              onPress={() => downloadStore.checkSpaceAndDownload(model.id)}
               disabled={!storageOk}
               style={[
                 styles.primaryActionButton,
@@ -596,8 +602,8 @@ export const ModelCard: React.FC<ModelCardProps> = observer(
 
     const renderModelLoadButton = () => {
       if (
-        modelStore.isContextLoading &&
-        modelStore.loadingModel?.id === model.id
+        runtimeStore.isContextLoading &&
+        runtimeStore.loadingModel?.id === model.id
       ) {
         return (
           <Button
@@ -619,10 +625,10 @@ export const ModelCard: React.FC<ModelCardProps> = observer(
 
       const handlePress = async () => {
         if (isActiveModel) {
-          modelStore.manualReleaseContext();
+          runtimeStore.manualReleaseContext();
         } else {
           try {
-            await modelStore.selectModel(model);
+            await runtimeStore.selectModel(model);
             if (uiStore.autoNavigatetoChat) {
               navigation.navigate('Chat');
             }
@@ -875,7 +881,7 @@ export const ModelCard: React.FC<ModelCardProps> = observer(
                           width={16}
                           height={16}
                           stroke={
-                            modelStore.getModelVisionPreference(model)
+                            catalogStore.getModelVisionPreference(model)
                               ? theme.colors.tertiary
                               : theme.colors.onSurfaceVariant
                           }
@@ -887,17 +893,17 @@ export const ModelCard: React.FC<ModelCardProps> = observer(
                       <Switch
                         testID="vision-toggle-switch"
                         accessibilityLabel={l10n.models.modelCard.labels.vision}
-                        value={modelStore.getModelVisionPreference(model)}
+                        value={catalogStore.getModelVisionPreference(model)}
                         onValueChange={handleVisionToggle}
                         disabled={
                           !projectionModelStatus.isAvailable &&
-                          !modelStore.getModelVisionPreference(model) &&
+                          !catalogStore.getModelVisionPreference(model) &&
                           model.isDownloaded
                         }
                       />
                     </View>
                     {!projectionModelStatus.isAvailable &&
-                      !modelStore.getModelVisionPreference(model) &&
+                      !catalogStore.getModelVisionPreference(model) &&
                       model.isDownloaded && (
                         <Text style={styles.visionHelpText}>
                           {l10n.models.modelCard.labels.requiresProjectionModel}
@@ -908,7 +914,7 @@ export const ModelCard: React.FC<ModelCardProps> = observer(
 
                 {/* Projection Models Management for multimodal models */}
                 {model.supportsMultimodal &&
-                  modelStore.getModelVisionPreference(model) && (
+                  catalogStore.getModelVisionPreference(model) && (
                     <View style={styles.projectionModelsContainer}>
                       <ProjectionModelSelector
                         model={model}
