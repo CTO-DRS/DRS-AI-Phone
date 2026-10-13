@@ -23,7 +23,60 @@ import {ModelCard} from '../ModelCard';
 
 import {downloadManager} from '../../../../services/downloads';
 
-import {modelStore, uiStore, serverStore} from '../../../../store';
+import {uiStore, serverStore} from '../../../../store';
+
+import {catalogStore} from '../../../../store/model/catalogStore';
+import {downloadStore} from '../../../../store/model/downloadStore';
+import {runtimeStore} from '../../../../store/model/runtimeStore';
+
+jest.mock('../../../../store/model/catalogStore', () => {
+  const real = jest.requireActual('../../../../store/model/catalogStore');
+  return {
+    catalogStore: Object.assign(Object.create(real.catalogStore), {
+      getModelVisionPreference: jest.fn().mockReturnValue(true),
+      getCompatibleProjectionModels: jest.fn().mockReturnValue([]),
+      setDefaultProjectionModel: jest.fn(),
+    }),
+  };
+});
+
+jest.mock('../../../../store/model/downloadStore', () => {
+  const real = jest.requireActual('../../../../store/model/downloadStore');
+  return {
+    downloadStore: Object.assign(Object.create(real.downloadStore), {
+      checkSpaceAndDownload: jest.fn().mockResolvedValue(undefined),
+      getProjectionModelStatus: jest.fn().mockReturnValue({
+        isAvailable: true,
+        state: 'not_needed',
+      }),
+      deleteModel: jest.fn().mockResolvedValue(undefined),
+      cancelDownload: jest.fn(),
+    }),
+  };
+});
+
+jest.mock('../../../../store/model/runtimeStore', () => {
+  const real = jest.requireActual('../../../../store/model/runtimeStore');
+  const rt = Object.create(real.runtimeStore);
+  Object.defineProperty(rt, 'isContextLoading', {
+    value: false,
+    writable: true,
+    configurable: true,
+    enumerable: true,
+  });
+  Object.defineProperty(rt, 'loadingModel', {
+    value: undefined,
+    writable: true,
+    configurable: true,
+    enumerable: true,
+  });
+  return {
+    runtimeStore: Object.assign(rt, {
+      selectModel: jest.fn().mockResolvedValue(Promise.resolve()),
+      manualReleaseContext: jest.fn(),
+    }),
+  };
+});
 import {ModelType} from '../../../../utils/types';
 
 import {l10n} from '../../../../locales';
@@ -97,8 +150,8 @@ describe('ModelCard', () => {
   }, 10000);
 
   it('handles download overlay and download button correctly', async () => {
-    if (!jest.isMockFunction(modelStore.checkSpaceAndDownload)) {
-      jest.spyOn(modelStore, 'checkSpaceAndDownload');
+    if (!jest.isMockFunction(downloadStore.checkSpaceAndDownload)) {
+      jest.spyOn(downloadStore, 'checkSpaceAndDownload');
     }
 
     const {getByTestId, queryByTestId} = customRender(
@@ -115,7 +168,7 @@ describe('ModelCard', () => {
       fireEvent.press(downloadButton);
     });
 
-    expect(modelStore.checkSpaceAndDownload).toHaveBeenCalledWith(
+    expect(downloadStore.checkSpaceAndDownload).toHaveBeenCalledWith(
       basicModel.id,
     );
   });
@@ -173,7 +226,7 @@ describe('ModelCard', () => {
       fireEvent.press(getByTestId('load-button'));
     });
 
-    expect(modelStore.selectModel).toHaveBeenCalledWith(downloadedModel);
+    expect(runtimeStore.selectModel).toHaveBeenCalledWith(downloadedModel);
     expect(mockNavigate).not.toHaveBeenCalled();
 
     uiStore.autoNavigatetoChat = true;
@@ -196,7 +249,7 @@ describe('ModelCard', () => {
       fireEvent.press(getByTestId('offload-button'));
     });
 
-    expect(modelStore.manualReleaseContext).toHaveBeenCalled();
+    expect(runtimeStore.manualReleaseContext).toHaveBeenCalled();
   });
 
   // Add tests for delete functionality
@@ -235,7 +288,7 @@ describe('ModelCard', () => {
       const deleteButton = getByTestId('delete-button');
       fireEvent.press(deleteButton);
 
-      expect(modelStore.deleteModel).toHaveBeenCalledWith(downloadedModel);
+      expect(downloadStore.deleteModel).toHaveBeenCalledWith(downloadedModel);
     });
 
     it('shows special confirmation for projection models', async () => {
@@ -288,7 +341,7 @@ describe('ModelCard', () => {
       const cancelButton = getByTestId('cancel-button');
       fireEvent.press(cancelButton);
 
-      expect(modelStore.cancelDownload).toHaveBeenCalledWith(
+      expect(downloadStore.cancelDownload).toHaveBeenCalledWith(
         downloadingModel.id,
       );
     });
@@ -329,10 +382,10 @@ describe('ModelCard', () => {
     beforeEach(() => {
       jest.clearAllMocks();
 
-      // Reset modelStore to a clean state
-      modelStore.isContextLoading = false;
-      modelStore.loadingModel = undefined;
-      modelStore.selectModel = jest.fn(); // optional: re-mock if necessary
+      // Reset the runtime store to a clean state
+      runtimeStore.isContextLoading = false;
+      runtimeStore.loadingModel = undefined;
+      runtimeStore.selectModel = jest.fn(); // optional: re-mock if necessary
 
       // Reset downloadManager mock to ensure models are not downloading
       (downloadManager.isDownloading as jest.Mock).mockImplementation(
@@ -343,8 +396,8 @@ describe('ModelCard', () => {
     });
 
     it('shows loading indicator when model is being loaded', async () => {
-      modelStore.isContextLoading = true;
-      modelStore.loadingModel = downloadedModel;
+      runtimeStore.isContextLoading = true;
+      runtimeStore.loadingModel = downloadedModel;
 
       const {getByTestId} = customRender(<ModelCard model={downloadedModel} />);
 
@@ -355,7 +408,7 @@ describe('ModelCard', () => {
 
     it('handles model loading errors', async () => {
       const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation();
-      (modelStore.selectModel as jest.Mock).mockRejectedValue(
+      (runtimeStore.selectModel as jest.Mock).mockRejectedValue(
         new Error('Loading failed'),
       );
 
@@ -399,13 +452,13 @@ describe('ModelCard', () => {
       );
 
       // Mock projection model status
-      modelStore.getProjectionModelStatus = jest.fn().mockReturnValue({
+      downloadStore.getProjectionModelStatus = jest.fn().mockReturnValue({
         isAvailable: true,
         state: 'available',
       });
 
       // Mock vision preference
-      modelStore.getModelVisionPreference = jest.fn().mockReturnValue(true);
+      catalogStore.getModelVisionPreference = jest.fn().mockReturnValue(true);
     });
 
     it('shows vision controls for vision models', async () => {
@@ -428,7 +481,7 @@ describe('ModelCard', () => {
 
     it('shows projection model selector for vision models', async () => {
       const {getByTestId} = customRender(<ModelCard model={visionModel} />);
-      (modelStore.getCompatibleProjectionModels as jest.Mock) = jest
+      (catalogStore.getCompatibleProjectionModels as jest.Mock) = jest
         .fn()
         .mockReturnValue([projectionModel]);
 
@@ -445,7 +498,7 @@ describe('ModelCard', () => {
       );
       fireEvent.press(projectionModelButton);
 
-      expect(modelStore.setDefaultProjectionModel).toHaveBeenCalledWith(
+      expect(catalogStore.setDefaultProjectionModel).toHaveBeenCalledWith(
         visionModel.id,
         expect.any(String),
       );
@@ -459,13 +512,13 @@ describe('ModelCard', () => {
       };
 
       // Mock getProjectionModelStatus to return missing state
-      modelStore.getProjectionModelStatus = jest.fn().mockReturnValue({
+      downloadStore.getProjectionModelStatus = jest.fn().mockReturnValue({
         isAvailable: false,
         state: 'missing',
       });
 
       // Mock vision preference to be enabled (required for warning to show)
-      modelStore.getModelVisionPreference = jest.fn().mockReturnValue(true);
+      catalogStore.getModelVisionPreference = jest.fn().mockReturnValue(true);
 
       const {getByTestId} = customRender(
         <ModelCard model={visionModelWithMissingProjection} />,
@@ -488,13 +541,13 @@ describe('ModelCard', () => {
       };
 
       // Mock getProjectionModelStatus to return missing state
-      modelStore.getProjectionModelStatus = jest.fn().mockReturnValue({
+      downloadStore.getProjectionModelStatus = jest.fn().mockReturnValue({
         isAvailable: false,
         state: 'missing',
       });
 
       // Mock vision preference to be enabled (required for warning to show)
-      modelStore.getModelVisionPreference = jest.fn().mockReturnValue(true);
+      catalogStore.getModelVisionPreference = jest.fn().mockReturnValue(true);
 
       const {getByTestId} = customRender(
         <ModelCard model={visionModelWithMissingProjection} />,
@@ -509,7 +562,7 @@ describe('ModelCard', () => {
         fireEvent.press(warningBadge);
       });
 
-      expect(modelStore.checkSpaceAndDownload).toHaveBeenCalledWith(
+      expect(downloadStore.checkSpaceAndDownload).toHaveBeenCalledWith(
         'missing/projection-model',
       );
     });
