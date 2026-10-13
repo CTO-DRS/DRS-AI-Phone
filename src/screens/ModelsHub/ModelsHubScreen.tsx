@@ -37,13 +37,11 @@ import {
   ServerDetailsSheet,
 } from '../../components';
 
-import {
-  uiStore,
-  modelStore,
-  hfStore,
-  serverStore,
-  modelHubStore,
-} from '../../store';
+import {uiStore, hfStore, serverStore, modelHubStore} from '../../store';
+
+import {catalogStore} from '../../store/model/catalogStore';
+import {downloadStore} from '../../store/model/downloadStore';
+import {runtimeStore} from '../../store/model/runtimeStore';
 
 import {L10nContext} from '../../utils';
 import {Model, HuggingFaceModel, ModelFile} from '../../utils/types';
@@ -175,8 +173,8 @@ export const ModelsHubScreen: React.FC = observer(() => {
     const errorDisposer = reaction(
       () => ({
         hfError: hfStore.error,
-        downloadError: modelStore.downloadError,
-        modelLoadError: modelStore.modelLoadError,
+        downloadError: downloadStore.downloadError,
+        modelLoadError: runtimeStore.modelLoadError,
       }),
       data => {
         const hasDialogError =
@@ -201,8 +199,8 @@ export const ModelsHubScreen: React.FC = observer(() => {
   }, []);
 
   // ── derived data ──
-  const installedModels = modelStore.displayModels;
-  const activeModelId = modelStore.activeModel?.id;
+  const installedModels = catalogStore.displayModels;
+  const activeModelId = runtimeStore.activeModel?.id;
 
   const installedCounts = useMemo(() => {
     const counts: Partial<Record<ModelCategory, number>> = {};
@@ -274,7 +272,7 @@ export const ModelsHubScreen: React.FC = observer(() => {
   const onRefresh = async () => {
     setRefreshing(true);
     await gatherDeviceProfile(); // cached; refreshes tier if missing
-    await modelStore.refreshDownloadStatuses();
+    await downloadStore.refreshDownloadStatuses();
     featured.load({
       filter: 'gguf,conversational',
       sort: 'downloads',
@@ -325,21 +323,21 @@ export const ModelsHubScreen: React.FC = observer(() => {
 
   const handleDismissError = () => {
     hfStore.clearError();
-    modelStore.clearDownloadError();
-    modelStore.clearModelLoadError();
+    downloadStore.clearDownloadError();
+    runtimeStore.clearModelLoadError();
   };
 
   const handleRetryAction = () => {
     if (activeError?.context === 'search') {
       hfStore.fetchModels();
     } else if (activeError?.context === 'download') {
-      modelStore.retryDownload();
+      downloadStore.retryDownload();
     } else if (activeError?.context === 'modelInit') {
       const modelId = activeError.metadata?.modelId;
       if (modelId) {
-        const model = modelStore.models.find(m => m.id === modelId);
+        const model = catalogStore.models.find(m => m.id === modelId);
         if (model) {
-          modelStore.selectModel(model);
+          runtimeStore.selectModel(model);
         }
       }
     }
@@ -406,7 +404,7 @@ export const ModelsHubScreen: React.FC = observer(() => {
             switch (choice) {
               case 'replace':
                 await RNFS.unlink(permanentPath);
-                modelStore.removeModelByFullPath(permanentPath);
+                catalogStore.removeModelByFullPath(permanentPath);
                 break;
               case 'keep': {
                 let counter = 1;
@@ -428,7 +426,7 @@ export const ModelsHubScreen: React.FC = observer(() => {
           try {
             setIsCopyingModel(true);
             await RNFS.copyFile(file.uri, permanentPath);
-            await modelStore.addLocalModel(permanentPath);
+            await catalogStore.addLocalModel(permanentPath);
           } catch (e) {
             Alert.alert(
               l10n.models.fileManagement.copyFailed,
@@ -621,17 +619,18 @@ export const ModelsHubScreen: React.FC = observer(() => {
           <DownloadErrorDialog
             visible={isShowingErrorDialog}
             onDismiss={() => {
-              modelStore.clearDownloadError();
+              downloadStore.clearDownloadError();
             }}
-            error={modelStore.downloadError}
+            error={downloadStore.downloadError}
             model={
-              modelStore.downloadError?.metadata?.modelId
-                ? modelStore.models.find(
-                    m => m.id === modelStore.downloadError?.metadata?.modelId,
+              downloadStore.downloadError?.metadata?.modelId
+                ? catalogStore.models.find(
+                    m =>
+                      m.id === downloadStore.downloadError?.metadata?.modelId,
                   )
                 : undefined
             }
-            onTryAgain={modelStore.retryDownload}
+            onTryAgain={downloadStore.retryDownload}
           />
         </Portal>
         {hubOverlays()}
@@ -670,7 +669,7 @@ export const ModelsHubScreen: React.FC = observer(() => {
   }
 
   // ── Browse mode ──
-  const downloadsActive = modelStore.activeDownloads.length > 0;
+  const downloadsActive = downloadStore.activeDownloads.length > 0;
 
   return (
     <View style={styles.container} testID="models-hub-screen">
@@ -993,17 +992,17 @@ export const ModelsHubScreen: React.FC = observer(() => {
         <DownloadErrorDialog
           visible={isShowingErrorDialog}
           onDismiss={() => {
-            modelStore.clearDownloadError();
+            downloadStore.clearDownloadError();
           }}
-          error={modelStore.downloadError}
+          error={downloadStore.downloadError}
           model={
-            modelStore.downloadError?.metadata?.modelId
-              ? modelStore.models.find(
-                  m => m.id === modelStore.downloadError?.metadata?.modelId,
+            downloadStore.downloadError?.metadata?.modelId
+              ? catalogStore.models.find(
+                  m => m.id === downloadStore.downloadError?.metadata?.modelId,
                 )
               : undefined
           }
-          onTryAgain={modelStore.retryDownload}
+          onTryAgain={downloadStore.retryDownload}
         />
       </Portal>
 

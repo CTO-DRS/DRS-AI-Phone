@@ -17,7 +17,9 @@ import {
 } from 'llama.rn';
 import {observer} from 'mobx-react';
 
-import {modelStore} from '../../store';
+import {catalogStore} from '../../store/model/catalogStore';
+import {downloadStore} from '../../store/model/downloadStore';
+import {runtimeStore} from '../../store/model/runtimeStore';
 import NativeHardwareInfo from '../../specs/NativeHardwareInfo';
 import {getDeviceOptions} from '../../utils/deviceSelection';
 import {getRecommendedThreadCount} from '../../utils/deviceCapabilities';
@@ -143,7 +145,7 @@ interface BenchmarkRunRow {
   init_settings: Record<string, unknown>;
   /** Exact params passed to llama.rn's initLlama, captured BEFORE
    * initContext fires. Distinct from `init_settings` (which snapshots
-   * `modelStore.contextInitParams` AFTER init). The store may carry
+   * `runtimeStore.contextInitParams` AFTER init). The store may carry
    * symbolic values like `use_mmap='smart'` that resolve to concrete
    * booleans only via `getEffectiveContextInitParams(filePath)`. This
    * field captures what the runtime actually saw. Diagnostic for
@@ -276,7 +278,7 @@ export function expandAxes(
  * GPU/Hexagon pre-check failure).
  *
  * Reads only from the bench's own base params — never from
- * `modelStore.contextInitParams`. The runner is fully isolated from the
+ * `runtimeStore.contextInitParams`. The runner is fully isolated from the
  * rest of the app's state, so the fingerprint reflects the bench's
  * declared base, not whatever the user happens to have in Settings.
  */
@@ -295,7 +297,7 @@ function snapshotFingerprintKeys(base: BenchBaseParams): PreRunSnapshot {
  * Project a cell's composed `ContextParams` onto the fingerprint-eligible
  * knobs. Used to build the success-path fingerprint AND to populate the
  * report's `init_settings` field. Replaces the prior post-init snapshot
- * read from `modelStore.contextInitParams`: under the isolated lifecycle
+ * read from `runtimeStore.contextInitParams`: under the isolated lifecycle
  * the runner never goes through ModelStore, so the cell's composed
  * params ARE the post-init reality (no in-store mutation can shadow
  * them).
@@ -467,7 +469,7 @@ export function buildFailureFingerprint(
  * Side effects:
  *   - Updates the screen's status string at every transition.
  *   - Writes the report JSON file after every cell (append-as-you-go).
- *   - Calls modelStore.setDevices / initContext / context.bench / releaseContext.
+ *   - Calls runtimeStore.setDevices / initContext / context.bench / releaseContext.
  *
  * Per-cell error containment: a throw in cell N is captured into the row,
  * status is set to error:<msg>, but the loop continues to cell N+1.
@@ -493,7 +495,7 @@ export async function runMatrix(
   );
 
   // Resolve the device-appropriate thread count ONCE for the matrix.
-  // `getRecommendedThreadCount()` is a pure utility (no modelStore
+  // `getRecommendedThreadCount()` is a pure utility (no store
   // coupling), so the bench's base stays isolated from the user's
   // persisted Settings while still picking a sensible per-device
   // default (80% of cores when >4, otherwise all cores).
@@ -504,7 +506,7 @@ export async function runMatrix(
   };
 
   // Matrix-level fingerprint snapshot (WHAT 4c.1). Derived from the
-  // bench's own base — NOT from `modelStore.contextInitParams` — so the
+  // bench's own base — NOT from `runtimeStore.contextInitParams` — so the
   // fingerprint reflects what the bench would have run, independent of
   // whatever the user has in Settings.
   const preRunSnapshot = snapshotFingerprintKeys(benchBase);
@@ -576,15 +578,15 @@ export async function runMatrix(
     await toggleNativeLog(true).catch(() => undefined);
 
     // Take exclusive ownership of the native context lifecycle. This:
-    //   - Sets `modelStore.benchmarkActive = true` synchronously so any
+    //   - Sets `runtimeStore.benchmarkActive = true` synchronously so any
     //     in-flight or new auto-load (e.g. ChatView's assistant-default
     //     selectModel on cold-launch) is gated.
     //   - Releases any context the rest of the app loaded so no stale
     //     LlamaContext occupies the native context list while the matrix
     //     is creating its own.
     // The runner from this point on calls `initLlama` directly per cell;
-    // it never touches `modelStore.context` / `modelStore.activeModelId`.
-    await modelStore.enterBenchmarkMode();
+    // it never touches `runtimeStore.context` / `runtimeStore.activeModelId`.
+    await runtimeStore.enterBenchmarkMode();
     // Claimed only after enterBenchmarkMode so a local chat's own
     // deactivate has already run; the native flag is not ref-counted.
     keepAwakeClaimed = true;
@@ -654,7 +656,7 @@ export async function runMatrix(
       let logSub: {remove: () => void} | null = null;
       // The native context the runner owns for this cell. Stored at outer
       // scope so the `finally` block can release it regardless of where in
-      // the try body a throw lands. Distinct from `modelStore.context` —
+      // the try body a throw lands. Distinct from `runtimeStore.context` —
       // the runner never assigns to that.
       let ctx: LlamaContext | null = null;
       let initMs: number | undefined;
@@ -721,7 +723,7 @@ export async function runMatrix(
         }
 
         // 2. Resolve / download the model file.
-        let resolvedModel = modelStore.models.find(
+        let resolvedModel = catalogStore.models.find(
           (mm: Model) => mm.filename === variant.filename && mm.isDownloaded,
         );
         if (!resolvedModel) {
@@ -729,8 +731,8 @@ export async function runMatrix(
           setStatus(`downloading:${variant.filename}`);
           // Strategy: rely on the existing app download path. The screen
           // pushes a minimal HuggingFaceModel + ModelFile descriptor into
-          // modelStore, kicks off the download via downloadHFModel, and
-          // polls modelStore.models for isDownloaded=true.
+          // catalogStore, kicks off the download via downloadHFModel, and
+          // polls catalogStore.models for isDownloaded=true.
           const hfModel = {
             _id: model.hfModelId,
             id: model.hfModelId,
@@ -766,28 +768,27 @@ export async function runMatrix(
           } as any;
           // Clear stale download error so we only observe failures from THIS
           // cell's download. The matrix is serial so one error slot is enough.
-          modelStore.clearDownloadError?.();
-          await modelStore.downloadHFModel(hfModel, modelFile);
-          // Status updates with download progress: poll modelStore.models for
+          downloadStore.clearDownloadError?.();
+          await downloadStore.downloadHFModel(hfModel, modelFile);
+          // Status updates with download progress: poll catalogStore.models for
           // the entry and surface percentage. The DownloadManager updates
           // model.progress as bytes arrive; we read it on each poll tick.
-          // We also watch modelStore.downloadError so a failed download fails
+          // We also watch downloadStore.downloadError so a failed download fails
           // the cell within ~500 ms instead of burning the full 30-min deadline.
           const progressFilename = variant.filename;
           const downloadDeadline = Date.now() + 30 * 60 * 1000;
           while (Date.now() < downloadDeadline) {
-            const entry = modelStore.models.find(
+            const entry = catalogStore.models.find(
               (m: Model) => m.filename === progressFilename,
             );
             if (entry?.isDownloaded) {
               resolvedModel = entry;
               break;
             }
-            const dlErr = (modelStore as any).downloadError;
+            const dlErr = downloadStore.downloadError;
             if (dlErr) {
               const reason =
                 dlErr?.message ??
-                dlErr?.error?.message ??
                 JSON.stringify(dlErr).slice(0, TRUNCATE_ERROR);
               throw new Error(`download-failed:${progressFilename}:${reason}`);
             }
@@ -805,7 +806,7 @@ export async function runMatrix(
         //    mutation: per-cell overrides + backend slot land directly in
         //    the dict we hand to `initLlama`. This is the single source of
         //    truth for `init_settings` AND `effective_init_params`.
-        const filePath = await modelStore.getModelFullPath(resolvedModel);
+        const filePath = await downloadStore.getModelFullPath(resolvedModel);
         const slot = backendSlot(backend, adrenoDevices, hexagonDevices);
         const cellParams = composeCellParams({
           filePath,
@@ -839,7 +840,7 @@ export async function runMatrix(
         });
 
         // 5. Init the native context directly. `initLlama` is the runner's
-        //    ONLY native-load entrypoint — `modelStore.initContext` /
+        //    ONLY native-load entrypoint — `runtimeStore.initContext` /
         //    `selectModel` are gated by `benchmarkActive` and would throw
         //    if accidentally invoked.
         const initStart = Date.now();
@@ -1083,11 +1084,11 @@ export async function runMatrix(
     }
     // Outer matrix-level finally: success and failure paths converge here.
     // No "restore settings" step is required — under the isolated
-    // lifecycle the runner never wrote to `modelStore.contextInitParams`,
+    // lifecycle the runner never wrote to `runtimeStore.contextInitParams`,
     // so there is nothing to undo. The single side-effect we own is
     // native-log toggle (matrix-scoped) and benchmark-mode (matrix-scoped).
     await toggleNativeLog(false).catch(() => undefined);
-    modelStore.exitBenchmarkMode();
+    runtimeStore.exitBenchmarkMode();
   }
 }
 
