@@ -11,9 +11,10 @@
  * ═══════════════════════════ NEW-CODE RULE ═══════════════════════════
  * New code MUST import domain stores from their files directly:
  *   import {downloadStore} from '<...>/store/model/downloadStore';
- * The facade re-export of downloadStore below carries the Phase-2
- * @deprecated tag, and .eslintrc.js no-restricted-syntax fires on new
- * imports of downloadStore through this facade path.
+ * All three facade re-exports below carry @deprecated tags (downloadStore
+ * since Phase 2; catalogStore/runtimeStore since the Phase-3 expansion),
+ * and .eslintrc.js no-restricted-syntax fires on new imports through this
+ * facade path.
  * ═════════════════════════════════════════════════════════════════════
  *
  * DISSOLUTION (Phase 4): this barrel dies together with the pass-through
@@ -32,5 +33,18 @@
  * deferred categories finish their own migration.
  */
 export {downloadStore} from './downloadStore';
+/**
+ * @deprecated استخدم catalogStore من './catalogStore' مباشرة — ممنوع في الكود الجديد (مرحلة 3)
+ *
+ * Same contract as downloadStore above: the store itself is the blessed
+ * migration target; what is deprecated is importing it THROUGH this facade.
+ */
 export {catalogStore} from './catalogStore';
+
+/**
+ * @deprecated استخدم runtimeStore من './runtimeStore' مباشرة — ممنوع في الكود الجديد (مرحلة 3)
+ *
+ * Same contract as downloadStore above: the store itself is the blessed
+ * migration target; what is deprecated is importing it THROUGH this facade.
+ */
 export {runtimeStore} from './runtimeStore';
