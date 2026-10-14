@@ -119,3 +119,30 @@
 - Real CI command (test --coverage): EXIT=0 — 312 suites / 4989 passed + 2 skipped / 310 snapshots.
 - Untouched (verified byte-level per-file against d68ebb9): B-class (all surviving files' modelStore line counts identical), ModelStore.ts (2 lines incl. singleton export), ModelStore.test.ts (932 lines), ModelStore.localModelPath.test.ts (39 lines), scaffold (161 lines constant).
 - Deferred to Phase 4: ModelStore.ts self-reference (line 3577), ModelStore.test.ts, localModelPath.test, initializeStore cross-member, canDelete internal runtime read documentation.
+
+---
+
+## الجلسة 6 — الاستعادة السادسة + إعادة بناء خطة المرحلة 4
+
+### الحادثة (إعادة ضبط 6)
+- الحاوية مُسحت بالكامل: لا مستودع، لا scripts، لا bundles، **ولا توكن** (upload/gh_token.txt فارغ).
+- `git ls-remote` أثبت: فرع `fix/modelstore-dissolution` غير موجود على origin — مخطط `99a48bb` **لم يُدفع قط** وضاع.
+- الاستعادة: استنساخ كامل (FULL-HISTORY — الخطوة 0.1 غير مطلوبة أصلاً)، الفرع أُعيد من `fix/audit-hardening` (`88a0257`).
+
+### حالة الخطوة 0 (موثقة)
+- شجرة `origin/main` (400e0ea) ≠ شجرة 88a0257: **PR المراحل 1-3 غير مدموج** (41 ملفاً +477/−2325) — حالة توثيق فقط، الفرع النهائي يغطي الكل.
+- الدفع متوقف: **TOKEN_REQUIRED** — upload/ فارغ؛ أول push سيكون بوابة المصادقة.
+
+### إعادة البناء (كلها مقاسة من الكود عند 88a0257، ليست من الذاكرة)
+- **docs/extraction-plan.md** + **docs/phase4-members.json** أعيد بناؤهما بمحلل بنيوي حتمي (scripts داخل الحاوية؛ الخطة نفسها داخل المستودع).
+- تحققات مطابقة: official=1733 / real=1732 يطابقان سجل إغلاق المرحلة 3 حرفياً؛ داخل السقالة 138 (المرجع 145 كان بنمط أوسع يشمل استيرادات/تعليقات — الوصفة المثبتة الآن `modelStore\.[a-zA-Z]`).
+- الجرد: 145 عضواً = 138 مفوَّضاً (39 catalog + 23 download + 76 runtime) + 7 غير مغطاة + خاصون موزعون؛ ModelStore.test.ts = 6,350 سطراً بـ 282 it( عادية + 3 it.each (المرسى 100+78+104=282 يطابق).
+- الفئة ب المقاسة: **60 ملفاً / 782 سطراً رسمياً / 781 حقيقياً** (رقم 802 القديم كان أحداثاً).
+- **حسم الشرط 3**: بعد 4b — official 951 / real 950 / raw 951 (المدى 950..951 انحسم بمصير سطر FP الذي يعيش داخل مجموعة ب).
+- حسم الشرط 1: الستة تتحول إلى bootstrap.test.ts → 4e = 4989+2 ثابتة، suites 312 ثابتة.
+- حسم الشرط 4: R0 = سقالة bootstrap.ts + ربط بالحقن، صفر نقل أعضاء، صفر فرق عدادات.
+- fp الفريد الآن في BenchmarkRunnerScreen.test.tsx:1715 (تعليق __mocks__/stores/modelStore.ts).
+- المصدر الذاتي الوحيد `modelStore.` داخل ModelStore.ts سطر 3577 (`toJS(modelStore.activeModel?.stopWords)` في startImageCompletion) — يموت مع دفعة B6 → official بعد 4a = 1732.
+
+### نقطة التوقف الحالية
+commit docs + bundle نجاة، ثم **توقف عند بوابة الدفع** بانتظار توكن جديد في upload/gh_token.txt.
