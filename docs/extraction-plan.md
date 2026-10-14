@@ -1,0 +1,268 @@
+# خطة الاستخلاص — المرحلة 4 (docs/extraction-plan.md)
+
+> **الحالة**: مُعاد بناؤها في الجلسة 6 بعد إعادة الضبط رقم 6. النسخة الأصلية (commit `99a48bb`)
+> ضاعت قبل دفعها — لم تكن موجودة على origin إطلاقاً (`git ls-remote` أثبت غياب فرع
+> `fix/modelstore-dissolution`). هذا الملف والجرد المرافق `docs/phase4-members.json`
+> أُعيدا بناءهما حتمياً من الكود عند `88a0257`، مع الحفاظ على كل مرساة معتمدة من المالك
+> (البنية الطبقية، 9 حالات عابرة بملكية واحدة، الاستراتيجية الثلاثية، ذوبان
+> initializeStore في bootstrap، تقسيم 100+78+104=282، ترتيب 4c قبل 4b، 24 دفعة، 950..951).
+> كل رقم أدناه مقاس من الشجرة الحالية وليس منسوخاً من الذاكرة.
+
+**الفرع**: `fix/modelstore-dissolution` من `fix/audit-hardening` (`88a0257`).
+**خط الأساس المقدس**: 312 suites / 4989 passed + 2 skipped / 310 snapshots / CI EXIT=0 / madge 42 حلقة.
+
+---
+
+## 0) حالة الخطوة 0 (موثقة، ليست فشلاً)
+
+1. `git fetch --unshallow` — **غير مطلوب**: الاستنساخ الجديد كامل التاريخ (FULL-HISTORY، لا `.git/shallow`).
+2. مقارنة شجرة `origin/main` (`400e0ea`) بشجرة `88a0257`: **غير فارغة** (41 ملفاً، +477/−2325؛
+   main يفتقد `src/store/model/` كاملاً واختبارات العقد وruntimeStore). **السبب**: PR المراحل 1-3
+   لم يُدمج بعد. القرار وفق البروتوكول: توثيق فقط — الفرع من `fix/audit-hardening` مقبول،
+   والـ PR النهائي يغطي الكل (13 commit فوق main).
+3. دفع `99a48bb`: المستحيل — الضياع سبق الدفع. البديل المعتمد: إعادة البناء هذه + دفع فوري
+   بأول توكن يعمل (بوابة المصادقة = أول push تجريبي).
+4. الدرس المؤسسي المطبق: كل ما يلي يعيش داخل المستودع من اللحظة الأولى.
+
+---
+
+## 1) الجرد الكامل لأعضاء ModelStore (المصدر: docs/phase4-members.json)
+
+`src/store/ModelStore.ts` = 3,716 سطراً؛ الكلاس `160..3714`؛ المفرد `export const modelStore = new ModelStore()` في سطر 3716.
+
+**الإجمالي: 145 عضواً = 138 مفوَّضاً (عقود المرحلة 1 المعتمدة) + 7 غير مغطاة + 0 خارج العقود.**
+التحقق الحتمي: 133 عضواً مُحللاً آلياً + 12 عضواً بتواقيع متعددة الأسطر أعاد إلحاقها مسح
+التعريفات = 145؛ 138+7=145 ✓ بلا تكرار بين القوائم الثلاث (duplicates = ∅).
+
+| المتجر | أعضاء العقد | الحالة المحفوظة | أمثلة كبرى (أسطر) |
+|---|---|---|---|
+| `catalogStore` | 39 | models, version, deviceTier, rulesVersion, lastUsedModelId | addHFModel 2837(104L)، fetchAndPersistGGUFMetadata 1862(115L)، deleteModel→القائمة (اعتماد مالك: `models.splice` خالص سطر 2968)، mergeModelLists 963(63L)، resetModels 3065(62L) |
+| `downloadStore` | 23 | — (حالتها كلها عابرة) | deleteModel 1740(117L)، verifyDownloadedModel 1627(62L)، checkSpaceAndDownload 1543(46L)، getModelFullPath 1212(83L)، resolveLocalModelPath 1317(48L)، downloadHFModel 2768 |
+| `runtimeStore` | 76 | useAutoRelease, contextInitParams, wasAutoReleased, lastAutoReleasedModelId, availableMemoryCeiling, largestSuccessfulLoad, pendingProjectionCleanupIds | initContext 2206(111L)، proceedWithInitialization 2321(289L حتى نهايتها الفعلية)، _releaseContextInternal 2476، startImageCompletion 3498(137L)، getEffectiveContextInitParams 539(120L)، handleAppStateChange 1096(44L) |
+
+**السبعة غير المغطاة + الخاصون (قرارات §2)**: constructor(92L)، initializeStore(85L)،
+initializeThreadCount(27L)، initializeGpuSettings(18L)، updateModelStopTokens(63L)،
+registerCompletionPromise(3L)، clearCompletionPromise(3L)، + 25 عضواً خاصاً (`private`)
+موّزعين حسب النطاق في `phase4-members.json` (مثل resolvePresets/draftRulesManager→catalog؛
+proceedWithInitialization/_releaseContextInternal/contextOperationMutex→runtime؛
+pendingLocalPathRecoveries/flushPendingLocalPathRecoveries→download)، + مديران تركيبيان:
+`draftRulesManager` (DraftRulesManager، 125 سطراً) → catalog، `projectionManager`
+(ProjectionModelManager، 369 سطراً) → **جذر التركيب** (يخدم أعضاءً في النطاقات الثلاثة).
+
+### خريطة دفعات 4a (24 دفعة، ترتيب اعتماديات — كل دفعة: ModelStore.test.ts بلا تعديل + suites المتجر والمتأثرات خضراء → commit + bundle + push)
+
+| دفعة | المحتوى (أعضاء بعقودهم) |
+|---|---|
+| R0 | سقالة bootstrap.ts + الربط بالحقن — §Condition-4 |
+| B1 | 18 مُحدد معاملات runtime (setNThreads..setNParallel، 373-533) |
+| B2 | عائلة getEffective* الأربع + MIN_CONTEXT_SIZE + max_threads |
+| B3 | سطح draft/capabilities: effectiveDraftMode، effectiveDraftCacheDefaults، capabilityEnv، capsFor، activeModelCaps، activeModel، contextId |
+| B4 | عائلة auto-release الكاملة (appState، useAutoRelease، wasAutoReleased، lastAutoReleasedModelId، autoReleaseDisabledReasons، enable/disable/update، markAutoReleased، clearAutoReleaseFlags، setupAppStateListener، handleAppStateChange، checkAndReloadAutoReleasedModel) |
+| B5 | benchmark: benchmarkActive، enterBenchmarkMode، exitBenchmarkMode |
+| B6 | أعلام الإكمال: inferencing، isStreaming، setInferencing، setIsStreaming، registerCompletionPromise، clearCompletionPromise، activeCompletionPromise + **startImageCompletion (المرجع الذاتي 3577 يموت هنا — official −1)** |
+| B7 | دورة الحياة 1: contextOperationMutex، pendingModelId، _releaseContextInternal، releaseContext، manualReleaseContext، modelLoadError، clearModelLoadError |
+| B8 | دورة الحياة 2: initContext + proceedWithInitialization + resolveMultimodalConfig + resolveDraftConfig + checkMemoryAndConfirm + isContextLoading/loadingModel + activeProjectionModelId + isMultimodalActive + activeRemoteBinding + reinitializeContext |
+| B9 | availableMemoryCeiling + largestSuccessfulLoad (الحالة المحفوظة runtime) |
+| B10 | حالة الكتالوج: models، version، deviceTier، rulesVersion، displayModels، availableModels، lastUsedModelId، lastUsedModel، remoteModels (القائمة) |
+| B11 | طفرات القائمة: addHFModel، addLocalModel، resetModels، removeModelFromList، removeModelByFullPath، registerOnboardingAssistantModel، mergeModelLists، reconcilePresets، resolvePresets + خاصو preset + draftRulesManager/DraftRulesManager |
+| B12 | محدّثات البيانات الوصفية: updateModelName/resetModelName، updateModelChatTemplate/reset، updateModelStopWords/reset، updateModelHash، isModelAvailable، fetchAndUpdateModelFileDetails |
+| B13 | GGUF: fetchAndPersistGGUFMetadata + loadMissingGGUFMetadata + healDraftVisionClassification (منتج cleanupQueueBridge) |
+| B14 | remote + vision/reasoning: setRemoteModel، setModelVisionEnabled، getModelVisionPreference، setReasoningOverride، recordReasoningObserved + updateModelThinkingCapabilities |
+| B15 | عائلة projection-كتالوج: getCompatibleProjectionModels، getDefault/setDefaultProjectionModel، getLLMsUsingProjectionModel، hasRequiredProjectionModel + إعادة إيواء ProjectionModelManager جزء 1 (قراءات runtimeBridge موثقة) |
+| B16 | حالة التنزيل + طابور: verifyingModelIds، downloadError، clearDownloadError، activeDownloads، isDownloading، getDownloadProgress، initializeDownloadStatus، refreshDownloadStatuses |
+| B17 | دورة التنزيل: checkSpaceAndDownload، cancelDownload، pauseDownload، resumeDownload، retryDownload + **جسر mutationSync (كتل setCallbacks 288-342 تنتقل كتركيب downloadStore)** |
+| B18 | ملفات: getModelFullPath، resolveLocalModelPath، checkFileExists، pendingLocalPathRecoveries، flushPendingLocalPathRecoveries، removeInvalidLocalModels |
+| B19 | deleteModel (117L) + downloadHFModel + verifyDownloadedModel |
+| B20 | عائلة projection-تنزيل: getProjectionModelStatus، canDeleteProjectionModel، getDownloadedLLMsUsingProjectionModel، _downloadProjectionModelIfNeeded، _downloadDraftModelIfNeeded، cleanupOrphanedProjectionModel(s)، drainPendingProjectionCleanup، pendingProjectionCleanupIds — اكتمال cleanupQueueBridge |
+| B21 | GPU: initializeGpuSettings، setNoGpuDevices، setDevices، setFlashAttnType، setKvUnified، setNParallel |
+| B22 | contextInitParams (محفوظ) + activeContextSettings + initializeThreadCount → تصدير bootstrap |
+| B23 | **ذوبان initializeStore في bootstrap** (761-845) + updateModelStopTokens |
+| B24 | الشكل النهائي لـ ModelStore.ts: مفرد + مفوضون عكسيون خالصون؛ مسح: صفر مرجع modelStore داخل src/store/model؛ عدادات: official 1732 / real 1731 / raw 1732؛ لقطة madge |
+
+قاعدة الدفعات: الانكسار في ModelStore.test.ts أثناء 4a-4c = تبعية سلوكية حقيقية → توقف وتوثيق، ممنوع إصلاح عبر تعديل الاختبار.
+
+---
+
+## 2) خريطة الحالة عبر النطاقات — صفر تكرار صامت
+
+قاعدة القرار لكل عضو: **move+import** (ينتقل جسده ويستوردَ من مالكه) / **composition-root**
+(يعيش في bootstrap.ts) / **documented bridge** (وصول عابر للنطاقات عبر مالك واحد موثق).
+ممنوع أي نسخ حالة. الحالات العابرة التسع (ملكية واحدة، إثبات سطري في phase4-members.json):
+
+| # | الحالة | المالك | الوصول العابر الموثق |
+|---|---|---|---|
+| 1 | `context` | runtime | runtimeBridge: ProjectionModelManager L206/L324 يقرأ عبر مرجع runtime المحقون |
+| 2 | `activeModelId` | runtime | runtimeBridge: PM L321 (isActiveModel) |
+| 3 | `activeProjectionModelId` | runtime | runtimeBridge: PM L206؛ كتابة runtime فقط (2335/2404/2499) |
+| 4 | `isMultimodalActive` | runtime | كتابة حصراً في خط التهيئة (2334/2397/2403/2498)؛ قراءة UI عبر runtimeStore |
+| 5 | `downloadError` | download | mutationSync يكتب (L339) + تدفقات التنزيل (1582/1678) |
+| 6 | `max_threads` | runtime | bootstrap يكتب عبر initializeThreadCount (349/368؛ يقرأ version الكتالوج للإطلاق الأول) |
+| 7 | `verifyingModelIds` | download | verifyDownloadedModel (1630/1683)؛ settlement تنتظره تدفقات حالة التنزيل |
+| 8 | `pendingLocalPathRecoveries` | download | resolveLocalModelPath يكتب (1362)؛ flush داخل تدفقات الحالة (1430) |
+| 9 | `appState` | runtime | المستمع يكتب (1097-1106)؛ auto-release يستهلك |
+
+حوكمة الصفر-تكرار: كل اسم يُعلن **مرة واحدة بالضبط** في `src/store/model/*.ts`؛ أي وصول
+من نطاق آخر يمر عبر المتجر المالك أو جسر موثق بالاسم. **بوابة 4e**: `rg` لكل اسم من
+التسعة = تعريف واحد بالضبط — أي تعريف ثانٍ يوقف التنفيذ.
+
+### الجسور الثلاثة (قرارات 4a)
+
+- **mutationSync**: كتل `downloadManager.setCallbacks` (constructor 288-342) تنتقل كتركيب
+  داخل downloadStore؛ كتابات حقول catalog (progress/isDownloaded/downloadedAt) تمر عبر
+  أعضاء catalogStore العامة — لا كتابة مباشرة لحالة غير مالك.
+- **cleanupQueueBridge**: طابور `pendingProjectionCleanupIds` (محفوظ، kill-safe) — المنتج
+  `healDraftVisionClassification` (catalog، L703-708)، المستهلك `drainPendingProjectionCleanup`
+  (runtime، L726-759) يستدعي deleteModel (download). الملكية: runtimeStore؛ الجسر موثق بالاتجاه catalog→runtime→download.
+- **runtimeBridge**: ProjectionModelManager يقرأ host.context/activeModelId/activeProjectionModelId
+  (L206/208/321/324) لخدمة أعضاء catalog+download. القرار: المدير يُعاد إيواؤه ويستقبل مرجع
+  runtime محقوناً (DI) — القراءة تبقى **موثقة بالاسم في ترويسة المدير**، ليست تكراراً ولا وصولاً صامتاً.
+
+## 3) ملكية مفاتيح mobx-persist + إعادة الترطيب
+
+12 مفتاحاً (makePersistable L263-283، name='ModelStore'، AsyncStorage) تنقسم 5/7:
+
+- `catalogStore` (5): models، version، deviceTier، rulesVersion، lastUsedModelId
+- `runtimeStore` (7): useAutoRelease، contextInitParams، wasAutoReleased، lastAutoReleasedModelId، availableMemoryCeiling، largestSuccessfulLoad، pendingProjectionCleanupIds
+
+**الاستراتيجية الثلاثية** (تحقق بند REHYDRATION CLAUSE في العقود الثلاثة):
+1. **جذور جديدة مُصدرة الإصدار**: makePersistable لكل متجر مالك (name: `catalogStore:v2` / `runtimeStore:v2`) بنفس الخصائص — ترقية v1.41.x لا تفقد ولا تنزل تفضيلات المستخدم.
+2. **استيراد إرث لمرة واحدة**: bootstrap يقرأ مفتاح `ModelStore` الإرثي من AsyncStorage، يوزع الحمولات على الجذور الجديدة، يحترم stored version مقابل MODEL_LIST_VERSION (منطق 782-797 يبقى حرفياً)، ويفشل بأمان (يعيد المحاولة اللاحقة) عند أي خطأ قراءة — لا يُمس المفتاح الإرثي قبل نجاح الاستيراد.
+3. **تنظيف المفتاح الإرثي** بعد أول استيراد ناجح كامل.
+
+ترتيب التهيئة في bootstrap: استيراد الإرث → initializeThreadCount → initializeModelSystem —
+بنفس ترتيب constructor الحالي (280-285) حرفياً.
+
+## 4) مصير initializeStore والتوقيع الجديد
+
+- اليوم: `initializeStore = async () => {}` (761-845، 85 سطراً) — **لا مستدعينا إنتاج خارجيين**
+  (التحقق: الإشارة الوحيدة خارج الكلاس تعليق في useMemoryCheck.ts:101)؛ المستدعي الوحيد:
+  persist.then في constructor (L282).
+- **المصير**: الذوبان في `src/store/model/bootstrap.ts` باسم `initializeModelSystem` — دفعة B23.
+- **التوقيع الجديد**:
+  `initializeModelSystem(deps: {catalog: CatalogStore; download: DownloadStore; runtime: RuntimeStore}): Promise<void>`
+  — يستقبل المتاجر الثلاثة صراحة (لا التقاط مفردات)؛ ترتيب الخطوات L762-845 محفوظ حرفياً:
+  heal → syncWithActiveDownloads → drain → resolvePresets → بوابة version (merge/reconcile) →
+  upgradeToFetchedRules بعد التفاعلات → initializeGpuSettings → سقف الذاكرة → loadMissingGGUFMetadata → checkAndReloadAutoReleasedModel.
+- بعد 4e يصبح bootstrap جذر التركيب الوحيد: ينشئ/يوصل المفردات الثلاثة ويصدّر initializeModelSystem؛ نقطة دخول التطبيق تستدعيه مكان constructor المفرد القديم.
+
+## 5) بنية الاختبار المركزية (jest.mock + test-utils)
+
+- **اليوم**: `jest/setup.ts` L118 `jest.mock('../src/store', ...)` — سخرية برميلية عامة تبني
+  كائناً من `__mocks__/stores/modelStore.ts` (371 سطراً، MockModelStore) + 11 mock مركزياً آخر.
+  test-utils.ts **لا يُلمس إطلاقاً** في كل المرحلة 4.
+- **4c (قبل 4b — الترتيب معتمد)**: إضافة بحتة — 3 ملفات `__mocks__/stores/{catalog,download,runtime}Store.ts`
+  (نمط المركزي الحالي: requireActual + Object.create(real) + jest.fn overrides + defineProperty
+  للحالة المظللة بالوصولات — نمط دفعة 8/8 المعتمد) + توسيع factory في setup.ts بثلاثة مفاتيح
+  جديدة فقط. **شرط النجاح الفوري**: 5 suites حساسة خضراء (SettingsScreen، ChatScreen،
+  IncreaseContextSheet، useChatSession، facade.test) + ModelStore.test.ts بلا تعديل.
+- **mock الثلاثية الجديدة تُبنى فوق MockModelStore** (ترث مثيله) حتى تبقى suites الفئة ب
+  المت هجرة على سلوك مألوف — لا mock paralel مستقل.
+- **مصير `__mocks__/stores/modelStore.ts`**: يبقى طوال 4a-4d (ModelStore.test.ts يعيش عليه)،
+  ويُحذف في 4e مع سطر الإخراج من factory (تنظيف كامل — لا مفاتيح ميتة).
+- **قاعدة جديدة على الدفعات الجديدة**: AsyncStorage mock محلي داخل كل ملف اختبار جديد + بادئة
+  mock للهوِيستنغ + صفر تسجيل بعد اكتمال suites (وروثية).
+
+## 6) خطة تقسيم ModelStore.test.ts (توجيه تكافؤ فقط — صفر حذف assertions)
+
+المصدر: `src/store/__tests__/ModelStore.test.ts` = 6,350 سطراً، 68 describe،
+**282 it( عادية + 3 it.each** (المجموع الثابت المرسّى 282 يطابق 100+78+104).
+
+| الجناح المقسم | it( عادية | النطاق |
+|---|---|---|
+| `src/store/model/__tests__/catalogStore.test.ts` | 100 | describes الخاصة بالكتالوج/البيانات الوصفية/preset/projection-كتالوج |
+| `src/store/model/__tests__/downloadStore.test.ts` | 78 | describes الخاصة بالتنزيل/الملفات/الحذف/projection-تنزيل |
+| `src/store/model/__tests__/runtimeStore.test.ts` | 104 | describes الخاصة بالسياق/المعاملات/auto-release/benchmark/الإكمال |
+
+- **التكافؤ**: كل describe يُسند بنطاقه (جدول الإسناد يُبنى آلياً من أسماء describes قبل 4d
+  ويُعلن رقمه)؛ `modelStore.X` يتحول إلى مرجع المتجر المالك `catalogStore.X` / `downloadStore.X` /
+  `runtimeStore.X` — نفس التوقيعات (المفوضون العكسيون من 4a يضمنون التكافؤ السلوكي طوال الطريق).
+- كتل it.each الثلاث تسافر مع describe الأم؛ عددها التوسيعي يقاس مباشرة عند 4d ويُعلن.
+- **الجناحان الذاتيان يوجَّهان في 4d أيضاً**: localModelPath (38 مرجعاً modelStore) و
+  register (10 مراجعات) — إعادة إيواء + تحويل المراجع للمتجر المالك؛ صفر حذف assertions.
+- **ModelStore.test.ts الأصلي يُحذف فقط بعد خضوع الأجنحة الثلاثة** (وليس أثناء التقسيم).
+- بوابة العدادات بعد 4d: official=1 (سطر FP وحده)، real=0، raw=1.
+
+---
+
+## الشرط 1 — مصير اختبارات الفاصاد الستة (محسوم قبل 4d)
+
+**القرار: التحول لا الموت.** الستة تتحول إلى `src/store/model/__tests__/bootstrap.test.ts`
+(عقد التركيب + الجسور الثلاثة) بتوجيه تكافؤ assertion-by-assertion:
+
+| اختبار الفاصاد اليوم | مصيره في bootstrap.test.ts |
+|---|---|
+| 1. سطح download كامل بأنواع أعضاء صحيحة | يبقى حرفياً على downloadStore الحقيقي (بعد 4a هو المالك) |
+| 2. سطحا catalog+runtime كاملان | يبقى حرفياً على المالكين الحقيقيين |
+| 3. live-state — نفس المراجع لا نسخ | يُعكس اتجاهه: المتاجر الآن مالكو الحالة — identity عبر أسلاك bootstrap (catalogStore.models === bootstrap.wired.models) |
+| 4. فخ isDownloading المنحنية (getter يرجع دالة) | يبقى حرفياً على downloadStore |
+| 5. نقاء النطاقات — لا تسرب عابر | يبقى حرفياً |
+| 6. هوية البرميل — الفاصاد يعيد تصدير نفس المفردات | يتحول لعقد جذر التركيب: bootstrap يوصل نفس المفردات الثلاثة بالضبط (لا مفرد رابع، لا كائن إله) |
+
+**أثر 4e النهائي المحسوم**: **4989 passed + 2 skipped ثابتان** (الستة محفوظون كتحولات) و
+**312 suite ثابت** (facade.test.ts −1، bootstrap.test.ts +1). لا تقدير — رقم نهائي.
+
+## الشرط 2 — خريطة تغطية الجسور (مالك اختباري مسمى لكل جسر قبل 4e)
+
+| الجسر | التغطية الضمنية اليوم (ModelStore.test عبر المفرد الحقيقي) | المالك بعد التقسيم 4d | فحص الفجوة |
+|---|---|---|---|
+| mutationSync | describes التنزيل: مسار onComplete (تحقق/بيانات وصفية) + مسار onError (downloadError) | **download suite** | عند 4d: إذا لم توجد it( تمارس setCallbacks صراحة → suite صغيرة جديدة (اسم: bootstrap.test يغطي الأسلاك + download suite يغطي السلوك) وتُعلن أرقامها قبل التنفيذ |
+| cleanupQueueBridge | L447/463 (drain يفرغ الطابور) + L494/505 (احتفاظ in-flight) | **runtime suite** (drain) + **catalog suite** (منتج heal) | نفس البروتوكول — الفجوة تُسد بـ it( في الجناح المالك لا suite مستقلة إن أمكن |
+| runtimeBridge | اختبارات canDeleteProjectionModel (قراءة context/active) + مسار vision-change (PM L321-324) | **download suite** (canDelete) | يفحص وجود it( لقراءة السياق عند canDelete؛ فجوة → it( جديدة في download suite بأرقام معلنة |
+
+قاعدة: جسر بلا مالك مسمى عند نهاية 4d = يوقف 4e حتى استيفائه.
+
+## الشرط 3 — حسم رقم 4b قبل بدئها (محسوم)
+
+من `docs/phase4-members.json` (bClass): **الفئة ب = 60 ملفاً / 782 سطراً رسمياً / 781 حقيقياً**
+(33 إنتاجاً بـ 279 سطراً + 27 suite اختبار بـ 503؛ FP داخل المجموعة).
+(رقم الجلسة 3 القديم 802 كان **أحداثاً** — العداد بالأسطر؛ سطر قد يحوي عدة أحداث.)
+
+الرقم الوحيد المحسوم بعد آخر دفعة 4b — **الثلاثة معاً**:
+
+- **official = 951** (1732 بعد 4a − 781 سطراً حقيقياً مهاجراً؛ يبقى FP التعليق + ModelStore.test 902 + localModelPath 38 + register 10)
+- **real = 950** (official − 1 FP)
+- **raw = 951** (داخل src/store/model = 0 بعد 4a — التنفيذات الحقيقية لا ترجع modelStore)
+
+المدى القديم 950..951 كان حالة official/real قبل حسم مصير سطر FP — الآن كل رقم مقفول:
+post-4a: official 1732 / real 1731 / raw 1732 → post-4b: **951/950/951** → post-4d: 1/0/1 → post-4e: **0/0/0**.
+
+## الشرط 4 — تعريف R0 (محسوم قبل تنفيذها)
+
+**R0 = سقالة + ربط بالحقن، دون نقل أي عضو** — تأكيد ما فهمته بلا زيادة:
+
+1. إنشاء `src/store/model/bootstrap.ts` يحوي فقط: أنواع التركيب
+   (`ModelSystemDeps = {catalog; download; runtime}`) + دالة
+   `initializeModelSystem(deps)` التي **تستدعي مُهيئاً محقوناً بمعامل** — لا استيراد للمفرد،
+   لا نقل جسد، لا سلوك جديد.
+2. الربط: constructor في ModelStore.ts (كتلة persist.then 280-283) يستدعي
+   `initializeModelSystem({catalog, download, runtime, initializeStore: this.initializeStore, initializeThreadCount: this.initializeThreadCount})` — سلوك مطابق حرفياً.
+3. **الأثر المتوقع المقاس**: +1 ملف؛ suites 312 ثابتة؛ اختبارات 4989+2 ثابتة؛
+   عدادات **صفر فرق** (official 1733 / real 1732 / raw 1871 — bootstrap بلا أي مرجع
+   modelStore. بفضل الحقن)؛ madge: لا حلقات جديدة؛ ModelStore.test.ts بلا تعديل.
+4. اختبارات عقد bootstrap تأتي لاحقاً من الستة المحولة (الشرط 1) عند 4d — R0 لا يضيف suite.
+
+---
+
+## 7) سلّم البوابات (الأرقام المتوقعة تُعلن قبل كل بوابة)
+
+| البوابة | suites | passed | official | real | raw | داخل src/store/model | إضافي |
+|---|---|---|---|---|---|---|---|
+| الآن (بعد R0) | 312 | 4989+2 | 1733 | 1732 | 1871 | 138 | — |
+| نهاية 4a (B24) | 312 | 4989+2 | **1732** | 1731 | **1732** | **0** | ModelStore.ts = مفرد + مفوضون عكسيون؛ madge لقطة |
+| 4c | 312 | 4989+2 | 1732 | 1731 | 1732 | 0 | +3 mock files؛ 5 suites حساسة خضراء فوراً |
+| كل 3 دفعات 4b + نهاية 4b | 312 | 4989+2 | **951** | **950** | **951** | 0 | بوابة سلسلة كاملة (8 شرائح) قبل 4d |
+| 4d | 312−1+3؟* | 4989+2 | **1** | **0** | **1** | 0 | تقسيم 100+78+104 + توجيه 38/10 + الستة→bootstrap.test |
+| 4e | حسب الشرط 1: **312** | **4989+2** | **0** | **0** | **0** | 0 | حذف الفاصاد+ModelStore+mock المركزي+سطر FP؛ برميل يصدر الثلاثة فقط؛ eslint يمنع modelStore؛ madge ≤42 صفر جديد؛ CI الحقيقي EXIT=0 |
+
+\* إحصاء suites عند 4d: −ModelStore.test، −facade.test، −localModelPath(register يبقى مكان إعادة
+إيواه)، +3 أجنحة + bootstrap.test — الرقم النهائي يُعلن قبل بوابة 4d من جدول الإسناد الفعلي
+(المرسى: 4989+2 passed ثابتة؛ zero deleted assertions).
+
+### بروتوكولات ثابتة (موروثة + مثبتة في هذا الملف)
+
+- بعد كل commit: bundle نجاة `git bundle create` + verify، ثم push (فرع feature = نسخ احتياطي).
+- commitlint: feat/fix/docs/chore فقط، ≤100 حرف، lowercase.
+- التشغيل مجزأ في المقدمة فقط — ممنوع خلفي.
+- التحقق بـ Read/od فقط؛ بعد أي فشل جزئي: git diff فوراً؛ أي مفاجأة = توقف وتوثيق.
+- الأرقام: تُعلن قبل كل بوابة؛ أي انحراف يُشرح مصدره قبل إعلان الاكتمال.
+- نهاية 4e بعد آخر push ناجح: الرد الحرفي `REVOKE` (استهلاك التوكن: حقن URL فقط، لا طباعة).
