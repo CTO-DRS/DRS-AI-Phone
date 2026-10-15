@@ -37,7 +37,6 @@ import {
   unpairedDraftCandidate,
 } from './draftResolution';
 import {checkGpuSupport} from '../utils/deviceCapabilities';
-import {resolveDeviceSelection} from '../utils/deviceSelection';
 import {
   deepMerge,
   getSHA256Hash,
@@ -98,7 +97,6 @@ import {capsMatchBinding} from '../utils/remoteCaps';
 import {resolveModelCaps} from '../utils/modelCaps';
 import type {CapabilityEnv, ModelCapabilityView} from '../utils/modelCaps';
 import {t} from '../locales';
-import {resolveUseMmap} from '../utils/memorySettings';
 import {
   createContextInitParams,
   createDefaultContextInitParams,
@@ -120,7 +118,11 @@ import {initializeModelSystem} from './model/bootstrap';
 // runtimeStore; these are verbatim reverse delegations (each dies at 4b
 // when its call sites migrate). The host injection below gives runtimeStore
 // write access to contextInitParams without importing this module.
-import {injectRuntimeHost, runtimeStore} from './model/runtimeStore';
+import {
+  MIN_CONTEXT_SIZE,
+  injectRuntimeHost,
+  runtimeStore,
+} from './model/runtimeStore';
 
 /**
  * Factory function to create a Model object for a remote model from an OpenAI-compatible server.
@@ -191,7 +193,17 @@ export class ModelStore {
   // Unified context initialization parameters
   contextInitParams: ContextInitParams = createDefaultContextInitParams();
 
-  max_threads: number = 4; // Will be set in constructor
+  // ── B2 (phase-4 4a): real state lives in runtimeStore (observable box) ──
+  // initializeThreadCount (below) writes through the setter; the Settings UI
+  // reads through the getter. Both hit the same box runtimeStore owns, so
+  // observer re-render semantics are unchanged. The writer itself relocates
+  // to bootstrap at B22; call sites migrate at 4b.
+  get max_threads(): number {
+    return runtimeStore.max_threads;
+  }
+  set max_threads(value: number) {
+    runtimeStore.max_threads = value;
+  }
 
   activeModelId: string | undefined = undefined;
 
@@ -220,7 +232,10 @@ export class ModelStore {
   // System UI protection (runtime)
   private autoReleaseDisabledReasons = new Set<string>();
 
-  MIN_CONTEXT_SIZE = 200;
+  // ── B2 (phase-4 4a): pure constant — module-level export in runtimeStore ──
+  get MIN_CONTEXT_SIZE(): number {
+    return MIN_CONTEXT_SIZE;
+  }
 
   inferencing: boolean = false;
   isStreaming: boolean = false;
@@ -458,6 +473,11 @@ export class ModelStore {
     runtimeStore.setSpecDraftCacheTypeV(spec_draft_cache_type_v);
   };
 
+  // ── B2 (phase-4 4a): implementations live in runtimeStore since batch 2 ──
+  // Verbatim reverse delegation; each dies when its call sites migrate (4b).
+  // Block bodies + explicit return types on purpose: an arrow-expression body
+  // (or bare inference) resolves the return type through Pick<ModelStore,...>
+  // back into this class — TS7024.
   /**
    * Get effective context initialization parameters with constraints applied
    * This is the unified method that replaces both getEffectiveBatchValues and getEffectiveInitSettings
@@ -466,149 +486,34 @@ export class ModelStore {
     filePath?: string,
     draftConfig?: DraftConfig,
   ): Promise<Omit<ContextParams, 'model'>> => {
-    // Apply batch constraints
-    const effectiveContext = this.contextInitParams.n_ctx;
-    const effectiveBatch = Math.min(
-      this.contextInitParams.n_batch,
-      effectiveContext,
-    );
-    const effectiveUBatch = Math.min(
-      this.contextInitParams.n_ubatch,
-      effectiveBatch,
-    );
-
-    // Resolve the effective use_mmap value based on the setting
-    const currentUseMmap = this.contextInitParams.use_mmap;
-    let effectiveUseMmap: boolean;
-
-    if (currentUseMmap === 'smart') {
-      // Handle 'smart' option
-      effectiveUseMmap = filePath
-        ? await resolveUseMmap('smart', filePath)
-        : true;
-    } else if (currentUseMmap === 'true') {
-      effectiveUseMmap = true;
-    } else if (currentUseMmap === 'false') {
-      effectiveUseMmap = false;
-    } else {
-      // Default fallback
-      effectiveUseMmap = true;
-    }
-
-    const mode = draftConfig?.mode ?? 'off';
-    const speculative = mode !== 'off';
-
-    // Handle flash_attn_type (v2.0) - platform-specific default
-    const flashAttnModeDefault =
-      mode === 'paired'
-        ? 'off'
-        : mode === 'embedded'
-          ? 'auto'
-          : Platform.OS === 'ios'
-            ? 'auto'
-            : 'off';
-    const flash_attn_type =
-      this.contextInitParams.flash_attn_type ?? flashAttnModeDefault;
-
-    // Build the params object, filtering out undefined values
-    const params: Partial<Omit<ContextParams, 'model'>> = {
-      n_ctx: effectiveContext,
-      n_batch: effectiveBatch,
-      n_ubatch: effectiveUBatch,
-      n_threads: this.contextInitParams.n_threads,
-      flash_attn_type, // NEW: replaces flash_attn boolean
-      cache_type_k: this.contextInitParams.cache_type_k,
-      cache_type_v: this.contextInitParams.cache_type_v,
-      n_gpu_layers: this.contextInitParams.n_gpu_layers ?? 99,
-      devices: this.contextInitParams.devices?.slice(),
-      kv_unified: this.contextInitParams.kv_unified ?? true, // NEW (default true!)
-      n_parallel: this.contextInitParams.n_parallel ?? 1, // NEW (1 for blocking mode only)
-      use_mlock: this.contextInitParams.use_mlock,
-      use_mmap: effectiveUseMmap,
-      no_extra_bufts: this.contextInitParams.no_extra_bufts,
-    };
-
-    if (speculative) {
-      // llama.rn's speculative type set stays empty without spec_type — nothing engages.
-      params.spec_type = 'draft-mtp';
-
-      // llama.rn throws on spec_draft_n_max <= 0 with DRAFT_MTP.
-      params.spec_draft_n_max =
-        this.contextInitParams.spec_draft_n_max !== undefined
-          ? Math.max(1, this.contextInitParams.spec_draft_n_max)
-          : undefined;
-      params.spec_draft_n_min = this.contextInitParams.spec_draft_n_min;
-      params.spec_draft_p_min = this.contextInitParams.spec_draft_p_min;
-      params.spec_draft_p_split = this.contextInitParams.spec_draft_p_split;
-
-      const cacheDefaults = draftCacheDefaults(mode, flash_attn_type === 'on');
-      params.spec_draft_cache_type_k =
-        this.contextInitParams.spec_draft_cache_type_k ?? cacheDefaults.k;
-      // With flash attention explicitly off a quantized draft V cache can
-      // never load (llama.cpp hard-refuses it) — clamp even an explicit pick.
-      const draftV =
-        this.contextInitParams.spec_draft_cache_type_v ?? cacheDefaults.v;
-      params.spec_draft_cache_type_v =
-        flash_attn_type === 'off' && draftV !== CacheType.F16
-          ? CacheType.F16
-          : draftV;
-
-      if (draftConfig?.mode === 'paired') {
-        params.model_draft = draftConfig.resolvedDraftPath;
-        params.is_model_draft_asset = false;
-        params.spec_draft_n_gpu_layers =
-          this.contextInitParams.spec_draft_n_gpu_layers ?? 99;
-      } else {
-        params.spec_draft_n_gpu_layers =
-          this.contextInitParams.spec_draft_n_gpu_layers;
-      }
-    }
-
-    Object.assign(
-      params,
-      await resolveDeviceSelection({
-        devices: params.devices,
-        n_gpu_layers: params.n_gpu_layers,
-      }),
-    );
-
-    // Remove undefined values from the params object
-    return Object.fromEntries(
-      Object.entries(params).filter(([_, value]) => value !== undefined),
-    ) as Omit<ContextParams, 'model'>;
+    return runtimeStore.getEffectiveContextInitParams(filePath, draftConfig);
   };
 
   // Legacy methods for backward compatibility
 
   /** @deprecated Use getEffectiveContextInitParams instead */
-  getEffectiveBatchValues = () => {
-    const effectiveContext = this.contextInitParams.n_ctx;
-    const effectiveBatch = Math.min(
-      this.contextInitParams.n_batch,
-      effectiveContext,
-    );
-    const effectiveUBatch = Math.min(
-      this.contextInitParams.n_ubatch,
-      effectiveBatch,
-    );
-
-    return {
-      n_ctx: effectiveContext,
-      n_batch: effectiveBatch,
-      n_ubatch: effectiveUBatch,
-    };
+  getEffectiveBatchValues = (): {
+    n_ctx: number;
+    n_batch: number;
+    n_ubatch: number;
+  } => {
+    return runtimeStore.getEffectiveBatchValues();
   };
 
   /** @deprecated Use getEffectiveContextInitParams instead */
   getEffectiveInitSettings = async (
     filePath?: string,
   ): Promise<Omit<ContextParams, 'model'>> => {
-    return this.getEffectiveContextInitParams(filePath);
+    return runtimeStore.getEffectiveInitSettings(filePath);
   };
 
   /** @deprecated Use getEffectiveBatchValues instead */
-  getEffectiveValues = () => {
-    return this.getEffectiveBatchValues();
+  getEffectiveValues = (): {
+    n_ctx: number;
+    n_batch: number;
+    n_ubatch: number;
+  } => {
+    return runtimeStore.getEffectiveValues();
   };
 
   // Drafts downloaded before draft detection existed were classified as
