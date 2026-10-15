@@ -116,6 +116,11 @@ import {DraftRulesManager} from './model/DraftRulesManager';
 // relocates members, the three domain slots receive `this` — the god object
 // IS the sole domain implementation.
 import {initializeModelSystem} from './model/bootstrap';
+// B1 (phase-4 4a): the 16 context-parameter setters physically live in
+// runtimeStore; these are verbatim reverse delegations (each dies at 4b
+// when its call sites migrate). The host injection below gives runtimeStore
+// write access to contextInitParams without importing this module.
+import {injectRuntimeHost, runtimeStore} from './model/runtimeStore';
 
 /**
  * Factory function to create a Model object for a remote model from an OpenAI-compatible server.
@@ -267,6 +272,9 @@ export class ModelStore {
       // it holds no state of its own, so keep it out of the observable tree.
       projectionManager: false,
     });
+    // B1 (phase-4 4a): host injection for runtimeStore's physical setters —
+    // must precede any setter call (persist.then / UI). See runtimeStore.ts.
+    injectRuntimeHost(this);
     makePersistable(this, {
       name: 'ModelStore',
       properties: [
@@ -382,166 +390,72 @@ export class ModelStore {
     }
   }
 
+  // ── B1 (phase-4 4a): implementations live in runtimeStore since batch 1 ──
+  // Verbatim reverse delegation; each line dies when its call sites migrate (4b).
+  // Block bodies on purpose: an arrow-expression body makes the return type
+  // resolve through Pick<ModelStore,...> back into this class — TS7024.
   setNThreads = (n_threads: number) => {
-    runInAction(() => {
-      this.contextInitParams = {
-        ...this.contextInitParams,
-        n_threads,
-      };
-    });
+    runtimeStore.setNThreads(n_threads);
   };
 
   setCacheTypeK = (cache_type: CacheType) => {
-    runInAction(() => {
-      // Only allow changing cache type if flash attention is enabled
-      // Support both old flash_attn and new flash_attn_type
-      const flashAttnEnabled =
-        this.contextInitParams.flash_attn ||
-        (this.contextInitParams.flash_attn_type &&
-          this.contextInitParams.flash_attn_type !== 'off');
-
-      if (flashAttnEnabled) {
-        this.contextInitParams = {
-          ...this.contextInitParams,
-          cache_type_k: cache_type,
-        };
-      }
-    });
+    runtimeStore.setCacheTypeK(cache_type);
   };
 
   setCacheTypeV = (cache_type: CacheType) => {
-    runInAction(() => {
-      // Only allow changing cache type if flash attention is enabled
-      // Support both old flash_attn and new flash_attn_type
-      const flashAttnEnabled =
-        this.contextInitParams.flash_attn ||
-        (this.contextInitParams.flash_attn_type &&
-          this.contextInitParams.flash_attn_type !== 'off');
-
-      if (flashAttnEnabled) {
-        this.contextInitParams = {
-          ...this.contextInitParams,
-          cache_type_v: cache_type,
-        };
-      }
-    });
+    runtimeStore.setCacheTypeV(cache_type);
   };
 
   setNBatch = (n_batch: number) => {
-    runInAction(() => {
-      this.contextInitParams = {
-        ...this.contextInitParams,
-        n_batch,
-      };
-    });
+    runtimeStore.setNBatch(n_batch);
   };
 
   setNUBatch = (n_ubatch: number) => {
-    runInAction(() => {
-      this.contextInitParams = {
-        ...this.contextInitParams,
-        n_ubatch,
-      };
-    });
+    runtimeStore.setNUBatch(n_ubatch);
   };
 
   setNContext = (n_ctx: number) => {
-    runInAction(() => {
-      this.contextInitParams = {
-        ...this.contextInitParams,
-        n_ctx,
-      };
-    });
+    runtimeStore.setNContext(n_ctx);
   };
 
   setNGPULayers = (n_gpu_layers: number) => {
-    runInAction(() => {
-      this.contextInitParams = {
-        ...this.contextInitParams,
-        n_gpu_layers,
-      };
-    });
+    runtimeStore.setNGPULayers(n_gpu_layers);
   };
 
   setImageMaxTokens = (image_max_tokens: number) => {
-    runInAction(() => {
-      this.contextInitParams = {
-        ...this.contextInitParams,
-        image_max_tokens,
-      };
-    });
+    runtimeStore.setImageMaxTokens(image_max_tokens);
   };
 
   setUseMlock = (use_mlock: boolean) => {
-    runInAction(() => {
-      this.contextInitParams = {
-        ...this.contextInitParams,
-        use_mlock,
-      };
-    });
+    runtimeStore.setUseMlock(use_mlock);
   };
 
   setUseMmap = (use_mmap: 'true' | 'false' | 'smart') => {
-    runInAction(() => {
-      this.contextInitParams = {
-        ...this.contextInitParams,
-        use_mmap,
-      };
-    });
+    runtimeStore.setUseMmap(use_mmap);
   };
 
   setNoExtraBufts = (no_extra_bufts: boolean) => {
-    runInAction(() => {
-      this.contextInitParams = {
-        ...this.contextInitParams,
-        no_extra_bufts,
-      };
-    });
+    runtimeStore.setNoExtraBufts(no_extra_bufts);
   };
 
   setSpeculativeEnabled = (speculativeEnabled: boolean) => {
-    runInAction(() => {
-      this.contextInitParams = {
-        ...this.contextInitParams,
-        speculativeEnabled,
-      };
-    });
+    runtimeStore.setSpeculativeEnabled(speculativeEnabled);
   };
 
   setSelectedDraftModel = (selectedDraftModelId?: string) => {
-    runInAction(() => {
-      this.contextInitParams = {
-        ...this.contextInitParams,
-        selectedDraftModelId,
-      };
-    });
+    runtimeStore.setSelectedDraftModel(selectedDraftModelId);
   };
 
   setSpecDraftNGpuLayers = (spec_draft_n_gpu_layers: number) => {
-    runInAction(() => {
-      this.contextInitParams = {
-        ...this.contextInitParams,
-        spec_draft_n_gpu_layers,
-      };
-    });
+    runtimeStore.setSpecDraftNGpuLayers(spec_draft_n_gpu_layers);
   };
 
   setSpecDraftCacheTypeK = (spec_draft_cache_type_k: CacheType) => {
-    runInAction(() => {
-      this.contextInitParams = {
-        ...this.contextInitParams,
-        spec_draft_cache_type_k,
-      };
-    });
+    runtimeStore.setSpecDraftCacheTypeK(spec_draft_cache_type_k);
   };
 
   setSpecDraftCacheTypeV = (spec_draft_cache_type_v: CacheType) => {
-    runInAction(() => {
-      this.contextInitParams = {
-        ...this.contextInitParams,
-        spec_draft_cache_type_v,
-      };
-    });
+    runtimeStore.setSpecDraftCacheTypeV(spec_draft_cache_type_v);
   };
 
   /**

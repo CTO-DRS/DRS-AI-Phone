@@ -5,6 +5,8 @@ import type {ModelStore} from '../ModelStore';
 // a migrated component. Type-only import keeps the Pick<ModelStore,...>
 // compile-time drift guard. Revisit at Phase 4 dissolution.
 import {modelStore} from '../';
+import {runInAction} from 'mobx';
+import type {CacheType, ContextInitParams} from '../../utils/types';
 
 /**
  * runtimeStore — Phase-1 scaffold (fix 4, stage 1 of 4).
@@ -51,6 +53,37 @@ import {modelStore} from '../';
  * n_ctx / GPU / draft preferences on upgrade = migration failure.
  * ══════════════════════════════════════════════════════════════════════════
  */
+
+// ═══════════════ B1 (phase-4 4a): FIRST PHYSICAL MEMBERS ═══════════════
+// The 16 context-parameter setters (setNThreads..setSpecDraftCacheTypeV) are
+// the first members whose implementation physically lives here instead of the
+// god object. They write contextInitParams, which stays on the god object
+// until B22 (persist-key migration). Access is therefore INJECTED, never
+// imported: the ModelStore constructor calls injectRuntimeHost(this) before
+// any setter can run, and each setter writes through that host — the MobX
+// observable field, the action wrapper, and the write semantics are the
+// god object's own. Zero modelStore references — the inside counter drops
+// by exactly the 16 delegation lines this batch replaces.
+let runtimeHost: {contextInitParams: ContextInitParams} | null = null;
+
+/**
+ * DI injection point (ModelStore constructor). Must run before any parameter
+ * setter; a setter called without a host is a lifecycle bug and throws.
+ */
+export function injectRuntimeHost(host: {
+  contextInitParams: ContextInitParams;
+}): void {
+  runtimeHost = host;
+}
+
+function hostInitParams(): {contextInitParams: ContextInitParams} {
+  if (!runtimeHost) {
+    throw new Error(
+      'runtimeStore: host not injected — ModelStore must call injectRuntimeHost before parameter setters run',
+    );
+  }
+  return runtimeHost;
+}
 
 export const RUNTIME_MEMBERS = [
   'activeModel',
@@ -237,25 +270,183 @@ export const runtimeStore: RuntimeStore = {
   getEffectiveInitSettings: (...args) =>
     modelStore.getEffectiveInitSettings(...args),
   getEffectiveValues: (...args) => modelStore.getEffectiveValues(...args),
-  setNThreads: (...args) => modelStore.setNThreads(...args),
-  setCacheTypeK: (...args) => modelStore.setCacheTypeK(...args),
-  setCacheTypeV: (...args) => modelStore.setCacheTypeV(...args),
-  setNBatch: (...args) => modelStore.setNBatch(...args),
-  setNUBatch: (...args) => modelStore.setNUBatch(...args),
-  setNContext: (...args) => modelStore.setNContext(...args),
-  setNGPULayers: (...args) => modelStore.setNGPULayers(...args),
-  setImageMaxTokens: (...args) => modelStore.setImageMaxTokens(...args),
-  setUseMlock: (...args) => modelStore.setUseMlock(...args),
-  setUseMmap: (...args) => modelStore.setUseMmap(...args),
-  setNoExtraBufts: (...args) => modelStore.setNoExtraBufts(...args),
-  setSpeculativeEnabled: (...args) => modelStore.setSpeculativeEnabled(...args),
-  setSelectedDraftModel: (...args) => modelStore.setSelectedDraftModel(...args),
-  setSpecDraftNGpuLayers: (...args) =>
-    modelStore.setSpecDraftNGpuLayers(...args),
-  setSpecDraftCacheTypeK: (...args) =>
-    modelStore.setSpecDraftCacheTypeK(...args),
-  setSpecDraftCacheTypeV: (...args) =>
-    modelStore.setSpecDraftCacheTypeV(...args),
+  setNThreads: (n_threads: number) => {
+    runInAction(() => {
+      const host = hostInitParams();
+      host.contextInitParams = {
+        ...host.contextInitParams,
+        n_threads,
+      };
+    });
+  },
+
+  setCacheTypeK: (cache_type: CacheType) => {
+    runInAction(() => {
+      const host = hostInitParams();
+      // Only allow changing cache type if flash attention is enabled
+      // Support both old flash_attn and new flash_attn_type
+      const flashAttnEnabled =
+        host.contextInitParams.flash_attn ||
+        (host.contextInitParams.flash_attn_type &&
+          host.contextInitParams.flash_attn_type !== 'off');
+
+      if (flashAttnEnabled) {
+        host.contextInitParams = {
+          ...host.contextInitParams,
+          cache_type_k: cache_type,
+        };
+      }
+    });
+  },
+
+  setCacheTypeV: (cache_type: CacheType) => {
+    runInAction(() => {
+      const host = hostInitParams();
+      // Only allow changing cache type if flash attention is enabled
+      // Support both old flash_attn and new flash_attn_type
+      const flashAttnEnabled =
+        host.contextInitParams.flash_attn ||
+        (host.contextInitParams.flash_attn_type &&
+          host.contextInitParams.flash_attn_type !== 'off');
+
+      if (flashAttnEnabled) {
+        host.contextInitParams = {
+          ...host.contextInitParams,
+          cache_type_v: cache_type,
+        };
+      }
+    });
+  },
+
+  setNBatch: (n_batch: number) => {
+    runInAction(() => {
+      const host = hostInitParams();
+      host.contextInitParams = {
+        ...host.contextInitParams,
+        n_batch,
+      };
+    });
+  },
+
+  setNUBatch: (n_ubatch: number) => {
+    runInAction(() => {
+      const host = hostInitParams();
+      host.contextInitParams = {
+        ...host.contextInitParams,
+        n_ubatch,
+      };
+    });
+  },
+
+  setNContext: (n_ctx: number) => {
+    runInAction(() => {
+      const host = hostInitParams();
+      host.contextInitParams = {
+        ...host.contextInitParams,
+        n_ctx,
+      };
+    });
+  },
+
+  setNGPULayers: (n_gpu_layers: number) => {
+    runInAction(() => {
+      const host = hostInitParams();
+      host.contextInitParams = {
+        ...host.contextInitParams,
+        n_gpu_layers,
+      };
+    });
+  },
+
+  setImageMaxTokens: (image_max_tokens: number) => {
+    runInAction(() => {
+      const host = hostInitParams();
+      host.contextInitParams = {
+        ...host.contextInitParams,
+        image_max_tokens,
+      };
+    });
+  },
+
+  setUseMlock: (use_mlock: boolean) => {
+    runInAction(() => {
+      const host = hostInitParams();
+      host.contextInitParams = {
+        ...host.contextInitParams,
+        use_mlock,
+      };
+    });
+  },
+
+  setUseMmap: (use_mmap: 'true' | 'false' | 'smart') => {
+    runInAction(() => {
+      const host = hostInitParams();
+      host.contextInitParams = {
+        ...host.contextInitParams,
+        use_mmap,
+      };
+    });
+  },
+
+  setNoExtraBufts: (no_extra_bufts: boolean) => {
+    runInAction(() => {
+      const host = hostInitParams();
+      host.contextInitParams = {
+        ...host.contextInitParams,
+        no_extra_bufts,
+      };
+    });
+  },
+
+  setSpeculativeEnabled: (speculativeEnabled: boolean) => {
+    runInAction(() => {
+      const host = hostInitParams();
+      host.contextInitParams = {
+        ...host.contextInitParams,
+        speculativeEnabled,
+      };
+    });
+  },
+
+  setSelectedDraftModel: (selectedDraftModelId?: string) => {
+    runInAction(() => {
+      const host = hostInitParams();
+      host.contextInitParams = {
+        ...host.contextInitParams,
+        selectedDraftModelId,
+      };
+    });
+  },
+
+  setSpecDraftNGpuLayers: (spec_draft_n_gpu_layers: number) => {
+    runInAction(() => {
+      const host = hostInitParams();
+      host.contextInitParams = {
+        ...host.contextInitParams,
+        spec_draft_n_gpu_layers,
+      };
+    });
+  },
+
+  setSpecDraftCacheTypeK: (spec_draft_cache_type_k: CacheType) => {
+    runInAction(() => {
+      const host = hostInitParams();
+      host.contextInitParams = {
+        ...host.contextInitParams,
+        spec_draft_cache_type_k,
+      };
+    });
+  },
+
+  setSpecDraftCacheTypeV: (spec_draft_cache_type_v: CacheType) => {
+    runInAction(() => {
+      const host = hostInitParams();
+      host.contextInitParams = {
+        ...host.contextInitParams,
+        spec_draft_cache_type_v,
+      };
+    });
+  },
   setNoGpuDevices: (...args) => modelStore.setNoGpuDevices(...args),
   setDevices: (...args) => modelStore.setDevices(...args),
   setFlashAttnType: (...args) => modelStore.setFlashAttnType(...args),
