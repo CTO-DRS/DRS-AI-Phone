@@ -109,6 +109,13 @@ import {loadLlamaModelInfo} from 'llama.rn';
 import {logger} from '../utils/logger';
 import {ProjectionModelManager} from './model/ProjectionModelManager';
 import {DraftRulesManager} from './model/DraftRulesManager';
+// Phase-4 R0 (docs/extraction-plan.md, condition 4): DI composition root.
+// bootstrap is imported ALONE — never the three pass-through stores. They
+// import the store barrel (which re-exports ModelStore), so a static import
+// from here would close a madge cycle (gate: pinned at 42). Until 4a
+// relocates members, the three domain slots receive `this` — the god object
+// IS the sole domain implementation.
+import {initializeModelSystem} from './model/bootstrap';
 
 /**
  * Factory function to create a Model object for a remote model from an OpenAI-compatible server.
@@ -278,8 +285,13 @@ export class ModelStore {
       ],
       storage: AsyncStorage,
     }).then(async () => {
-      await this.initializeThreadCount();
-      this.initializeStore();
+      await initializeModelSystem({
+        catalog: this,
+        download: this,
+        runtime: this,
+        initializeStore: () => this.initializeStore(),
+        initializeThreadCount: () => this.initializeThreadCount(),
+      });
     });
 
     this.setupAppStateListener();
