@@ -62,7 +62,7 @@ pendingLocalPathRecoveries/flushPendingLocalPathRecoveries→download)، + مد�
 | B6 | أعلام الإكمال: inferencing، isStreaming، setInferencing، setIsStreaming، registerCompletionPromise، clearCompletionPromise، activeCompletionPromise + **startImageCompletion (المرجع الذاتي 3577 يموت هنا — official −1)** |
 | B7 | دورة الحياة 1: contextOperationMutex، pendingModelId، _releaseContextInternal، releaseContext، manualReleaseContext، modelLoadError، clearModelLoadError |
 | B8 | دورة الحياة 2: initContext + proceedWithInitialization + resolveMultimodalConfig + resolveDraftConfig + checkMemoryAndConfirm + isContextLoading/loadingModel + activeProjectionModelId + isMultimodalActive + activeRemoteBinding + reinitializeContext |
-| B9 | availableMemoryCeiling + largestSuccessfulLoad (الحالة المحفوظة runtime) |
+| B9 | **أُفرغت لصالح §3-أ** (حُسم في B8): availableMemoryCeiling + largestSuccessfulLoad مفتاحا persist — حالتهما لا تنتقل قبل جذري v2؛ المحتوى أُعيد إسناده إلى B22 (يقرؤها runtimeStore عبر البرميل منذ Phase-1، ويكتبها عبره ج20/ذيل ج13 — كلها بمعاهش معلنة) |
 | B10 | حالة الكتالوج: models، version، deviceTier، rulesVersion، displayModels، availableModels، lastUsedModelId، lastUsedModel، remoteModels (القائمة) |
 | B11 | طفرات القائمة: addHFModel، addLocalModel، resetModels، removeModelFromList، removeModelByFullPath، registerOnboardingAssistantModel، mergeModelLists، reconcilePresets، resolvePresets + خاصو preset + draftRulesManager/DraftRulesManager |
 | B12 | محدّثات البيانات الوصفية: updateModelName/resetModelName، updateModelChatTemplate/reset، updateModelStopWords/reset، updateModelHash، isModelAvailable، fetchAndUpdateModelFileDetails |
@@ -134,6 +134,10 @@ pendingLocalPathRecoveries/flushPendingLocalPathRecoveries→download)، + مد�
 أي مفتاح persist إلى زوج وصول قبل إنشاء الجذرين v2: حالته تبقى حقل observable على
 الإله الكائن، ومنطق runtimeStore يقرأه/يكتبه عبر ربط البرميل. يبدأ نشر الحالة المحفوظة
 إلى runtimeStore مع إنشاء `runtimeStore:v2` (B22+)، لا قبل.
+**الأثر على الدفعات**: B9 أُفرغت بهذا القيد (availableMemoryCeiling + largestSuccessfulLoad
+مفتاحا persist) — محتواهما أُعيد إسناده إلى B22؛ لا دفعة runtime متبقية بعد B8 إلا ما
+عليه حافة B10 (الكتالوج) — سلّم الدفعات ينتقل B8 → B10 مباشرة منطقياً، وبوابة السلسلة
+الثالثة تقام بعد نقطة B9 المفرغة.
 
 **قاعدة mock-compat للأعضاء الحقيقية (مثبتة في B2-B4)**: عضو حقيقي يُستهلك أثناء render
 من مكون مهاجر يقرأ حالته عبر getters المتجر نفسه/ربط البرميل (يُسخَّر في suites) —
@@ -320,7 +324,10 @@ post-4a: official 1732 / real 1731 / raw 1732 → post-4b: **951/950/951** → p
 >
 > **دفتر madge لـ 4a (السقف يُعلن مرة واحدة)**: 42 (R0) → 44 (B1، حلقتان عابرتان
 > ModelStore↔runtimeStore: مباشرة عبر type-import + عبر برميل store/index — تفكك B24) →
-> 44 ثابتة عبر B2..B9 (أعضاء runtime، لا حواف جديدة؛ B3 كله runtime حتى capabilityEnv الخاص)
+> 44 ثابتة عبر B2..B9 (أعضاء runtime، لا حواف جديدة؛ B3 كله runtime حتى capabilityEnv الخاص؛
+> B8: حافة ModelStore→useMemoryCheck ماتت مع هجرة hasEnoughMemory عبر checkMemoryAndConfirm،
+> ووُلدت runtimeStore→useMemoryCheck مكانها — تبديل داخل نفس العنقود؛ الحلقة المعدودة تبادلت
+> ممثلها فقط: 44 بالضبط قبل وبعد، مقيساً)
 > → 46 عند B10 (أول حافة ModelStore→catalogStore: مباشرة+برميل) → 47 عند B15 (برميل catalog
 > يموت مع آخر مرجع pass-through) → **48 = السقف** عند B16 (أول حافة ModelStore→downloadStore)
 > → 47 عند B20 (برميل download) → 46 عند B23 (برميل runtime) → **42 بالضبط** عند B24
