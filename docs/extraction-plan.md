@@ -57,7 +57,7 @@ pendingLocalPathRecoveries/flushPendingLocalPathRecoveries→download)، + مد�
 | B1 | 18 مُحدد معاملات runtime (setNThreads..setNParallel، 373-533) |
 | B2 | عائلة getEffective* الأربع + MIN_CONTEXT_SIZE + max_threads |
 | B3 | سطح draft/capabilities: effectiveDraftMode، effectiveDraftCacheDefaults، capabilityEnv، capsFor، activeModelCaps، activeModel، contextId |
-| B4 | عائلة auto-release الكاملة (appState، useAutoRelease، wasAutoReleased، lastAutoReleasedModelId، autoReleaseDisabledReasons، enable/disable/update، markAutoReleased، clearAutoReleaseFlags، setupAppStateListener، handleAppStateChange، checkAndReloadAutoReleasedModel) |
+| B4 | عائلة auto-release الكاملة (appState، useAutoRelease، wasAutoReleased، lastAutoReleasedModelId، autoReleaseDisabledReasons، enable/disable/update، markAutoReleased، clearAutoReleaseFlags، setupAppStateListener، handleAppStateChange، checkAndReloadAutoReleasedModel) — ملاحظة §3-أ: حالة مفاتيح persist الثلاثة تبقى على الإله الكائن حتى جذور v2 |
 | B5 | benchmark: benchmarkActive، enterBenchmarkMode، exitBenchmarkMode |
 | B6 | أعلام الإكمال: inferencing، isStreaming، setInferencing، setIsStreaming، registerCompletionPromise، clearCompletionPromise، activeCompletionPromise + **startImageCompletion (المرجع الذاتي 3577 يموت هنا — official −1)** |
 | B7 | دورة الحياة 1: contextOperationMutex، pendingModelId، _releaseContextInternal، releaseContext، manualReleaseContext، modelLoadError، clearModelLoadError |
@@ -128,6 +128,18 @@ pendingLocalPathRecoveries/flushPendingLocalPathRecoveries→download)، + مد�
 1. **جذور جديدة مُصدرة الإصدار**: makePersistable لكل متجر مالك (name: `catalogStore:v2` / `runtimeStore:v2`) بنفس الخصائص — ترقية v1.41.x لا تفقد ولا تنزل تفضيلات المستخدم.
 2. **استيراد إرث لمرة واحدة**: bootstrap يقرأ مفتاح `ModelStore` الإرثي من AsyncStorage، يوزع الحمولات على الجذور الجديدة، يحترم stored version مقابل MODEL_LIST_VERSION (منطق 782-797 يبقى حرفياً)، ويفشل بأمان (يعيد المحاولة اللاحقة) عند أي خطأ قراءة — لا يُمس المفتاح الإرثي قبل نجاح الاستيراد.
 3. **تنظيف المفتاح الإرثي** بعد أول استيراد ناجح كامل.
+
+**§3-أ — قيد اكتشفه B4 (مقفول)**: mobx-persist-store يتجاهل الخصائص المحسوبة عند
+الحفظ (حارس `isComputedProp` في startPersisting + تحذير console) — لذلك يُمنع تحويل
+أي مفتاح persist إلى زوج وصول قبل إنشاء الجذرين v2: حالته تبقى حقل observable على
+الإله الكائن، ومنطق runtimeStore يقرأه/يكتبه عبر ربط البرميل. يبدأ نشر الحالة المحفوظة
+إلى runtimeStore مع إنشاء `runtimeStore:v2` (B22+)، لا قبل.
+
+**قاعدة mock-compat للأعضاء الحقيقية (مثبتة في B2-B4)**: عضو حقيقي يُستهلك أثناء render
+من مكون مهاجر يقرأ حالته عبر getters المتجر نفسه/ربط البرميل (يُسخَّر في suites) —
+ممنوع requireHost على مسارات القراءة (لا constructor يعمل في suites البرميل المسخرى؛
+الـ host لمسارات الكتابة فقط حتى يُحل B22)؛ optional-chains للمتعاونين الذين قد تغيب
+عن mocks جزئية؛ احتياط محمي بالـ host للأعضاء الذين تُعرَّف stub كقيم ثابتة (يموت في 4c).
 
 ترتيب التهيئة في bootstrap: استيراد الإرث → initializeThreadCount → initializeModelSystem —
 بنفس ترتيب constructor الحالي (280-285) حرفياً.
