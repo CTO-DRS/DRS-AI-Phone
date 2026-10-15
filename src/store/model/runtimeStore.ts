@@ -5,6 +5,11 @@ import type {ModelStore} from '../ModelStore';
 // a migrated component. Type-only import keeps the Pick<ModelStore,...>
 // compile-time drift guard. Revisit at Phase 4 dissolution.
 import {modelStore, serverStore, chatSessionStore, uiStore} from '../';
+// B10: catalog reads/writes go to the OWNER — direct import (ج1/ج15/ج21
+// death mode per the §8 registry: "استيراد المالك بحافة madge معلنة").
+// The module is never mocked; in barrel-mocked suites its guard getters
+// fall through to the central mock exactly like the pre-B10 pass-through.
+import {catalogStore} from './catalogStore';
 import {observable, runInAction, toJS} from 'mobx';
 import {Alert, AppState, AppStateStatus, Platform} from 'react-native';
 import {ContextParams, LlamaContext, initLlama} from 'llama.rn';
@@ -200,9 +205,9 @@ const modelLoadErrorBox = observable.box<ErrorState | null>(null);
 // The god object keeps accessor pairs (writable computeds — the B2/B7
 // pattern) so every external consumer, the injected host and the suites see
 // identical state and reactivity. activeContextSettings /
-// availableMemoryCeiling / largestSuccessfulLoad / lastUsedModelId stay
-// god-object-resident (persist keys / B22 / B10) — writes to them continue
-// through the barrel binding with declared deaths (§8 rows ج13/ج19/ج20/ج21).
+// availableMemoryCeiling / largestSuccessfulLoad stay god-object-resident
+// (persist keys / B22); lastUsedModelId moved to catalogStore in B10 —
+// writes to it go through the owner (ج21 dead, §8 registry).
 const isContextLoadingBox = observable.box<boolean>(false);
 const loadingModelBox = observable.box<Model | undefined>(undefined);
 const contextBox = observable.box<LlamaContext | undefined>(undefined);
@@ -492,11 +497,13 @@ export async function releaseContextInternal(
 // of the runtime contract), so they live at module level — the releaseContext-
 // Internal pattern. Cross-domain reads/writes that must wait for later batches
 // go through the barrel binding with declared deaths in the §8 registry:
-//   models (ج15 → B10), getModelVisionPreference (ج16 → B14),
+//   getModelVisionPreference (ج16 → B14),
 //   getModelFullPath (ج17 → B18), updateModelStopTokens (ج18 → B23),
 //   updateModelThinkingCapabilities (ج18 → B14),
 //   activeContextSettings write (ج19 → B22), largestSuccessfulLoad write
-//   (ج20 → B22), lastUsedModelId write (ج21 → B10).
+//   (ج20 → B22).
+// Died in B10: models reads (ج15), lastUsedModelId write (ج21) — both flip
+// to catalogStore, the owner.
 const pairedDraftModel = (config?: DraftConfig): Model | undefined =>
   config?.mode === 'paired' ? config.draftModel : undefined;
 
@@ -532,7 +539,8 @@ async function resolveMultimodalConfig(
     model.defaultProjectionModel &&
     visionEnabled
   ) {
-    const projectionModel = modelStore.models.find(
+    // B10: the list reads its OWNER (bridge ج15 died — §8 registry).
+    const projectionModel = catalogStore.models.find(
       m => m.id === model.defaultProjectionModel,
     );
     if (projectionModel?.isDownloaded) {
@@ -555,7 +563,7 @@ export async function resolveDraftConfig(
 ): Promise<DraftConfig> {
   const candidate = resolveDraftCandidate(
     model,
-    modelStore.models,
+    catalogStore.models, // B10: owner read (ج15 dead — §8 registry)
     s.contextInitParams,
   );
   if (candidate.mode !== 'paired') {
@@ -789,8 +797,9 @@ async function proceedWithInitialization(
     throw error;
   } finally {
     runInAction(() => {
-      // B10 (catalog persist key) — barrel write survives until then (ج21).
-      modelStore.lastUsedModelId = model.id;
+      // B10: lastUsedModelId is a catalog persist key — writes go to its
+      // owner (bridge ج21 died with the relocation, per the §8 registry).
+      catalogStore.lastUsedModelId = model.id;
     });
     try {
       runInAction(() => {
@@ -817,8 +826,8 @@ export const runtimeStore: RuntimeStore = {
     // unreachable and cannot recurse through the delegating getter. The
     // fallback dies at 4c (sub-store mocks) / B10 (list relocation).
     const derived =
-      modelStore.models?.find(model => model.id === this.activeModelId) ||
-      modelStore.remoteModels?.find(model => model.id === this.activeModelId);
+      catalogStore.models?.find(model => model.id === this.activeModelId) ||
+      catalogStore.remoteModels?.find(model => model.id === this.activeModelId); // B10: owner reads (ج1 dead — §8 registry)
     if (derived || runtimeHost) {
       return derived;
     }
@@ -1156,7 +1165,7 @@ export const runtimeStore: RuntimeStore = {
   },
   async reinitializeContext() {
     if (this.activeModelId) {
-      const model = modelStore.models.find(m => m.id === this.activeModelId);
+      const model = catalogStore.models.find(m => m.id === this.activeModelId); // B10: owner read (ج15)
       if (model) {
         // Routed through the god-object member on purpose (mock-compat):
         // suites redirect loads by overriding `modelStore.initContext`, and

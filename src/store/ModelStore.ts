@@ -27,7 +27,6 @@ import {
   getSHA256Hash,
   hfAsModel,
   getMmprojFiles,
-  filterProjectionModels,
   inferRepoFromModelId,
   parseSizeLabel,
 } from '../utils';
@@ -91,6 +90,17 @@ import {DraftRulesManager} from './model/DraftRulesManager';
 // relocates members, the three domain slots receive `this` — the god object
 // IS the sole domain implementation.
 import {initializeModelSystem} from './model/bootstrap';
+// B10 (phase-4 4a): the nine catalog state members physically live in
+// catalogStore (five persist keys as the catalogStore:v2 root's fields,
+// four derived views computed there). These are verbatim reverse
+// delegations (each dies at 4b when its call sites migrate); the v2 root
+// and the one-time legacy import are called from the constructor chain
+// below (ج25 — composition wiring, dies at 4e per §8).
+import {
+  catalogStore,
+  importLegacyCatalogState,
+  injectCatalogHost,
+} from './model/catalogStore';
 // B1 (phase-4 4a): the 16 context-parameter setters physically live in
 // runtimeStore; these are verbatim reverse delegations (each dies at 4b
 // when its call sites migrate). The host injection below gives runtimeStore
@@ -105,61 +115,45 @@ import {
   runtimeStore,
 } from './model/runtimeStore';
 
-/**
- * Factory function to create a Model object for a remote model from an OpenAI-compatible server.
- * Fills all required Model fields with sensible defaults.
- */
-function createRemoteModel(params: {
-  serverId: string;
-  serverName: string;
-  remoteModelId: string;
-  modelName: string;
-}): Model {
-  const emptyChatTemplate = {
-    name: '',
-    addBosToken: false,
-    addEosToken: false,
-    bosToken: '',
-    eosToken: '',
-    chatTemplate: '',
-    addGenerationPrompt: false,
-  };
-  return {
-    id: `${params.serverId}/${params.remoteModelId}`,
-    name: params.modelName,
-    author: params.serverName,
-    origin: ModelOrigin.REMOTE,
-    isDownloaded: true,
-    isLocal: false,
-    size: 0,
-    params: 0,
-    downloadUrl: '',
-    hfUrl: '',
-    progress: 0,
-    filename: '',
-    defaultChatTemplate: emptyChatTemplate,
-    chatTemplate: emptyChatTemplate,
-    defaultStopWords: [],
-    stopWords: [],
-    defaultCompletionSettings: {} as CompletionParams,
-    completionSettings: {} as CompletionParams,
-    serverId: params.serverId,
-    serverName: params.serverName,
-    remoteModelId: params.remoteModelId,
-  };
-}
+// B10: createRemoteModel moved verbatim to catalogStore.ts with its only
+// consumer (the remoteModels view) — private helper, catalog domain.
 
 export class ModelStore {
-  models: Model[] = [];
-  version: number | undefined = undefined; // Persisted version
-  deviceTier: Tier | null = null; // resolved device classification
-  rulesVersion: string | null = null; // provenance of the preset list
+  // ── B10 (phase-4 4a): real state lives in catalogStore (boxes; the
+  // catalogStore:v2 persist root owns the five persisted keys) ──
+  get models(): Model[] {
+    return catalogStore.models;
+  }
+  set models(value: Model[]) {
+    catalogStore.models = value;
+  }
+  /** Persisted version. */
+  get version(): number | undefined {
+    return catalogStore.version;
+  }
+  set version(value: number | undefined) {
+    catalogStore.version = value;
+  }
+  /** Resolved device classification. */
+  get deviceTier(): Tier | null {
+    return catalogStore.deviceTier;
+  }
+  set deviceTier(value: Tier | null) {
+    catalogStore.deviceTier = value;
+  }
+  /** Provenance of the preset list. */
+  get rulesVersion(): string | null {
+    return catalogStore.rulesVersion;
+  }
+  set rulesVersion(value: string | null) {
+    catalogStore.rulesVersion = value;
+  }
 
   /**
    * Returns models with projection models filtered out for display purposes
    */
   get displayModels(): Model[] {
-    return [...filterProjectionModels(this.models), ...this.remoteModels];
+    return catalogStore.displayModels;
   }
 
   // ── B4 (phase-4 4a): real state lives in runtimeStore (box; not persisted) ──
@@ -247,7 +241,13 @@ export class ModelStore {
     runtimeStore.activeRemoteBinding = value;
   }
 
-  lastUsedModelId: string | undefined = undefined;
+  // ── B10 (phase-4 4a): real state lives in catalogStore (box; v2 root) ──
+  get lastUsedModelId(): string | undefined {
+    return catalogStore.lastUsedModelId;
+  }
+  set lastUsedModelId(value: string | undefined) {
+    catalogStore.lastUsedModelId = value;
+  }
 
   /** Model ids currently in the post-download verification gate. */
   verifyingModelIds: string[] = [];
@@ -334,16 +334,14 @@ export class ModelStore {
     // B1 (phase-4 4a): host injection for runtimeStore's physical setters —
     // must precede any setter call (persist.then / UI). See runtimeStore.ts.
     injectRuntimeHost(this);
+    // B10 (phase-4 4a): catalog host marker — precedes the v2 root hydration
+    // (see catalogStore.ts; guards ج23/ج24 read boxes only in production).
+    injectCatalogHost({host: this});
     makePersistable(this, {
       name: 'ModelStore',
       properties: [
-        'models',
-        'version',
-        'deviceTier',
-        'rulesVersion',
         'useAutoRelease',
         'contextInitParams',
-        'lastUsedModelId',
         'wasAutoReleased',
         'lastAutoReleasedModelId',
         'availableMemoryCeiling',
@@ -352,6 +350,24 @@ export class ModelStore {
       ],
       storage: AsyncStorage,
     }).then(async () => {
+      // B10 (phase-4 4a): catalogStore:v2 persist root — the five catalog
+      // keys moved physically to catalogStore (§3, part 1); the one-time
+      // legacy import distributes the catalog half of the old all-in-one
+      // payload (§3, part 2). Ordering is load-bearing: v2 hydration first,
+      // legacy seed second, then the system initializers (the version gate
+      // in initializeStore must see the seeded list). ج25 — wiring dies 4e.
+      await makePersistable(catalogStore, {
+        name: 'catalogStore:v2',
+        properties: [
+          'models',
+          'version',
+          'deviceTier',
+          'rulesVersion',
+          'lastUsedModelId',
+        ],
+        storage: AsyncStorage,
+      });
+      await importLegacyCatalogState();
       await initializeModelSystem({
         catalog: this,
         download: this,
@@ -1876,10 +1892,9 @@ export class ModelStore {
     return runtimeStore.activeModelCaps;
   }
 
+  // ── B10 (phase-4 4a): implementation lives in catalogStore since batch 10 ──
   get lastUsedModel(): Model | undefined {
-    return this.lastUsedModelId
-      ? this.models.find(m => m.id === this.lastUsedModelId && m.isDownloaded)
-      : undefined;
+    return catalogStore.lastUsedModel;
   }
 
   /**
@@ -1898,24 +1913,9 @@ export class ModelStore {
    * change which cards exist. Remote models are never stored in the persisted
    * `models` array.
    */
+  // ── B10 (phase-4 4a): implementation lives in catalogStore since batch 10 ──
   get remoteModels(): Model[] {
-    const models: Model[] = [];
-    for (const selected of serverStore.userSelectedModels) {
-      const server = serverStore.servers.find(s => s.id === selected.serverId);
-      if (!server) {
-        continue;
-      }
-      // Use the remote model ID as the display name
-      models.push(
-        createRemoteModel({
-          serverId: selected.serverId,
-          serverName: server.name,
-          remoteModelId: selected.remoteModelId,
-          modelName: selected.remoteModelId,
-        }),
-      );
-    }
-    return models;
+    return catalogStore.remoteModels;
   }
 
   setActiveModel(modelId: string) {
@@ -2607,17 +2607,9 @@ export class ModelStore {
    * Returns available (i.e. downloaded models) models with projection models filtered out,
    * plus remote models from configured servers.
    */
+  // ── B10 (phase-4 4a): implementation lives in catalogStore since batch 10 ──
   get availableModels(): Model[] {
-    const localAvailable = filterProjectionModels(
-      this.models.filter(
-        model =>
-          // Include models that are either local or downloaded
-          model.isLocal ||
-          model.origin === ModelOrigin.LOCAL ||
-          model.isDownloaded,
-      ),
-    );
-    return [...localAvailable, ...this.remoteModels];
+    return catalogStore.availableModels;
   }
 
   // ── B6 (phase-4 4a): implementations live in runtimeStore since batch 6 ──

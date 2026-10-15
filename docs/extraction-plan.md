@@ -63,7 +63,7 @@ pendingLocalPathRecoveries/flushPendingLocalPathRecoveries→download)، + مد�
 | B7 | دورة الحياة 1: contextOperationMutex، pendingModelId، _releaseContextInternal، releaseContext، manualReleaseContext، modelLoadError، clearModelLoadError |
 | B8 | دورة الحياة 2: initContext + proceedWithInitialization + resolveMultimodalConfig + resolveDraftConfig + checkMemoryAndConfirm + isContextLoading/loadingModel + activeProjectionModelId + isMultimodalActive + activeRemoteBinding + reinitializeContext |
 | B9 | **أُفرغت لصالح §3-أ** (حُسم في B8): availableMemoryCeiling + largestSuccessfulLoad مفتاحا persist — حالتهما لا تنتقل قبل جذري v2؛ المحتوى أُعيد إسناده إلى B22 (يقرؤها runtimeStore عبر البرميل منذ Phase-1، ويكتبها عبره ج20/ذيل ج13 — كلها بمعاهش معلنة) |
-| B10 | حالة الكتالوج: models، version، deviceTier، rulesVersion، displayModels، availableModels، lastUsedModelId، lastUsedModel، remoteModels (القائمة) |
+| B10 | **منفَّذة (جلسة 9)**: حالة الكتالوج: models، version، deviceTier، rulesVersion، displayModels، availableModels، lastUsedModelId، lastUsedModel، remoteModels — **الجذر `catalogStore:v2` وُلد هنا** (§3-جزء 1) + الاستيراد الإرثي نصف الكتالوجي (§3-جزء 2، تنظيف المفتاح مؤجل إلى B22/4e)؛ ج1/ج15/ج21 ماتت بالقلب إلى المالك، ج2 بقيت عبر التفويض (موتها 4e)، وُلدت ج23/ج24/ج25 |
 | B11 | طفرات القائمة: addHFModel، addLocalModel، resetModels، removeModelFromList، removeModelByFullPath، registerOnboardingAssistantModel، mergeModelLists، reconcilePresets، resolvePresets + خاصو preset + draftRulesManager/DraftRulesManager |
 | B12 | محدّثات البيانات الوصفية: updateModelName/resetModelName، updateModelChatTemplate/reset، updateModelStopWords/reset، updateModelHash، isModelAvailable، fetchAndUpdateModelFileDetails |
 | B13 | GGUF: fetchAndPersistGGUFMetadata + loadMissingGGUFMetadata + healDraftVisionClassification (منتج cleanupQueueBridge) |
@@ -134,6 +134,11 @@ pendingLocalPathRecoveries/flushPendingLocalPathRecoveries→download)، + مد�
 أي مفتاح persist إلى زوج وصول قبل إنشاء الجذرين v2: حالته تبقى حقل observable على
 الإله الكائن، ومنطق runtimeStore يقرأه/يكتبه عبر ربط البرميل. يبدأ نشر الحالة المحفوظة
 إلى runtimeStore مع إنشاء `runtimeStore:v2` (B22+)، لا قبل.
+**تنفيذ الجذر الكتالوجي (B10، جلسة 9)**: الجذر الأول `catalogStore:v2` وُلد في B10 —
+المتجر كائن عادي (بلا makeAutoObservable) فالحارس `isComputedProp` لا يلتقط أزواج
+الوصول فوق الصناديق؛ الترطيب يمر عبر المحددات (كتابة الصندوق) والحفظ يقرأ عبر
+الجوالب — الحقلان القابلان للكتابة هنا هما الصندوق نفسه. الجذر الآخر (`runtimeStore:v2`)
+يبقى B22 (مفاتيح runtime السبعة لا تزال حقولاً على الإله الكائن).
 **الأثر على الدفعات**: B9 أُفرغت بهذا القيد (availableMemoryCeiling + largestSuccessfulLoad
 مفتاحا persist) — محتواهما أُعيد إسناده إلى B22؛ لا دفعة runtime متبقية بعد B8 إلا ما
 عليه حافة B10 (الكتالوج) — سلّم الدفعات ينتقل B8 → B10 مباشرة منطقياً، وبوابة السلسلة
@@ -216,8 +221,8 @@ pendingLocalPathRecoveries/flushPendingLocalPathRecoveries→download)، + مد�
 
 | الجسر العابر | الولادة | الموت المتوقع | كيف يموت |
 |---|---|---|---|
-| ج1: قراءتا القائمة في activeModel (`modelStore.models/remoteModels` + optional-chains) | B3 | **B10** | تقلب القراءات إلى مالك القائمة عند هجرتها (قرار B10 المعلن: استيراد المالك بحافة madge معلنة، أو البقاء عبر زوج التفويض حتى الموت القسري 4e) |
-| ج2: مصدر effectiveDraftMode (`effectiveDraftModeOf(modelStore)`) | B3 | **B10** | نفس قلب ج1 — مصدر المصدر يقرأ models من المالك |
+| ج1: قراءتا القائمة في activeModel (`modelStore.models/remoteModels` + optional-chains) | B3 | ✅ **B10** | قُلبت القراءتان إلى المالك (`catalogStore.models/remoteModels`) باستيراد مباشر — حافة madge المعلنة؛ الـ optional-chains بقيت (ج4 يموت 4e) |
+| ج2: مصدر effectiveDraftMode (`effectiveDraftModeOf(modelStore)`) | B3 | **4e** (مُعدَّل من B10 — جلسة 9) | خيار البقاء عبر زوج التفويض المعلن في هذا السطر: المصدر يقرأ models عبر المفوِّض العكسي (الوصول نفسه يصل المالك)؛ الاستيراد المباشر يتطلب مصدراً كاملاً (activeModel + contextInitParams غير كتالوجيين) |
 | ج3: الاحتياط المحمي في activeModel (فرع `modelStore.activeModel` بلا host) | B3 | **4e** (قسري) | آخر mock برميلي جزئي يموت مع 4e؛ وفاة مبكرة suite-by-suite خلال 4b مع هجرة كل suite إلى mock الفصاد |
 | ج4: optional-chains على المتعاونين (activeModel/checkAndReload) | B3/B4 | **4e** (قسري) | نفس سبب ج3 — بلا أثر إنتاجياً (القوائم موجودة دائماً) |
 | ج5: قراءة reprobe عبر cast من handleAppStateChange | B4 | **B14** | reprobeRemoteCapsIfUnknown تهاجر مع عائلة remote/vision — الاستدعاء يصبح داخلياً (this.) في runtimeStore |
@@ -230,13 +235,16 @@ pendingLocalPathRecoveries/flushPendingLocalPathRecoveries→download)، + مد�
 | ج12: قراءات الموتكس/pendingModelId من initContext عبر الماصّات المصدَّرة | B7 | ✅ B8 | initContext تهاجر مع حالتهما — الوصول مباشر (let وحدوي)؛ الماصّات الأربع حُذفت (لا مستهلك خارجي) |
 | ج13: كتابات حالة runtime عبر ربط البرميل من releaseContextInternal (engine/activeRemoteBinding/activeModelId/isMultimodalActive/activeProjectionModelId/activeContextSettings/availableMemoryCeiling — 17 سطراً) | B7 | ✅ B8 (B22 لـ activeContextSettings/availableMemoryCeiling) | الحالة الثمانية هاجرت إلى صناديق runtimeStore — الكتابات صارت s.* عبر أزواج الوصول (15 سطراً)؛ سطرا activeContextSettings/availableMemoryCeiling بقيا برميلين (ذيل ج13، B22) |
 | ج14: استدعاء الإفلات الداخلي من initContext عبر releaseContextInternal(this) المصدَّرة | B7 | ✅ B8 | initContext تهاجر — الاستدعاء محلي في نفس الوحدة |
-| ج15: قراءات models عبر البرميل (resolveMultimodalConfig/resolveDraftConfig/reinitializeContext — 3 أسطر) | B8 | **B10** | القائمة تهاجر إلى catalogStore — القراءات تنقلب إلى المالك |
+| ج15: قراءات models عبر البرميل (resolveMultimodalConfig/resolveDraftConfig/reinitializeContext — 3 أسطر) | B8 | ✅ **B10** | القائمة هاجرت إلى catalogStore — القراءات الثلاث قُلبت إلى المالك باستيراد مباشر (حافة madge المعلنة) |
 | ج16: قراءة getModelVisionPreference من resolveMultimodalConfig | B8 | **B14** | العضو يهاجر مع عائلة remote/vision |
 | ج17: قراءات getModelFullPath (resolveMultimodalConfig/resolveDraftConfig/proceedWithInitialization — 3 أسطر) | B8 | **B18** | العضو يهاجر مع عائلة الملفات (download) |
 | ج18: استدعاءا updateModelStopTokens/updateModelThinkingCapabilities من proceedWithInitialization (cast ضيق — ج5 نمط، غير مرئي للعداد) | B8 | **B23 / B14** | العضوان خاصّان على الإله الكائن؛ يهاجران مع B23/B14 فيصير الاستدعاء محلياً |
 | ج19: كتابة activeContextSettings من proceedWithInitialization (برميل) | B8 | **B22** | §3-أ: تبقى على الإله الكائن حتى جذري v2 — الكتابة تنقلب this. |
 | ج20: كتابة largestSuccessfulLoad من proceedWithInitialization (برميل) | B8 | **B22** | مفتاح persist — §3-أ: نفس مصير ج19 |
-| ج21: كتابة lastUsedModelId من proceedWithInitialization (برميل) | B8 | **B10** | مفتاح persist كتالوجي — يهاجر مع حالة القائمة |
+| ج21: كتابة lastUsedModelId من proceedWithInitialization (برميل) | B8 | ✅ **B10** | مفتاح persist كتالوجي — هاجر مع حالة القائمة؛ الكتابة قُلبت إلى `catalogStore.lastUsedModelId` |
+| ج23: حارس catalogHost على مفاتيح persist الكتالوجية الخمسة المنقولة (الصندوق عند حقن الـ host، البرميل في suites البرميلية — نمط ج22) | B10 | **4e** (قسري) | suites البرميلية تملك الحالة على الموك المركزي (لا constructor ← لا حقن)؛ موت مبكر suite-by-suite من 4b/4c مع هجرة mock الفصاد |
+| ج24: حارس catalogHost على المحتسبات المشتقة الأربعة (displayModels/availableModels/lastUsedModel/remoteModels) — الموك المركزي يحمل حساباته الخاصة وينقصه remoteModels | B10 | **4e** (قسري) | نفس موت ج23 — السقوط يحافظ على سلوك suites حرفياً |
+| ج25: استدعاءا الجذر `catalogStore:v2` + الاستيراد الإرثي في constructor الإله (سلك تركيب) | B10 | **4e** | bootstrap يصبح جذر التركيب الوحيد — السلك ينتقل معه (§8 صف النهاية)؛ الدالة نفسها (importLegacyCatalogState) تبقى ملك كتالوجي |
 | ج22: حارس قراءة الحالة الثمانية المنقولة (runtimeHost ? box : برميل — نمط ج3) | B8 | **4e** (قسري) | suites البرميلية تملك الحالة على الموك المركزي (لا constructor ← لا host)؛ موت مبكر suite-by-suite من 4b/4c مع هجرة mock الفصاد |
 
 قاعدة السجل: أي جسر جديد يولد في دفعة = سطر جديد هنا في نفس الـ commit؛ جسر بلا موت
@@ -328,7 +336,9 @@ post-4a: official 1732 / real 1731 / raw 1732 → post-4b: **951/950/951** → p
 > B8: حافة ModelStore→useMemoryCheck ماتت مع هجرة hasEnoughMemory عبر checkMemoryAndConfirm،
 > ووُلدت runtimeStore→useMemoryCheck مكانها — تبديل داخل نفس العنقود؛ الحلقة المعدودة تبادلت
 > ممثلها فقط: 44 بالضبط قبل وبعد، مقيساً)
-> → 46 عند B10 (أول حافة ModelStore→catalogStore: مباشرة+برميل) → 47 عند B15 (برميل catalog
+> → 46 عند B10 (**مقيس 46 بالضبط — جلسة 9**؛ أول حافة ModelStore→catalogStore:
+> المباشر في ModelStore.ts + البرميل؛ استيراد runtimeStore→catalogStore المباشر
+> (ج1/ج15/ج21) لم يضف حلقةً ثالثة — العنقود المعدود نفسه) → 47 عند B15 (برميل catalog
 > يموت مع آخر مرجع pass-through) → **48 = السقف** عند B16 (أول حافة ModelStore→downloadStore)
 > → 47 عند B20 (برميل download) → 46 عند B23 (برميل runtime) → **42 بالضبط** عند B24
 > (حواف type-guard الثلاث تموت مع استبدال دروع الانجراف).
