@@ -30,8 +30,6 @@ import {uiStore, hfStore, modelHubStore} from '.';
 import {serverStore} from './ServerStore';
 import {chatSessionStore} from './ChatSessionStore';
 import {
-  draftCacheDefaults,
-  effectiveDraftModeOf,
   resolveDraftCandidate,
   resolveDraftModelId,
   unpairedDraftCandidate,
@@ -94,8 +92,7 @@ import {
 import {detectThinkingCapability} from '../utils/thinkingCapabilityDetection';
 import {ReasoningCapability} from '../utils/reasoningCapability';
 import {capsMatchBinding} from '../utils/remoteCaps';
-import {resolveModelCaps} from '../utils/modelCaps';
-import type {CapabilityEnv, ModelCapabilityView} from '../utils/modelCaps';
+import type {ModelCapabilityView} from '../utils/modelCaps';
 import {t} from '../locales';
 import {
   createContextInitParams,
@@ -1912,15 +1909,13 @@ export class ModelStore {
     return unpairedDraftCandidate(model);
   };
 
+  // ── B3 (phase-4 4a): implementations live in runtimeStore since batch 3 ──
   get effectiveDraftMode(): DraftConfig['mode'] {
-    return effectiveDraftModeOf(this);
+    return runtimeStore.effectiveDraftMode;
   }
 
   get effectiveDraftCacheDefaults(): {k: CacheType; v: CacheType} {
-    return draftCacheDefaults(
-      this.effectiveDraftMode,
-      this.contextInitParams.flash_attn_type === 'on',
-    );
+    return runtimeStore.effectiveDraftCacheDefaults;
   }
 
   /**
@@ -2455,37 +2450,26 @@ export class ModelStore {
     await this.releaseContext(true); // Clear active model for manual release
   };
 
+  // ── B3 (phase-4 4a): implementation lives in runtimeStore since batch 3 ──
   get activeModel(): Model | undefined {
-    // Look in local models first, then remote models
-    return (
-      this.models.find(model => model.id === this.activeModelId) ||
-      this.remoteModels.find(model => model.id === this.activeModelId)
-    );
+    return runtimeStore.activeModel;
   }
 
-  private get capabilityEnv(): CapabilityEnv {
-    return {
-      remoteCaps: serverStore.remoteCaps,
-      listCaps: serverStore.listCaps,
-      binding: this.activeRemoteBinding,
-      isMultimodalActive: this.isMultimodalActive,
-      activeContextSettings: this.activeContextSettings,
-      activeModelId: this.activeModelId,
-    };
-  }
-
+  // ── B3 (phase-4 4a): capabilityEnv moved with its only consumer (capsFor);
+  // implementation lives in runtimeStore since batch 3 ──
   /**
    * Capabilities of any model, active or not — the model card's entry point.
    * Never annotate it explicitly as `action`: that untracks the observable
    * reads, so every card would freeze on its first value while the suite
    * stayed green.
    */
-  capsFor = (model: Model | undefined): ModelCapabilityView =>
-    resolveModelCaps(model, this.capabilityEnv);
+  capsFor = (model: Model | undefined): ModelCapabilityView => {
+    return runtimeStore.capsFor(model);
+  };
 
   /** Capabilities of the live session — chat's entry point. */
   get activeModelCaps(): ModelCapabilityView {
-    return this.capsFor(this.activeModel);
+    return runtimeStore.activeModelCaps;
   }
 
   get lastUsedModel(): Model | undefined {
@@ -2499,15 +2483,9 @@ export class ModelStore {
    * For local models: the numeric native context ID as a string.
    * For remote models: "remote-{serverId}" string.
    */
+  // ── B3 (phase-4 4a): implementation lives in runtimeStore since batch 3 ──
   get contextId(): string | undefined {
-    if (this.context) {
-      return String(this.context.id);
-    }
-    const model = this.activeModel;
-    if (model?.origin === ModelOrigin.REMOTE && model.serverId) {
-      return `remote-${model.serverId}`;
-    }
-    return undefined;
+    return runtimeStore.contextId;
   }
 
   /**
