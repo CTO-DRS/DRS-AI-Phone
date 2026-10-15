@@ -139,7 +139,8 @@ pendingLocalPathRecoveries/flushPendingLocalPathRecoveries→download)، + مد�
 من مكون مهاجر يقرأ حالته عبر getters المتجر نفسه/ربط البرميل (يُسخَّر في suites) —
 ممنوع requireHost على مسارات القراءة (لا constructor يعمل في suites البرميل المسخرى؛
 الـ host لمسارات الكتابة فقط حتى يُحل B22)؛ optional-chains للمتعاونين الذين قد تغيب
-عن mocks جزئية؛ احتياط محمي بالـ host للأعضاء الذين تُعرَّف stub كقيم ثابتة (يموت في 4c).
+عن mocks جزئية؛ احتياط محمي بالـ host للأعضاء الذين تُعرَّف stub كقيم ثابتة
+(الموت القسري 4e — انظر سجل موت الجسور ج3/ج4 في §8).
 
 ترتيب التهيئة في bootstrap: استيراد الإرث → initializeThreadCount → initializeModelSystem —
 بنفس ترتيب constructor الحالي (280-285) حرفياً.
@@ -206,6 +207,22 @@ pendingLocalPathRecoveries/flushPendingLocalPathRecoveries→download)، + مد�
 
 ترتيب التهيئة الثابت عبر المراحل الثلاث: استيراد الإرث ← initializeThreadCount ← initializeModelSystem
 (بقية الخطوات بترتيب 762-845 حرفياً — انظر §4).
+
+### سجل موت الجسور (لا جسر بلا موت معلن — يُحدَّث عند كل ولادة جسر)
+
+| الجسر العابر | الولادة | الموت المتوقع | كيف يموت |
+|---|---|---|---|
+| ج1: قراءتا القائمة في activeModel (`modelStore.models/remoteModels` + optional-chains) | B3 | **B10** | تقلب القراءات إلى مالك القائمة عند هجرتها (قرار B10 المعلن: استيراد المالك بحافة madge معلنة، أو البقاء عبر زوج التفويض حتى الموت القسري 4e) |
+| ج2: مصدر effectiveDraftMode (`effectiveDraftModeOf(modelStore)`) | B3 | **B10** | نفس قلب ج1 — مصدر المصدر يقرأ models من المالك |
+| ج3: الاحتياط المحمي في activeModel (فرع `modelStore.activeModel` بلا host) | B3 | **4e** (قسري) | آخر mock برميلي جزئي يموت مع 4e؛ وفاة مبكرة suite-by-suite خلال 4b مع هجرة كل suite إلى mock الفصاد |
+| ج4: optional-chains على المتعاونين (activeModel/checkAndReload) | B3/B4 | **4e** (قسري) | نفس سبب ج3 — بلا أثر إنتاجياً (القوائم موجودة دائماً) |
+| ج5: قراءة reprobe عبر cast من handleAppStateChange | B4 | **B14** | reprobeRemoteCapsIfUnknown تهاجر مع عائلة remote/vision — الاستدعاء يصبح داخلياً (this.) في runtimeStore |
+| ج6: كتابات مفاتيح persist عبر ربط البرميل (mark/clear/update) | B4 | **B22** | الجذر `runtimeStore:v2` يستقبل الحالة — الكتابات تصبح this. (§3-أ) |
+| ج7: injectRuntimeHost (كتابات contextInitParams في محددات B1) | R0/B1 | **B22** | §8 سطر «بعد B22»: الـ host يُحذف مع هجرة contextInitParams |
+| ج8: زوج max_threads على الإله الكائن | B2 | **B22** | الكاتب (initializeThreadCount) يهاجر إلى bootstrap — الزوج يُحذف |
+
+قاعدة السجل: أي جسر جديد يولد في دفعة = سطر جديد هنا في نفس الـ commit؛ جسر بلا موت
+معلن = يوقف الدفعة.
 
 ## الشرط 1 — مصير اختبارات الفاصاد الستة (محسوم قبل 4d)
 
