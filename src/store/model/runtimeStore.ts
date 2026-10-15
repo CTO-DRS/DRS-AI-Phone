@@ -4,14 +4,22 @@ import type {ModelStore} from '../ModelStore';
 // singleton (network fetch + DeviceInfo) inside every suite that renders
 // a migrated component. Type-only import keeps the Pick<ModelStore,...>
 // compile-time drift guard. Revisit at Phase 4 dissolution.
-import {modelStore} from '../';
+import {modelStore, serverStore} from '../';
 import {observable, runInAction} from 'mobx';
 import {Platform} from 'react-native';
 import type {ContextParams} from 'llama.rn';
-import {CacheType, ContextInitParams, DraftConfig} from '../../utils/types';
+import {
+  CacheType,
+  ContextInitParams,
+  DraftConfig,
+  Model,
+  ModelOrigin,
+} from '../../utils/types';
 import {resolveUseMmap} from '../../utils/memorySettings';
 import {resolveDeviceSelection} from '../../utils/deviceSelection';
-import {draftCacheDefaults} from '../draftResolution';
+import {draftCacheDefaults, effectiveDraftModeOf} from '../draftResolution';
+import {resolveModelCaps} from '../../utils/modelCaps';
+import type {CapabilityEnv, ModelCapabilityView} from '../../utils/modelCaps';
 
 /**
  * runtimeStore — Phase-1 scaffold (fix 4, stage 1 of 4).
@@ -69,25 +77,54 @@ import {draftCacheDefaults} from '../draftResolution';
 // observable field, the action wrapper, and the write semantics are the
 // god object's own. Zero modelStore references — the inside counter drops
 // by exactly the 16 delegation lines this batch replaces.
-let runtimeHost: {contextInitParams: ContextInitParams} | null = null;
+// The host stays NARROW (B1 shape): real members that are consumed during
+// render by migrated components read state through the store's own
+// pass-through getters / the barrel binding — which suites mock — never
+// through requireHost() (no constructor runs in barrel-mocked suites).
+// The host is for WRITE paths only until B22 retires it (extraction-plan §8).
+export interface RuntimeHost {
+  contextInitParams: ContextInitParams;
+}
+
+let runtimeHost: RuntimeHost | null = null;
 
 /**
  * DI injection point (ModelStore constructor). Must run before any parameter
  * setter; a setter called without a host is a lifecycle bug and throws.
  */
-export function injectRuntimeHost(host: {
-  contextInitParams: ContextInitParams;
-}): void {
+export function injectRuntimeHost(host: RuntimeHost): void {
   runtimeHost = host;
 }
 
-function hostInitParams(): {contextInitParams: ContextInitParams} {
+function requireHost(): RuntimeHost {
   if (!runtimeHost) {
     throw new Error(
-      'runtimeStore: host not injected — ModelStore must call injectRuntimeHost before parameter setters run',
+      'runtimeStore: host not injected — ModelStore must call injectRuntimeHost before store members run',
     );
   }
   return runtimeHost;
+}
+
+// B1 setters keep their narrow alias — their bodies stay byte-identical.
+function hostInitParams(): RuntimeHost {
+  return requireHost();
+}
+
+// capabilityEnv moved verbatim (a PRIVATE member of the god object — it is
+// not part of the runtime contract, so it lives at module level here). It
+// reads the runtime flags through the store's OWN getters and serverStore
+// through the BARREL (mocked in suites, real in production) — exactly the
+// collaborator resolution the central mock's own implementation uses, so
+// barrel-mocked suites see identical behavior with no host on render paths.
+function capabilityEnvOf(s: RuntimeStore): CapabilityEnv {
+  return {
+    remoteCaps: serverStore.remoteCaps,
+    listCaps: serverStore.listCaps,
+    binding: s.activeRemoteBinding,
+    isMultimodalActive: s.isMultimodalActive,
+    activeContextSettings: s.activeContextSettings,
+    activeModelId: s.activeModelId,
+  };
 }
 
 // ═══════════ B2 (phase-4 4a): FIRST REAL STATE + PURE CONSTANT ═══════════
@@ -189,7 +226,25 @@ export type RuntimeMember = (typeof RUNTIME_MEMBERS)[number];
 export type RuntimeStore = Pick<ModelStore, RuntimeMember>;
 
 export const runtimeStore: RuntimeStore = {
-  get activeModel() {
+  // ── B3 (phase-4 4a): real implementation (was god-object computed) ──
+  // Reads the list through the barrel binding (mocked in suites, the real
+  // god object in production) — identical data to the pre-move body; the
+  // read flips to catalogStore when B10 relocates the list.
+  get activeModel(): Model | undefined {
+    // Derivation over the singleton's lists — the god object's own computed
+    // logic. Optional chains + the host-guarded tail are mock-compat:
+    // partial barrel suites stub `activeModel` as DATA with no lists; there
+    // (and only there — runtimeHost is null because no constructor ran)
+    // this returns exactly what the old pass-through returned. In production
+    // both lists always exist and the host is injected, so the fallback is
+    // unreachable and cannot recurse through the delegating getter. The
+    // fallback dies at 4c (sub-store mocks) / B10 (list relocation).
+    const derived =
+      modelStore.models?.find(model => model.id === this.activeModelId) ||
+      modelStore.remoteModels?.find(model => model.id === this.activeModelId);
+    if (derived || runtimeHost) {
+      return derived;
+    }
     return modelStore.activeModel;
   },
   get activeModelId() {
@@ -198,8 +253,16 @@ export const runtimeStore: RuntimeStore = {
   get context() {
     return modelStore.context;
   },
-  get contextId() {
-    return modelStore.contextId;
+  // ── B3 (phase-4 4a): real implementation ──
+  get contextId(): string | undefined {
+    if (this.context) {
+      return String(this.context.id);
+    }
+    const model = this.activeModel;
+    if (model?.origin === ModelOrigin.REMOTE && model.serverId) {
+      return `remote-${model.serverId}`;
+    }
+    return undefined;
   },
   get engine() {
     return modelStore.engine;
@@ -270,14 +333,23 @@ export const runtimeStore: RuntimeStore = {
   get activeRemoteBinding() {
     return modelStore.activeRemoteBinding;
   },
-  get activeModelCaps() {
-    return modelStore.activeModelCaps;
+  // ── B3 (phase-4 4a): draft/capabilities surface — real implementations ──
+  /** Capabilities of the live session — chat's entry point. */
+  get activeModelCaps(): ModelCapabilityView {
+    return this.capsFor(this.activeModel);
   },
-  get effectiveDraftMode() {
-    return modelStore.effectiveDraftMode;
+  get effectiveDraftMode(): DraftConfig['mode'] {
+    // The barrel binding structurally satisfies DraftResolutionSource
+    // (models + activeModel + contextInitParams) in BOTH worlds — the real
+    // god object in production, the central mock in barrel-mocked suites —
+    // same shape as the pre-move `effectiveDraftModeOf(this)`.
+    return effectiveDraftModeOf(modelStore);
   },
-  get effectiveDraftCacheDefaults() {
-    return modelStore.effectiveDraftCacheDefaults;
+  get effectiveDraftCacheDefaults(): {k: CacheType; v: CacheType} {
+    return draftCacheDefaults(
+      this.effectiveDraftMode,
+      this.contextInitParams.flash_attn_type === 'on',
+    );
   },
   get pendingProjectionCleanupIds() {
     return modelStore.pendingProjectionCleanupIds;
@@ -641,7 +713,17 @@ export const runtimeStore: RuntimeStore = {
   setupAppStateListener: (...args) => modelStore.setupAppStateListener(...args),
   checkAndReloadAutoReleasedModel: (...args) =>
     modelStore.checkAndReloadAutoReleasedModel(...args),
-  capsFor: (...args) => modelStore.capsFor(...args),
+  /**
+   * Capabilities of any model, active or not — the model card's entry point.
+   * (The god object's delegation keeps the original comment: never annotate
+   * it explicitly as `action` — that untracks the observable reads, so every
+   * card would freeze on its first value while the suite stayed green.)
+   * Method shorthand + capabilityEnvOf(): plain function, no MobX annotation
+   * of its own — tracking belongs to the caller's reaction/computed.
+   */
+  capsFor(model: Model | undefined): ModelCapabilityView {
+    return resolveModelCaps(model, capabilityEnvOf(this));
+  },
   drainPendingProjectionCleanup: (...args) =>
     modelStore.drainPendingProjectionCleanup(...args),
   cleanupOrphanedProjectionModel: (...args) =>
