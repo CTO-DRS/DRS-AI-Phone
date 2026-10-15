@@ -1,5 +1,4 @@
 import {
-  AppState,
   AppStateStatus,
   InteractionManager,
   Platform,
@@ -181,7 +180,13 @@ export class ModelStore {
     return [...filterProjectionModels(this.models), ...this.remoteModels];
   }
 
-  appState: AppStateStatus = AppState.currentState;
+  // ── B4 (phase-4 4a): real state lives in runtimeStore (box; not persisted) ──
+  get appState(): AppStateStatus {
+    return runtimeStore.appState;
+  }
+  set appState(value: AppStateStatus) {
+    runtimeStore.appState = value;
+  }
   useAutoRelease: boolean = true;
   // UI loading state - true during model load/release transitions
   isContextLoading: boolean = false;
@@ -222,12 +227,10 @@ export class ModelStore {
   /** Model ids currently in the post-download verification gate. */
   verifyingModelIds: string[] = [];
 
-  // Auto-release tracking (persistent)
+  // Auto-release tracking (persist keys — state stays on the god object
+  // until the v2 persist roots exist; see runtimeStore.ts B4 note)
   wasAutoReleased: boolean = false;
   lastAutoReleasedModelId: string | undefined = undefined;
-
-  // System UI protection (runtime)
-  private autoReleaseDisabledReasons = new Set<string>();
 
   // ── B2 (phase-4 4a): pure constant — module-level export in runtimeStore ──
   get MIN_CONTEXT_SIZE(): number {
@@ -852,118 +855,30 @@ export class ModelStore {
     return this.initializeDownloadStatus();
   };
 
+  // ── B4 (phase-4 4a): implementations live in runtimeStore since batch 4 ──
   setupAppStateListener = () => {
-    AppState.addEventListener('change', this.handleAppStateChange);
+    runtimeStore.setupAppStateListener();
   };
 
   // Auto-release management methods
   disableAutoRelease = (reason: string) => {
-    this.autoReleaseDisabledReasons.add(reason);
-    logger.debug(
-      `Auto-release disabled: ${reason}`,
-      Array.from(this.autoReleaseDisabledReasons),
-    );
+    runtimeStore.disableAutoRelease(reason);
   };
 
   enableAutoRelease = (reason: string) => {
-    this.autoReleaseDisabledReasons.delete(reason);
-    logger.debug(
-      `Auto-release enabled: ${reason}`,
-      Array.from(this.autoReleaseDisabledReasons),
-    );
+    runtimeStore.enableAutoRelease(reason);
   };
 
-  get isAutoReleaseEnabled() {
-    return this.useAutoRelease && this.autoReleaseDisabledReasons.size === 0;
+  get isAutoReleaseEnabled(): boolean {
+    return runtimeStore.isAutoReleaseEnabled;
   }
 
-  private markAutoReleased = (modelId: string) => {
-    // Skip auto-release for remote models (no native context to release)
-    const model = this.activeModel;
-    if (model?.origin === ModelOrigin.REMOTE) {
-      return;
-    }
-    logger.debug('Marking auto-released: ', modelId);
-    runInAction(() => {
-      this.wasAutoReleased = true;
-      this.lastAutoReleasedModelId = modelId;
-    });
-  };
-
-  private clearAutoReleaseFlags = () => {
-    logger.debug('Clearing auto-release flags');
-    runInAction(() => {
-      this.wasAutoReleased = false;
-      this.lastAutoReleasedModelId = undefined;
-    });
-  };
-
   checkAndReloadAutoReleasedModel = async () => {
-    if (this.wasAutoReleased && this.lastAutoReleasedModelId) {
-      // Skip if the auto-released model ID refers to a remote model
-      if (this.lastAutoReleasedModelId.includes('/')) {
-        const remoteModel = this.remoteModels.find(
-          m => m.id === this.lastAutoReleasedModelId,
-        );
-        if (remoteModel) {
-          this.clearAutoReleaseFlags();
-          return;
-        }
-      }
-      const model = this.models.find(
-        m => m.id === this.lastAutoReleasedModelId && m.isDownloaded,
-      );
-      if (model) {
-        logger.debug('Reloading auto-released model:', model.id);
-        await this.initContext(model);
-      }
-      this.clearAutoReleaseFlags();
-    }
+    await runtimeStore.checkAndReloadAutoReleasedModel();
   };
 
   handleAppStateChange = async (nextAppState: AppStateStatus) => {
-    logger.debug(`App state change: ${this.appState} → ${nextAppState}`);
-
-    if (
-      this.appState.match(/inactive|background/) &&
-      nextAppState === 'active'
-    ) {
-      // Coming to foreground - check if we need to reload auto-released model
-      await this.checkAndReloadAutoReleasedModel();
-      this.reprobeRemoteCapsIfUnknown();
-    } else if (this.appState === 'active' && nextAppState === 'inactive') {
-      // active → inactive: NO action (per requirements)
-      logger.debug('Active → Inactive: No auto-release action');
-    } else if (this.appState === 'inactive' && nextAppState === 'background') {
-      // inactive → background: release if enabled
-      // Skip for remote models — no native context to release, and
-      // releaseContext() would clear the engine with no reload path.
-      if (
-        this.isAutoReleaseEnabled &&
-        this.activeModelId &&
-        this.activeModel?.origin !== ModelOrigin.REMOTE
-      ) {
-        logger.debug('Inactive → Background: Auto-releasing context');
-        this.markAutoReleased(this.activeModelId);
-        await this.releaseContext();
-      }
-    } else if (this.appState === 'active' && nextAppState === 'background') {
-      // active → background: release if enabled (direct transition)
-      // Skip for remote models — same reason as above.
-      if (
-        this.isAutoReleaseEnabled &&
-        this.activeModelId &&
-        this.activeModel?.origin !== ModelOrigin.REMOTE
-      ) {
-        logger.debug('Active → Background: Auto-releasing context');
-        this.markAutoReleased(this.activeModelId);
-        await this.releaseContext();
-      }
-    }
-
-    runInAction(() => {
-      this.appState = nextAppState;
-    });
+    await runtimeStore.handleAppStateChange(nextAppState);
   };
 
   /**
@@ -3033,10 +2948,9 @@ export class ModelStore {
     });
   };
 
+  // ── B4 (phase-4 4a): implementation lives in runtimeStore since batch 4 ──
   updateUseAutoRelease = (useAutoRelease: boolean) => {
-    runInAction(() => {
-      this.useAutoRelease = useAutoRelease;
-    });
+    runtimeStore.updateUseAutoRelease(useAutoRelease);
   };
 
   /**

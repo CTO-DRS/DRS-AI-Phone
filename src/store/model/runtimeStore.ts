@@ -6,7 +6,7 @@ import type {ModelStore} from '../ModelStore';
 // compile-time drift guard. Revisit at Phase 4 dissolution.
 import {modelStore, serverStore} from '../';
 import {observable, runInAction} from 'mobx';
-import {Platform} from 'react-native';
+import {AppState, AppStateStatus, Platform} from 'react-native';
 import type {ContextParams} from 'llama.rn';
 import {
   CacheType,
@@ -20,6 +20,7 @@ import {resolveDeviceSelection} from '../../utils/deviceSelection';
 import {draftCacheDefaults, effectiveDraftModeOf} from '../draftResolution';
 import {resolveModelCaps} from '../../utils/modelCaps';
 import type {CapabilityEnv, ModelCapabilityView} from '../../utils/modelCaps';
+import {logger} from '../../utils/logger';
 
 /**
  * runtimeStore — Phase-1 scaffold (fix 4, stage 1 of 4).
@@ -125,6 +126,41 @@ function capabilityEnvOf(s: RuntimeStore): CapabilityEnv {
     activeContextSettings: s.activeContextSettings,
     activeModelId: s.activeModelId,
   };
+}
+
+// ═══════════ B4 (phase-4 4a): auto-release family — real state + logic ═══════════
+// appState + autoReleaseDisabledReasons are NOT persisted → their real state
+// moves here (box / observable set). The three persist keys (useAutoRelease,
+// wasAutoReleased, lastAutoReleasedModelId) KEEP their state on the god
+// object until the v2 persist roots exist (B22+/§3): mobx-persist-store
+// skips computed properties when saving (isComputedProp guard), so an
+// accessor pair would silently disable persistence. Their methods here read
+// and write them through the barrel binding (mocked in suites).
+const appStateBox = observable.box<AppStateStatus>(AppState.currentState);
+const autoReleaseDisabledReasons = observable.set<string>();
+
+// markAutoReleased / clearAutoReleaseFlags (private members) moved verbatim;
+// they write the persist-key flags through the barrel binding until the v2
+// roots relocate them.
+function markAutoReleased(s: RuntimeStore, modelId: string) {
+  // Skip auto-release for remote models (no native context to release)
+  const model = s.activeModel;
+  if (model?.origin === ModelOrigin.REMOTE) {
+    return;
+  }
+  logger.debug('Marking auto-released: ', modelId);
+  runInAction(() => {
+    modelStore.wasAutoReleased = true;
+    modelStore.lastAutoReleasedModelId = modelId;
+  });
+}
+
+function clearAutoReleaseFlags() {
+  logger.debug('Clearing auto-release flags');
+  runInAction(() => {
+    modelStore.wasAutoReleased = false;
+    modelStore.lastAutoReleasedModelId = undefined;
+  });
 }
 
 // ═══════════ B2 (phase-4 4a): FIRST REAL STATE + PURE CONSTANT ═══════════
@@ -318,8 +354,10 @@ export const runtimeStore: RuntimeStore = {
   get useAutoRelease() {
     return modelStore.useAutoRelease;
   },
-  get isAutoReleaseEnabled() {
-    return modelStore.isAutoReleaseEnabled;
+  // ── B4 (phase-4 4a): real implementation (persist-key flag stays on the
+  // god object until the v2 roots; disabled-reasons set is module state) ──
+  get isAutoReleaseEnabled(): boolean {
+    return this.useAutoRelease && autoReleaseDisabledReasons.size === 0;
   },
   get wasAutoReleased() {
     return modelStore.wasAutoReleased;
@@ -327,8 +365,14 @@ export const runtimeStore: RuntimeStore = {
   get lastAutoReleasedModelId() {
     return modelStore.lastAutoReleasedModelId;
   },
+  // ── B4 (phase-4 4a): real state (box above; not persisted) ──
   get appState() {
-    return modelStore.appState;
+    return appStateBox.get();
+  },
+  set appState(value: AppStateStatus) {
+    runInAction(() => {
+      appStateBox.set(value);
+    });
   },
   get activeRemoteBinding() {
     return modelStore.activeRemoteBinding;
@@ -706,13 +750,106 @@ export const runtimeStore: RuntimeStore = {
   enterBenchmarkMode: (...args) => modelStore.enterBenchmarkMode(...args),
   exitBenchmarkMode: (...args) => modelStore.exitBenchmarkMode(...args),
   clearModelLoadError: (...args) => modelStore.clearModelLoadError(...args),
-  enableAutoRelease: (...args) => modelStore.enableAutoRelease(...args),
-  disableAutoRelease: (...args) => modelStore.disableAutoRelease(...args),
-  updateUseAutoRelease: (...args) => modelStore.updateUseAutoRelease(...args),
-  handleAppStateChange: (...args) => modelStore.handleAppStateChange(...args),
-  setupAppStateListener: (...args) => modelStore.setupAppStateListener(...args),
-  checkAndReloadAutoReleasedModel: (...args) =>
-    modelStore.checkAndReloadAutoReleasedModel(...args),
+  // ── B4 (phase-4 4a): auto-release family — real implementations ──
+  setupAppStateListener() {
+    AppState.addEventListener('change', this.handleAppStateChange);
+  },
+
+  disableAutoRelease(reason: string) {
+    autoReleaseDisabledReasons.add(reason);
+    logger.debug(
+      `Auto-release disabled: ${reason}`,
+      Array.from(autoReleaseDisabledReasons),
+    );
+  },
+
+  enableAutoRelease(reason: string) {
+    autoReleaseDisabledReasons.delete(reason);
+    logger.debug(
+      `Auto-release enabled: ${reason}`,
+      Array.from(autoReleaseDisabledReasons),
+    );
+  },
+
+  updateUseAutoRelease(useAutoRelease: boolean) {
+    runInAction(() => {
+      modelStore.useAutoRelease = useAutoRelease;
+    });
+  },
+
+  async checkAndReloadAutoReleasedModel() {
+    if (this.wasAutoReleased && this.lastAutoReleasedModelId) {
+      // Skip if the auto-released model ID refers to a remote model
+      if (this.lastAutoReleasedModelId.includes('/')) {
+        const remoteModel = modelStore.remoteModels?.find(
+          m => m.id === this.lastAutoReleasedModelId,
+        );
+        if (remoteModel) {
+          clearAutoReleaseFlags();
+          return;
+        }
+      }
+      const model = modelStore.models?.find(
+        m => m.id === this.lastAutoReleasedModelId && m.isDownloaded,
+      );
+      if (model) {
+        logger.debug('Reloading auto-released model:', model.id);
+        await this.initContext(model);
+      }
+      clearAutoReleaseFlags();
+    }
+  },
+
+  async handleAppStateChange(nextAppState: AppStateStatus) {
+    logger.debug(`App state change: ${this.appState} → ${nextAppState}`);
+
+    if (
+      this.appState.match(/inactive|background/) &&
+      nextAppState === 'active'
+    ) {
+      // Coming to foreground - check if we need to reload auto-released model
+      await this.checkAndReloadAutoReleasedModel();
+      // Cross-domain bridge (documented): the reprobe belongs to the
+      // remote-caps surface (B14) and is private on the god object, so the
+      // call goes through a narrow structural view; optional-call keeps
+      // partial barrel mocks (which never fire AppState) safe.
+      (
+        modelStore as unknown as {reprobeRemoteCapsIfUnknown?: () => void}
+      ).reprobeRemoteCapsIfUnknown?.();
+    } else if (this.appState === 'active' && nextAppState === 'inactive') {
+      // active → inactive: NO action (per requirements)
+      logger.debug('Active → Inactive: No auto-release action');
+    } else if (this.appState === 'inactive' && nextAppState === 'background') {
+      // inactive → background: release if enabled
+      // Skip for remote models — no native context to release, and
+      // releaseContext() would clear the engine with no reload path.
+      if (
+        this.isAutoReleaseEnabled &&
+        this.activeModelId &&
+        this.activeModel?.origin !== ModelOrigin.REMOTE
+      ) {
+        logger.debug('Inactive → Background: Auto-releasing context');
+        markAutoReleased(this, this.activeModelId);
+        await this.releaseContext();
+      }
+    } else if (this.appState === 'active' && nextAppState === 'background') {
+      // active → background: release if enabled (direct transition)
+      // Skip for remote models — same reason as above.
+      if (
+        this.isAutoReleaseEnabled &&
+        this.activeModelId &&
+        this.activeModel?.origin !== ModelOrigin.REMOTE
+      ) {
+        logger.debug('Active → Background: Auto-releasing context');
+        markAutoReleased(this, this.activeModelId);
+        await this.releaseContext();
+      }
+    }
+
+    runInAction(() => {
+      appStateBox.set(nextAppState);
+    });
+  },
   /**
    * Capabilities of any model, active or not — the model card's entry point.
    * (The god object's delegation keeps the original comment: never annotate
