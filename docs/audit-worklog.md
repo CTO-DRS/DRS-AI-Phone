@@ -188,3 +188,58 @@ commit docs + bundle نجاة، ثم **توقف عند بوابة الدفع** �
 ### نقطة التوقف الحالية
 بوابة B7 خضراء ومدفوعة (05a709a). التالي: B8 (دورة الحياة 2 — initContext وعائلتها،
 تنتقل فيها ج12/ج13/ج14) ثم B9 — ثم بوابة السلسلة الثالثة.
+
+---
+
+## الجلسة 8 — استرجاع بعد إعادة ضبط #7، دفعتا B8/B9، بوابة السلسلة الثالثة (مكتملة ومدفوعة)
+
+### الاسترجاع (إعادة الضبط السابعة)
+- الحاوية أُعيد ضبطها؛ HEAD المحلي كان 4890a41 (قبل B1). origin/fix/modelstore-dissolution
+  احتفظ بالسلسلة كاملة حتى 3d42d17 (جلسة 7) — دمج سريع بلا أي خسارة. core.fileMode=false
+  أُعيد (منع 1,999 artifact وهمياً)؛ التوكن أُعيد حقنه في URL بصمت.
+
+### B8 — دورة الحياة 2 (b3c963d)
+- النقل: initContext + proceedWithInitialization (دالتي وحدة) + resolveMultimodalConfig +
+  resolveDraftConfig (دالة وحدة) + checkMemoryAndConfirm + reinitializeContext +
+  **حالة الثمانية**: context/engine/activeModelId/isMultimodalActive/activeProjectionModelId/
+  activeRemoteBinding/isContextLoading/loadingModel — صناديق + أزواج وصول على الإله الكائن
+  (نمط B2/B7: محسوبات قابلة للكتابة).
+- **موت الجسور المعلنة**: ج12 (الماصّات الأربع حُذفت — لا مستهلك خارجي)، ج13 (15 كتابة
+  صارت s.* — ذيل activeContextSettings/availableMemoryCeiling بقي برميلاً حتى B22 كما
+  هو معلن)، ج14 (الاستدعاء محلي).
+- **ولادات معلنة (نفس الـ commit)**: ج15 (models → B10)، ج16 (getModelVisionPreference →
+  B14)، ج17 (getModelFullPath ×3 → B18)، ج18 (updateModelStopTokens/updateModelThinking-
+  Capabilities عبر cast ضيق — غير مرئية للعداد → B23/B14)، ج19 (activeContextSettings →
+  B22)، ج20 (largestSuccessfulLoad → B22)، ج21 (lastUsedModelId → B10)، **ج22** (حارس
+  قراءة الحالة الثمانية: runtimeHost ? box : برميل — نمط ج3؛ suites البرميلية تملك الحالة
+  على الموك المركزي — موت 4e قسرياً + مبكر suite-by-suite من 4b/4c).
+- **اكتشاف إعادة التسليح (التزام المالك 3)**: ChatEmptyPlaceholder.test فشل (2/4) — مكوّن
+  مهاجر (phase-3) يقرأ runtimeStore.activeModelId/isContextLoading أثناء render داخل suite
+  برميلية الموك؛ الصناديق الجديدة عمت الحالة. **الإصلاح = التنفيذ لا الاختبار** (صفر تعديل
+  اختبار): حارس موحّد على القراءات الثماني. الاختبارات التي تستبدل modelStore.initContext
+  (4 مواضع) أُبقيت صحيحة بتوجيه الاستدعاءين الداخليين عبر عضو الإله الكائن (جسر موت 4d).
+- madge: **44 بالضبط** — حافة ModelStore→useMemoryCheck ماتت (hasEnoughMemory هاجرت) ووُلدت
+  runtimeStore→useMemoryCheck مكانها (الحلقة المعدودة تبادلت ممثلها فقط — مقيس قبل/بعد).
+- **الأرقام**: توقع نهائي 1732/1731/1850/118 → قياس **1732/1731/1852/120** — انحراف +2
+  مُفسّر حرفياً: سطرا تعليق في ملاحظات mock-compat يحويان modelStore.initContext
+  (العداد يحصي أسطر التعليقات — نفس فئة FP الموثق). official ثابت 1732 (قيمة السلم منذ B6).
+
+### B9 — مُفرَّغة بحكم القيد المقفول (4ee10ab)
+- availableMemoryCeiling + largestSuccessfulLoad **مفتاحا persist** — §3-أ (مقفول منذ B4)
+  يمنع نقلهما قبل جذري v2. المحتوى أُعيد إسناده إلى B22؛ جدول الدفعات و§3-أ ودفتر madge
+  حُدّثا. لا دفعة runtime متبقية بعد B8 — السلم منطقياً B8 → B10 (الكيتالوج).
+
+### بوابة السلسلة الثالثة (بعد B8/B9)
+- 8 شرائح: verify:deps/l10n/fonts EXIT=0 · lint EXIT=0 (صفر أخطاء، 34 تحذيراً قائماً) ·
+  typecheck EXIT=0 · `jest --coverage` EXIT=0: **312 suites / 4989 passed + 2 skipped /
+  310 snapshots** بالضبط · العدادات 1732/1731/1852/120 · madge **44** ·
+  ModelStore.test.ts **بلا أي تعديل** منذ 3d42d17 (git diff فارغ) · شجرة نظيفة.
+- الكاشف الثانوي: 1865 إجمالاً؛ داخل src/store/model = **120 يطابق الوصفة المجمّدة
+  حرفياً**؛ الفارق (+1745 خارجياً) كله مواضع استدعاء متعددة الأسطر في الفئة ب — تُصاد
+  عند 4b. (CI الحقيقي = سلسلة أوامر job الحقيقية محلياً EXIT=0؛ حكم GitHub Actions
+  يأتي مع PR النهاية — ci.yml يعمل على main فقط.)
+
+### نقطة التوقف الحالية
+بوابة B8/B9 خضراء ومدفوعة (4ee10ab). التالي: B10 (حالة الكتالوج — أول حافة
+ModelStore→catalogStore، madge متوقع 46، فيها تموت ج1/ج2/ج15/ج21) — إعلان ما قبل الدفعة
+أولاً.
