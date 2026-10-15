@@ -243,3 +243,99 @@ commit docs + bundle نجاة، ثم **توقف عند بوابة الدفع** �
 بوابة B8/B9 خضراء ومدفوعة (4ee10ab). التالي: B10 (حالة الكتالوج — أول حافة
 ModelStore→catalogStore، madge متوقع 46، فيها تموت ج1/ج2/ج15/ج21) — إعلان ما قبل الدفعة
 أولاً.
+
+---
+
+## الجلسة 9 — استرجاع بعد إعادة ضبط #8، دفعة B10 (حالة الكتالوج + جذر v2 الأول)
+
+### الاسترجاع (إعادة الضبط الثامنة)
+- الحاوية أُعيد ضبطها؛ HEAD المحلي 4890a41 (قبل R0) وnode_modules محو. origin/fix/
+  modelstore-dissolution احتفظ بالسلسلة حتى d9a9c7c (جلسة 8) — دمج سريع بلا أي خسارة،
+  تثبيت yarn 1.22.22 + install مجمد القفل (75 ثانية)، core.fileMode=false أُعيد، التوكن
+  أُعيد حقنه في URL بصمت. القياسات قبلی الدفعة طابقت بوابة الجلسة 8 حرفياً:
+  1732/1731/1852/120 — الكاشف الثانوي 1865/120 — madge 44.
+
+### الإعلان ما قبل الدفعة (التزام المالك 3 — إعادة التسليح)
+- B10 تحرك حالة كتالوجية يغلفها الاختبار من عالمين: **العالم غير المسخر** (unmock):
+  ModelStore.test + localModelPath + register + facade — الكتابات تمر عبر أزواج
+  الوصول العكسية إلى الصناديق (سلوك مطابق). **العالم البرميلي المسخر**: ستة suites
+  مستوردة للكتالوج مباشرة (BenchmarkRunnerScreen 24 اختباراً، ProjectionModelSelector،
+  ModelNotAvailable، useOnboardingHandlers، ModelFileCard، ModelCard) + كل suites
+  المكونات المهاجرة — القراءات تسقط عبر جوالب ج23/ج24 إلى الموك المركزي (مصدر
+  التغذية لم يتغير — 4989+2 و310 مثبتان).
+
+### B10 — حالة الكتالوج تنتقل إلى منزلها (الالتزام بالمحتوى)
+- **الجذر `catalogStore:v2` وُلد** (§3-جزء 1): makePersistable(catalogStore, name
+  'catalogStore:v2'، الخصائص الخمس models/version/deviceTier/rulesVersion/
+  lastUsedModelId) — يستدعى من سلسلة persist في constructor الإله بعد حقن
+  catalogHost. المتجر كائن عادي فحارس isComputedProp لا يلتقط أزواج الوصول فوق
+  الصناديق (التفصيل في §3-أ المحدث)؛ الترطيب يكتب عبر المحددات والحفظ يقرأ عبر
+  الجوالب — الحقل القابل للكتابة هو الصندوق نفسه.
+- **الاستيراد الإرثي نصف الكتالوجي** (§3-جزء 2): importLegacyCatalogState في
+  catalogStore.ts يقرأ مفتاح 'ModelStore' الإرثي، يوزع الحمولات الخمس داخل
+  runInAction، يفشل بأمان (صامت، إعادة محاولة لاحقة)، ولا يلمس المفتاح. **تنظيف
+  المفتاح مؤجل** إلى B22/4e — المفتاح لا يزال يحمل حمولات runtime السبعة.
+  الترتيب حاسم: ترطيب v2 ← بذر الإرث ← initializeModelSystem (بوابة version
+  ترى القائمة المبذورة).
+- **النقل**: 5 مفاتيح persist كصناديق وحدوية + 4 مشتقات كحسابات حقيقية
+  (displayModels/availableModels/lastUsedModel/remoteModels) + createRemoteModel
+  (خاص، انتقل حرفياً مع مستهلكه الوحيد). الإله الكائن: أزواج وصول عكسية قابلة
+  للكتابة (نمط B2/B7/B8) — صفر تعديل على أي مستدعٍ خارجي.
+- **جذر الإله انخفض إلى 7 مفاتيح**: السطر makePersistable للإله فقد الخمسة
+  الكتالوجيين (تحذير computed-persist متفادى)؛ مفتاح 'ModelStore' الإرثي يواصل
+  حفظ runtime فقط حتى runtimeStore:v2 (B22).
+
+### موت الجسور (سجل §8 محدَّث في نفس الدفعة)
+- **ج1 مات**: قراءتا القائمة في activeModel قُلبتا إلى catalogStore.models/
+  remoteModels — استيراد مباشر './catalogStore' (حافة madge المعلنة).
+- **ج15 مات**: القراءات الثلاث (resolveMultimodalConfig/resolveDraftConfig/
+  reinitializeContext) قُلبت إلى المالك.
+- **ج21 مات**: كتابة lastUsedModelId من proceedWithInitialization قُلبت إلى
+  catalogStore.lastUsedModelId.
+- **ج2 عُدّل موته إلى 4e** (خيار التفويض المعلن في سطره): effectiveDraftModeOf
+  يحتاج مصدراً كاملاً (activeModel + contextInitParams غير كتالوجيين) — المصدر
+  يقرأ models عبر زوج التفويض العكسي فيصل المالك في النهاية.
+- **ولادات معلنة (نفس الـ commit)**: ج23 (حارس catalogHost على المفاتيح الخمسة —
+  نمط ج22)، ج24 (الحارس على المشتقات الأربعة — الموك المركزي يحمل حساباته
+  الخاصة وينقصه remoteModels فالسقوط يحافظ على سلوك suites حرفياً)، ج25
+  (استدعاءا الجذر v2 والاستيراد الإرثي في constructor الإله — سلك تركيب يموت 4e).
+
+### اكتشاف التصحيح (انحراف تم تصحيحه فوراً)
+- المحاولة الأولى قلبت القراءات عبر إضافة catalogStore إلى استيراد البرميل '../'
+  في runtimeStore — tsc أوقفها: البرميل الخارجي لا يصدّر catalogStore، وإضافته
+  إليه كانت ستكسر suites البرميلية (مصنع الموك المركزي بلا مفتاح catalogStore —
+  undefined). **التصحيح**: استيراد مباشر './catalogStore' (نمط موت ج1 المعلن
+  «استيراد المالك بحافة madge معلنة») — الوحدة لا تُسخر أبداً فجوالبها تسقط إلى
+  modelStore البرميلي (= الموك المركزي) في suites البرميل، وشرطية الحقن تقرأ
+  الصناديق في العالم غير المسخر. قياس madge أثبت عدم تكلفة حلقة ثالثة (46 بالضبط).
+- خطأ صياغي وُلد أثناء التحرير (`async finally`) وأصلح فوراً قبل أي قياس — سجل
+  بروتوكول «التحقق بـ Read فور أي تحرير».
+
+### الأرقام (توقع ← قياس)
+- **المتوقعة قبل التنفيذ**: official 1732 / real 1731 (ثابتان — الدفعة تحرك حالة
+  لا مواقع استدعاء)؛ madge 46 (سلّم معلن)؛ suites 312 / 4989+2 / 310 ثابتة؛
+  داخل src/store/model: توقع أولي 123 كان **خاطئ الحساب** — التصحيح قبل القياس:
+  قراءات الحالة التسع في catalogStore تحولت من pass-through إلى جوالب احتياطية
+  وهي ما تزال أسطر modelStore.X (صافي صفر لملف الكتالوج)؛ الفارق الحقيقي = 6
+  قلبات runtime فقط ← المتوقع 114.
+- **المقيس**: official **1732** / real **1731** / داخل **114** / raw **1846** —
+  تطابق حرفي. الكاشف الثانوي (الوصفة المجمدة): الإجمالي **1859** (1865−6) /
+  داخل **114** (download 23 + facade 7 + catalog 39 + runtime 45).
+- **madge: 46 بالضبط** (44 + حافتا ModelStore→catalogStore المعلنتان؛ استيراد
+  runtimeStore→catalogStore المباشر لم يضف حلقة — العنقود المعدود نفسه).
+- **B-class census ثابت**: 782/781 (لا أسطر فئة ب تحركت).
+
+### بروتوكول الدفعة-8 (السباقات المتأثرة — 12 suite)
+- facade.test (constructor الحقيقي + جذر v2 + استيراد إرثي + هوية live-state) ✓
+- ModelStore.test (304 اختباراً مع facade — **بلا أي تعديل**) ✓
+- localModelPath + registerOnboardingAssistantModel ✓
+- BenchmarkRunnerScreen (24) + ChatEmptyPlaceholder (درس B8) ✓
+- ProjectionModelSelector + ModelNotAvailable + useOnboardingHandlers +
+  ModelFileCard + ModelCard + useChatSession ✓
+- **المجموع: 12 suite / 532 اختباراً، كلها خضراء.**
+
+### نقطة التوقف الحالية
+B10 خضراء ومدفوعة (انظر commit). التالي: B11 (طفرات القائمة — addHFModel/
+addLocalModel/resetModels/removeModelFromList/removeModelByFullPath/
+registerOnboardingAssistantModel/mergeModelLists/reconcilePresets/resolvePresets
++ خاصو preset + draftRulesManager/DraftRulesManager) — إعلان ما قبل الدفعة أولاً.
