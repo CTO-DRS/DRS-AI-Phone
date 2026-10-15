@@ -220,9 +220,12 @@ pendingLocalPathRecoveries/flushPendingLocalPathRecoveries→download)، + مد�
 | ج6: كتابات مفاتيح persist عبر ربط البرميل (mark/clear/update) | B4 | **B22** | الجذر `runtimeStore:v2` يستقبل الحالة — الكتابات تصبح this. (§3-أ) |
 | ج7: injectRuntimeHost (كتابات contextInitParams في محددات B1) | R0/B1 | **B22** | §8 سطر «بعد B22»: الـ host يُحذف مع هجرة contextInitParams |
 | ج8: زوج max_threads على الإله الكائن | B2 | **B22** | الكاتب (initializeThreadCount) يهاجر إلى bootstrap — الزوج يُحذف |
-| ج9: قراءات B7 الخاصة عبر cast من enterBenchmarkMode (contextOperationMutex + _releaseContextInternal) | B5 | **B7** | الموتكس والإفلات الداخلي يهاجران مع دورة الحياة 1 — الاستدعاء يصبح this. داخل runtimeStore |
+| ج9: ~~قراءات B7 الخاصة عبر cast من enterBenchmarkMode~~ **مات في B7** | B5 | ✅ B7 | الموتكس والإفلات الداخلي أصبحا حالة/دالة وحدة — الاستدعاء محلي مباشر |
 | ج10: استيراد chatSessionRepository في runtimeStore (جسم startImageCompletion) | B6 | **4e** (قسري) | حذف ModelStore من البرميل يقطع أي حلقة عبر exportUtils؛ الاستيراد نفسه حقيقي (خدمة لا حالة) — madge لم يحتسبه حلقة جديدة عند القياس (44 ثابتة، انحراف عن إعلان +1 موثق) |
-| ج11: قراءة activeCompletionPromise عبر getActiveCompletionPromise من releaseContext | B6 | **B7** | releaseContext تهاجر — القراءة تصبح محلية (this. عبر الصندوق) |
+| ج11: ~~قراءة activeCompletionPromise عبر getActiveCompletionPromise~~ **مات في B7** | B6 | ✅ B7 | releaseContext/Internal هاجرتا — القراءة صارت محلية (الصندوق في نفس الوحدة) |
+| ج12: قراءات الموتكس/pendingModelId من initContext عبر الماصّات المصدَّرة | B7 | **B8** | initContext تهاجر مع حالتهما — الوصول يصبح مباشراً (let وحدوي) |
+| ج13: كتابات حالة runtime عبر ربط البرميل من releaseContextInternal (engine/activeRemoteBinding/activeModelId/isMultimodalActive/activeProjectionModelId/activeContextSettings/availableMemoryCeiling — 17 سطراً) | B7 | **B8** (B22 لـ activeContextSettings/availableMemoryCeiling) | الحالة تهاجر إلى runtimeStore — الكتابات تصبح this./صناديق |
+| ج14: استدعاء الإفلات الداخلي من initContext عبر releaseContextInternal(this) المصدَّرة | B7 | **B8** | initContext تهاجر — الاستدعاء يصبح محلياً في نفس الوحدة |
 
 قاعدة السجل: أي جسر جديد يولد في دفعة = سطر جديد هنا في نفس الـ commit؛ جسر بلا موت
 معلن = يوقف الدفعة.

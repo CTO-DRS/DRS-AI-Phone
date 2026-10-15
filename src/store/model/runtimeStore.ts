@@ -4,10 +4,10 @@ import type {ModelStore} from '../ModelStore';
 // singleton (network fetch + DeviceInfo) inside every suite that renders
 // a migrated component. Type-only import keeps the Pick<ModelStore,...>
 // compile-time drift guard. Revisit at Phase 4 dissolution.
-import {modelStore, serverStore} from '../';
+import {modelStore, serverStore, chatSessionStore} from '../';
 import {observable, runInAction, toJS} from 'mobx';
 import {AppState, AppStateStatus, Platform} from 'react-native';
-import type {ContextParams} from 'llama.rn';
+import type {ContextParams, LlamaContext} from 'llama.rn';
 import {
   CacheType,
   ContextInitParams,
@@ -21,7 +21,10 @@ import {draftCacheDefaults, effectiveDraftModeOf} from '../draftResolution';
 import {resolveModelCaps} from '../../utils/modelCaps';
 import type {CapabilityEnv, ModelCapabilityView} from '../../utils/modelCaps';
 import {logger} from '../../utils/logger';
+import {ErrorState} from '../../utils/errors';
+import NativeHardwareInfo from '../../specs/NativeHardwareInfo';
 import {
+  CompletionEngine,
   CompletionParams,
   toApiCompletionParams,
 } from '../../utils/completionTypes';
@@ -149,7 +152,8 @@ const autoReleaseDisabledReasons = observable.set<string>();
 const benchmarkActiveBox = observable.box<boolean>(false);
 
 // B6: completion flags — real state (boxes; not persisted). The promise
-// guards safe context release (releaseContext awaits it — B7 member).
+// guards safe context release (releaseContext awaits it — now local since
+// B7 moved the release family; the ج11 reader bridge died with it).
 const inferencingBox = observable.box<boolean>(false);
 const isStreamingBox = observable.box<boolean>(false);
 const activeCompletionPromiseBox = observable.box<Promise<any> | null>(null);
@@ -165,11 +169,32 @@ export function clearCompletionPromiseOf() {
   activeCompletionPromiseBox.set(null);
 }
 
-// Reader for the god object's releaseContext (B7 code still living there
-// until its batch) — bridge ج11, death B7 (extraction-plan §8 registry).
-export function getActiveCompletionPromise(): Promise<any> | null {
-  return activeCompletionPromiseBox.get();
+// B7: lifecycle-1 state. The mutex is a plain module binding (a promise
+// chain — never UI-reactive; the god object's observable annotation carried
+// no observers). pendingModelId likewise (internal last-one-wins guard).
+// Both keep ONE god-object consumer until B8 (initContext) — it reaches them
+// through these accessors (bridge ج12, death B8 — extraction-plan §8).
+let contextOperationMutex: Promise<void> = Promise.resolve();
+let pendingModelId: string | null = null;
+
+export function getContextOperationMutex(): Promise<void> {
+  return contextOperationMutex;
 }
+
+export function setContextOperationMutex(p: Promise<void>) {
+  contextOperationMutex = p;
+}
+
+export function getPendingModelId(): string | null {
+  return pendingModelId;
+}
+
+export function setPendingModelId(v: string | null) {
+  pendingModelId = v;
+}
+
+// B7: modelLoadError — real state (box; not persisted).
+const modelLoadErrorBox = observable.box<ErrorState | null>(null);
 
 // markAutoReleased / clearAutoReleaseFlags (private members) moved verbatim;
 // they write the persist-key flags through the barrel binding until the v2
@@ -293,6 +318,149 @@ export type RuntimeMember = (typeof RUNTIME_MEMBERS)[number];
 /** Compile-time drift guard: ModelStore signature changes break this file. */
 export type RuntimeStore = Pick<ModelStore, RuntimeMember>;
 
+/** Internal release - caller must already hold the mutex. */
+export async function releaseContextInternal(
+  s: {
+    context?: LlamaContext;
+    engine?: CompletionEngine;
+    inferencing: boolean;
+    isStreaming: boolean;
+    isMultimodalActive: boolean;
+    availableMemoryCeiling: number | undefined;
+  },
+  clearActiveModel: boolean = false,
+): Promise<string> {
+  logger.debug('attempt to release');
+  chatSessionStore.exitEditMode();
+  // Hoisted on purpose: TS narrowing does not persist across statements
+  // for getter accesses.
+  const context = s.context;
+  if (!context) {
+    // For remote models or deletion scenarios, clear engine and state
+    const engine = s.engine;
+    if (engine || clearActiveModel) {
+      // Stop any active remote completion
+      if (engine) {
+        try {
+          await engine.stopCompletion();
+        } catch {
+          // Ignore errors from stopping remote completion
+        }
+      }
+      runInAction(() => {
+        modelStore.engine = undefined;
+        modelStore.activeRemoteBinding = undefined;
+        if (clearActiveModel) {
+          modelStore.activeModelId = undefined;
+        }
+        modelStore.isMultimodalActive = false;
+        modelStore.activeProjectionModelId = undefined;
+      });
+    }
+    if (!s.engine && !clearActiveModel) {
+      return 'No context to release';
+    }
+    return 'Remote engine cleared';
+  }
+
+  try {
+    // IMPORTANT: Stop-Await-Release Pattern
+    // This prevents race condition where completion callback fires after context is freed
+    // which causes SIGSEGV in isMultimodalEnabled/createCompletionResult
+    if (s.inferencing || s.isStreaming || activeCompletionPromiseBox.get()) {
+      logger.debug('Stopping active completion before context release');
+
+      // Step 1: Signal the completion to stop
+      try {
+        await context.stopCompletion();
+      } catch (stopError) {
+        console.warn('Error stopping completion:', stopError);
+        // Continue with release even if stop fails
+      }
+
+      // Step 2: Wait for the completion promise to actually finish
+      // This is critical - stopCompletion() only signals, it doesn't wait
+      const activePromise = activeCompletionPromiseBox.get();
+      if (activePromise) {
+        logger.debug('Waiting for completion promise to finish...');
+        try {
+          // Wait for promise to settle (ignore errors, just wait for it to complete)
+          await activePromise.catch(() => {});
+        } catch {
+          // Ignore any errors, we just need to wait
+        }
+        clearCompletionPromiseOf();
+      }
+
+      // Clear inference flags
+      runInAction(() => {
+        inferencingBox.set(false);
+        isStreamingBox.set(false);
+      });
+    }
+
+    // Step 3: Now safe to release - First check if multimodal is enabled and release it if needed
+    if (s.isMultimodalActive) {
+      logger.debug('Releasing multimodal context first');
+      try {
+        await context.releaseMultimodal();
+        // Immediately clear multimodal state after successful release
+        runInAction(() => {
+          modelStore.isMultimodalActive = false;
+          modelStore.activeProjectionModelId = undefined;
+        });
+        logger.debug('Multimodal context released and state cleared');
+      } catch (error) {
+        console.error('Error releasing multimodal context:', error);
+        // Even if release fails, clear the state to prevent blocking deletion
+        runInAction(() => {
+          modelStore.isMultimodalActive = false;
+          modelStore.activeProjectionModelId = undefined;
+        });
+      }
+    }
+
+    // Then release the main context
+    await context.release();
+    logger.debug('released');
+  } catch (error) {
+    console.error('Error during context release:', error);
+  } finally {
+    runInAction(() => {
+      modelStore.context = undefined;
+      modelStore.engine = undefined;
+      modelStore.activeRemoteBinding = undefined;
+      modelStore.activeContextSettings = undefined;
+      // Ensure multimodal state is cleared even if something went wrong above
+      modelStore.isMultimodalActive = false;
+      modelStore.activeProjectionModelId = undefined;
+      // Clear active model if requested (for deletion scenarios)
+      if (clearActiveModel) {
+        modelStore.activeModelId = undefined;
+      }
+    });
+
+    // Update availableMemoryCeiling after release (clean state)
+    try {
+      const availableBytes = await NativeHardwareInfo.getAvailableMemory();
+      runInAction(() => {
+        if (
+          s.availableMemoryCeiling === undefined ||
+          availableBytes > s.availableMemoryCeiling
+        ) {
+          modelStore.availableMemoryCeiling = availableBytes;
+        }
+      });
+    } catch (error) {
+      console.warn(
+        '[ModelStore] Failed to update availableMemoryCeiling:',
+        error,
+      );
+    }
+  }
+  return 'Context released successfully';
+}
+
 export const runtimeStore: RuntimeStore = {
   // ── B3 (phase-4 4a): real implementation (was god-object computed) ──
   // Reads the list through the barrel binding (mocked in suites, the real
@@ -390,8 +558,14 @@ export const runtimeStore: RuntimeStore = {
       benchmarkActiveBox.set(value);
     });
   },
+  // ── B7 (phase-4 4a): real state (box above; not persisted) ──
   get modelLoadError() {
-    return modelStore.modelLoadError;
+    return modelLoadErrorBox.get();
+  },
+  set modelLoadError(value: ErrorState | null) {
+    runInAction(() => {
+      modelLoadErrorBox.set(value);
+    });
   },
   get availableMemoryCeiling() {
     return modelStore.availableMemoryCeiling;
@@ -450,8 +624,27 @@ export const runtimeStore: RuntimeStore = {
   selectModel: (...args) => modelStore.selectModel(...args),
   initContext: (...args) => modelStore.initContext(...args),
   reinitializeContext: (...args) => modelStore.reinitializeContext(...args),
-  releaseContext: (...args) => modelStore.releaseContext(...args),
-  manualReleaseContext: (...args) => modelStore.manualReleaseContext(...args),
+  // ── B7 (phase-4 4a): lifecycle-1 — real implementations (bridge ج9 died:
+  // the mutex + internal release are module state/functions now) ──
+  /** Acquires mutex before releasing context. */
+  async releaseContext(clearActiveModel: boolean = false) {
+    const operationPromise = contextOperationMutex.then(async () => {
+      return releaseContextInternal(this, clearActiveModel);
+    });
+
+    // Swallow errors to keep mutex chain intact
+    contextOperationMutex = operationPromise.then(() => {}).catch(() => {});
+
+    return operationPromise;
+  },
+
+  async manualReleaseContext() {
+    await this.releaseContext(true); // Clear active model for manual release
+  },
+
+  clearModelLoadError() {
+    modelLoadErrorBox.set(null);
+  },
   /**
    * Get effective context initialization parameters with constraints applied
    * This is the unified method that replaces both getEffectiveBatchValues and getEffectiveInitSettings
@@ -955,17 +1148,13 @@ export const runtimeStore: RuntimeStore = {
       benchmarkActiveBox.set(true);
     });
 
-    const godPrivate = modelStore as unknown as {
-      contextOperationMutex: Promise<void>;
-      _releaseContextInternal: (clearActiveModel: boolean) => Promise<void>;
-    };
-    const op = godPrivate.contextOperationMutex.then(async () => {
+    const op = contextOperationMutex.then(async () => {
       // Release any context the rest of the app loaded (e.g. ChatView's
       // auto-load on cold launch). clearActiveModel:true so the queued
       // post-mutex callers see a clean slate if they ever run.
-      await godPrivate._releaseContextInternal(true);
+      await releaseContextInternal(this, true);
     });
-    godPrivate.contextOperationMutex = op.then(() => {}).catch(() => {});
+    contextOperationMutex = op.then(() => {}).catch(() => {});
     await op;
   },
 
@@ -978,7 +1167,6 @@ export const runtimeStore: RuntimeStore = {
       benchmarkActiveBox.set(false);
     });
   },
-  clearModelLoadError: (...args) => modelStore.clearModelLoadError(...args),
   // ── B4 (phase-4 4a): auto-release family — real implementations ──
   setupAppStateListener() {
     AppState.addEventListener('change', this.handleAppStateChange);
