@@ -223,9 +223,17 @@ pendingLocalPathRecoveries/flushPendingLocalPathRecoveries→download)، + مد�
 | ج9: ~~قراءات B7 الخاصة عبر cast من enterBenchmarkMode~~ **مات في B7** | B5 | ✅ B7 | الموتكس والإفلات الداخلي أصبحا حالة/دالة وحدة — الاستدعاء محلي مباشر |
 | ج10: استيراد chatSessionRepository في runtimeStore (جسم startImageCompletion) | B6 | **4e** (قسري) | حذف ModelStore من البرميل يقطع أي حلقة عبر exportUtils؛ الاستيراد نفسه حقيقي (خدمة لا حالة) — madge لم يحتسبه حلقة جديدة عند القياس (44 ثابتة، انحراف عن إعلان +1 موثق) |
 | ج11: ~~قراءة activeCompletionPromise عبر getActiveCompletionPromise~~ **مات في B7** | B6 | ✅ B7 | releaseContext/Internal هاجرتا — القراءة صارت محلية (الصندوق في نفس الوحدة) |
-| ج12: قراءات الموتكس/pendingModelId من initContext عبر الماصّات المصدَّرة | B7 | **B8** | initContext تهاجر مع حالتهما — الوصول يصبح مباشراً (let وحدوي) |
-| ج13: كتابات حالة runtime عبر ربط البرميل من releaseContextInternal (engine/activeRemoteBinding/activeModelId/isMultimodalActive/activeProjectionModelId/activeContextSettings/availableMemoryCeiling — 17 سطراً) | B7 | **B8** (B22 لـ activeContextSettings/availableMemoryCeiling) | الحالة تهاجر إلى runtimeStore — الكتابات تصبح this./صناديق |
-| ج14: استدعاء الإفلات الداخلي من initContext عبر releaseContextInternal(this) المصدَّرة | B7 | **B8** | initContext تهاجر — الاستدعاء يصبح محلياً في نفس الوحدة |
+| ج12: قراءات الموتكس/pendingModelId من initContext عبر الماصّات المصدَّرة | B7 | ✅ B8 | initContext تهاجر مع حالتهما — الوصول مباشر (let وحدوي)؛ الماصّات الأربع حُذفت (لا مستهلك خارجي) |
+| ج13: كتابات حالة runtime عبر ربط البرميل من releaseContextInternal (engine/activeRemoteBinding/activeModelId/isMultimodalActive/activeProjectionModelId/activeContextSettings/availableMemoryCeiling — 17 سطراً) | B7 | ✅ B8 (B22 لـ activeContextSettings/availableMemoryCeiling) | الحالة الثمانية هاجرت إلى صناديق runtimeStore — الكتابات صارت s.* عبر أزواج الوصول (15 سطراً)؛ سطرا activeContextSettings/availableMemoryCeiling بقيا برميلين (ذيل ج13، B22) |
+| ج14: استدعاء الإفلات الداخلي من initContext عبر releaseContextInternal(this) المصدَّرة | B7 | ✅ B8 | initContext تهاجر — الاستدعاء محلي في نفس الوحدة |
+| ج15: قراءات models عبر البرميل (resolveMultimodalConfig/resolveDraftConfig/reinitializeContext — 3 أسطر) | B8 | **B10** | القائمة تهاجر إلى catalogStore — القراءات تنقلب إلى المالك |
+| ج16: قراءة getModelVisionPreference من resolveMultimodalConfig | B8 | **B14** | العضو يهاجر مع عائلة remote/vision |
+| ج17: قراءات getModelFullPath (resolveMultimodalConfig/resolveDraftConfig/proceedWithInitialization — 3 أسطر) | B8 | **B18** | العضو يهاجر مع عائلة الملفات (download) |
+| ج18: استدعاءا updateModelStopTokens/updateModelThinkingCapabilities من proceedWithInitialization (cast ضيق — ج5 نمط، غير مرئي للعداد) | B8 | **B23 / B14** | العضوان خاصّان على الإله الكائن؛ يهاجران مع B23/B14 فيصير الاستدعاء محلياً |
+| ج19: كتابة activeContextSettings من proceedWithInitialization (برميل) | B8 | **B22** | §3-أ: تبقى على الإله الكائن حتى جذري v2 — الكتابة تنقلب this. |
+| ج20: كتابة largestSuccessfulLoad من proceedWithInitialization (برميل) | B8 | **B22** | مفتاح persist — §3-أ: نفس مصير ج19 |
+| ج21: كتابة lastUsedModelId من proceedWithInitialization (برميل) | B8 | **B10** | مفتاح persist كتالوجي — يهاجر مع حالة القائمة |
+| ج22: حارس قراءة الحالة الثمانية المنقولة (runtimeHost ? box : برميل — نمط ج3) | B8 | **4e** (قسري) | suites البرميلية تملك الحالة على الموك المركزي (لا constructor ← لا host)؛ موت مبكر suite-by-suite من 4b/4c مع هجرة mock الفصاد |
 
 قاعدة السجل: أي جسر جديد يولد في دفعة = سطر جديد هنا في نفس الـ commit؛ جسر بلا موت
 معلن = يوقف الدفعة.
