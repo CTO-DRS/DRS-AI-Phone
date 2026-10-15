@@ -5,7 +5,7 @@ import type {ModelStore} from '../ModelStore';
 // a migrated component. Type-only import keeps the Pick<ModelStore,...>
 // compile-time drift guard. Revisit at Phase 4 dissolution.
 import {modelStore, serverStore} from '../';
-import {observable, runInAction} from 'mobx';
+import {observable, runInAction, toJS} from 'mobx';
 import {AppState, AppStateStatus, Platform} from 'react-native';
 import type {ContextParams} from 'llama.rn';
 import {
@@ -21,6 +21,11 @@ import {draftCacheDefaults, effectiveDraftModeOf} from '../draftResolution';
 import {resolveModelCaps} from '../../utils/modelCaps';
 import type {CapabilityEnv, ModelCapabilityView} from '../../utils/modelCaps';
 import {logger} from '../../utils/logger';
+import {
+  CompletionParams,
+  toApiCompletionParams,
+} from '../../utils/completionTypes';
+import {chatSessionRepository} from '../../repositories/ChatSessionRepository';
 
 /**
  * runtimeStore — Phase-1 scaffold (fix 4, stage 1 of 4).
@@ -142,6 +147,29 @@ const autoReleaseDisabledReasons = observable.set<string>();
 // B5: benchmarkActive — real state (box; not persisted). The e2e runner
 // claims/releases the native context through enter/exitBenchmarkMode.
 const benchmarkActiveBox = observable.box<boolean>(false);
+
+// B6: completion flags — real state (boxes; not persisted). The promise
+// guards safe context release (releaseContext awaits it — B7 member).
+const inferencingBox = observable.box<boolean>(false);
+const isStreamingBox = observable.box<boolean>(false);
+const activeCompletionPromiseBox = observable.box<Promise<any> | null>(null);
+
+// registerCompletionPromise / clearCompletionPromise moved verbatim (public
+// members outside the phase-1 runtime contract, so they live at module level
+// with thin god-object delegations).
+export function registerCompletionPromiseOf(promise: Promise<any>) {
+  activeCompletionPromiseBox.set(promise);
+}
+
+export function clearCompletionPromiseOf() {
+  activeCompletionPromiseBox.set(null);
+}
+
+// Reader for the god object's releaseContext (B7 code still living there
+// until its batch) — bridge ج11, death B7 (extraction-plan §8 registry).
+export function getActiveCompletionPromise(): Promise<any> | null {
+  return activeCompletionPromiseBox.get();
+}
 
 // markAutoReleased / clearAutoReleaseFlags (private members) moved verbatim;
 // they write the persist-key flags through the barrel binding until the v2
@@ -337,11 +365,22 @@ export const runtimeStore: RuntimeStore = {
   get activeProjectionModelId() {
     return modelStore.activeProjectionModelId;
   },
+  // ── B6 (phase-4 4a): real state (boxes above; not persisted) ──
   get inferencing() {
-    return modelStore.inferencing;
+    return inferencingBox.get();
+  },
+  set inferencing(value: boolean) {
+    runInAction(() => {
+      inferencingBox.set(value);
+    });
   },
   get isStreaming() {
-    return modelStore.isStreaming;
+    return isStreamingBox.get();
+  },
+  set isStreaming(value: boolean) {
+    runInAction(() => {
+      isStreamingBox.set(value);
+    });
   },
   get benchmarkActive() {
     return benchmarkActiveBox.get();
@@ -753,9 +792,149 @@ export const runtimeStore: RuntimeStore = {
   setFlashAttnType: (...args) => modelStore.setFlashAttnType(...args),
   setKvUnified: (...args) => modelStore.setKvUnified(...args),
   setNParallel: (...args) => modelStore.setNParallel(...args),
-  startImageCompletion: (...args) => modelStore.startImageCompletion(...args),
-  setInferencing: (...args) => modelStore.setInferencing(...args),
-  setIsStreaming: (...args) => modelStore.setIsStreaming(...args),
+  // ── B6 (phase-4 4a): completion surface — real implementations. Method
+  // shorthand: `this` must bind to this store (an arrow property's lexical
+  // `this` is the module scope — it would crash at runtime).
+  async startImageCompletion(params: {
+    prompt: string;
+    image_path?: string; // For backward compatibility
+    image_paths?: string[]; // New parameter for multiple images
+    systemMessage?: string;
+    onToken?: (token: string) => void;
+    onComplete?: (text: string) => void;
+    onError?: (error: Error) => void;
+  }): Promise<void> {
+    // Hoisted on purpose: TS narrowing does not persist across statements
+    // for getter accesses, and the callback below needs the typed context.
+    const context = this.context;
+    if (!context) {
+      throw new Error('No model context available');
+    }
+
+    // Check if multimodal is enabled
+    if (!this.isMultimodalActive) {
+      throw new Error('Multimodal is not enabled for this model');
+    }
+
+    runInAction(() => {
+      inferencingBox.set(true);
+      isStreamingBox.set(false);
+    });
+
+    try {
+      // Handle both single image_path and multiple image_paths
+      let imagePaths: string[] = [];
+
+      if (params.image_paths && params.image_paths.length > 0) {
+        // Use the provided image_paths array
+        imagePaths = [...params.image_paths];
+      } else if (params.image_path) {
+        // Backward compatibility: convert single image_path to array
+        imagePaths = [params.image_path];
+      }
+
+      if (imagePaths.length === 0) {
+        throw new Error('No images provided for multimodal completion');
+      }
+
+      // Process all image paths to handle file:// prefix
+      const processedImagePaths = imagePaths.map(path =>
+        path.startsWith('file://')
+          ? Platform.OS === 'ios'
+            ? path.substring(7) // iOS: remove 'file://'
+            : path // Android: keep as is
+          : path,
+      );
+
+      // Create a system message if provided
+      const systemMessage = params.systemMessage?.trim()
+        ? {
+            role: 'system',
+            content: params.systemMessage,
+          }
+        : undefined;
+
+      // Create a user message with text and all images
+      const userMessage = {
+        role: 'user',
+        content: [
+          {
+            type: 'text',
+            text: params.prompt,
+          },
+          // Add all images to the content array
+          ...processedImagePaths.map(path => ({
+            type: 'image_url',
+            image_url: {url: path},
+          })),
+        ],
+      };
+
+      // Start the completion
+      runInAction(() => {
+        isStreamingBox.set(true);
+      });
+
+      const completionParams =
+        await chatSessionRepository.getGlobalCompletionSettings();
+      // Former SELF-REFERENCE (plan B6: official −1): reads the B3-owned
+      // real getter instead of the god object — the singleton line dies.
+      const stopWords = toJS(this.activeModel?.stopWords);
+
+      // Create completion params with app-specific properties
+      const messages = systemMessage
+        ? [systemMessage, userMessage]
+        : [userMessage];
+      const completionParamsWithAppProps = {
+        ...completionParams,
+        messages: messages,
+        stop: stopWords,
+      } as CompletionParams;
+
+      // Strip app-specific properties before passing to llama.rn
+      const cleanCompletionParams = toApiCompletionParams(
+        completionParamsWithAppProps,
+      );
+
+      // Create the completion promise and register it for safe context release
+      const completionPromise = context.completion(
+        cleanCompletionParams,
+        data => {
+          if (data.token) {
+            params.onToken?.(data.token);
+          }
+        },
+      );
+
+      // Register the promise so releaseContext can wait for it
+      registerCompletionPromiseOf(completionPromise);
+
+      const result = await completionPromise;
+
+      // Clear the promise after completion finishes
+      clearCompletionPromiseOf();
+
+      params.onComplete?.(result.text);
+    } catch (error) {
+      // Clear the promise on error too
+      clearCompletionPromiseOf();
+      console.error('Error in multi-image completion:', error);
+      params.onError?.(
+        error instanceof Error ? error : new Error(String(error)),
+      );
+    } finally {
+      runInAction(() => {
+        inferencingBox.set(false);
+        isStreamingBox.set(false);
+      });
+    }
+  },
+  setInferencing(value: boolean) {
+    inferencingBox.set(value);
+  },
+  setIsStreaming(value: boolean) {
+    isStreamingBox.set(value);
+  },
   // ── B5 (phase-4 4a): benchmark family — real implementations ──
   /**
    * Take exclusive ownership of the native context for the e2e benchmark

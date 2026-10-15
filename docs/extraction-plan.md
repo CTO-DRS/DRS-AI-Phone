@@ -221,6 +221,8 @@ pendingLocalPathRecoveries/flushPendingLocalPathRecoveries→download)، + مد�
 | ج7: injectRuntimeHost (كتابات contextInitParams في محددات B1) | R0/B1 | **B22** | §8 سطر «بعد B22»: الـ host يُحذف مع هجرة contextInitParams |
 | ج8: زوج max_threads على الإله الكائن | B2 | **B22** | الكاتب (initializeThreadCount) يهاجر إلى bootstrap — الزوج يُحذف |
 | ج9: قراءات B7 الخاصة عبر cast من enterBenchmarkMode (contextOperationMutex + _releaseContextInternal) | B5 | **B7** | الموتكس والإفلات الداخلي يهاجران مع دورة الحياة 1 — الاستدعاء يصبح this. داخل runtimeStore |
+| ج10: استيراد chatSessionRepository في runtimeStore (جسم startImageCompletion) | B6 | **4e** (قسري) | حذف ModelStore من البرميل يقطع أي حلقة عبر exportUtils؛ الاستيراد نفسه حقيقي (خدمة لا حالة) — madge لم يحتسبه حلقة جديدة عند القياس (44 ثابتة، انحراف عن إعلان +1 موثق) |
+| ج11: قراءة activeCompletionPromise عبر getActiveCompletionPromise من releaseContext | B6 | **B7** | releaseContext تهاجر — القراءة تصبح محلية (this. عبر الصندوق) |
 
 قاعدة السجل: أي جسر جديد يولد في دفعة = سطر جديد هنا في نفس الـ commit؛ جسر بلا موت
 معلن = يوقف الدفعة.

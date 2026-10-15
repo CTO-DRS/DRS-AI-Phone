@@ -10,14 +10,10 @@ import {v4 as uuidv4} from 'uuid';
 import 'react-native-get-random-values';
 import {makePersistable} from 'mobx-persist-store';
 import * as RNFS from '@dr.pogodin/react-native-fs';
-import {computed, makeAutoObservable, runInAction, toJS} from 'mobx';
+import {computed, makeAutoObservable, runInAction} from 'mobx';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {ContextParams, LlamaContext, initLlama} from 'llama.rn';
-import {
-  CompletionParams,
-  CompletionEngine,
-  toApiCompletionParams,
-} from '../utils/completionTypes';
+import {CompletionParams, CompletionEngine} from '../utils/completionTypes';
 
 import {fetchModelFilesDetails} from '../api/hf';
 import {
@@ -81,7 +77,6 @@ import {
 } from '../utils/types';
 
 import {ErrorState, createErrorState} from '../utils/errors';
-import {chatSessionRepository} from '../repositories/ChatSessionRepository';
 import {hasEnoughMemory} from '../hooks/useMemoryCheck';
 import {
   isHighEndDevice,
@@ -116,7 +111,10 @@ import {initializeModelSystem} from './model/bootstrap';
 // write access to contextInitParams without importing this module.
 import {
   MIN_CONTEXT_SIZE,
+  clearCompletionPromiseOf,
+  getActiveCompletionPromise,
   injectRuntimeHost,
+  registerCompletionPromiseOf,
   runtimeStore,
 } from './model/runtimeStore';
 
@@ -237,12 +235,25 @@ export class ModelStore {
     return MIN_CONTEXT_SIZE;
   }
 
-  inferencing: boolean = false;
-  isStreaming: boolean = false;
+  // ── B6 (phase-4 4a): real state lives in runtimeStore (boxes; not persisted) ──
+  get inferencing(): boolean {
+    return runtimeStore.inferencing;
+  }
+  set inferencing(value: boolean) {
+    runtimeStore.inferencing = value;
+  }
+  get isStreaming(): boolean {
+    return runtimeStore.isStreaming;
+  }
+  set isStreaming(value: boolean) {
+    runtimeStore.isStreaming = value;
+  }
 
   // Track active completion promise for safe context release
   // This prevents race condition where context is freed while completion is still running
-  private activeCompletionPromise: Promise<any> | null = null;
+  // ── B6: real state is the runtimeStore box; releaseContext reads it via
+  // getActiveCompletionPromise() (bridge ج11, death B7) until this member's
+  // family relocates.
 
   // Mutex to serialize model load/release operations to prevent memory leaks
   private contextOperationMutex: Promise<void> = Promise.resolve();
@@ -2233,7 +2244,7 @@ export class ModelStore {
       if (
         this.inferencing ||
         this.isStreaming ||
-        this.activeCompletionPromise
+        getActiveCompletionPromise()
       ) {
         logger.debug('Stopping active completion before context release');
 
@@ -2247,15 +2258,18 @@ export class ModelStore {
 
         // Step 2: Wait for the completion promise to actually finish
         // This is critical - stopCompletion() only signals, it doesn't wait
-        if (this.activeCompletionPromise) {
+        // B6: promise state lives in the runtimeStore box — read via the
+        // ج11 bridge until B7 relocates releaseContext.
+        const activePromise = getActiveCompletionPromise();
+        if (activePromise) {
           logger.debug('Waiting for completion promise to finish...');
           try {
             // Wait for promise to settle (ignore errors, just wait for it to complete)
-            await this.activeCompletionPromise.catch(() => {});
+            await activePromise.catch(() => {});
           } catch {
             // Ignore any errors, we just need to wait
           }
-          this.activeCompletionPromise = null;
+          clearCompletionPromiseOf();
         }
 
         // Clear inference flags
@@ -3111,12 +3125,13 @@ export class ModelStore {
     return [...localAvailable, ...this.remoteModels];
   }
 
+  // ── B6 (phase-4 4a): implementations live in runtimeStore since batch 6 ──
   setInferencing(value: boolean) {
-    this.inferencing = value;
+    runtimeStore.setInferencing(value);
   }
 
   setIsStreaming(value: boolean) {
-    this.isStreaming = value;
+    runtimeStore.setIsStreaming(value);
   }
 
   /**
@@ -3125,7 +3140,7 @@ export class ModelStore {
    * @param promise The completion promise to track
    */
   registerCompletionPromise(promise: Promise<any>) {
-    this.activeCompletionPromise = promise;
+    registerCompletionPromiseOf(promise);
   }
 
   /**
@@ -3133,7 +3148,7 @@ export class ModelStore {
    * This should be called when the completion finishes (success or error).
    */
   clearCompletionPromise() {
-    this.activeCompletionPromise = null;
+    clearCompletionPromiseOf();
   }
 
   /**
@@ -3198,6 +3213,7 @@ export class ModelStore {
    * @param params - Completion parameters including image paths
    * @returns Promise<void>
    */
+  // ── B6 (phase-4 4a): implementation lives in runtimeStore since batch 6 ──
   startImageCompletion = async (params: {
     prompt: string;
     image_path?: string; // For backward compatibility
@@ -3207,125 +3223,7 @@ export class ModelStore {
     onComplete?: (text: string) => void;
     onError?: (error: Error) => void;
   }): Promise<void> => {
-    if (!this.context) {
-      throw new Error('No model context available');
-    }
-
-    // Check if multimodal is enabled
-    if (!this.isMultimodalActive) {
-      throw new Error('Multimodal is not enabled for this model');
-    }
-
-    runInAction(() => {
-      this.inferencing = true;
-      this.isStreaming = false;
-    });
-
-    try {
-      // Handle both single image_path and multiple image_paths
-      let imagePaths: string[] = [];
-
-      if (params.image_paths && params.image_paths.length > 0) {
-        // Use the provided image_paths array
-        imagePaths = [...params.image_paths];
-      } else if (params.image_path) {
-        // Backward compatibility: convert single image_path to array
-        imagePaths = [params.image_path];
-      }
-
-      if (imagePaths.length === 0) {
-        throw new Error('No images provided for multimodal completion');
-      }
-
-      // Process all image paths to handle file:// prefix
-      const processedImagePaths = imagePaths.map(path =>
-        path.startsWith('file://')
-          ? Platform.OS === 'ios'
-            ? path.substring(7) // iOS: remove 'file://'
-            : path // Android: keep as is
-          : path,
-      );
-
-      // Create a system message if provided
-      const systemMessage = params.systemMessage?.trim()
-        ? {
-            role: 'system',
-            content: params.systemMessage,
-          }
-        : undefined;
-
-      // Create a user message with text and all images
-      const userMessage = {
-        role: 'user',
-        content: [
-          {
-            type: 'text',
-            text: params.prompt,
-          },
-          // Add all images to the content array
-          ...processedImagePaths.map(path => ({
-            type: 'image_url',
-            image_url: {url: path},
-          })),
-        ],
-      };
-
-      // Start the completion
-      runInAction(() => {
-        this.isStreaming = true;
-      });
-
-      const completionParams =
-        await chatSessionRepository.getGlobalCompletionSettings();
-      const stopWords = toJS(modelStore.activeModel?.stopWords);
-
-      // Create completion params with app-specific properties
-      const messages = systemMessage
-        ? [systemMessage, userMessage]
-        : [userMessage];
-      const completionParamsWithAppProps = {
-        ...completionParams,
-        messages: messages,
-        stop: stopWords,
-      } as CompletionParams;
-
-      // Strip app-specific properties before passing to llama.rn
-      const cleanCompletionParams = toApiCompletionParams(
-        completionParamsWithAppProps,
-      );
-
-      // Create the completion promise and register it for safe context release
-      const completionPromise = this.context.completion(
-        cleanCompletionParams,
-        data => {
-          if (data.token) {
-            params.onToken?.(data.token);
-          }
-        },
-      );
-
-      // Register the promise so releaseContext can wait for it
-      this.registerCompletionPromise(completionPromise);
-
-      const result = await completionPromise;
-
-      // Clear the promise after completion finishes
-      this.clearCompletionPromise();
-
-      params.onComplete?.(result.text);
-    } catch (error) {
-      // Clear the promise on error too
-      this.clearCompletionPromise();
-      console.error('Error in multi-image completion:', error);
-      params.onError?.(
-        error instanceof Error ? error : new Error(String(error)),
-      );
-    } finally {
-      runInAction(() => {
-        this.inferencing = false;
-        this.isStreaming = false;
-      });
-    }
+    await runtimeStore.startImageCompletion(params);
   };
 
   /**
