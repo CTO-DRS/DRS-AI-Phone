@@ -23,7 +23,6 @@ import {
 
 import {uiStore, hfStore, modelHubStore} from '.';
 import {serverStore} from './ServerStore';
-import {chatSessionStore} from './ChatSessionStore';
 import {
   resolveDraftCandidate,
   resolveDraftModelId,
@@ -112,10 +111,14 @@ import {initializeModelSystem} from './model/bootstrap';
 import {
   MIN_CONTEXT_SIZE,
   clearCompletionPromiseOf,
-  getActiveCompletionPromise,
+  getContextOperationMutex,
+  getPendingModelId,
   injectRuntimeHost,
   registerCompletionPromiseOf,
+  releaseContextInternal,
   runtimeStore,
+  setContextOperationMutex,
+  setPendingModelId,
 } from './model/runtimeStore';
 
 /**
@@ -255,12 +258,6 @@ export class ModelStore {
   // getActiveCompletionPromise() (bridge ج11, death B7) until this member's
   // family relocates.
 
-  // Mutex to serialize model load/release operations to prevent memory leaks
-  private contextOperationMutex: Promise<void> = Promise.resolve();
-
-  // Last requested model ID - enables "last one wins" during rapid switching
-  private pendingModelId: string | null = null;
-
   // Recovered local-model paths awaiting persistence. resolveLocalModelPath
   // collects (model -> re-anchored path) here instead of writing each one in
   // its own runInAction; a container change invalidates every local path at
@@ -282,7 +279,13 @@ export class ModelStore {
   }
 
   downloadError: ErrorState | null = null;
-  modelLoadError: ErrorState | null = null;
+  // ── B7 (phase-4 4a): real state lives in runtimeStore (box; not persisted) ──
+  get modelLoadError(): ErrorState | null {
+    return runtimeStore.modelLoadError;
+  }
+  set modelLoadError(value: ErrorState | null) {
+    runtimeStore.modelLoadError = value;
+  }
 
   // Memory calibration variables (persisted)
   // Updated at app startup and after model release
@@ -1951,7 +1954,7 @@ export class ModelStore {
     // Mark intent immediately - this is the "last-one-wins" tracking
     // If another model is requested while we're showing an Alert, their
     // pendingModelId will overwrite ours and we'll detect it later
-    this.pendingModelId = model.id;
+    setPendingModelId(model.id);
 
     // Set loading state immediately for UI feedback
     runInAction(() => {
@@ -1980,16 +1983,16 @@ export class ModelStore {
 
       // After Alert (if shown), check if we're still the intended model
       // Another model request might have come in while user was deciding
-      if (this.pendingModelId !== model.id) {
+      if (getPendingModelId() !== model.id) {
         logger.debug(
-          `[ModelStore] Skipping "${model.name}" - user switched to "${this.pendingModelId}" during confirmation`,
+          `[ModelStore] Skipping "${model.name}" - user switched to "${getPendingModelId()}" during confirmation`,
         );
         return null;
       }
 
       // === Phase 2: Execute context operations WITH mutex ===
 
-      const operationPromise = this.contextOperationMutex.then(async () => {
+      const operationPromise = getContextOperationMutex().then(async () => {
         // A benchmark may have started while this load sat in the mutex
         // queue (cold-launch deep-link race). Bail before doing native work
         // — enterBenchmarkMode will release any context we leave behind.
@@ -2002,9 +2005,9 @@ export class ModelStore {
 
         // Final check if this request is still current (last-one-wins)
         // This catches race conditions where another request queued while we waited
-        if (this.pendingModelId !== model.id) {
+        if (getPendingModelId() !== model.id) {
           logger.debug(
-            `[ModelStore] Skipping outdated load for "${model.name}" - user now wants model "${this.pendingModelId}"`,
+            `[ModelStore] Skipping outdated load for "${model.name}" - user now wants model "${getPendingModelId()}"`,
           );
           return null;
         }
@@ -2018,7 +2021,7 @@ export class ModelStore {
         }
 
         // Release existing context
-        await this._releaseContextInternal();
+        await releaseContextInternal(this);
 
         // Small delay for native cleanup before loading next model
         await new Promise(resolve => setTimeout(resolve, 100));
@@ -2034,9 +2037,7 @@ export class ModelStore {
       });
 
       // Keep mutex chain intact by swallowing errors
-      this.contextOperationMutex = operationPromise
-        .then(() => {})
-        .catch(() => {});
+      setContextOperationMutex(operationPromise.then(() => {}).catch(() => {}));
 
       return await operationPromise;
     } finally {
@@ -2144,7 +2145,7 @@ export class ModelStore {
         this.activeRemoteBinding = undefined;
         this.activeContextSettings = contextInitParams;
         this.setActiveModel(model.id);
-        this.pendingModelId = null;
+        setPendingModelId(null);
       });
 
       // Update largestSuccessfulLoad using GGUF estimator
@@ -2204,159 +2205,26 @@ export class ModelStore {
     }
   }
 
-  /** Internal release - caller must already hold the mutex. */
-  private _releaseContextInternal = async (
+  // ── B7 (phase-4 4a): implementations live in runtimeStore since batch 7 ──
+  releaseContext = async (
     clearActiveModel: boolean = false,
-  ) => {
-    logger.debug('attempt to release');
-    chatSessionStore.exitEditMode();
-    if (!this.context) {
-      // For remote models or deletion scenarios, clear engine and state
-      if (this.engine || clearActiveModel) {
-        // Stop any active remote completion
-        if (this.engine) {
-          try {
-            await this.engine.stopCompletion();
-          } catch {
-            // Ignore errors from stopping remote completion
-          }
-        }
-        runInAction(() => {
-          this.engine = undefined;
-          this.activeRemoteBinding = undefined;
-          if (clearActiveModel) {
-            this.activeModelId = undefined;
-          }
-          this.isMultimodalActive = false;
-          this.activeProjectionModelId = undefined;
-        });
-      }
-      if (!this.engine && !clearActiveModel) {
-        return 'No context to release';
-      }
-      return 'Remote engine cleared';
-    }
-
-    try {
-      // IMPORTANT: Stop-Await-Release Pattern
-      // This prevents race condition where completion callback fires after context is freed
-      // which causes SIGSEGV in isMultimodalEnabled/createCompletionResult
-      if (
-        this.inferencing ||
-        this.isStreaming ||
-        getActiveCompletionPromise()
-      ) {
-        logger.debug('Stopping active completion before context release');
-
-        // Step 1: Signal the completion to stop
-        try {
-          await this.context.stopCompletion();
-        } catch (stopError) {
-          console.warn('Error stopping completion:', stopError);
-          // Continue with release even if stop fails
-        }
-
-        // Step 2: Wait for the completion promise to actually finish
-        // This is critical - stopCompletion() only signals, it doesn't wait
-        // B6: promise state lives in the runtimeStore box — read via the
-        // ج11 bridge until B7 relocates releaseContext.
-        const activePromise = getActiveCompletionPromise();
-        if (activePromise) {
-          logger.debug('Waiting for completion promise to finish...');
-          try {
-            // Wait for promise to settle (ignore errors, just wait for it to complete)
-            await activePromise.catch(() => {});
-          } catch {
-            // Ignore any errors, we just need to wait
-          }
-          clearCompletionPromiseOf();
-        }
-
-        // Clear inference flags
-        runInAction(() => {
-          this.inferencing = false;
-          this.isStreaming = false;
-        });
-      }
-
-      // Step 3: Now safe to release - First check if multimodal is enabled and release it if needed
-      if (this.isMultimodalActive) {
-        logger.debug('Releasing multimodal context first');
-        try {
-          await this.context.releaseMultimodal();
-          // Immediately clear multimodal state after successful release
-          runInAction(() => {
-            this.isMultimodalActive = false;
-            this.activeProjectionModelId = undefined;
-          });
-          logger.debug('Multimodal context released and state cleared');
-        } catch (error) {
-          console.error('Error releasing multimodal context:', error);
-          // Even if release fails, clear the state to prevent blocking deletion
-          runInAction(() => {
-            this.isMultimodalActive = false;
-            this.activeProjectionModelId = undefined;
-          });
-        }
-      }
-
-      // Then release the main context
-      await this.context.release();
-      logger.debug('released');
-    } catch (error) {
-      console.error('Error during context release:', error);
-    } finally {
-      runInAction(() => {
-        this.context = undefined;
-        this.engine = undefined;
-        this.activeRemoteBinding = undefined;
-        this.activeContextSettings = undefined;
-        // Ensure multimodal state is cleared even if something went wrong above
-        this.isMultimodalActive = false;
-        this.activeProjectionModelId = undefined;
-        // Clear active model if requested (for deletion scenarios)
-        if (clearActiveModel) {
-          this.activeModelId = undefined;
-        }
-      });
-
-      // Update availableMemoryCeiling after release (clean state)
-      try {
-        const availableBytes = await NativeHardwareInfo.getAvailableMemory();
-        runInAction(() => {
-          if (
-            this.availableMemoryCeiling === undefined ||
-            availableBytes > this.availableMemoryCeiling
-          ) {
-            this.availableMemoryCeiling = availableBytes;
-          }
-        });
-      } catch (error) {
-        console.warn(
-          '[ModelStore] Failed to update availableMemoryCeiling:',
-          error,
-        );
-      }
-    }
-    return 'Context released successfully';
+  ): Promise<string> => {
+    return runtimeStore.releaseContext(clearActiveModel);
   };
 
-  /** Acquires mutex before releasing context. */
-  releaseContext = async (clearActiveModel: boolean = false) => {
-    const operationPromise = this.contextOperationMutex.then(async () => {
-      return this._releaseContextInternal(clearActiveModel);
-    });
-
-    // Swallow errors to keep mutex chain intact
-    this.contextOperationMutex = operationPromise
-      .then(() => {})
-      .catch(() => {});
-
-    return operationPromise;
+  /** Internal release - caller must already hold the mutex. */
+  // ── B7: implementation lives in runtimeStore (module function). This
+  // private reverse delegation keeps the god-object surface identical for
+  // the suite that exercises the private name directly (B1 pattern: every
+  // moved member keeps its delegation until its call sites migrate at 4d).
+  private _releaseContextInternal = async (
+    clearActiveModel: boolean = false,
+  ): Promise<string> => {
+    return releaseContextInternal(this, clearActiveModel);
   };
 
   manualReleaseContext = async () => {
-    await this.releaseContext(true); // Clear active model for manual release
+    await runtimeStore.manualReleaseContext();
   };
 
   // ── B3 (phase-4 4a): implementation lives in runtimeStore since batch 3 ──
@@ -3296,8 +3164,9 @@ export class ModelStore {
     this.downloadError = null;
   };
 
+  // ── B7 (phase-4 4a): implementation lives in runtimeStore since batch 7 ──
   clearModelLoadError = () => {
-    this.modelLoadError = null;
+    runtimeStore.clearModelLoadError();
   };
 
   retryDownload = () => {
