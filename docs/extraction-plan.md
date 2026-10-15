@@ -184,6 +184,17 @@ pendingLocalPathRecoveries/flushPendingLocalPathRecoveries→download)، + مد�
 
 ---
 
+## 8) جدول دورة حياة bootstrap (الدرس المؤسسي — لا غموض معماري عند 4d/4e)
+
+| المرحلة | bootstrap.ts | نقطة الاستدعاء | الـ host المحقون | الحالة/مفاتيح persist |
+|---|---|---|---|---|
+| **اليوم** (R0→B21) | `ModelSystemDeps` + `initializeModelSystem(deps)` — صفر استيراد؛ يستدعي المُهيئين المحقونين حرفياً | `ModelStore` constructor: `makeAutoObservable` ← `injectRuntimeHost(this)` ← `makePersistable(...).then(() => initializeModelSystem({catalog: this, download: this, runtime: this, initializeStore, initializeThreadCount}))` ← `setupAppStateListener()` ← `downloadManager.setCallbacks(...)` | الإله الكائن نفسه (`this` في الفتحات الثلاثة) — هو تنفيذ النطاقات الثلاثة حتى تنتهي 4a | الـ 12 مفتاحاً كلها على `ModelStore` (name='ModelStore') |
+| **بعد B22** | نفس الدالة؛ `initializeThreadCount` تُصدَّر من bootstrap وتُستدعى بمتاجر حقيقية | `persist.then` يبقى قناة الاستدعاء حتى B23؛ الكتابات تمر عبر runtimeStore مباشرة | **الـ host يتقلص**: محددات B1 الـ 16 تكتب حالة runtimeStore الخاصة (بلا host)؛ `initializeThreadCount` المصدَّرة تكتب `runtimeStore.max_threads` و`contextInitParams.n_threads` وتقرأ `catalogStore.version` لبوهية الإطلاق الأول — `injectRuntimeHost` يُحذف | contextInitParams/activeContextSettings على runtimeStore — الجذر `runtimeStore:v2` يبدأ هنا |
+| **النهاية** (4e) | جذر التركيب الوحيد: ينشئ المفردات الثلاثة، يوصل الجسور الثلاثة (mutationSync / cleanupQueueBridge / runtimeBridge)، يعلن مفتاحي persist (`catalogStore:v2` / `runtimeStore:v2`)، ينفذ استيراد الإرث لمرة واحدة، ويصدّر `initializeModelSystem` | `App.tsx` ← `initializeModelStores()` (نقطة دخول bootstrap تستدعي `initializeModelSystem`) — لا constructor مفرد، لا إله كائن | لا host — كل متجر يملك حالته؛ الوصول العابر فقط عبر الجسور الثلاثة الموثقة بالاسم | 5 مفاتيح catalog + 7 runtime على الجذرين الجديدین + تنظيف مفتاح `ModelStore` الإرثي بعد أول استيراد ناجح |
+
+ترتيب التهيئة الثابت عبر المراحل الثلاث: استيراد الإرث ← initializeThreadCount ← initializeModelSystem
+(بقية الخطوات بترتيب 762-845 حرفياً — انظر §4).
+
 ## الشرط 1 — مصير اختبارات الفاصاد الستة (محسوم قبل 4d)
 
 **القرار: التحول لا الموت.** الستة تتحول إلى `src/store/model/__tests__/bootstrap.test.ts`
@@ -247,7 +258,7 @@ post-4a: official 1732 / real 1731 / raw 1732 → post-4b: **951/950/951** → p
 
 | البوابة | suites | passed | official | real | raw | داخل src/store/model | إضافي |
 |---|---|---|---|---|---|---|---|
-| الآن (بعد R0) | 312 | 4989+2 | 1733 | 1732 | 1871 | 138 | — |
+| الآن (بعد R0) | 312 | 4989+2 | 1733 | 1732 | **1878** | **145** | — |
 | نهاية 4a (B24) | 312 | 4989+2 | **1732** | 1731 | **1732** | **0** | ModelStore.ts = مفرد + مفوضون عكسيون؛ madge لقطة |
 | 4c | 312 | 4989+2 | 1732 | 1731 | 1732 | 0 | +3 mock files؛ 5 suites حساسة خضراء فوراً |
 | كل 3 دفعات 4b + نهاية 4b | 312 | 4989+2 | **951** | **950** | **951** | 0 | بوابة سلسلة كاملة (8 شرائح) قبل 4d |
@@ -258,6 +269,20 @@ post-4a: official 1732 / real 1731 / raw 1732 → post-4b: **951/950/951** → p
 إيواه)، +3 أجنحة + bootstrap.test — الرقم النهائي يُعلن قبل بوابة 4d من جدول الإسناد الفعلي
 (المرسى: 4989+2 passed ثابتة؛ zero deleted assertions).
 
+> **تسوية عدادية (جلسة 7)**: سطر R0 أعلاه أُعلن وقتها raw=1871/داخل=138 — توقعٌ استخدم عدد
+> الأعضاء المفوضين (138) بينما الوصفة المثبتة تعدّ **أسطر** `modelStore.x` داخل `src/store/model`
+> (145 عند R0 = 76 runtime + 23 download + 39 catalog + 7 facade.test) ← raw الحقيقي 1733+145=**1878**
+> (قياس نفس الشجرة قبل B1 يطابق القياس الحالي). زلة سطر توقع واحد؛ الوصفة ثابتة والسلّم سليم:
+> بعد B1 قياساً 1733/1732/**1862**/129 — وبعد B2 المتوقع 1733/1732/**1856**/**123**.
+>
+> **دفتر madge لـ 4a (السقف يُعلن مرة واحدة)**: 42 (R0) → 44 (B1، حلقتان عابرتان
+> ModelStore↔runtimeStore: مباشرة عبر type-import + عبر برميل store/index — تفكك B24) →
+> 44 ثابتة عبر B2..B9 (أعضاء runtime، لا حواف جديدة؛ B3 كله runtime حتى capabilityEnv الخاص)
+> → 46 عند B10 (أول حافة ModelStore→catalogStore: مباشرة+برميل) → 47 عند B15 (برميل catalog
+> يموت مع آخر مرجع pass-through) → **48 = السقف** عند B16 (أول حافة ModelStore→downloadStore)
+> → 47 عند B20 (برميل download) → 46 عند B23 (برميل runtime) → **42 بالضبط** عند B24
+> (حواف type-guard الثلاث تموت مع استبدال دروع الانجراف).
+
 ### بروتوكولات ثابتة (موروثة + مثبتة في هذا الملف)
 
 - بعد كل commit: bundle نجاة `git bundle create` + verify، ثم push (فرع feature = نسخ احتياطي).
@@ -265,4 +290,7 @@ post-4a: official 1732 / real 1731 / raw 1732 → post-4b: **951/950/951** → p
 - التشغيل مجزأ في المقدمة فقط — ممنوع خلفي.
 - التحقق بـ Read/od فقط؛ بعد أي فشل جزئي: git diff فوراً؛ أي مفاجأة = توقف وتوثيق.
 - الأرقام: تُعلن قبل كل بوابة؛ أي انحراف يُشرح مصدره قبل إعلان الاكتمال.
+- تهيئة البيئة بعد كل إعادة ضبط حاوية (الإعداد محلي ويموت مع الضبط):
+  `git config core.fileMode=false` — يمنع 1,999 artifact وهمياً في git status
+  (بقايا أنماط ملفات؛ صفر تغيير محتوى). المطبق فعلياً منذ جلسة step0-d.
 - نهاية 4e بعد آخر push ناجح: الرد الحرفي `REVOKE` (استهلاك التوكن: حقن URL فقط، لا طباعة).
