@@ -4,24 +4,30 @@ import type {ModelStore} from '../ModelStore';
 // singleton (network fetch + DeviceInfo) inside every suite that renders
 // a migrated component. Type-only import keeps the Pick<ModelStore,...>
 // compile-time drift guard. Revisit at Phase 4 dissolution.
-import {modelStore, serverStore, chatSessionStore} from '../';
+import {modelStore, serverStore, chatSessionStore, uiStore} from '../';
 import {observable, runInAction, toJS} from 'mobx';
-import {AppState, AppStateStatus, Platform} from 'react-native';
-import type {ContextParams, LlamaContext} from 'llama.rn';
+import {Alert, AppState, AppStateStatus, Platform} from 'react-native';
+import {ContextParams, LlamaContext, initLlama} from 'llama.rn';
 import {
   CacheType,
   ContextInitParams,
   DraftConfig,
   Model,
   ModelOrigin,
+  RemoteSessionBinding,
 } from '../../utils/types';
 import {resolveUseMmap} from '../../utils/memorySettings';
 import {resolveDeviceSelection} from '../../utils/deviceSelection';
-import {draftCacheDefaults, effectiveDraftModeOf} from '../draftResolution';
+import {
+  draftCacheDefaults,
+  effectiveDraftModeOf,
+  resolveDraftCandidate,
+  unpairedDraftCandidate,
+} from '../draftResolution';
 import {resolveModelCaps} from '../../utils/modelCaps';
 import type {CapabilityEnv, ModelCapabilityView} from '../../utils/modelCaps';
 import {logger} from '../../utils/logger';
-import {ErrorState} from '../../utils/errors';
+import {ErrorState, createErrorState} from '../../utils/errors';
 import NativeHardwareInfo from '../../specs/NativeHardwareInfo';
 import {
   CompletionEngine,
@@ -29,6 +35,11 @@ import {
   toApiCompletionParams,
 } from '../../utils/completionTypes';
 import {chatSessionRepository} from '../../repositories/ChatSessionRepository';
+import {LocalCompletionEngine} from '../../api/completionEngines';
+import {hasEnoughMemory} from '../../hooks/useMemoryCheck';
+import {createContextInitParams} from '../../utils/contextInitParamsVersions';
+import {getModelMemoryRequirement} from '../../utils/memoryEstimator';
+import {isHighEndDevice} from '../../utils/deviceCapabilities';
 
 /**
  * runtimeStore — Phase-1 scaffold (fix 4, stage 1 of 4).
@@ -172,29 +183,38 @@ export function clearCompletionPromiseOf() {
 // B7: lifecycle-1 state. The mutex is a plain module binding (a promise
 // chain — never UI-reactive; the god object's observable annotation carried
 // no observers). pendingModelId likewise (internal last-one-wins guard).
-// Both keep ONE god-object consumer until B8 (initContext) — it reaches them
-// through these accessors (bridge ج12, death B8 — extraction-plan §8).
+// B8: initContext relocated into this module — the exported accessors the
+// god object reached through (bridge ج12) died with the move; both guards
+// are plain module-private bindings now.
 let contextOperationMutex: Promise<void> = Promise.resolve();
 let pendingModelId: string | null = null;
 
-export function getContextOperationMutex(): Promise<void> {
-  return contextOperationMutex;
-}
-
-export function setContextOperationMutex(p: Promise<void>) {
-  contextOperationMutex = p;
-}
-
-export function getPendingModelId(): string | null {
-  return pendingModelId;
-}
-
-export function setPendingModelId(v: string | null) {
-  pendingModelId = v;
-}
-
 // B7: modelLoadError — real state (box; not persisted).
 const modelLoadErrorBox = observable.box<ErrorState | null>(null);
+
+// ───────────── B8 (phase-4 4a): lifecycle-2 — real state ─────────────
+// The context/session state moves as boxes: context, engine, activeModelId,
+// isMultimodalActive, activeProjectionModelId, activeRemoteBinding (the six
+// whose releaseContextInternal barrel-writes were bridge ج13 — dies this
+// batch per the §8 registry), plus isContextLoading/loadingModel (batch row).
+// The god object keeps accessor pairs (writable computeds — the B2/B7
+// pattern) so every external consumer, the injected host and the suites see
+// identical state and reactivity. activeContextSettings /
+// availableMemoryCeiling / largestSuccessfulLoad / lastUsedModelId stay
+// god-object-resident (persist keys / B22 / B10) — writes to them continue
+// through the barrel binding with declared deaths (§8 rows ج13/ج19/ج20/ج21).
+const isContextLoadingBox = observable.box<boolean>(false);
+const loadingModelBox = observable.box<Model | undefined>(undefined);
+const contextBox = observable.box<LlamaContext | undefined>(undefined);
+const engineBox = observable.box<CompletionEngine | undefined>(undefined);
+const activeModelIdBox = observable.box<string | undefined>(undefined);
+const isMultimodalActiveBox = observable.box<boolean>(false);
+const activeProjectionModelIdBox = observable.box<string | undefined>(
+  undefined,
+);
+const activeRemoteBindingBox = observable.box<RemoteSessionBinding | undefined>(
+  undefined,
+);
 
 // markAutoReleased / clearAutoReleaseFlags (private members) moved verbatim;
 // they write the persist-key flags through the barrel binding until the v2
@@ -326,6 +346,9 @@ export async function releaseContextInternal(
     inferencing: boolean;
     isStreaming: boolean;
     isMultimodalActive: boolean;
+    activeProjectionModelId?: string;
+    activeRemoteBinding?: RemoteSessionBinding;
+    activeModelId?: string;
     availableMemoryCeiling: number | undefined;
   },
   clearActiveModel: boolean = false,
@@ -348,13 +371,13 @@ export async function releaseContextInternal(
         }
       }
       runInAction(() => {
-        modelStore.engine = undefined;
-        modelStore.activeRemoteBinding = undefined;
+        s.engine = undefined;
+        s.activeRemoteBinding = undefined;
         if (clearActiveModel) {
-          modelStore.activeModelId = undefined;
+          s.activeModelId = undefined;
         }
-        modelStore.isMultimodalActive = false;
-        modelStore.activeProjectionModelId = undefined;
+        s.isMultimodalActive = false;
+        s.activeProjectionModelId = undefined;
       });
     }
     if (!s.engine && !clearActiveModel) {
@@ -406,16 +429,16 @@ export async function releaseContextInternal(
         await context.releaseMultimodal();
         // Immediately clear multimodal state after successful release
         runInAction(() => {
-          modelStore.isMultimodalActive = false;
-          modelStore.activeProjectionModelId = undefined;
+          s.isMultimodalActive = false;
+          s.activeProjectionModelId = undefined;
         });
         logger.debug('Multimodal context released and state cleared');
       } catch (error) {
         console.error('Error releasing multimodal context:', error);
         // Even if release fails, clear the state to prevent blocking deletion
         runInAction(() => {
-          modelStore.isMultimodalActive = false;
-          modelStore.activeProjectionModelId = undefined;
+          s.isMultimodalActive = false;
+          s.activeProjectionModelId = undefined;
         });
       }
     }
@@ -427,16 +450,18 @@ export async function releaseContextInternal(
     console.error('Error during context release:', error);
   } finally {
     runInAction(() => {
-      modelStore.context = undefined;
-      modelStore.engine = undefined;
-      modelStore.activeRemoteBinding = undefined;
+      s.context = undefined;
+      s.engine = undefined;
+      s.activeRemoteBinding = undefined;
+      // B22 (§3-أ persist-root boundary): activeContextSettings stays on the
+      // god object until the v2 roots exist — barrel write survives (ج13 tail).
       modelStore.activeContextSettings = undefined;
       // Ensure multimodal state is cleared even if something went wrong above
-      modelStore.isMultimodalActive = false;
-      modelStore.activeProjectionModelId = undefined;
+      s.isMultimodalActive = false;
+      s.activeProjectionModelId = undefined;
       // Clear active model if requested (for deletion scenarios)
       if (clearActiveModel) {
-        modelStore.activeModelId = undefined;
+        s.activeModelId = undefined;
       }
     });
 
@@ -461,6 +486,322 @@ export async function releaseContextInternal(
   return 'Context released successfully';
 }
 
+// ═══════════ B8 (phase-4 4a): lifecycle-2 — private helpers, moved verbatim ═══════════
+// pairedDraftModel + the four pre-flight/initialization helpers leave the god
+// object with initContext (batch row B8). They are private members (not part
+// of the runtime contract), so they live at module level — the releaseContext-
+// Internal pattern. Cross-domain reads/writes that must wait for later batches
+// go through the barrel binding with declared deaths in the §8 registry:
+//   models (ج15 → B10), getModelVisionPreference (ج16 → B14),
+//   getModelFullPath (ج17 → B18), updateModelStopTokens (ج18 → B23),
+//   updateModelThinkingCapabilities (ج18 → B14),
+//   activeContextSettings write (ج19 → B22), largestSuccessfulLoad write
+//   (ج20 → B22), lastUsedModelId write (ج21 → B10).
+const pairedDraftModel = (config?: DraftConfig): Model | undefined =>
+  config?.mode === 'paired' ? config.draftModel : undefined;
+
+// ج18 (B8): two still-private god-object members, reached through a narrow
+// structural view — same pattern as the ج5 reprobe read. The cast form is
+// invisible to the line counter by design; the deaths are the registry's.
+type GodObjectPrivates = {
+  updateModelStopTokens: (ctx: LlamaContext, model: Model) => Promise<void>;
+  updateModelThinkingCapabilities: (
+    ctx: LlamaContext,
+    model: Model,
+  ) => Promise<void>;
+};
+
+async function resolveMultimodalConfig(
+  model: Model,
+  mmProjPath?: string,
+): Promise<{
+  isMultimodalInit: boolean;
+  resolvedMmProjPath?: string;
+  projectionModel?: Model;
+}> {
+  const visionEnabled = modelStore.getModelVisionPreference(model);
+
+  // Priority 1: Explicit path provided by caller
+  if (mmProjPath && visionEnabled) {
+    return {isMultimodalInit: true, resolvedMmProjPath: mmProjPath};
+  }
+
+  // Priority 2: Auto-resolve from model's default projection model
+  if (
+    model.supportsMultimodal &&
+    model.defaultProjectionModel &&
+    visionEnabled
+  ) {
+    const projectionModel = modelStore.models.find(
+      m => m.id === model.defaultProjectionModel,
+    );
+    if (projectionModel?.isDownloaded) {
+      const resolvedPath = await modelStore.getModelFullPath(projectionModel);
+      return {
+        isMultimodalInit: true,
+        resolvedMmProjPath: resolvedPath,
+        projectionModel,
+      };
+    }
+  }
+
+  // Default: No multimodal support
+  return {isMultimodalInit: false};
+}
+
+export async function resolveDraftConfig(
+  s: RuntimeStore,
+  model: Model,
+): Promise<DraftConfig> {
+  const candidate = resolveDraftCandidate(
+    model,
+    modelStore.models,
+    s.contextInitParams,
+  );
+  if (candidate.mode !== 'paired') {
+    return candidate;
+  }
+
+  const resolvedDraftPath = await modelStore.getModelFullPath(
+    candidate.draftModel,
+  );
+  if (resolvedDraftPath) {
+    return {
+      mode: 'paired',
+      resolvedDraftPath,
+      draftModel: candidate.draftModel,
+    };
+  }
+
+  return unpairedDraftCandidate(model);
+}
+
+/**
+ * Check memory/capability requirements and show warning alert if needed.
+ * Returns true if user confirms or no warning needed, false if cancelled.
+ */
+async function checkMemoryAndConfirm(
+  model: Model,
+  isMultimodalInit: boolean,
+  projectionModel?: Model,
+  draftModel?: Model,
+): Promise<boolean> {
+  let hasMemory = true;
+  try {
+    hasMemory = await hasEnoughMemory(model, projectionModel, draftModel);
+  } catch (error) {
+    console.error('Memory check failed:', error);
+    return false;
+  }
+
+  const isCapable = isMultimodalInit ? await isHighEndDevice() : true;
+  const hasMemoryIssue = !hasMemory;
+  const hasCapabilityIssue = isMultimodalInit && !isCapable;
+
+  if (!hasMemoryIssue && !hasCapabilityIssue) {
+    return true; // No warning needed
+  }
+
+  console.warn(
+    `Device performance warning for model: ${model.name} - Memory: ${hasMemoryIssue}, Capability: ${hasCapabilityIssue}`,
+  );
+
+  let title: string;
+  let message: string;
+
+  if (hasMemoryIssue && hasCapabilityIssue) {
+    title = uiStore.l10n.memory.alerts.combinedWarningTitle;
+    message = uiStore.l10n.memory.alerts.combinedWarningMessage;
+  } else if (hasMemoryIssue) {
+    title = uiStore.l10n.memory.alerts.memoryWarningTitle;
+    message = uiStore.l10n.memory.alerts.memoryWarningMessage;
+  } else {
+    title = uiStore.l10n.memory.alerts.multimodalWarningTitle;
+    message = uiStore.l10n.memory.alerts.multimodalWarningMessage;
+  }
+
+  // Show alert and wait for user decision - this happens OUTSIDE the mutex
+  return new Promise<boolean>(resolve => {
+    Alert.alert(title, message, [
+      {
+        text: uiStore.l10n.memory.alerts.cancel,
+        style: 'cancel',
+        onPress: () => resolve(false),
+      },
+      {
+        text: uiStore.l10n.memory.alerts.continue,
+        onPress: () => resolve(true),
+      },
+    ]);
+  });
+}
+
+/**
+ * Proceed with the actual model initialization after device capability checks
+ */
+async function proceedWithInitialization(
+  s: RuntimeStore,
+  model: Model,
+  mmProjPath?: string,
+  isMultimodalInit: boolean = false,
+  projectionModel?: Model,
+  draftConfig?: DraftConfig,
+): Promise<LlamaContext> {
+  const filePath = await modelStore.getModelFullPath(model);
+  if (!filePath) {
+    throw new Error('Model path is undefined');
+  }
+
+  runInAction(() => {
+    s.isMultimodalActive = false; // Reset until we confirm it's enabled
+    s.activeProjectionModelId = projectionModel?.id;
+  });
+
+  // Get all effective initialization settings BEFORE try block
+  // so they're available for error reporting if initialization fails
+  const effectiveSettings = await s.getEffectiveContextInitParams(
+    filePath,
+    draftConfig,
+  );
+
+  try {
+    // Create properly versioned ContextInitParams
+    const contextInitParams = createContextInitParams(effectiveSettings);
+
+    const t0 = Date.now();
+    const ctx = await initLlama(
+      {
+        model: filePath,
+        ...effectiveSettings, // Use effectiveSettings without version for llama.rn
+        use_progress_callback: true,
+      },
+      (_progress: number) => {
+        //logger.debug('progress: ', _progress);
+      },
+    );
+    const t1 = Date.now();
+    logger.debug('init time: ', t1 - t0);
+
+    // ج18: still-private god-object members (see GodObjectPrivates above).
+    await (modelStore as unknown as GodObjectPrivates).updateModelStopTokens(
+      ctx,
+      model,
+    );
+
+    // Check and update thinking capabilities (ج18, death B14)
+    await (
+      modelStore as unknown as GodObjectPrivates
+    ).updateModelThinkingCapabilities(ctx, model);
+
+    // Initialize multimodal support if mmproj path was provided
+    if (isMultimodalInit && mmProjPath) {
+      try {
+        logger.debug('Initializing multimodal support with path:', mmProjPath);
+
+        // Initialize multimodal with the new API format
+        // Apply effective value: clamp image_max_tokens to n_ctx
+        const success = await ctx.initMultimodal({
+          path: mmProjPath,
+          use_gpu: !s.contextInitParams.no_gpu_devices,
+          image_max_tokens: Math.min(
+            s.contextInitParams.image_max_tokens ?? 512,
+            s.contextInitParams.n_ctx,
+          ),
+        });
+
+        if (!success) {
+          console.error('Failed to initialize multimodal support');
+        } else {
+          logger.debug('Multimodal support initialized successfully');
+          // Verify that multimodal is now enabled
+          const isEnabled = await ctx.isMultimodalEnabled();
+          logger.debug('Multimodal enabled status:', isEnabled);
+
+          // Update the multimodal active flag
+          runInAction(() => {
+            s.isMultimodalActive = isEnabled;
+          });
+        }
+      } catch (error) {
+        console.error('Error initializing multimodal support:', error);
+        runInAction(() => {
+          s.isMultimodalActive = false;
+          s.activeProjectionModelId = undefined;
+        });
+      }
+    }
+
+    runInAction(() => {
+      s.context = ctx;
+      s.engine = new LocalCompletionEngine(ctx);
+      s.activeRemoteBinding = undefined;
+      // B22 (§3-أ): persist-adjacent settings stay on the god object until
+      // the v2 roots exist (ج19).
+      modelStore.activeContextSettings = contextInitParams;
+      s.setActiveModel(model.id);
+      pendingModelId = null;
+    });
+
+    // Update largestSuccessfulLoad using GGUF estimator
+    try {
+      const estimated = getModelMemoryRequirement(
+        model,
+        projectionModel,
+        contextInitParams,
+        pairedDraftModel(draftConfig),
+      );
+      runInAction(() => {
+        if (
+          s.largestSuccessfulLoad === undefined ||
+          estimated > s.largestSuccessfulLoad
+        ) {
+          // B22 (§3-أ): persist key stays on the god object until the v2
+          // roots exist (ج20).
+          modelStore.largestSuccessfulLoad = estimated;
+        }
+      });
+    } catch (error) {
+      console.warn(
+        '[ModelStore] Failed to update largestSuccessfulLoad:',
+        error,
+      );
+    }
+
+    return ctx;
+  } catch (error) {
+    console.error(
+      `Failed to initialize model context for "${model.name}" (${model.id}):`,
+      error,
+    );
+
+    // Set error state for UI feedback - include model info and context params for error reporting
+    const errorState = createErrorState(error, 'modelInit', undefined, {
+      modelId: model.id,
+      modelName: model.name,
+      modelUrl: model.hfUrl,
+      modelSize: model.size,
+      contextParams: effectiveSettings,
+    });
+    runInAction(() => {
+      s.modelLoadError = errorState;
+    });
+
+    throw error;
+  } finally {
+    runInAction(() => {
+      // B10 (catalog persist key) — barrel write survives until then (ج21).
+      modelStore.lastUsedModelId = model.id;
+    });
+    try {
+      runInAction(() => {
+        model.lastUsedAt = Date.now();
+      });
+    } catch {
+      // Non-critical bookkeeping — never fail a model load over it.
+    }
+  }
+}
+
 export const runtimeStore: RuntimeStore = {
   // ── B3 (phase-4 4a): real implementation (was god-object computed) ──
   // Reads the list through the barrel binding (mocked in suites, the real
@@ -483,11 +824,28 @@ export const runtimeStore: RuntimeStore = {
     }
     return modelStore.activeModel;
   },
+  // ── B8 (phase-4 4a): real state (boxes above; not persisted) ──
+  // ج22 (B8): mock-compat read guard, uniform on all eight relocated state
+  // members. With the host injected (production + real-store suites) the box
+  // IS the state; in barrel-mocked suites no constructor ever ran, so the
+  // mock singleton owns the state and the read goes through the barrel
+  // binding — exactly the ج3 shape on activeModel. Dies with it: per-suite
+  // as 4b/4c migrate the callers to sub-store mocks, force-killed at 4e.
   get activeModelId() {
-    return modelStore.activeModelId;
+    return runtimeHost ? activeModelIdBox.get() : modelStore.activeModelId;
+  },
+  set activeModelId(value: string | undefined) {
+    runInAction(() => {
+      activeModelIdBox.set(value);
+    });
   },
   get context() {
-    return modelStore.context;
+    return runtimeHost ? contextBox.get() : modelStore.context;
+  },
+  set context(value: LlamaContext | undefined) {
+    runInAction(() => {
+      contextBox.set(value);
+    });
   },
   // ── B3 (phase-4 4a): real implementation ──
   get contextId(): string | undefined {
@@ -501,13 +859,30 @@ export const runtimeStore: RuntimeStore = {
     return undefined;
   },
   get engine() {
-    return modelStore.engine;
+    return runtimeHost ? engineBox.get() : modelStore.engine;
+  },
+  set engine(value: CompletionEngine | undefined) {
+    runInAction(() => {
+      engineBox.set(value);
+    });
   },
   get isContextLoading() {
-    return modelStore.isContextLoading;
+    return runtimeHost
+      ? isContextLoadingBox.get()
+      : modelStore.isContextLoading;
+  },
+  set isContextLoading(value: boolean) {
+    runInAction(() => {
+      isContextLoadingBox.set(value);
+    });
   },
   get loadingModel() {
-    return modelStore.loadingModel;
+    return runtimeHost ? loadingModelBox.get() : modelStore.loadingModel;
+  },
+  set loadingModel(value: Model | undefined) {
+    runInAction(() => {
+      loadingModelBox.set(value);
+    });
   },
   get contextInitParams() {
     return modelStore.contextInitParams;
@@ -528,10 +903,24 @@ export const runtimeStore: RuntimeStore = {
     return MIN_CONTEXT_SIZE;
   },
   get isMultimodalActive() {
-    return modelStore.isMultimodalActive;
+    return runtimeHost
+      ? isMultimodalActiveBox.get()
+      : modelStore.isMultimodalActive;
+  },
+  set isMultimodalActive(value: boolean) {
+    runInAction(() => {
+      isMultimodalActiveBox.set(value);
+    });
   },
   get activeProjectionModelId() {
-    return modelStore.activeProjectionModelId;
+    return runtimeHost
+      ? activeProjectionModelIdBox.get()
+      : modelStore.activeProjectionModelId;
+  },
+  set activeProjectionModelId(value: string | undefined) {
+    runInAction(() => {
+      activeProjectionModelIdBox.set(value);
+    });
   },
   // ── B6 (phase-4 4a): real state (boxes above; not persisted) ──
   get inferencing() {
@@ -597,7 +986,14 @@ export const runtimeStore: RuntimeStore = {
     });
   },
   get activeRemoteBinding() {
-    return modelStore.activeRemoteBinding;
+    return runtimeHost
+      ? activeRemoteBindingBox.get()
+      : modelStore.activeRemoteBinding;
+  },
+  set activeRemoteBinding(value: RemoteSessionBinding | undefined) {
+    runInAction(() => {
+      activeRemoteBindingBox.set(value);
+    });
   },
   // ── B3 (phase-4 4a): draft/capabilities surface — real implementations ──
   /** Capabilities of the live session — chat's entry point. */
@@ -620,10 +1016,156 @@ export const runtimeStore: RuntimeStore = {
   get pendingProjectionCleanupIds() {
     return modelStore.pendingProjectionCleanupIds;
   },
-  setActiveModel: (...args) => modelStore.setActiveModel(...args),
+  // ── B8 (phase-4 4a): session identity + lifecycle-2 — real implementations.
+  // Method shorthand: `this` must bind to this store (an arrow property's
+  // lexical `this` is the module scope — it would crash at runtime).
+  setActiveModel(modelId: string) {
+    runInAction(() => {
+      activeModelIdBox.set(modelId);
+    });
+  },
   selectModel: (...args) => modelStore.selectModel(...args),
-  initContext: (...args) => modelStore.initContext(...args),
-  reinitializeContext: (...args) => modelStore.reinitializeContext(...args),
+  /**
+   * Initialize a model context, optionally with multimodal support.
+   *
+   * Architecture:
+   * - Phase 1 (outside mutex): Resolve config, check memory, show alert if needed
+   * - Phase 2 (inside mutex): Release old context, load new context
+   *
+   * The "last-one-wins" pattern uses pendingModelId set at the START, then checked
+   * both after the Alert (to skip if superseded) and inside the mutex (final check).
+   * Note: "last-one-wins" not always loading the last tapped model, but it's ok, as
+   * long as it is not leading the deadlock or mem leak.
+   *
+   * @param model The main LLM model to initialize
+   * @param mmProjPath Optional path to a projection model for multimodal support
+   * @returns The initialized LlamaContext, or null if cancelled/skipped
+   */
+  async initContext(
+    model: Model,
+    mmProjPath?: string,
+  ): Promise<LlamaContext | null> {
+    // Benchmark mode owns the native context lifecycle end-to-end.
+    // Reject synchronously so any racing caller (ChatView auto-load, header,
+    // sheet) fails fast instead of silently shadowing the matrix's per-cell
+    // devices / n_gpu_layers via the "already loaded → skip" path.
+    if (this.benchmarkActive) {
+      throw new Error(
+        '[ModelStore] initContext rejected: benchmark mode is active',
+      );
+    }
+
+    // === Phase 1: Pre-flight checks OUTSIDE mutex ===
+
+    // Mark intent immediately - this is the "last-one-wins" tracking
+    // If another model is requested while we're showing an Alert, their
+    // pendingModelId will overwrite ours and we'll detect it later
+    pendingModelId = model.id;
+
+    // Set loading state immediately for UI feedback
+    runInAction(() => {
+      this.isContextLoading = true;
+      this.loadingModel = model;
+    });
+
+    try {
+      // Resolve multimodal configuration
+      const {isMultimodalInit, resolvedMmProjPath, projectionModel} =
+        await resolveMultimodalConfig(model, mmProjPath);
+
+      const draftConfig = await resolveDraftConfig(this, model);
+
+      // Check memory and get user confirmation if needed (no mutex - UI interaction)
+      const shouldProceed = await checkMemoryAndConfirm(
+        model,
+        isMultimodalInit,
+        projectionModel,
+        pairedDraftModel(draftConfig),
+      );
+
+      if (!shouldProceed) {
+        throw new Error('Model loading cancelled by user');
+      }
+
+      // After Alert (if shown), check if we're still the intended model
+      // Another model request might have come in while user was deciding
+      if (pendingModelId !== model.id) {
+        logger.debug(
+          `[ModelStore] Skipping "${model.name}" - user switched to "${pendingModelId}" during confirmation`,
+        );
+        return null;
+      }
+
+      // === Phase 2: Execute context operations WITH mutex ===
+
+      const operationPromise = contextOperationMutex.then(async () => {
+        // A benchmark may have started while this load sat in the mutex
+        // queue (cold-launch deep-link race). Bail before doing native work
+        // — enterBenchmarkMode will release any context we leave behind.
+        if (this.benchmarkActive) {
+          logger.debug(
+            `[ModelStore] Skipping queued load for "${model.name}" - benchmark mode is active`,
+          );
+          return null;
+        }
+
+        // Final check if this request is still current (last-one-wins)
+        // This catches race conditions where another request queued while we waited
+        if (pendingModelId !== model.id) {
+          logger.debug(
+            `[ModelStore] Skipping outdated load for "${model.name}" - user now wants model "${pendingModelId}"`,
+          );
+          return null;
+        }
+
+        // Skip if already loaded
+        if (this.activeModelId === model.id && this.context) {
+          logger.debug(
+            `[ModelStore] Model "${model.name}" is already loaded, skipping`,
+          );
+          return this.context;
+        }
+
+        // Release existing context (bridge ج14 died: local module call now)
+        await releaseContextInternal(this);
+
+        // Small delay for native cleanup before loading next model
+        await new Promise(resolve => setTimeout(resolve, 100));
+
+        // Proceed with actual initialization
+        return proceedWithInitialization(
+          this,
+          model,
+          resolvedMmProjPath,
+          isMultimodalInit,
+          projectionModel,
+          draftConfig,
+        );
+      });
+
+      // Keep mutex chain intact by swallowing errors
+      contextOperationMutex = operationPromise.then(() => {}).catch(() => {});
+
+      return await operationPromise;
+    } finally {
+      runInAction(() => {
+        this.isContextLoading = false;
+        this.loadingModel = undefined;
+      });
+    }
+  },
+  async reinitializeContext() {
+    if (this.activeModelId) {
+      const model = modelStore.models.find(m => m.id === this.activeModelId);
+      if (model) {
+        // Routed through the god-object member on purpose (mock-compat):
+        // suites redirect loads by overriding `modelStore.initContext`, and
+        // internal callers must honor that override (ModelStore.test.ts).
+        // Becomes a local `this.initContext` when the suites split (4d).
+        await modelStore.initContext(model);
+      }
+    }
+  },
   // ── B7 (phase-4 4a): lifecycle-1 — real implementations (bridge ج9 died:
   // the mutex + internal release are module state/functions now) ──
   /** Acquires mutex before releasing context. */
@@ -1211,7 +1753,11 @@ export const runtimeStore: RuntimeStore = {
       );
       if (model) {
         logger.debug('Reloading auto-released model:', model.id);
-        await this.initContext(model);
+        // Routed through the god-object member on purpose (mock-compat):
+        // suites redirect loads by overriding `modelStore.initContext`;
+        // internal callers must honor that override. Same bridge as
+        // reinitializeContext above — dies when the suites split (4d).
+        await modelStore.initContext(model);
       }
       clearAutoReleaseFlags();
     }

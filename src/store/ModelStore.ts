@@ -12,22 +12,15 @@ import {makePersistable} from 'mobx-persist-store';
 import * as RNFS from '@dr.pogodin/react-native-fs';
 import {computed, makeAutoObservable, runInAction} from 'mobx';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {ContextParams, LlamaContext, initLlama} from 'llama.rn';
+import {ContextParams, LlamaContext} from 'llama.rn';
 import {CompletionParams, CompletionEngine} from '../utils/completionTypes';
 
 import {fetchModelFilesDetails} from '../api/hf';
-import {
-  LocalCompletionEngine,
-  OpenAICompletionEngine,
-} from '../api/completionEngines';
+import {OpenAICompletionEngine} from '../api/completionEngines';
 
 import {uiStore, hfStore, modelHubStore} from '.';
 import {serverStore} from './ServerStore';
-import {
-  resolveDraftCandidate,
-  resolveDraftModelId,
-  unpairedDraftCandidate,
-} from './draftResolution';
+import {resolveDraftModelId} from './draftResolution';
 import {checkGpuSupport} from '../utils/deviceCapabilities';
 import {
   deepMerge,
@@ -76,9 +69,7 @@ import {
 } from '../utils/types';
 
 import {ErrorState, createErrorState} from '../utils/errors';
-import {hasEnoughMemory} from '../hooks/useMemoryCheck';
 import {
-  isHighEndDevice,
   getRecommendedThreadCount,
   getCpuCoreCount,
 } from '../utils/deviceCapabilities';
@@ -87,12 +78,8 @@ import {ReasoningCapability} from '../utils/reasoningCapability';
 import {capsMatchBinding} from '../utils/remoteCaps';
 import type {ModelCapabilityView} from '../utils/modelCaps';
 import {t} from '../locales';
-import {
-  createContextInitParams,
-  createDefaultContextInitParams,
-} from '../utils/contextInitParamsVersions';
+import {createDefaultContextInitParams} from '../utils/contextInitParamsVersions';
 import NativeHardwareInfo from '../specs/NativeHardwareInfo';
-import {getModelMemoryRequirement} from '../utils/memoryEstimator';
 import {loadLlamaModelInfo} from 'llama.rn';
 import {logger} from '../utils/logger';
 import {ProjectionModelManager} from './model/ProjectionModelManager';
@@ -111,14 +98,11 @@ import {initializeModelSystem} from './model/bootstrap';
 import {
   MIN_CONTEXT_SIZE,
   clearCompletionPromiseOf,
-  getContextOperationMutex,
-  getPendingModelId,
   injectRuntimeHost,
   registerCompletionPromiseOf,
   releaseContextInternal,
+  resolveDraftConfig as resolveDraftConfigOf,
   runtimeStore,
-  setContextOperationMutex,
-  setPendingModelId,
 } from './model/runtimeStore';
 
 /**
@@ -165,9 +149,6 @@ function createRemoteModel(params: {
   };
 }
 
-const pairedDraftModel = (config?: DraftConfig): Model | undefined =>
-  config?.mode === 'paired' ? config.draftModel : undefined;
-
 export class ModelStore {
   models: Model[] = [];
   version: number | undefined = undefined; // Persisted version
@@ -190,8 +171,19 @@ export class ModelStore {
   }
   useAutoRelease: boolean = true;
   // UI loading state - true during model load/release transitions
-  isContextLoading: boolean = false;
-  loadingModel: Model | undefined = undefined;
+  // ── B8 (phase-4 4a): real state lives in runtimeStore (boxes; not persisted) ──
+  get isContextLoading(): boolean {
+    return runtimeStore.isContextLoading;
+  }
+  set isContextLoading(value: boolean) {
+    runtimeStore.isContextLoading = value;
+  }
+  get loadingModel(): Model | undefined {
+    return runtimeStore.loadingModel;
+  }
+  set loadingModel(value: Model | undefined) {
+    runtimeStore.loadingModel = value;
+  }
 
   // Unified context initialization parameters
   contextInitParams: ContextInitParams = createDefaultContextInitParams();
@@ -208,20 +200,52 @@ export class ModelStore {
     runtimeStore.max_threads = value;
   }
 
-  activeModelId: string | undefined = undefined;
+  // ── B8 (phase-4 4a): real state lives in runtimeStore (boxes; not persisted) ──
+  get activeModelId(): string | undefined {
+    return runtimeStore.activeModelId;
+  }
+  set activeModelId(value: string | undefined) {
+    runtimeStore.activeModelId = value;
+  }
 
   // Flag to track if multimodal is currently active
-  isMultimodalActive: boolean = false;
-  activeProjectionModelId: string | undefined = undefined;
+  get isMultimodalActive(): boolean {
+    return runtimeStore.isMultimodalActive;
+  }
+  set isMultimodalActive(value: boolean) {
+    runtimeStore.isMultimodalActive = value;
+  }
+  get activeProjectionModelId(): string | undefined {
+    return runtimeStore.activeProjectionModelId;
+  }
+  set activeProjectionModelId(value: string | undefined) {
+    runtimeStore.activeProjectionModelId = value;
+  }
 
   // Track initialization settings for the active context
   activeContextSettings: ContextInitParams | undefined = undefined;
 
-  context: LlamaContext | undefined = undefined;
+  // ── B8 (phase-4 4a): real state lives in runtimeStore (boxes; not persisted) ──
+  get context(): LlamaContext | undefined {
+    return runtimeStore.context;
+  }
+  set context(value: LlamaContext | undefined) {
+    runtimeStore.context = value;
+  }
 
-  engine: CompletionEngine | undefined = undefined;
+  get engine(): CompletionEngine | undefined {
+    return runtimeStore.engine;
+  }
+  set engine(value: CompletionEngine | undefined) {
+    runtimeStore.engine = value;
+  }
 
-  activeRemoteBinding: RemoteSessionBinding | undefined = undefined;
+  get activeRemoteBinding(): RemoteSessionBinding | undefined {
+    return runtimeStore.activeRemoteBinding;
+  }
+  set activeRemoteBinding(value: RemoteSessionBinding | undefined) {
+    runtimeStore.activeRemoteBinding = value;
+  }
 
   lastUsedModelId: string | undefined = undefined;
 
@@ -942,13 +966,9 @@ export class ModelStore {
       .catch(() => {});
   };
 
-  reinitializeContext = async () => {
-    if (this.activeModelId) {
-      const model = this.models.find(m => m.id === this.activeModelId);
-      if (model) {
-        await this.initContext(model);
-      }
-    }
+  // ── B8 (phase-4 4a): implementation lives in runtimeStore since batch 8 ──
+  reinitializeContext = async (): Promise<void> => {
+    await runtimeStore.reinitializeContext();
   };
 
   /**
@@ -1771,78 +1791,9 @@ export class ModelStore {
     })();
   };
 
-  /**
-   * Determines whether multimodal (vision) should be enabled for a model load.
-   *
-   * Resolves multimodal config: enables vision if model supports it and a projection
-   * model is available (explicit path or downloaded default).
-   *
-   * @returns
-   * - isMultimodalInit: true if we should initialize with vision support
-   * - resolvedMmProjPath: file path to the projection model (only if isMultimodalInit=true)
-   * - projectionModel: the Model object for the projection (only when auto-resolved from defaults)
-   *
-   * Note: This is a read-only operation safe to call outside the mutex.
-   */
-  private resolveMultimodalConfig = async (
-    model: Model,
-    mmProjPath?: string,
-  ): Promise<{
-    isMultimodalInit: boolean;
-    resolvedMmProjPath?: string;
-    projectionModel?: Model;
-  }> => {
-    const visionEnabled = this.getModelVisionPreference(model);
-
-    // Priority 1: Explicit path provided by caller
-    if (mmProjPath && visionEnabled) {
-      return {isMultimodalInit: true, resolvedMmProjPath: mmProjPath};
-    }
-
-    // Priority 2: Auto-resolve from model's default projection model
-    if (
-      model.supportsMultimodal &&
-      model.defaultProjectionModel &&
-      visionEnabled
-    ) {
-      const projectionModel = this.models.find(
-        m => m.id === model.defaultProjectionModel,
-      );
-      if (projectionModel?.isDownloaded) {
-        const resolvedPath = await this.getModelFullPath(projectionModel);
-        return {
-          isMultimodalInit: true,
-          resolvedMmProjPath: resolvedPath,
-          projectionModel,
-        };
-      }
-    }
-
-    // Default: No multimodal support
-    return {isMultimodalInit: false};
-  };
-
-  private resolveDraftConfig = async (model: Model): Promise<DraftConfig> => {
-    const candidate = resolveDraftCandidate(
-      model,
-      this.models,
-      this.contextInitParams,
-    );
-    if (candidate.mode !== 'paired') {
-      return candidate;
-    }
-
-    const resolvedDraftPath = await this.getModelFullPath(candidate.draftModel);
-    if (resolvedDraftPath) {
-      return {
-        mode: 'paired',
-        resolvedDraftPath,
-        draftModel: candidate.draftModel,
-      };
-    }
-
-    return unpairedDraftCandidate(model);
-  };
+  // ── B8 (phase-4 4a): resolveMultimodalConfig / checkMemoryAndConfirm /
+  // proceedWithInitialization left with initContext (module-level helpers in
+  // runtimeStore.ts — private members, no god-object surface needed).
 
   // ── B3 (phase-4 4a): implementations live in runtimeStore since batch 3 ──
   get effectiveDraftMode(): DraftConfig['mode'] {
@@ -1853,65 +1804,13 @@ export class ModelStore {
     return runtimeStore.effectiveDraftCacheDefaults;
   }
 
-  /**
-   * Check memory/capability requirements and show warning alert if needed.
-   * Returns true if user confirms or no warning needed, false if cancelled.
-   */
-  private checkMemoryAndConfirm = async (
-    model: Model,
-    isMultimodalInit: boolean,
-    projectionModel?: Model,
-    draftModel?: Model,
-  ): Promise<boolean> => {
-    let hasMemory = true;
-    try {
-      hasMemory = await hasEnoughMemory(model, projectionModel, draftModel);
-    } catch (error) {
-      console.error('Memory check failed:', error);
-      return false;
-    }
-
-    const isCapable = isMultimodalInit ? await isHighEndDevice() : true;
-    const hasMemoryIssue = !hasMemory;
-    const hasCapabilityIssue = isMultimodalInit && !isCapable;
-
-    if (!hasMemoryIssue && !hasCapabilityIssue) {
-      return true; // No warning needed
-    }
-
-    console.warn(
-      `Device performance warning for model: ${model.name} - Memory: ${hasMemoryIssue}, Capability: ${hasCapabilityIssue}`,
-    );
-
-    let title: string;
-    let message: string;
-
-    if (hasMemoryIssue && hasCapabilityIssue) {
-      title = uiStore.l10n.memory.alerts.combinedWarningTitle;
-      message = uiStore.l10n.memory.alerts.combinedWarningMessage;
-    } else if (hasMemoryIssue) {
-      title = uiStore.l10n.memory.alerts.memoryWarningTitle;
-      message = uiStore.l10n.memory.alerts.memoryWarningMessage;
-    } else {
-      title = uiStore.l10n.memory.alerts.multimodalWarningTitle;
-      message = uiStore.l10n.memory.alerts.multimodalWarningMessage;
-    }
-
-    // Show alert and wait for user decision - this happens OUTSIDE the mutex
-    return new Promise<boolean>(resolve => {
-      Alert.alert(title, message, [
-        {
-          text: uiStore.l10n.memory.alerts.cancel,
-          style: 'cancel',
-          onPress: () => resolve(false),
-        },
-        {
-          text: uiStore.l10n.memory.alerts.continue,
-          onPress: () => resolve(true),
-        },
-      ]);
-    });
-  };
+  // ── B8 (phase-4 4a): implementation lives in runtimeStore (module
+  // function). This private reverse delegation keeps the god-object surface
+  // identical for the suites that exercise the private name directly (B1
+  // pattern: every moved member keeps its delegation until its call sites
+  // migrate at 4d).
+  private resolveDraftConfig = async (model: Model): Promise<DraftConfig> =>
+    resolveDraftConfigOf(runtimeStore, model);
 
   // ── B5 (phase-4 4a): implementations live in runtimeStore since batch 5 ──
   enterBenchmarkMode = async (): Promise<void> => {
@@ -1922,288 +1821,16 @@ export class ModelStore {
     runtimeStore.exitBenchmarkMode();
   };
 
-  /**
-   * Initialize a model context, optionally with multimodal support.
-   *
-   * Architecture:
-   * - Phase 1 (outside mutex): Resolve config, check memory, show alert if needed
-   * - Phase 2 (inside mutex): Release old context, load new context
-   *
-   * The "last-one-wins" pattern uses pendingModelId set at the START, then checked
-   * both after the Alert (to skip if superseded) and inside the mutex (final check).
-   * Note: "last-one-wins" not always loading the last tapped model, but it's ok, as
-   * long as it is not leading the deadlock or mem leak.
-   *
-   * @param model The main LLM model to initialize
-   * @param mmProjPath Optional path to a projection model for multimodal support
-   * @returns The initialized LlamaContext, or null if cancelled/skipped
-   */
-  initContext = async (model: Model, mmProjPath?: string) => {
-    // Benchmark mode owns the native context lifecycle end-to-end.
-    // Reject synchronously so any racing caller (ChatView auto-load, header,
-    // sheet) fails fast instead of silently shadowing the matrix's per-cell
-    // devices / n_gpu_layers via the "already loaded → skip" path.
-    if (this.benchmarkActive) {
-      throw new Error(
-        '[ModelStore] initContext rejected: benchmark mode is active',
-      );
-    }
-
-    // === Phase 1: Pre-flight checks OUTSIDE mutex ===
-
-    // Mark intent immediately - this is the "last-one-wins" tracking
-    // If another model is requested while we're showing an Alert, their
-    // pendingModelId will overwrite ours and we'll detect it later
-    setPendingModelId(model.id);
-
-    // Set loading state immediately for UI feedback
-    runInAction(() => {
-      this.isContextLoading = true;
-      this.loadingModel = model;
-    });
-
-    try {
-      // Resolve multimodal configuration
-      const {isMultimodalInit, resolvedMmProjPath, projectionModel} =
-        await this.resolveMultimodalConfig(model, mmProjPath);
-
-      const draftConfig = await this.resolveDraftConfig(model);
-
-      // Check memory and get user confirmation if needed (no mutex - UI interaction)
-      const shouldProceed = await this.checkMemoryAndConfirm(
-        model,
-        isMultimodalInit,
-        projectionModel,
-        pairedDraftModel(draftConfig),
-      );
-
-      if (!shouldProceed) {
-        throw new Error('Model loading cancelled by user');
-      }
-
-      // After Alert (if shown), check if we're still the intended model
-      // Another model request might have come in while user was deciding
-      if (getPendingModelId() !== model.id) {
-        logger.debug(
-          `[ModelStore] Skipping "${model.name}" - user switched to "${getPendingModelId()}" during confirmation`,
-        );
-        return null;
-      }
-
-      // === Phase 2: Execute context operations WITH mutex ===
-
-      const operationPromise = getContextOperationMutex().then(async () => {
-        // A benchmark may have started while this load sat in the mutex
-        // queue (cold-launch deep-link race). Bail before doing native work
-        // — enterBenchmarkMode will release any context we leave behind.
-        if (this.benchmarkActive) {
-          logger.debug(
-            `[ModelStore] Skipping queued load for "${model.name}" - benchmark mode is active`,
-          );
-          return null;
-        }
-
-        // Final check if this request is still current (last-one-wins)
-        // This catches race conditions where another request queued while we waited
-        if (getPendingModelId() !== model.id) {
-          logger.debug(
-            `[ModelStore] Skipping outdated load for "${model.name}" - user now wants model "${getPendingModelId()}"`,
-          );
-          return null;
-        }
-
-        // Skip if already loaded
-        if (this.activeModelId === model.id && this.context) {
-          logger.debug(
-            `[ModelStore] Model "${model.name}" is already loaded, skipping`,
-          );
-          return this.context;
-        }
-
-        // Release existing context
-        await releaseContextInternal(this);
-
-        // Small delay for native cleanup before loading next model
-        await new Promise(resolve => setTimeout(resolve, 100));
-
-        // Proceed with actual initialization
-        return this.proceedWithInitialization(
-          model,
-          resolvedMmProjPath,
-          isMultimodalInit,
-          projectionModel,
-          draftConfig,
-        );
-      });
-
-      // Keep mutex chain intact by swallowing errors
-      setContextOperationMutex(operationPromise.then(() => {}).catch(() => {}));
-
-      return await operationPromise;
-    } finally {
-      runInAction(() => {
-        this.isContextLoading = false;
-        this.loadingModel = undefined;
-      });
-    }
-  };
-
-  /**
-   * Proceed with the actual model initialization after device capability checks
-   */
-  private async proceedWithInitialization(
+  // ── B8 (phase-4 4a): implementation lives in runtimeStore since batch 8
+  // (its pre-flight helpers + proceedWithInitialization went with it as
+  // module functions). Verbatim reverse delegation — dies at 4b when the
+  // call sites migrate. The JSDoc moved with the body.
+  initContext = async (
     model: Model,
     mmProjPath?: string,
-    isMultimodalInit: boolean = false,
-    projectionModel?: Model,
-    draftConfig?: DraftConfig,
-  ): Promise<LlamaContext> {
-    const filePath = await this.getModelFullPath(model);
-    if (!filePath) {
-      throw new Error('Model path is undefined');
-    }
-
-    runInAction(() => {
-      this.isMultimodalActive = false; // Reset until we confirm it's enabled
-      this.activeProjectionModelId = projectionModel?.id;
-    });
-
-    // Get all effective initialization settings BEFORE try block
-    // so they're available for error reporting if initialization fails
-    const effectiveSettings = await this.getEffectiveContextInitParams(
-      filePath,
-      draftConfig,
-    );
-
-    try {
-      // Create properly versioned ContextInitParams
-      const contextInitParams = createContextInitParams(effectiveSettings);
-
-      const t0 = Date.now();
-      const ctx = await initLlama(
-        {
-          model: filePath,
-          ...effectiveSettings, // Use effectiveSettings without version for llama.rn
-          use_progress_callback: true,
-        },
-        (_progress: number) => {
-          //logger.debug('progress: ', _progress);
-        },
-      );
-      const t1 = Date.now();
-      logger.debug('init time: ', t1 - t0);
-
-      await this.updateModelStopTokens(ctx, model);
-
-      // Check and update thinking capabilities
-      await this.updateModelThinkingCapabilities(ctx, model);
-
-      // Initialize multimodal support if mmproj path was provided
-      if (isMultimodalInit && mmProjPath) {
-        try {
-          logger.debug(
-            'Initializing multimodal support with path:',
-            mmProjPath,
-          );
-
-          // Initialize multimodal with the new API format
-          // Apply effective value: clamp image_max_tokens to n_ctx
-          const success = await ctx.initMultimodal({
-            path: mmProjPath,
-            use_gpu: !this.contextInitParams.no_gpu_devices,
-            image_max_tokens: Math.min(
-              this.contextInitParams.image_max_tokens ?? 512,
-              this.contextInitParams.n_ctx,
-            ),
-          });
-
-          if (!success) {
-            console.error('Failed to initialize multimodal support');
-          } else {
-            logger.debug('Multimodal support initialized successfully');
-            // Verify that multimodal is now enabled
-            const isEnabled = await ctx.isMultimodalEnabled();
-            logger.debug('Multimodal enabled status:', isEnabled);
-
-            // Update the multimodal active flag
-            runInAction(() => {
-              this.isMultimodalActive = isEnabled;
-            });
-          }
-        } catch (error) {
-          console.error('Error initializing multimodal support:', error);
-          runInAction(() => {
-            this.isMultimodalActive = false;
-            this.activeProjectionModelId = undefined;
-          });
-        }
-      }
-
-      runInAction(() => {
-        this.context = ctx;
-        this.engine = new LocalCompletionEngine(ctx);
-        this.activeRemoteBinding = undefined;
-        this.activeContextSettings = contextInitParams;
-        this.setActiveModel(model.id);
-        setPendingModelId(null);
-      });
-
-      // Update largestSuccessfulLoad using GGUF estimator
-      try {
-        const estimated = getModelMemoryRequirement(
-          model,
-          projectionModel,
-          contextInitParams,
-          pairedDraftModel(draftConfig),
-        );
-        runInAction(() => {
-          if (
-            this.largestSuccessfulLoad === undefined ||
-            estimated > this.largestSuccessfulLoad
-          ) {
-            this.largestSuccessfulLoad = estimated;
-          }
-        });
-      } catch (error) {
-        console.warn(
-          '[ModelStore] Failed to update largestSuccessfulLoad:',
-          error,
-        );
-      }
-
-      return ctx;
-    } catch (error) {
-      console.error(
-        `Failed to initialize model context for "${model.name}" (${model.id}):`,
-        error,
-      );
-
-      // Set error state for UI feedback - include model info and context params for error reporting
-      const errorState = createErrorState(error, 'modelInit', undefined, {
-        modelId: model.id,
-        modelName: model.name,
-        modelUrl: model.hfUrl,
-        modelSize: model.size,
-        contextParams: effectiveSettings,
-      });
-      runInAction(() => {
-        this.modelLoadError = errorState;
-      });
-
-      throw error;
-    } finally {
-      runInAction(() => {
-        this.lastUsedModelId = model.id;
-      });
-      try {
-        runInAction(() => {
-          model.lastUsedAt = Date.now();
-        });
-      } catch {
-        // Non-critical bookkeeping — never fail a model load over it.
-      }
-    }
-  }
+  ): Promise<LlamaContext | null> => {
+    return runtimeStore.initContext(model, mmProjPath);
+  };
 
   // ── B7 (phase-4 4a): implementations live in runtimeStore since batch 7 ──
   releaseContext = async (
