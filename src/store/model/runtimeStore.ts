@@ -139,6 +139,10 @@ function capabilityEnvOf(s: RuntimeStore): CapabilityEnv {
 const appStateBox = observable.box<AppStateStatus>(AppState.currentState);
 const autoReleaseDisabledReasons = observable.set<string>();
 
+// B5: benchmarkActive — real state (box; not persisted). The e2e runner
+// claims/releases the native context through enter/exitBenchmarkMode.
+const benchmarkActiveBox = observable.box<boolean>(false);
+
 // markAutoReleased / clearAutoReleaseFlags (private members) moved verbatim;
 // they write the persist-key flags through the barrel binding until the v2
 // roots relocate them.
@@ -340,7 +344,12 @@ export const runtimeStore: RuntimeStore = {
     return modelStore.isStreaming;
   },
   get benchmarkActive() {
-    return modelStore.benchmarkActive;
+    return benchmarkActiveBox.get();
+  },
+  set benchmarkActive(value: boolean) {
+    runInAction(() => {
+      benchmarkActiveBox.set(value);
+    });
   },
   get modelLoadError() {
     return modelStore.modelLoadError;
@@ -747,8 +756,49 @@ export const runtimeStore: RuntimeStore = {
   startImageCompletion: (...args) => modelStore.startImageCompletion(...args),
   setInferencing: (...args) => modelStore.setInferencing(...args),
   setIsStreaming: (...args) => modelStore.setIsStreaming(...args),
-  enterBenchmarkMode: (...args) => modelStore.enterBenchmarkMode(...args),
-  exitBenchmarkMode: (...args) => modelStore.exitBenchmarkMode(...args),
+  // ── B5 (phase-4 4a): benchmark family — real implementations ──
+  /**
+   * Take exclusive ownership of the native context for the e2e benchmark
+   * runner. Sets `benchmarkActive` synchronously so any new auto-load is
+   * gated, then drains the mutex (in case one is already in flight) and
+   * releases whatever context exists. After this resolves, the runner can
+   * safely call `initLlama` directly without racing the rest of the app.
+   *
+   * Pairs with `exitBenchmarkMode()`. The runner MUST call exit even on
+   * failure paths or chat / header / sheet inits will stay rejected.
+   *
+   * The mutex and the internal release stay on the god object until B7 —
+   * private members, reached through a narrow structural view (bridge ج9,
+   * death B7 — see extraction-plan §8 registry).
+   */
+  async enterBenchmarkMode(): Promise<void> {
+    runInAction(() => {
+      benchmarkActiveBox.set(true);
+    });
+
+    const godPrivate = modelStore as unknown as {
+      contextOperationMutex: Promise<void>;
+      _releaseContextInternal: (clearActiveModel: boolean) => Promise<void>;
+    };
+    const op = godPrivate.contextOperationMutex.then(async () => {
+      // Release any context the rest of the app loaded (e.g. ChatView's
+      // auto-load on cold launch). clearActiveModel:true so the queued
+      // post-mutex callers see a clean slate if they ever run.
+      await godPrivate._releaseContextInternal(true);
+    });
+    godPrivate.contextOperationMutex = op.then(() => {}).catch(() => {});
+    await op;
+  },
+
+  /**
+   * Hand context ownership back to the rest of the app. Intentionally
+   * trivial — no native work — so it's safe to call from a `finally` block.
+   */
+  exitBenchmarkMode(): void {
+    runInAction(() => {
+      benchmarkActiveBox.set(false);
+    });
+  },
   clearModelLoadError: (...args) => modelStore.clearModelLoadError(...args),
   // ── B4 (phase-4 4a): auto-release family — real implementations ──
   setupAppStateListener() {

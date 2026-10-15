@@ -220,6 +220,7 @@ pendingLocalPathRecoveries/flushPendingLocalPathRecoveries→download)، + مد�
 | ج6: كتابات مفاتيح persist عبر ربط البرميل (mark/clear/update) | B4 | **B22** | الجذر `runtimeStore:v2` يستقبل الحالة — الكتابات تصبح this. (§3-أ) |
 | ج7: injectRuntimeHost (كتابات contextInitParams في محددات B1) | R0/B1 | **B22** | §8 سطر «بعد B22»: الـ host يُحذف مع هجرة contextInitParams |
 | ج8: زوج max_threads على الإله الكائن | B2 | **B22** | الكاتب (initializeThreadCount) يهاجر إلى bootstrap — الزوج يُحذف |
+| ج9: قراءات B7 الخاصة عبر cast من enterBenchmarkMode (contextOperationMutex + _releaseContextInternal) | B5 | **B7** | الموتكس والإفلات الداخلي يهاجران مع دورة الحياة 1 — الاستدعاء يصبح this. داخل runtimeStore |
 
 قاعدة السجل: أي جسر جديد يولد في دفعة = سطر جديد هنا في نفس الـ commit؛ جسر بلا موت
 معلن = يوقف الدفعة.

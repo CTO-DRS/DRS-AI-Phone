@@ -262,7 +262,13 @@ export class ModelStore {
   // to keep the matrix's per-cell devices/n_gpu_layers from being shadowed
   // by an in-flight init that started before the matrix could configure them.
   // Runtime-only; not persisted.
-  benchmarkActive: boolean = false;
+  // ── B5 (phase-4 4a): real state lives in runtimeStore (box; not persisted) ──
+  get benchmarkActive(): boolean {
+    return runtimeStore.benchmarkActive;
+  }
+  set benchmarkActive(value: boolean) {
+    runtimeStore.benchmarkActive = value;
+  }
 
   downloadError: ErrorState | null = null;
   modelLoadError: ErrorState | null = null;
@@ -1893,39 +1899,13 @@ export class ModelStore {
     });
   };
 
-  /**
-   * Take exclusive ownership of the native context for the e2e benchmark
-   * runner. Sets `benchmarkActive` synchronously so any new auto-load is
-   * gated, then drains the mutex (in case one is already in flight) and
-   * releases whatever context exists. After this resolves, the runner can
-   * safely call `initLlama` directly without racing the rest of the app.
-   *
-   * Pairs with `exitBenchmarkMode()`. The runner MUST call exit even on
-   * failure paths or chat / header / sheet inits will stay rejected.
-   */
+  // ── B5 (phase-4 4a): implementations live in runtimeStore since batch 5 ──
   enterBenchmarkMode = async (): Promise<void> => {
-    runInAction(() => {
-      this.benchmarkActive = true;
-    });
-
-    const op = this.contextOperationMutex.then(async () => {
-      // Release any context the rest of the app loaded (e.g. ChatView's
-      // auto-load on cold launch). clearActiveModel:true so the queued
-      // post-mutex callers see a clean slate if they ever run.
-      await this._releaseContextInternal(true);
-    });
-    this.contextOperationMutex = op.then(() => {}).catch(() => {});
-    await op;
+    await runtimeStore.enterBenchmarkMode();
   };
 
-  /**
-   * Hand context ownership back to the rest of the app. Intentionally
-   * trivial — no native work — so it's safe to call from a `finally` block.
-   */
   exitBenchmarkMode = (): void => {
-    runInAction(() => {
-      this.benchmarkActive = false;
-    });
+    runtimeStore.exitBenchmarkMode();
   };
 
   /**
