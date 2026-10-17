@@ -1,0 +1,1936 @@
+{
+ "_meta": {
+  "regenerated": "2026-10-14 session-6 (post-reset-#6 rebuild; original 99a48bb lost unpushed)",
+  "source": "src/store/ModelStore.ts @ 88a0257 (branch fix/modelstore-dissolution)",
+  "totalSourceLines": 3717,
+  "classRange": [
+   160,
+   3714
+  ],
+  "memberCountParsed": 133,
+  "memberCountTotal": 145,
+  "note": "12 list-members with multi-line signatures were re-attached by declaration scan; 145 = 138 delegated (39 catalog + 23 download + 76 runtime) + 7 uncovered"
+ },
+ "persistKeys": [
+  {
+   "key": "models",
+   "owner": "catalog"
+  },
+  {
+   "key": "version",
+   "owner": "catalog"
+  },
+  {
+   "key": "deviceTier",
+   "owner": "catalog"
+  },
+  {
+   "key": "rulesVersion",
+   "owner": "catalog"
+  },
+  {
+   "key": "lastUsedModelId",
+   "owner": "catalog"
+  },
+  {
+   "key": "useAutoRelease",
+   "owner": "runtime"
+  },
+  {
+   "key": "contextInitParams",
+   "owner": "runtime"
+  },
+  {
+   "key": "wasAutoReleased",
+   "owner": "runtime"
+  },
+  {
+   "key": "lastAutoReleasedModelId",
+   "owner": "runtime"
+  },
+  {
+   "key": "availableMemoryCeiling",
+   "owner": "runtime"
+  },
+  {
+   "key": "largestSuccessfulLoad",
+   "owner": "runtime"
+  },
+  {
+   "key": "pendingProjectionCleanupIds",
+   "owner": "runtime"
+  }
+ ],
+ "persistStrategy": {
+  "name": "triple",
+  "steps": [
+   "new versioned roots: makePersistable per owning store (name \"catalogStore:v2\" / \"runtimeStore:v2\") with the same 12 properties split 5 catalog / 7 runtime",
+   "one-time legacy import: bootstrap reads legacy AsyncStorage key \"ModelStore\", maps payloads into the new roots, respects stored version vs MODEL_LIST_VERSION, never drops user data on upgrade",
+   "legacy key removal after successful import (re-hydration clause of the store contracts)"
+  ]
+ },
+ "transientStates": [
+  {
+   "name": "context",
+   "owner": "runtime",
+   "evidence": "read by ProjectionModelManager L206/L324 (runtimeBridge)"
+  },
+  {
+   "name": "activeModelId",
+   "owner": "runtime",
+   "evidence": "read by ProjectionModelManager L321 (runtimeBridge)"
+  },
+  {
+   "name": "activeProjectionModelId",
+   "owner": "runtime",
+   "evidence": "written L2335/2404/2499; read by ProjectionModelManager L206"
+  },
+  {
+   "name": "isMultimodalActive",
+   "owner": "runtime",
+   "evidence": "written only in init pipeline L2334/2397/2403/2498; UI reads via runtimeStore"
+  },
+  {
+   "name": "downloadError",
+   "owner": "download",
+   "evidence": "written by mutationSync bridge L339 + download flows L1582/1678"
+  },
+  {
+   "name": "max_threads",
+   "owner": "runtime",
+   "evidence": "bootstrap-written by initializeThreadCount L349/368 (first-launch reads catalog version)"
+  },
+  {
+   "name": "verifyingModelIds",
+   "owner": "download",
+   "evidence": "written by verifyDownloadedModel L1630/1683; settlement awaited by download-status flows"
+  },
+  {
+   "name": "pendingLocalPathRecoveries",
+   "owner": "download",
+   "evidence": "written resolveLocalModelPath L1362; flushed L1430 inside download-status flows"
+  },
+  {
+   "name": "appState",
+   "owner": "runtime",
+   "evidence": "written by listener L1097-1106; consumed by auto-release"
+  }
+ ],
+ "transientStatesRule": "each declared EXACTLY ONCE across src/store/model/*.ts; cross-domain access only through the owning store or a documented bridge; 4e gate greps each name = 1 declaration",
+ "bridges": [
+  {
+   "name": "mutationSync",
+   "from": "downloadManager callbacks (constructor L288-342)",
+   "to": "catalog model fields + downloadError + verifyDownloadedModel + fetchAndPersistGGUFMetadata",
+   "ownerAfter4a": "downloadStore composition; catalog writes via catalogStore members",
+   "coveredBy": "ModelStore.test.ts download describes (onComplete verification, onError downloadError); post-4d owner: download suite"
+  },
+  {
+   "name": "cleanupQueueBridge",
+   "from": "healDraftVisionClassification (catalog) L703-708 pushes ids",
+   "to": "drainPendingProjectionCleanup (runtime) L726-759 calls deleteModel (download); persisted queue kill-safe",
+   "ownerAfter4a": "queue state: runtimeStore; producer: catalogStore.healDraftVisionClassification; consumer: runtimeStore drain",
+   "coveredBy": "ModelStore.test.ts L447/463/494/505 (drain + in-flight retention); post-4d owner: runtime suite (drain) + catalog suite (producer)"
+  },
+  {
+   "name": "runtimeBridge",
+   "from": "ProjectionModelManager (serves catalog+download members) reads host.context/activeModelId/activeProjectionModelId L206/208/321/324",
+   "to": "runtime state",
+   "ownerAfter4a": "manager re-homed with explicit reads via injected runtime store reference (documented, not silent)",
+   "coveredBy": "ModelStore.test.ts canDelete/vision tests; post-4d owner: download suite; gap check at 4d"
+  }
+ ],
+ "initializeStore": {
+  "current": {
+   "line": 761,
+   "size": 85,
+   "callers": "only ModelStore constructor persist.then L282 (no external production callers)"
+  },
+  "fate": "dissolves into src/store/model/bootstrap.ts as initializeModelSystem(composition) — 4a batch 23",
+  "newSignature": "initializeModelSystem(deps: {catalog: CatalogStore; download: DownloadStore; runtime: RuntimeStore; persist?: {importLegacy: () => Promise<void>}}) => Promise<void>",
+  "order": "preserve exact step order L762-845: heal -> syncWithActiveDownloads -> drain -> presets resolve -> version-gate merge/reconcile -> upgradeToFetchedRules (after interactions) -> initializeGpuSettings -> memory ceiling -> loadMissingGGUFMetadata -> checkAndReloadAutoReleasedModel"
+ },
+ "r0": {
+  "content": "src/store/model/bootstrap.ts scaffold ONLY: composition types + initializeModelSystem(deps) that wires the three stores and invokes the INJECTED initializer; ModelStore.ts constructor persist.then rewritten to call bootstrap with injected this.initializeStore/this.initializeThreadCount; ZERO members moved; ZERO test changes; ZERO counter delta (DI by parameter, no modelStore. reference inside bootstrap.ts); +1 file",
+  "suitesImpact": "none (312 stays); bootstrap contract tests arrive at 4d from the transformed facade six (Condition 1)"
+ },
+ "counter": {
+  "recipe": "official = rg 'modelStore\\.[a-zA-Z]' lines outside src/store/model; raw = official + same pattern inside src/store/model; real = official - 1 (FP: comment 'a future regeneration of __mocks__/stores/modelStore.ts cannot silently' at BenchmarkRunnerScreen.test.tsx:1715)",
+  "now": {
+   "official": 1733,
+   "real": 1732,
+   "raw": 1878,
+   "scaffoldInside": 145
+  },
+  "post4a": {
+   "official": 1732,
+   "real": 1731,
+   "raw": 1732,
+   "reason": "self-ref L3577 (toJS(modelStore.activeModel?.stopWords) inside startImageCompletion) leaves with the move; backward delegates reference store names, not modelStore."
+  },
+  "post4b": {
+   "official": 951,
+   "real": 950,
+   "raw": 951,
+   "reason": "B-class real 781 lines migrated (782 official incl FP); FP survives (comment); remaining = ModelStore.test 902 + localModelPath 38 + register 10 + FP 1 = official 951"
+  },
+  "post4d": {
+   "official": 1,
+   "real": 0,
+   "raw": 1,
+   "reason": "902+38+10 redirected (refs become store names); FP survives"
+  },
+  "post4e": {
+   "official": 0,
+   "real": 0,
+   "raw": 0,
+   "reason": "FP line deleted; ModelStore.ts + facade + central modelStore mock deleted"
+  }
+ },
+ "bClass": {
+  "filesTotal": 60,
+  "productionFiles": 33,
+  "testSuites": 27,
+  "officialLines": 782,
+  "realLines": 781,
+  "note": "session-3 figure was 60 files / 802 EVENTS; counter counts LINES (one line may hold several events) -> 782 official lines / 781 real",
+  "files": [
+   {
+    "file": "src/hooks/__tests__/useMemoryCheck.test.ts",
+    "count": 20
+   },
+   {
+    "file": "src/hooks/__tests__/useStructuredOutput.test.ts",
+    "count": 6
+   },
+   {
+    "file": "src/hooks/__tests__/useChatSession.test.ts",
+    "count": 54
+   },
+   {
+    "file": "src/hooks/__tests__/useMessageActions.test.ts",
+    "count": 6
+   },
+   {
+    "file": "src/hooks/__tests__/useChatSession.assistantTurn.test.ts",
+    "count": 55
+   },
+   {
+    "file": "src/hooks/__tests__/useChatSession.reasoning.test.ts",
+    "count": 14
+   },
+   {
+    "file": "src/hooks/useAssistantLoadHint.ts",
+    "count": 1
+   },
+   {
+    "file": "src/hooks/useMemoryCheck.ts",
+    "count": 8
+   },
+   {
+    "file": "src/hooks/useChatSession.ts",
+    "count": 25
+   },
+   {
+    "file": "src/hooks/useStructuredOutput.ts",
+    "count": 2
+   },
+   {
+    "file": "src/hooks/useMessageActions.ts",
+    "count": 3
+   },
+   {
+    "file": "src/store/onboarding/onboardingAssistants.ts",
+    "count": 3
+   },
+   {
+    "file": "src/screens/AssistantsScreen/components/SquareAssistantCard/__tests__/SquareAssistantCard.test.tsx",
+    "count": 4
+   },
+   {
+    "file": "src/screens/AssistantsScreen/components/SquareAssistantCard/SquareAssistantCard.tsx",
+    "count": 7
+   },
+   {
+    "file": "src/screens/DevToolsScreen/screens/TestCompletionScreen/TestCompletionScreen.tsx",
+    "count": 24
+   },
+   {
+    "file": "src/screens/OnboardingScreens/Onboarding6Screen/Onboarding6Screen.tsx",
+    "count": 1
+   },
+   {
+    "file": "src/screens/ModelsHub/__tests__/ModelsHubScreen.test.tsx",
+    "count": 1
+   },
+   {
+    "file": "src/screens/ModelsHub/hooks/useDeviceProfile.ts",
+    "count": 1
+   },
+   {
+    "file": "src/screens/ModelsHub/components/CategoryBrowse.tsx",
+    "count": 1
+   },
+   {
+    "file": "src/screens/ModelsHub/components/ModelDetailsSheet.tsx",
+    "count": 1
+   },
+   {
+    "file": "src/screens/ModelsHub/components/UpdatesSection.tsx",
+    "count": 1
+   },
+   {
+    "file": "src/screens/ModelsHub/components/HubSearchResults.tsx",
+    "count": 1
+   },
+   {
+    "file": "src/screens/SettingsScreen/SettingsScreen.tsx",
+    "count": 84
+   },
+   {
+    "file": "src/screens/ChatScreen/ModelNotLoadedMessage/__tests__/ModelNotLoadedMessage.test.tsx",
+    "count": 11
+   },
+   {
+    "file": "src/screens/ChatScreen/ModelNotLoadedMessage/ModelNotLoadedMessage.tsx",
+    "count": 1
+   },
+   {
+    "file": "src/screens/ChatScreen/ChatScreen.tsx",
+    "count": 16
+   },
+   {
+    "file": "src/screens/SettingsScreen/__tests__/SettingsScreen.test.tsx",
+    "count": 108
+   },
+   {
+    "file": "src/screens/ChatScreen/__tests__/VideoAssistantScreen.test.tsx",
+    "count": 9
+   },
+   {
+    "file": "src/screens/ChatScreen/__tests__/ChatScreen.test.tsx",
+    "count": 81
+   },
+   {
+    "file": "src/screens/ChatScreen/VideoAssistantScreen.tsx",
+    "count": 16
+   },
+   {
+    "file": "src/screens/BenchmarkScreen/__tests__/BenchmarkScreen.test.tsx",
+    "count": 25
+   },
+   {
+    "file": "src/screens/BenchmarkScreen/BenchmarkScreen.tsx",
+    "count": 23
+   },
+   {
+    "file": "src/__automation__/benchParams.ts",
+    "count": 1
+   },
+   {
+    "file": "src/__automation__/screens/__tests__/BenchmarkRunnerScreen.test.tsx",
+    "count": 1
+   },
+   {
+    "file": "src/components/TextMessage/__tests__/PlayButton.test.tsx",
+    "count": 2
+   },
+   {
+    "file": "src/components/TextMessage/PlayButton.tsx",
+    "count": 2
+   },
+   {
+    "file": "src/components/IncreaseContextSheet/IncreaseContextSheet.tsx",
+    "count": 9
+   },
+   {
+    "file": "src/components/IncreaseContextSheet/__tests__/IncreaseContextSheet.test.tsx",
+    "count": 10
+   },
+   {
+    "file": "src/components/ContentReportSheet/ContentReportSheet.tsx",
+    "count": 3
+   },
+   {
+    "file": "src/components/TTSSetupSheet/__tests__/TTSSetupSheet.integration.test.tsx",
+    "count": 1
+   },
+   {
+    "file": "src/components/ChatAssistantModelPickerSheet/__tests__/ChatAssistantModelPickerSheet.test.tsx",
+    "count": 1
+   },
+   {
+    "file": "src/components/ChatInput/__tests__/ChatInput.test.tsx",
+    "count": 19
+   },
+   {
+    "file": "src/components/ChatInput/ChatInput.tsx",
+    "count": 6
+   },
+   {
+    "file": "src/components/MemoryRequirement/MemoryRequirement.tsx",
+    "count": 1
+   },
+   {
+    "file": "src/components/ModelsHeaderRight/ModelsHeaderRight.tsx",
+    "count": 1
+   },
+   {
+    "file": "src/components/AssistantSheets/__tests__/SystemPromptSection.test.tsx",
+    "count": 1
+   },
+   {
+    "file": "src/components/HeaderRight/__tests__/HeaderRight.test.tsx",
+    "count": 2
+   },
+   {
+    "file": "src/components/AssistantSheets/SystemPromptSection.tsx",
+    "count": 4
+   },
+   {
+    "file": "src/components/AssistantSheets/ModelSelector.tsx",
+    "count": 2
+   },
+   {
+    "file": "src/components/HeaderRight/HeaderRight.tsx",
+    "count": 3
+   },
+   {
+    "file": "src/components/ChatEmptyPlaceholder/__tests__/ChatEmptyPlaceholder.test.tsx",
+    "count": 4
+   },
+   {
+    "file": "src/components/ChatHeaderTitle/__tests__/ChatHeaderTitle.test.tsx",
+    "count": 6
+   },
+   {
+    "file": "src/components/ModelSettingsSheet/__tests__/ModelSettingsSheet.test.tsx",
+    "count": 15
+   },
+   {
+    "file": "src/components/ModelSettingsSheet/ModelSettingsSheet.tsx",
+    "count": 8
+   },
+   {
+    "file": "src/components/ChatHeaderTitle/ChatHeaderTitle.tsx",
+    "count": 1
+   },
+   {
+    "file": "src/components/ChatView/__tests__/BannerRow.test.tsx",
+    "count": 29
+   },
+   {
+    "file": "src/components/ChatView/ChatView.tsx",
+    "count": 16
+   },
+   {
+    "file": "src/components/ChatView/__tests__/ChatView.assistantTurn.test.tsx",
+    "count": 1
+   },
+   {
+    "file": "src/components/ChatView/BannerRow.tsx",
+    "count": 3
+   },
+   {
+    "file": "src/components/ChatView/__tests__/ChatView.test.tsx",
+    "count": 17
+   }
+  ]
+ },
+ "facadeSix": {
+  "file": "src/store/model/__tests__/facade.test.ts",
+  "tests": 6,
+  "fate": "TRANSFORM (not delete) into src/store/model/__tests__/bootstrap.test.ts at 4d — see extraction-plan.md Condition 1",
+  "fourEExpected": "4989 passed + 2 skipped STABLE; suites 312 STABLE (facade.test.ts -1, bootstrap.test.ts +1)"
+ },
+ "testSplit": {
+  "source": "src/store/__tests__/ModelStore.test.ts (6350 lines, 68 describes)",
+  "counts": {
+   "plainIt": 282,
+   "itEach": 3,
+   "anchoredItTotal": 285
+  },
+  "suites": {
+   "catalog": 100,
+   "download": 78,
+   "runtime": 104,
+   "total": 282
+  },
+  "rule": "equivalence redirection only: describe blocks map by domain; modelStore.X refs become owning-store refs; zero deleted assertions; it.each blocks travel with their describe (expansion counts measured live at 4d)",
+  "localModelPath": {
+   "file": "src/store/__tests__/ModelStore.localModelPath.test.ts",
+   "modelStoreRefs": 38,
+   "fate": "re-homed 4d, refs redirected to owning store"
+  },
+  "register": {
+   "file": "src/store/__tests__/ModelStore.registerOnboardingAssistantModel.test.ts",
+   "modelStoreRefs": 10,
+   "fate": "re-homed 4d, refs redirected to owning store"
+  }
+ },
+ "members": [
+  {
+   "name": "models",
+   "kind": "property",
+   "lines": [
+    161,
+    161
+   ],
+   "size": 1,
+   "target": "catalog",
+   "persisted": true
+  },
+  {
+   "name": "version",
+   "kind": "property",
+   "lines": [
+    162,
+    162
+   ],
+   "size": 1,
+   "target": "catalog",
+   "persisted": true
+  },
+  {
+   "name": "deviceTier",
+   "kind": "property",
+   "lines": [
+    163,
+    163
+   ],
+   "size": 1,
+   "target": "catalog",
+   "persisted": true
+  },
+  {
+   "name": "rulesVersion",
+   "kind": "property",
+   "lines": [
+    164,
+    164
+   ],
+   "size": 1,
+   "target": "catalog",
+   "persisted": true
+  },
+  {
+   "name": "displayModels",
+   "kind": "getter",
+   "lines": [
+    169,
+    171
+   ],
+   "size": 3,
+   "target": "catalog",
+   "persisted": false
+  },
+  {
+   "name": "appState",
+   "kind": "property",
+   "lines": [
+    173,
+    173
+   ],
+   "size": 1,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "useAutoRelease",
+   "kind": "property",
+   "lines": [
+    174,
+    174
+   ],
+   "size": 1,
+   "target": "runtime",
+   "persisted": true
+  },
+  {
+   "name": "isContextLoading",
+   "kind": "property",
+   "lines": [
+    176,
+    176
+   ],
+   "size": 1,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "loadingModel",
+   "kind": "property",
+   "lines": [
+    177,
+    177
+   ],
+   "size": 1,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "contextInitParams",
+   "kind": "property",
+   "lines": [
+    180,
+    180
+   ],
+   "size": 1,
+   "target": "runtime",
+   "persisted": true
+  },
+  {
+   "name": "max_threads",
+   "kind": "property",
+   "lines": [
+    182,
+    182
+   ],
+   "size": 1,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "activeModelId",
+   "kind": "property",
+   "lines": [
+    184,
+    184
+   ],
+   "size": 1,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "isMultimodalActive",
+   "kind": "property",
+   "lines": [
+    187,
+    187
+   ],
+   "size": 1,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "activeProjectionModelId",
+   "kind": "property",
+   "lines": [
+    188,
+    188
+   ],
+   "size": 1,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "activeContextSettings",
+   "kind": "property",
+   "lines": [
+    191,
+    191
+   ],
+   "size": 1,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "context",
+   "kind": "property",
+   "lines": [
+    193,
+    193
+   ],
+   "size": 1,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "engine",
+   "kind": "property",
+   "lines": [
+    195,
+    195
+   ],
+   "size": 1,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "activeRemoteBinding",
+   "kind": "property",
+   "lines": [
+    197,
+    197
+   ],
+   "size": 1,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "lastUsedModelId",
+   "kind": "property",
+   "lines": [
+    199,
+    199
+   ],
+   "size": 1,
+   "target": "catalog",
+   "persisted": true
+  },
+  {
+   "name": "verifyingModelIds",
+   "kind": "property",
+   "lines": [
+    202,
+    202
+   ],
+   "size": 1,
+   "target": "download",
+   "persisted": false
+  },
+  {
+   "name": "wasAutoReleased",
+   "kind": "property",
+   "lines": [
+    205,
+    205
+   ],
+   "size": 1,
+   "target": "runtime",
+   "persisted": true
+  },
+  {
+   "name": "lastAutoReleasedModelId",
+   "kind": "property",
+   "lines": [
+    206,
+    206
+   ],
+   "size": 1,
+   "target": "runtime",
+   "persisted": true
+  },
+  {
+   "name": "inferencing",
+   "kind": "property",
+   "lines": [
+    213,
+    213
+   ],
+   "size": 1,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "isStreaming",
+   "kind": "property",
+   "lines": [
+    214,
+    214
+   ],
+   "size": 1,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "benchmarkActive",
+   "kind": "property",
+   "lines": [
+    238,
+    238
+   ],
+   "size": 1,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "downloadError",
+   "kind": "property",
+   "lines": [
+    240,
+    240
+   ],
+   "size": 1,
+   "target": "download",
+   "persisted": false
+  },
+  {
+   "name": "modelLoadError",
+   "kind": "property",
+   "lines": [
+    241,
+    241
+   ],
+   "size": 1,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "availableMemoryCeiling",
+   "kind": "property",
+   "lines": [
+    245,
+    245
+   ],
+   "size": 1,
+   "target": "runtime",
+   "persisted": true
+  },
+  {
+   "name": "largestSuccessfulLoad",
+   "kind": "property",
+   "lines": [
+    247,
+    247
+   ],
+   "size": 1,
+   "target": "runtime",
+   "persisted": true
+  },
+  {
+   "name": "pendingProjectionCleanupIds",
+   "kind": "property",
+   "lines": [
+    250,
+    250
+   ],
+   "size": 1,
+   "target": "runtime",
+   "persisted": true
+  },
+  {
+   "name": "constructor",
+   "kind": "method",
+   "lines": [
+    252,
+    343
+   ],
+   "size": 92,
+   "target": "composition-root",
+   "persisted": false
+  },
+  {
+   "name": "initializeThreadCount",
+   "kind": "method",
+   "lines": [
+    345,
+    371
+   ],
+   "size": 27,
+   "target": "bootstrap",
+   "persisted": false
+  },
+  {
+   "name": "setNThreads",
+   "kind": "arrow-method",
+   "lines": [
+    373,
+    380
+   ],
+   "size": 8,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "setCacheTypeK",
+   "kind": "arrow-method",
+   "lines": [
+    382,
+    398
+   ],
+   "size": 17,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "setCacheTypeV",
+   "kind": "arrow-method",
+   "lines": [
+    400,
+    416
+   ],
+   "size": 17,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "setNBatch",
+   "kind": "arrow-method",
+   "lines": [
+    418,
+    425
+   ],
+   "size": 8,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "setNUBatch",
+   "kind": "arrow-method",
+   "lines": [
+    427,
+    434
+   ],
+   "size": 8,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "setNContext",
+   "kind": "arrow-method",
+   "lines": [
+    436,
+    443
+   ],
+   "size": 8,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "setNGPULayers",
+   "kind": "arrow-method",
+   "lines": [
+    445,
+    452
+   ],
+   "size": 8,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "setImageMaxTokens",
+   "kind": "arrow-method",
+   "lines": [
+    454,
+    461
+   ],
+   "size": 8,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "setUseMlock",
+   "kind": "arrow-method",
+   "lines": [
+    463,
+    470
+   ],
+   "size": 8,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "setUseMmap",
+   "kind": "arrow-method",
+   "lines": [
+    472,
+    479
+   ],
+   "size": 8,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "setNoExtraBufts",
+   "kind": "arrow-method",
+   "lines": [
+    481,
+    488
+   ],
+   "size": 8,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "setSpeculativeEnabled",
+   "kind": "arrow-method",
+   "lines": [
+    490,
+    497
+   ],
+   "size": 8,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "setSelectedDraftModel",
+   "kind": "arrow-method",
+   "lines": [
+    499,
+    506
+   ],
+   "size": 8,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "setSpecDraftNGpuLayers",
+   "kind": "arrow-method",
+   "lines": [
+    508,
+    515
+   ],
+   "size": 8,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "setSpecDraftCacheTypeK",
+   "kind": "arrow-method",
+   "lines": [
+    517,
+    524
+   ],
+   "size": 8,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "setSpecDraftCacheTypeV",
+   "kind": "arrow-method",
+   "lines": [
+    526,
+    533
+   ],
+   "size": 8,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "getEffectiveBatchValues",
+   "kind": "arrow-method",
+   "lines": [
+    658,
+    674
+   ],
+   "size": 17,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "getEffectiveValues",
+   "kind": "arrow-method",
+   "lines": [
+    684,
+    686
+   ],
+   "size": 3,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "healDraftVisionClassification",
+   "kind": "arrow-method",
+   "lines": [
+    694,
+    717
+   ],
+   "size": 24,
+   "target": "catalog",
+   "persisted": false
+  },
+  {
+   "name": "drainPendingProjectionCleanup",
+   "kind": "arrow-method",
+   "lines": [
+    726,
+    759
+   ],
+   "size": 34,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "initializeStore",
+   "kind": "arrow-method",
+   "lines": [
+    761,
+    845
+   ],
+   "size": 85,
+   "target": "bootstrap",
+   "persisted": false
+  },
+  {
+   "name": "reconcilePresets",
+   "kind": "arrow-method",
+   "lines": [
+    945,
+    961
+   ],
+   "size": 17,
+   "target": "catalog",
+   "persisted": false
+  },
+  {
+   "name": "mergeModelLists",
+   "kind": "arrow-method",
+   "lines": [
+    963,
+    1025
+   ],
+   "size": 63,
+   "target": "catalog",
+   "persisted": false
+  },
+  {
+   "name": "setupAppStateListener",
+   "kind": "arrow-method",
+   "lines": [
+    1027,
+    1029
+   ],
+   "size": 3,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "disableAutoRelease",
+   "kind": "arrow-method",
+   "lines": [
+    1032,
+    1038
+   ],
+   "size": 7,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "enableAutoRelease",
+   "kind": "arrow-method",
+   "lines": [
+    1040,
+    1046
+   ],
+   "size": 7,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "isAutoReleaseEnabled",
+   "kind": "getter",
+   "lines": [
+    1048,
+    1050
+   ],
+   "size": 3,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "checkAndReloadAutoReleasedModel",
+   "kind": "arrow-method",
+   "lines": [
+    1073,
+    1094
+   ],
+   "size": 22,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "handleAppStateChange",
+   "kind": "arrow-method",
+   "lines": [
+    1096,
+    1139
+   ],
+   "size": 44,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "reinitializeContext",
+   "kind": "arrow-method",
+   "lines": [
+    1182,
+    1189
+   ],
+   "size": 8,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "getModelFullPath",
+   "kind": "arrow-method",
+   "lines": [
+    1212,
+    1294
+   ],
+   "size": 83,
+   "target": "download",
+   "persisted": false
+  },
+  {
+   "name": "resolveLocalModelPath",
+   "kind": "arrow-method",
+   "lines": [
+    1317,
+    1364
+   ],
+   "size": 48,
+   "target": "download",
+   "persisted": false
+  },
+  {
+   "name": "checkFileExists",
+   "kind": "method",
+   "lines": [
+    1387,
+    1407
+   ],
+   "size": 21,
+   "target": "download",
+   "persisted": false
+  },
+  {
+   "name": "refreshDownloadStatuses",
+   "kind": "arrow-method",
+   "lines": [
+    1409,
+    1431
+   ],
+   "size": 23,
+   "target": "download",
+   "persisted": false
+  },
+  {
+   "name": "initializeDownloadStatus",
+   "kind": "arrow-method",
+   "lines": [
+    1433,
+    1435
+   ],
+   "size": 3,
+   "target": "download",
+   "persisted": false
+  },
+  {
+   "name": "removeInvalidLocalModels",
+   "kind": "arrow-method",
+   "lines": [
+    1437,
+    1460
+   ],
+   "size": 24,
+   "target": "download",
+   "persisted": false
+  },
+  {
+   "name": "checkSpaceAndDownload",
+   "kind": "arrow-method",
+   "lines": [
+    1543,
+    1588
+   ],
+   "size": 46,
+   "target": "download",
+   "persisted": false
+  },
+  {
+   "name": "cancelDownload",
+   "kind": "arrow-method",
+   "lines": [
+    1590,
+    1600
+   ],
+   "size": 11,
+   "target": "download",
+   "persisted": false
+  },
+  {
+   "name": "isDownloading",
+   "kind": "getter",
+   "lines": [
+    1602,
+    1604
+   ],
+   "size": 3,
+   "target": "download",
+   "persisted": false
+  },
+  {
+   "name": "pauseDownload",
+   "kind": "arrow-method",
+   "lines": [
+    1607,
+    1607
+   ],
+   "size": 1,
+   "target": "download",
+   "persisted": false
+  },
+  {
+   "name": "resumeDownload",
+   "kind": "arrow-method",
+   "lines": [
+    1611,
+    1611
+   ],
+   "size": 1,
+   "target": "download",
+   "persisted": false
+  },
+  {
+   "name": "verifyDownloadedModel",
+   "kind": "arrow-method",
+   "lines": [
+    1627,
+    1688
+   ],
+   "size": 62,
+   "target": "download",
+   "persisted": false
+  },
+  {
+   "name": "getDownloadProgress",
+   "kind": "arrow-method",
+   "lines": [
+    1690,
+    1692
+   ],
+   "size": 3,
+   "target": "download",
+   "persisted": false
+  },
+  {
+   "name": "activeDownloads",
+   "kind": "getter",
+   "lines": [
+    1699,
+    1717
+   ],
+   "size": 19,
+   "target": "download",
+   "persisted": false
+  },
+  {
+   "name": "removeModelFromList",
+   "kind": "arrow-method",
+   "lines": [
+    1724,
+    1738
+   ],
+   "size": 15,
+   "target": "catalog",
+   "persisted": false
+  },
+  {
+   "name": "deleteModel",
+   "kind": "arrow-method",
+   "lines": [
+    1740,
+    1856
+   ],
+   "size": 117,
+   "target": "download",
+   "persisted": false
+  },
+  {
+   "name": "fetchAndPersistGGUFMetadata",
+   "kind": "arrow-method",
+   "lines": [
+    1862,
+    1976
+   ],
+   "size": 115,
+   "target": "catalog",
+   "persisted": false
+  },
+  {
+   "name": "effectiveDraftMode",
+   "kind": "getter",
+   "lines": [
+    2084,
+    2086
+   ],
+   "size": 3,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "effectiveDraftCacheDefaults",
+   "kind": "getter",
+   "lines": [
+    2088,
+    2093
+   ],
+   "size": 6,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "enterBenchmarkMode",
+   "kind": "arrow-method",
+   "lines": [
+    2165,
+    2178
+   ],
+   "size": 14,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "exitBenchmarkMode",
+   "kind": "arrow-method",
+   "lines": [
+    2184,
+    2188
+   ],
+   "size": 5,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "initContext",
+   "kind": "arrow-method",
+   "lines": [
+    2206,
+    2316
+   ],
+   "size": 111,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "releaseContext",
+   "kind": "arrow-method",
+   "lines": [
+    2610,
+    2621
+   ],
+   "size": 12,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "manualReleaseContext",
+   "kind": "arrow-method",
+   "lines": [
+    2623,
+    2625
+   ],
+   "size": 3,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "activeModel",
+   "kind": "getter",
+   "lines": [
+    2627,
+    2633
+   ],
+   "size": 7,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "capsFor",
+   "kind": "arrow-method",
+   "lines": [
+    2652,
+    2652
+   ],
+   "size": 1,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "activeModelCaps",
+   "kind": "getter",
+   "lines": [
+    2656,
+    2658
+   ],
+   "size": 3,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "lastUsedModel",
+   "kind": "getter",
+   "lines": [
+    2660,
+    2664
+   ],
+   "size": 5,
+   "target": "catalog",
+   "persisted": false
+  },
+  {
+   "name": "contextId",
+   "kind": "getter",
+   "lines": [
+    2671,
+    2680
+   ],
+   "size": 10,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "remoteModels",
+   "kind": "getter",
+   "lines": [
+    2688,
+    2706
+   ],
+   "size": 19,
+   "target": "catalog",
+   "persisted": false
+  },
+  {
+   "name": "setActiveModel",
+   "kind": "method",
+   "lines": [
+    2708,
+    2710
+   ],
+   "size": 3,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "setRemoteModel",
+   "kind": "arrow-method",
+   "lines": [
+    2716,
+    2752
+   ],
+   "size": 37,
+   "target": "catalog",
+   "persisted": false
+  },
+  {
+   "name": "selectModel",
+   "kind": "arrow-method",
+   "lines": [
+    2760,
+    2766
+   ],
+   "size": 7,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "addHFModel",
+   "kind": "arrow-method",
+   "lines": [
+    2837,
+    2940
+   ],
+   "size": 104,
+   "target": "catalog",
+   "persisted": false
+  },
+  {
+   "name": "removeModelByFullPath",
+   "kind": "arrow-method",
+   "lines": [
+    2968,
+    2977
+   ],
+   "size": 10,
+   "target": "catalog",
+   "persisted": false
+  },
+  {
+   "name": "addLocalModel",
+   "kind": "arrow-method",
+   "lines": [
+    2979,
+    3030
+   ],
+   "size": 52,
+   "target": "catalog",
+   "persisted": false
+  },
+  {
+   "name": "updateModelName",
+   "kind": "arrow-method",
+   "lines": [
+    3056,
+    3063
+   ],
+   "size": 8,
+   "target": "catalog",
+   "persisted": false
+  },
+  {
+   "name": "resetModels",
+   "kind": "arrow-method",
+   "lines": [
+    3065,
+    3126
+   ],
+   "size": 62,
+   "target": "catalog",
+   "persisted": false
+  },
+  {
+   "name": "resetModelChatTemplate",
+   "kind": "arrow-method",
+   "lines": [
+    3128,
+    3135
+   ],
+   "size": 8,
+   "target": "catalog",
+   "persisted": false
+  },
+  {
+   "name": "resetModelStopWords",
+   "kind": "arrow-method",
+   "lines": [
+    3137,
+    3144
+   ],
+   "size": 8,
+   "target": "catalog",
+   "persisted": false
+  },
+  {
+   "name": "resetModelName",
+   "kind": "arrow-method",
+   "lines": [
+    3146,
+    3153
+   ],
+   "size": 8,
+   "target": "catalog",
+   "persisted": false
+  },
+  {
+   "name": "initializeGpuSettings",
+   "kind": "method",
+   "lines": [
+    3155,
+    3172
+   ],
+   "size": 18,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "setNoGpuDevices",
+   "kind": "arrow-method",
+   "lines": [
+    3174,
+    3181
+   ],
+   "size": 8,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "setDevices",
+   "kind": "arrow-method",
+   "lines": [
+    3184,
+    3191
+   ],
+   "size": 8,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "setFlashAttnType",
+   "kind": "arrow-method",
+   "lines": [
+    3193,
+    3207
+   ],
+   "size": 15,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "setKvUnified",
+   "kind": "arrow-method",
+   "lines": [
+    3209,
+    3216
+   ],
+   "size": 8,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "setNParallel",
+   "kind": "arrow-method",
+   "lines": [
+    3218,
+    3225
+   ],
+   "size": 8,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "updateUseAutoRelease",
+   "kind": "arrow-method",
+   "lines": [
+    3227,
+    3231
+   ],
+   "size": 5,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "updateModelStopTokens",
+   "kind": "method",
+   "lines": [
+    3238,
+    3300
+   ],
+   "size": 63,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "recordReasoningObserved",
+   "kind": "arrow-method",
+   "lines": [
+    3355,
+    3376
+   ],
+   "size": 22,
+   "target": "catalog",
+   "persisted": false
+  },
+  {
+   "name": "setReasoningOverride",
+   "kind": "arrow-method",
+   "lines": [
+    3382,
+    3392
+   ],
+   "size": 11,
+   "target": "catalog",
+   "persisted": false
+  },
+  {
+   "name": "availableModels",
+   "kind": "getter",
+   "lines": [
+    3398,
+    3409
+   ],
+   "size": 12,
+   "target": "catalog",
+   "persisted": false
+  },
+  {
+   "name": "setInferencing",
+   "kind": "method",
+   "lines": [
+    3411,
+    3413
+   ],
+   "size": 3,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "setIsStreaming",
+   "kind": "method",
+   "lines": [
+    3415,
+    3417
+   ],
+   "size": 3,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "registerCompletionPromise",
+   "kind": "method",
+   "lines": [
+    3424,
+    3426
+   ],
+   "size": 3,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "clearCompletionPromise",
+   "kind": "method",
+   "lines": [
+    3432,
+    3434
+   ],
+   "size": 3,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "getCompatibleProjectionModels",
+   "kind": "arrow-method",
+   "lines": [
+    3443,
+    3443
+   ],
+   "size": 1,
+   "target": "catalog",
+   "persisted": false
+  },
+  {
+   "name": "setDefaultProjectionModel",
+   "kind": "arrow-method",
+   "lines": [
+    3446,
+    3446
+   ],
+   "size": 1,
+   "target": "catalog",
+   "persisted": false
+  },
+  {
+   "name": "getDefaultProjectionModel",
+   "kind": "arrow-method",
+   "lines": [
+    3452,
+    3452
+   ],
+   "size": 1,
+   "target": "catalog",
+   "persisted": false
+  },
+  {
+   "name": "getLLMsUsingProjectionModel",
+   "kind": "arrow-method",
+   "lines": [
+    3455,
+    3455
+   ],
+   "size": 1,
+   "target": "catalog",
+   "persisted": false
+  },
+  {
+   "name": "hasRequiredProjectionModel",
+   "kind": "arrow-method",
+   "lines": [
+    3465,
+    3465
+   ],
+   "size": 1,
+   "target": "catalog",
+   "persisted": false
+  },
+  {
+   "name": "cleanupOrphanedProjectionModel",
+   "kind": "arrow-method",
+   "lines": [
+    3481,
+    3481
+   ],
+   "size": 1,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "cleanupOrphanedProjectionModels",
+   "kind": "arrow-method",
+   "lines": [
+    3484,
+    3484
+   ],
+   "size": 1,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "setModelVisionEnabled",
+   "kind": "arrow-method",
+   "lines": [
+    3487,
+    3487
+   ],
+   "size": 1,
+   "target": "catalog",
+   "persisted": false
+  },
+  {
+   "name": "getModelVisionPreference",
+   "kind": "arrow-method",
+   "lines": [
+    3490,
+    3490
+   ],
+   "size": 1,
+   "target": "catalog",
+   "persisted": false
+  },
+  {
+   "name": "fetchAndUpdateModelFileDetails",
+   "kind": "method",
+   "lines": [
+    3634,
+    3655
+   ],
+   "size": 22,
+   "target": "catalog",
+   "persisted": false
+  },
+  {
+   "name": "updateModelHash",
+   "kind": "arrow-method",
+   "lines": [
+    3659,
+    3674
+   ],
+   "size": 16,
+   "target": "catalog",
+   "persisted": false
+  },
+  {
+   "name": "isModelAvailable",
+   "kind": "arrow-method",
+   "lines": [
+    3676,
+    3681
+   ],
+   "size": 6,
+   "target": "catalog",
+   "persisted": false
+  },
+  {
+   "name": "clearDownloadError",
+   "kind": "arrow-method",
+   "lines": [
+    3694,
+    3696
+   ],
+   "size": 3,
+   "target": "download",
+   "persisted": false
+  },
+  {
+   "name": "clearModelLoadError",
+   "kind": "arrow-method",
+   "lines": [
+    3698,
+    3700
+   ],
+   "size": 3,
+   "target": "runtime",
+   "persisted": false
+  },
+  {
+   "name": "retryDownload",
+   "kind": "arrow-method",
+   "lines": [
+    3702,
+    3713
+   ],
+   "size": 12,
+   "target": "download",
+   "persisted": false
+  }
+ ]
+}

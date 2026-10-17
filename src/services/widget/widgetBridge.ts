@@ -107,18 +107,19 @@ export const startWidgetBridge = (): void => {
   const bridge = NativeWidgetBridge;
 
   // Lazy require avoids a hard store cycle at module-eval time.
-
-  const {modelStore, uiStore} = require('../../store');
+  const {uiStore} = require('../../store');
+  const {downloadStore} = require('../../store/model/downloadStore');
+  const {runtimeStore} = require('../../store/model/runtimeStore');
 
   disposeAutorun = autorun(() => {
     try {
-      const downloads = modelStore.activeDownloads.map(
+      const downloads = downloadStore.activeDownloads.map(
         (d: {modelId: string; progress: number}) => ({
           modelId: d.modelId,
           progress: d.progress,
         }),
       );
-      const activeModel = modelStore.activeModel;
+      const activeModel = runtimeStore.activeModel;
       const labels: WidgetLabels = {
         idle: uiStore.l10n.widgets.idle,
         ready: uiStore.l10n.widgets.ready,
@@ -136,8 +137,8 @@ export const startWidgetBridge = (): void => {
           hasActiveModel: !!activeModel,
           activeModelName: activeModel?.name ?? '',
           activeModelId: activeModel?.id ?? '',
-          loadingModelId: modelStore.loadingModel?.id,
-          inferencing: modelStore.inferencing,
+          loadingModelId: runtimeStore.loadingModel?.id,
+          inferencing: runtimeStore.inferencing,
           downloads,
         },
         labels,

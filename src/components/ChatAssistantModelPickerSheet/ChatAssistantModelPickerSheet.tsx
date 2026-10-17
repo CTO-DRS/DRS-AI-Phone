@@ -10,7 +10,10 @@ import BottomSheet, {
 
 import {useTheme} from '../../hooks';
 import {createStyles} from './styles';
-import {modelStore, assistantStore, chatSessionStore} from '../../store';
+import {assistantStore, chatSessionStore} from '../../store';
+import {catalogStore} from '../../store/model/catalogStore';
+import {downloadStore} from '../../store/model/downloadStore';
+import {runtimeStore} from '../../store/model/runtimeStore';
 import {CustomBackdrop} from '../Sheet/CustomBackdrop';
 import {getModelSkills, L10nContext, Model} from '../../utils';
 import {t} from '../../locales';
@@ -34,16 +37,16 @@ const ObservedSkillsDisplay = observer(({model}) => {
   const hasProjectionModelWarning =
     model.supportsMultimodal &&
     model.visionEnabled &&
-    modelStore.getProjectionModelStatus(model).state === 'missing';
+    downloadStore.getProjectionModelStatus(model).state === 'missing';
 
   const toggleVision = async () => {
     if (!model.supportsMultimodal) {
       return;
     }
     try {
-      await modelStore.setModelVisionEnabled(
+      await catalogStore.setModelVisionEnabled(
         model.id,
-        !modelStore.getModelVisionPreference(model),
+        !catalogStore.getModelVisionPreference(model),
       );
     } catch (error) {
       console.error('Failed to toggle vision setting:', error);
@@ -51,7 +54,7 @@ const ObservedSkillsDisplay = observer(({model}) => {
       // We could show a toast/snackbar here if needed
     }
   };
-  const visionEnabled = modelStore.getModelVisionPreference(model);
+  const visionEnabled = catalogStore.getModelVisionPreference(model);
 
   return (
     <SkillsDisplay
@@ -60,7 +63,7 @@ const ObservedSkillsDisplay = observer(({model}) => {
       onVisionPress={toggleVision}
       onProjectionWarningPress={() =>
         model.defaultProjectionModel &&
-        modelStore.checkSpaceAndDownload(model.defaultProjectionModel)
+        downloadStore.checkSpaceAndDownload(model.defaultProjectionModel)
       }
       visionEnabled={visionEnabled}
     />
@@ -144,11 +147,11 @@ export const ChatAssistantModelPickerSheet = observer(
     );
 
     const handleModelSelect = React.useCallback(
-      async (model: (typeof modelStore.availableModels)[0]) => {
+      async (model: (typeof catalogStore.availableModels)[0]) => {
         try {
           onModelSelect?.(model.id);
           onClose();
-          modelStore.selectModel(model);
+          runtimeStore.selectModel(model);
         } catch (e) {
           logger.debug(`Error: ${e}`);
         }
@@ -161,10 +164,10 @@ export const ChatAssistantModelPickerSheet = observer(
         await chatSessionStore.setActiveAssistant(assistant?.id);
         if (
           assistant?.defaultModel &&
-          modelStore.activeModel &&
-          assistant.defaultModel?.id !== modelStore.activeModelId
+          runtimeStore.activeModel &&
+          assistant.defaultModel?.id !== runtimeStore.activeModelId
         ) {
-          const assistantDefaultModel = modelStore.availableModels.find(
+          const assistantDefaultModel = catalogStore.availableModels.find(
             m => m.id === assistant.defaultModel?.id,
           );
           if (assistantDefaultModel) {
@@ -187,7 +190,7 @@ export const ChatAssistantModelPickerSheet = observer(
                   text: l10n.components.chatAssistantModelPickerSheet
                     .switchButton,
                   onPress: () => {
-                    modelStore.selectModel(assistantDefaultModel);
+                    runtimeStore.selectModel(assistantDefaultModel);
                   },
                 },
               ],
@@ -235,7 +238,7 @@ export const ChatAssistantModelPickerSheet = observer(
 
     const renderModelItem = React.useCallback(
       (model: Model) => {
-        const isActiveModel = model.id === modelStore.activeModelId;
+        const isActiveModel = model.id === runtimeStore.activeModelId;
         const modelSkills = getModelSkills(model)
           .flatMap(skill => skill.labelKey)
           .join(', ');
@@ -348,7 +351,7 @@ export const ChatAssistantModelPickerSheet = observer(
           <BottomSheetScrollView
             contentContainerStyle={{paddingBottom: chatInputHeight + 66}}>
             {item.id === 'models'
-              ? modelStore.availableModels.map(renderModelItem)
+              ? catalogStore.availableModels.map(renderModelItem)
               : [
                   renderDisableAssistantItem(),
                   ...assistantStore.assistants.map(renderAssistantItem),

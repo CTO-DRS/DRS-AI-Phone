@@ -14,7 +14,8 @@ import * as RNFS from '@dr.pogodin/react-native-fs';
 import {useTheme} from '../../../hooks';
 import {hubStatusColors} from '../hubStatus';
 import {L10nContext} from '../../../utils';
-import {modelStore} from '../../../store';
+import {catalogStore} from '../../../store/model/catalogStore';
+import {downloadStore} from '../../../store/model/downloadStore';
 import {Model} from '../../../utils/types';
 import {formatBytes} from '../../../utils';
 import {
@@ -68,14 +69,14 @@ export const StorageSheet: React.FC<StorageSheetProps> = observer(
       let cancelled = false;
       (async () => {
         setStats(s => ({...s, loading: true}));
-        const downloaded = modelStore.models.filter(m => m.isDownloaded);
+        const downloaded = catalogStore.models.filter(m => m.isDownloaded);
         const perCategory: Record<string, number> = {};
         const sized: Array<{model: Model; bytes: number}> = [];
         let totalUsed = 0;
 
         for (const model of downloaded) {
           try {
-            const fullPath = await modelStore.getModelFullPath(model);
+            const fullPath = await downloadStore.getModelFullPath(model);
             if (await RNFS.exists(fullPath)) {
               const stat = await RNFS.stat(fullPath);
               const bytes = Number(stat.size) || 0;
@@ -93,7 +94,7 @@ export const StorageSheet: React.FC<StorageSheetProps> = observer(
         const orphans: Array<{path: string; size: number}> = [];
         try {
           const claimed = new Set<string>();
-          for (const model of modelStore.models) {
+          for (const model of catalogStore.models) {
             if (model.fullPath) {
               claimed.add(model.fullPath);
             }
@@ -145,7 +146,7 @@ export const StorageSheet: React.FC<StorageSheetProps> = observer(
             text: l10n.common.delete,
             style: 'destructive',
             onPress: () => {
-              modelStore.deleteModel(model);
+              downloadStore.deleteModel(model);
             },
           },
         ],

@@ -1,5 +1,4 @@
 import {
-  AppState,
   AppStateStatus,
   InteractionManager,
   Platform,
@@ -11,39 +10,23 @@ import {v4 as uuidv4} from 'uuid';
 import 'react-native-get-random-values';
 import {makePersistable} from 'mobx-persist-store';
 import * as RNFS from '@dr.pogodin/react-native-fs';
-import {computed, makeAutoObservable, runInAction, toJS} from 'mobx';
+import {computed, makeAutoObservable, runInAction} from 'mobx';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {ContextParams, LlamaContext, initLlama} from 'llama.rn';
-import {
-  CompletionParams,
-  CompletionEngine,
-  toApiCompletionParams,
-} from '../utils/completionTypes';
+import {ContextParams, LlamaContext} from 'llama.rn';
+import {CompletionParams, CompletionEngine} from '../utils/completionTypes';
 
 import {fetchModelFilesDetails} from '../api/hf';
-import {
-  LocalCompletionEngine,
-  OpenAICompletionEngine,
-} from '../api/completionEngines';
+import {OpenAICompletionEngine} from '../api/completionEngines';
 
 import {uiStore, hfStore, modelHubStore} from '.';
 import {serverStore} from './ServerStore';
-import {chatSessionStore} from './ChatSessionStore';
-import {
-  draftCacheDefaults,
-  effectiveDraftModeOf,
-  resolveDraftCandidate,
-  resolveDraftModelId,
-  unpairedDraftCandidate,
-} from './draftResolution';
+import {resolveDraftModelId} from './draftResolution';
 import {checkGpuSupport} from '../utils/deviceCapabilities';
-import {resolveDeviceSelection} from '../utils/deviceSelection';
 import {
   deepMerge,
   getSHA256Hash,
   hfAsModel,
   getMmprojFiles,
-  filterProjectionModels,
   inferRepoFromModelId,
   parseSizeLabel,
 } from '../utils';
@@ -85,143 +68,219 @@ import {
 } from '../utils/types';
 
 import {ErrorState, createErrorState} from '../utils/errors';
-import {chatSessionRepository} from '../repositories/ChatSessionRepository';
-import {hasEnoughMemory} from '../hooks/useMemoryCheck';
 import {
-  isHighEndDevice,
   getRecommendedThreadCount,
   getCpuCoreCount,
 } from '../utils/deviceCapabilities';
 import {detectThinkingCapability} from '../utils/thinkingCapabilityDetection';
 import {ReasoningCapability} from '../utils/reasoningCapability';
 import {capsMatchBinding} from '../utils/remoteCaps';
-import {resolveModelCaps} from '../utils/modelCaps';
-import type {CapabilityEnv, ModelCapabilityView} from '../utils/modelCaps';
+import type {ModelCapabilityView} from '../utils/modelCaps';
 import {t} from '../locales';
-import {resolveUseMmap} from '../utils/memorySettings';
-import {
-  createContextInitParams,
-  createDefaultContextInitParams,
-} from '../utils/contextInitParamsVersions';
+import {createDefaultContextInitParams} from '../utils/contextInitParamsVersions';
 import NativeHardwareInfo from '../specs/NativeHardwareInfo';
-import {getModelMemoryRequirement} from '../utils/memoryEstimator';
 import {loadLlamaModelInfo} from 'llama.rn';
 import {logger} from '../utils/logger';
 import {ProjectionModelManager} from './model/ProjectionModelManager';
 import {DraftRulesManager} from './model/DraftRulesManager';
+// Phase-4 R0 (docs/extraction-plan.md, condition 4): DI composition root.
+// bootstrap is imported ALONE — never the three pass-through stores. They
+// import the store barrel (which re-exports ModelStore), so a static import
+// from here would close a madge cycle (gate: pinned at 42). Until 4a
+// relocates members, the three domain slots receive `this` — the god object
+// IS the sole domain implementation.
+import {initializeModelSystem} from './model/bootstrap';
+// B10 (phase-4 4a): the nine catalog state members physically live in
+// catalogStore (five persist keys as the catalogStore:v2 root's fields,
+// four derived views computed there). These are verbatim reverse
+// delegations (each dies at 4b when its call sites migrate); the v2 root
+// and the one-time legacy import are called from the constructor chain
+// below (ج25 — composition wiring, dies at 4e per §8).
+import {
+  catalogStore,
+  importLegacyCatalogState,
+  injectCatalogHost,
+} from './model/catalogStore';
+// B1 (phase-4 4a): the 16 context-parameter setters physically live in
+// runtimeStore; these are verbatim reverse delegations (each dies at 4b
+// when its call sites migrate). The host injection below gives runtimeStore
+// write access to contextInitParams without importing this module.
+import {
+  MIN_CONTEXT_SIZE,
+  clearCompletionPromiseOf,
+  injectRuntimeHost,
+  registerCompletionPromiseOf,
+  releaseContextInternal,
+  resolveDraftConfig as resolveDraftConfigOf,
+  runtimeStore,
+} from './model/runtimeStore';
 
-/**
- * Factory function to create a Model object for a remote model from an OpenAI-compatible server.
- * Fills all required Model fields with sensible defaults.
- */
-function createRemoteModel(params: {
-  serverId: string;
-  serverName: string;
-  remoteModelId: string;
-  modelName: string;
-}): Model {
-  const emptyChatTemplate = {
-    name: '',
-    addBosToken: false,
-    addEosToken: false,
-    bosToken: '',
-    eosToken: '',
-    chatTemplate: '',
-    addGenerationPrompt: false,
-  };
-  return {
-    id: `${params.serverId}/${params.remoteModelId}`,
-    name: params.modelName,
-    author: params.serverName,
-    origin: ModelOrigin.REMOTE,
-    isDownloaded: true,
-    isLocal: false,
-    size: 0,
-    params: 0,
-    downloadUrl: '',
-    hfUrl: '',
-    progress: 0,
-    filename: '',
-    defaultChatTemplate: emptyChatTemplate,
-    chatTemplate: emptyChatTemplate,
-    defaultStopWords: [],
-    stopWords: [],
-    defaultCompletionSettings: {} as CompletionParams,
-    completionSettings: {} as CompletionParams,
-    serverId: params.serverId,
-    serverName: params.serverName,
-    remoteModelId: params.remoteModelId,
-  };
-}
-
-const pairedDraftModel = (config?: DraftConfig): Model | undefined =>
-  config?.mode === 'paired' ? config.draftModel : undefined;
+// B10: createRemoteModel moved verbatim to catalogStore.ts with its only
+// consumer (the remoteModels view) — private helper, catalog domain.
 
 export class ModelStore {
-  models: Model[] = [];
-  version: number | undefined = undefined; // Persisted version
-  deviceTier: Tier | null = null; // resolved device classification
-  rulesVersion: string | null = null; // provenance of the preset list
+  // ── B10 (phase-4 4a): real state lives in catalogStore (boxes; the
+  // catalogStore:v2 persist root owns the five persisted keys) ──
+  get models(): Model[] {
+    return catalogStore.models;
+  }
+  set models(value: Model[]) {
+    catalogStore.models = value;
+  }
+  /** Persisted version. */
+  get version(): number | undefined {
+    return catalogStore.version;
+  }
+  set version(value: number | undefined) {
+    catalogStore.version = value;
+  }
+  /** Resolved device classification. */
+  get deviceTier(): Tier | null {
+    return catalogStore.deviceTier;
+  }
+  set deviceTier(value: Tier | null) {
+    catalogStore.deviceTier = value;
+  }
+  /** Provenance of the preset list. */
+  get rulesVersion(): string | null {
+    return catalogStore.rulesVersion;
+  }
+  set rulesVersion(value: string | null) {
+    catalogStore.rulesVersion = value;
+  }
 
   /**
    * Returns models with projection models filtered out for display purposes
    */
   get displayModels(): Model[] {
-    return [...filterProjectionModels(this.models), ...this.remoteModels];
+    return catalogStore.displayModels;
   }
 
-  appState: AppStateStatus = AppState.currentState;
+  // ── B4 (phase-4 4a): real state lives in runtimeStore (box; not persisted) ──
+  get appState(): AppStateStatus {
+    return runtimeStore.appState;
+  }
+  set appState(value: AppStateStatus) {
+    runtimeStore.appState = value;
+  }
   useAutoRelease: boolean = true;
   // UI loading state - true during model load/release transitions
-  isContextLoading: boolean = false;
-  loadingModel: Model | undefined = undefined;
+  // ── B8 (phase-4 4a): real state lives in runtimeStore (boxes; not persisted) ──
+  get isContextLoading(): boolean {
+    return runtimeStore.isContextLoading;
+  }
+  set isContextLoading(value: boolean) {
+    runtimeStore.isContextLoading = value;
+  }
+  get loadingModel(): Model | undefined {
+    return runtimeStore.loadingModel;
+  }
+  set loadingModel(value: Model | undefined) {
+    runtimeStore.loadingModel = value;
+  }
 
   // Unified context initialization parameters
   contextInitParams: ContextInitParams = createDefaultContextInitParams();
 
-  max_threads: number = 4; // Will be set in constructor
+  // ── B2 (phase-4 4a): real state lives in runtimeStore (observable box) ──
+  // initializeThreadCount (below) writes through the setter; the Settings UI
+  // reads through the getter. Both hit the same box runtimeStore owns, so
+  // observer re-render semantics are unchanged. The writer itself relocates
+  // to bootstrap at B22; call sites migrate at 4b.
+  get max_threads(): number {
+    return runtimeStore.max_threads;
+  }
+  set max_threads(value: number) {
+    runtimeStore.max_threads = value;
+  }
 
-  activeModelId: string | undefined = undefined;
+  // ── B8 (phase-4 4a): real state lives in runtimeStore (boxes; not persisted) ──
+  get activeModelId(): string | undefined {
+    return runtimeStore.activeModelId;
+  }
+  set activeModelId(value: string | undefined) {
+    runtimeStore.activeModelId = value;
+  }
 
   // Flag to track if multimodal is currently active
-  isMultimodalActive: boolean = false;
-  activeProjectionModelId: string | undefined = undefined;
+  get isMultimodalActive(): boolean {
+    return runtimeStore.isMultimodalActive;
+  }
+  set isMultimodalActive(value: boolean) {
+    runtimeStore.isMultimodalActive = value;
+  }
+  get activeProjectionModelId(): string | undefined {
+    return runtimeStore.activeProjectionModelId;
+  }
+  set activeProjectionModelId(value: string | undefined) {
+    runtimeStore.activeProjectionModelId = value;
+  }
 
   // Track initialization settings for the active context
   activeContextSettings: ContextInitParams | undefined = undefined;
 
-  context: LlamaContext | undefined = undefined;
+  // ── B8 (phase-4 4a): real state lives in runtimeStore (boxes; not persisted) ──
+  get context(): LlamaContext | undefined {
+    return runtimeStore.context;
+  }
+  set context(value: LlamaContext | undefined) {
+    runtimeStore.context = value;
+  }
 
-  engine: CompletionEngine | undefined = undefined;
+  get engine(): CompletionEngine | undefined {
+    return runtimeStore.engine;
+  }
+  set engine(value: CompletionEngine | undefined) {
+    runtimeStore.engine = value;
+  }
 
-  activeRemoteBinding: RemoteSessionBinding | undefined = undefined;
+  get activeRemoteBinding(): RemoteSessionBinding | undefined {
+    return runtimeStore.activeRemoteBinding;
+  }
+  set activeRemoteBinding(value: RemoteSessionBinding | undefined) {
+    runtimeStore.activeRemoteBinding = value;
+  }
 
-  lastUsedModelId: string | undefined = undefined;
+  // ── B10 (phase-4 4a): real state lives in catalogStore (box; v2 root) ──
+  get lastUsedModelId(): string | undefined {
+    return catalogStore.lastUsedModelId;
+  }
+  set lastUsedModelId(value: string | undefined) {
+    catalogStore.lastUsedModelId = value;
+  }
 
   /** Model ids currently in the post-download verification gate. */
   verifyingModelIds: string[] = [];
 
-  // Auto-release tracking (persistent)
+  // Auto-release tracking (persist keys — state stays on the god object
+  // until the v2 persist roots exist; see runtimeStore.ts B4 note)
   wasAutoReleased: boolean = false;
   lastAutoReleasedModelId: string | undefined = undefined;
 
-  // System UI protection (runtime)
-  private autoReleaseDisabledReasons = new Set<string>();
+  // ── B2 (phase-4 4a): pure constant — module-level export in runtimeStore ──
+  get MIN_CONTEXT_SIZE(): number {
+    return MIN_CONTEXT_SIZE;
+  }
 
-  MIN_CONTEXT_SIZE = 200;
-
-  inferencing: boolean = false;
-  isStreaming: boolean = false;
+  // ── B6 (phase-4 4a): real state lives in runtimeStore (boxes; not persisted) ──
+  get inferencing(): boolean {
+    return runtimeStore.inferencing;
+  }
+  set inferencing(value: boolean) {
+    runtimeStore.inferencing = value;
+  }
+  get isStreaming(): boolean {
+    return runtimeStore.isStreaming;
+  }
+  set isStreaming(value: boolean) {
+    runtimeStore.isStreaming = value;
+  }
 
   // Track active completion promise for safe context release
   // This prevents race condition where context is freed while completion is still running
-  private activeCompletionPromise: Promise<any> | null = null;
-
-  // Mutex to serialize model load/release operations to prevent memory leaks
-  private contextOperationMutex: Promise<void> = Promise.resolve();
-
-  // Last requested model ID - enables "last one wins" during rapid switching
-  private pendingModelId: string | null = null;
+  // ── B6: real state is the runtimeStore box; releaseContext reads it via
+  // getActiveCompletionPromise() (bridge ج11, death B7) until this member's
+  // family relocates.
 
   // Recovered local-model paths awaiting persistence. resolveLocalModelPath
   // collects (model -> re-anchored path) here instead of writing each one in
@@ -235,10 +294,22 @@ export class ModelStore {
   // to keep the matrix's per-cell devices/n_gpu_layers from being shadowed
   // by an in-flight init that started before the matrix could configure them.
   // Runtime-only; not persisted.
-  benchmarkActive: boolean = false;
+  // ── B5 (phase-4 4a): real state lives in runtimeStore (box; not persisted) ──
+  get benchmarkActive(): boolean {
+    return runtimeStore.benchmarkActive;
+  }
+  set benchmarkActive(value: boolean) {
+    runtimeStore.benchmarkActive = value;
+  }
 
   downloadError: ErrorState | null = null;
-  modelLoadError: ErrorState | null = null;
+  // ── B7 (phase-4 4a): real state lives in runtimeStore (box; not persisted) ──
+  get modelLoadError(): ErrorState | null {
+    return runtimeStore.modelLoadError;
+  }
+  set modelLoadError(value: ErrorState | null) {
+    runtimeStore.modelLoadError = value;
+  }
 
   // Memory calibration variables (persisted)
   // Updated at app startup and after model release
@@ -260,16 +331,17 @@ export class ModelStore {
       // it holds no state of its own, so keep it out of the observable tree.
       projectionManager: false,
     });
+    // B1 (phase-4 4a): host injection for runtimeStore's physical setters —
+    // must precede any setter call (persist.then / UI). See runtimeStore.ts.
+    injectRuntimeHost(this);
+    // B10 (phase-4 4a): catalog host marker — precedes the v2 root hydration
+    // (see catalogStore.ts; guards ج23/ج24 read boxes only in production).
+    injectCatalogHost({host: this});
     makePersistable(this, {
       name: 'ModelStore',
       properties: [
-        'models',
-        'version',
-        'deviceTier',
-        'rulesVersion',
         'useAutoRelease',
         'contextInitParams',
-        'lastUsedModelId',
         'wasAutoReleased',
         'lastAutoReleasedModelId',
         'availableMemoryCeiling',
@@ -278,8 +350,31 @@ export class ModelStore {
       ],
       storage: AsyncStorage,
     }).then(async () => {
-      await this.initializeThreadCount();
-      this.initializeStore();
+      // B10 (phase-4 4a): catalogStore:v2 persist root — the five catalog
+      // keys moved physically to catalogStore (§3, part 1); the one-time
+      // legacy import distributes the catalog half of the old all-in-one
+      // payload (§3, part 2). Ordering is load-bearing: v2 hydration first,
+      // legacy seed second, then the system initializers (the version gate
+      // in initializeStore must see the seeded list). ج25 — wiring dies 4e.
+      await makePersistable(catalogStore, {
+        name: 'catalogStore:v2',
+        properties: [
+          'models',
+          'version',
+          'deviceTier',
+          'rulesVersion',
+          'lastUsedModelId',
+        ],
+        storage: AsyncStorage,
+      });
+      await importLegacyCatalogState();
+      await initializeModelSystem({
+        catalog: this,
+        download: this,
+        runtime: this,
+        initializeStore: () => this.initializeStore(),
+        initializeThreadCount: () => this.initializeThreadCount(),
+      });
     });
 
     this.setupAppStateListener();
@@ -370,168 +465,79 @@ export class ModelStore {
     }
   }
 
+  // ── B1 (phase-4 4a): implementations live in runtimeStore since batch 1 ──
+  // Verbatim reverse delegation; each line dies when its call sites migrate (4b).
+  // Block bodies on purpose: an arrow-expression body makes the return type
+  // resolve through Pick<ModelStore,...> back into this class — TS7024.
   setNThreads = (n_threads: number) => {
-    runInAction(() => {
-      this.contextInitParams = {
-        ...this.contextInitParams,
-        n_threads,
-      };
-    });
+    runtimeStore.setNThreads(n_threads);
   };
 
   setCacheTypeK = (cache_type: CacheType) => {
-    runInAction(() => {
-      // Only allow changing cache type if flash attention is enabled
-      // Support both old flash_attn and new flash_attn_type
-      const flashAttnEnabled =
-        this.contextInitParams.flash_attn ||
-        (this.contextInitParams.flash_attn_type &&
-          this.contextInitParams.flash_attn_type !== 'off');
-
-      if (flashAttnEnabled) {
-        this.contextInitParams = {
-          ...this.contextInitParams,
-          cache_type_k: cache_type,
-        };
-      }
-    });
+    runtimeStore.setCacheTypeK(cache_type);
   };
 
   setCacheTypeV = (cache_type: CacheType) => {
-    runInAction(() => {
-      // Only allow changing cache type if flash attention is enabled
-      // Support both old flash_attn and new flash_attn_type
-      const flashAttnEnabled =
-        this.contextInitParams.flash_attn ||
-        (this.contextInitParams.flash_attn_type &&
-          this.contextInitParams.flash_attn_type !== 'off');
-
-      if (flashAttnEnabled) {
-        this.contextInitParams = {
-          ...this.contextInitParams,
-          cache_type_v: cache_type,
-        };
-      }
-    });
+    runtimeStore.setCacheTypeV(cache_type);
   };
 
   setNBatch = (n_batch: number) => {
-    runInAction(() => {
-      this.contextInitParams = {
-        ...this.contextInitParams,
-        n_batch,
-      };
-    });
+    runtimeStore.setNBatch(n_batch);
   };
 
   setNUBatch = (n_ubatch: number) => {
-    runInAction(() => {
-      this.contextInitParams = {
-        ...this.contextInitParams,
-        n_ubatch,
-      };
-    });
+    runtimeStore.setNUBatch(n_ubatch);
   };
 
   setNContext = (n_ctx: number) => {
-    runInAction(() => {
-      this.contextInitParams = {
-        ...this.contextInitParams,
-        n_ctx,
-      };
-    });
+    runtimeStore.setNContext(n_ctx);
   };
 
   setNGPULayers = (n_gpu_layers: number) => {
-    runInAction(() => {
-      this.contextInitParams = {
-        ...this.contextInitParams,
-        n_gpu_layers,
-      };
-    });
+    runtimeStore.setNGPULayers(n_gpu_layers);
   };
 
   setImageMaxTokens = (image_max_tokens: number) => {
-    runInAction(() => {
-      this.contextInitParams = {
-        ...this.contextInitParams,
-        image_max_tokens,
-      };
-    });
+    runtimeStore.setImageMaxTokens(image_max_tokens);
   };
 
   setUseMlock = (use_mlock: boolean) => {
-    runInAction(() => {
-      this.contextInitParams = {
-        ...this.contextInitParams,
-        use_mlock,
-      };
-    });
+    runtimeStore.setUseMlock(use_mlock);
   };
 
   setUseMmap = (use_mmap: 'true' | 'false' | 'smart') => {
-    runInAction(() => {
-      this.contextInitParams = {
-        ...this.contextInitParams,
-        use_mmap,
-      };
-    });
+    runtimeStore.setUseMmap(use_mmap);
   };
 
   setNoExtraBufts = (no_extra_bufts: boolean) => {
-    runInAction(() => {
-      this.contextInitParams = {
-        ...this.contextInitParams,
-        no_extra_bufts,
-      };
-    });
+    runtimeStore.setNoExtraBufts(no_extra_bufts);
   };
 
   setSpeculativeEnabled = (speculativeEnabled: boolean) => {
-    runInAction(() => {
-      this.contextInitParams = {
-        ...this.contextInitParams,
-        speculativeEnabled,
-      };
-    });
+    runtimeStore.setSpeculativeEnabled(speculativeEnabled);
   };
 
   setSelectedDraftModel = (selectedDraftModelId?: string) => {
-    runInAction(() => {
-      this.contextInitParams = {
-        ...this.contextInitParams,
-        selectedDraftModelId,
-      };
-    });
+    runtimeStore.setSelectedDraftModel(selectedDraftModelId);
   };
 
   setSpecDraftNGpuLayers = (spec_draft_n_gpu_layers: number) => {
-    runInAction(() => {
-      this.contextInitParams = {
-        ...this.contextInitParams,
-        spec_draft_n_gpu_layers,
-      };
-    });
+    runtimeStore.setSpecDraftNGpuLayers(spec_draft_n_gpu_layers);
   };
 
   setSpecDraftCacheTypeK = (spec_draft_cache_type_k: CacheType) => {
-    runInAction(() => {
-      this.contextInitParams = {
-        ...this.contextInitParams,
-        spec_draft_cache_type_k,
-      };
-    });
+    runtimeStore.setSpecDraftCacheTypeK(spec_draft_cache_type_k);
   };
 
   setSpecDraftCacheTypeV = (spec_draft_cache_type_v: CacheType) => {
-    runInAction(() => {
-      this.contextInitParams = {
-        ...this.contextInitParams,
-        spec_draft_cache_type_v,
-      };
-    });
+    runtimeStore.setSpecDraftCacheTypeV(spec_draft_cache_type_v);
   };
 
+  // ── B2 (phase-4 4a): implementations live in runtimeStore since batch 2 ──
+  // Verbatim reverse delegation; each dies when its call sites migrate (4b).
+  // Block bodies + explicit return types on purpose: an arrow-expression body
+  // (or bare inference) resolves the return type through Pick<ModelStore,...>
+  // back into this class — TS7024.
   /**
    * Get effective context initialization parameters with constraints applied
    * This is the unified method that replaces both getEffectiveBatchValues and getEffectiveInitSettings
@@ -540,149 +546,34 @@ export class ModelStore {
     filePath?: string,
     draftConfig?: DraftConfig,
   ): Promise<Omit<ContextParams, 'model'>> => {
-    // Apply batch constraints
-    const effectiveContext = this.contextInitParams.n_ctx;
-    const effectiveBatch = Math.min(
-      this.contextInitParams.n_batch,
-      effectiveContext,
-    );
-    const effectiveUBatch = Math.min(
-      this.contextInitParams.n_ubatch,
-      effectiveBatch,
-    );
-
-    // Resolve the effective use_mmap value based on the setting
-    const currentUseMmap = this.contextInitParams.use_mmap;
-    let effectiveUseMmap: boolean;
-
-    if (currentUseMmap === 'smart') {
-      // Handle 'smart' option
-      effectiveUseMmap = filePath
-        ? await resolveUseMmap('smart', filePath)
-        : true;
-    } else if (currentUseMmap === 'true') {
-      effectiveUseMmap = true;
-    } else if (currentUseMmap === 'false') {
-      effectiveUseMmap = false;
-    } else {
-      // Default fallback
-      effectiveUseMmap = true;
-    }
-
-    const mode = draftConfig?.mode ?? 'off';
-    const speculative = mode !== 'off';
-
-    // Handle flash_attn_type (v2.0) - platform-specific default
-    const flashAttnModeDefault =
-      mode === 'paired'
-        ? 'off'
-        : mode === 'embedded'
-          ? 'auto'
-          : Platform.OS === 'ios'
-            ? 'auto'
-            : 'off';
-    const flash_attn_type =
-      this.contextInitParams.flash_attn_type ?? flashAttnModeDefault;
-
-    // Build the params object, filtering out undefined values
-    const params: Partial<Omit<ContextParams, 'model'>> = {
-      n_ctx: effectiveContext,
-      n_batch: effectiveBatch,
-      n_ubatch: effectiveUBatch,
-      n_threads: this.contextInitParams.n_threads,
-      flash_attn_type, // NEW: replaces flash_attn boolean
-      cache_type_k: this.contextInitParams.cache_type_k,
-      cache_type_v: this.contextInitParams.cache_type_v,
-      n_gpu_layers: this.contextInitParams.n_gpu_layers ?? 99,
-      devices: this.contextInitParams.devices?.slice(),
-      kv_unified: this.contextInitParams.kv_unified ?? true, // NEW (default true!)
-      n_parallel: this.contextInitParams.n_parallel ?? 1, // NEW (1 for blocking mode only)
-      use_mlock: this.contextInitParams.use_mlock,
-      use_mmap: effectiveUseMmap,
-      no_extra_bufts: this.contextInitParams.no_extra_bufts,
-    };
-
-    if (speculative) {
-      // llama.rn's speculative type set stays empty without spec_type — nothing engages.
-      params.spec_type = 'draft-mtp';
-
-      // llama.rn throws on spec_draft_n_max <= 0 with DRAFT_MTP.
-      params.spec_draft_n_max =
-        this.contextInitParams.spec_draft_n_max !== undefined
-          ? Math.max(1, this.contextInitParams.spec_draft_n_max)
-          : undefined;
-      params.spec_draft_n_min = this.contextInitParams.spec_draft_n_min;
-      params.spec_draft_p_min = this.contextInitParams.spec_draft_p_min;
-      params.spec_draft_p_split = this.contextInitParams.spec_draft_p_split;
-
-      const cacheDefaults = draftCacheDefaults(mode, flash_attn_type === 'on');
-      params.spec_draft_cache_type_k =
-        this.contextInitParams.spec_draft_cache_type_k ?? cacheDefaults.k;
-      // With flash attention explicitly off a quantized draft V cache can
-      // never load (llama.cpp hard-refuses it) — clamp even an explicit pick.
-      const draftV =
-        this.contextInitParams.spec_draft_cache_type_v ?? cacheDefaults.v;
-      params.spec_draft_cache_type_v =
-        flash_attn_type === 'off' && draftV !== CacheType.F16
-          ? CacheType.F16
-          : draftV;
-
-      if (draftConfig?.mode === 'paired') {
-        params.model_draft = draftConfig.resolvedDraftPath;
-        params.is_model_draft_asset = false;
-        params.spec_draft_n_gpu_layers =
-          this.contextInitParams.spec_draft_n_gpu_layers ?? 99;
-      } else {
-        params.spec_draft_n_gpu_layers =
-          this.contextInitParams.spec_draft_n_gpu_layers;
-      }
-    }
-
-    Object.assign(
-      params,
-      await resolveDeviceSelection({
-        devices: params.devices,
-        n_gpu_layers: params.n_gpu_layers,
-      }),
-    );
-
-    // Remove undefined values from the params object
-    return Object.fromEntries(
-      Object.entries(params).filter(([_, value]) => value !== undefined),
-    ) as Omit<ContextParams, 'model'>;
+    return runtimeStore.getEffectiveContextInitParams(filePath, draftConfig);
   };
 
   // Legacy methods for backward compatibility
 
   /** @deprecated Use getEffectiveContextInitParams instead */
-  getEffectiveBatchValues = () => {
-    const effectiveContext = this.contextInitParams.n_ctx;
-    const effectiveBatch = Math.min(
-      this.contextInitParams.n_batch,
-      effectiveContext,
-    );
-    const effectiveUBatch = Math.min(
-      this.contextInitParams.n_ubatch,
-      effectiveBatch,
-    );
-
-    return {
-      n_ctx: effectiveContext,
-      n_batch: effectiveBatch,
-      n_ubatch: effectiveUBatch,
-    };
+  getEffectiveBatchValues = (): {
+    n_ctx: number;
+    n_batch: number;
+    n_ubatch: number;
+  } => {
+    return runtimeStore.getEffectiveBatchValues();
   };
 
   /** @deprecated Use getEffectiveContextInitParams instead */
   getEffectiveInitSettings = async (
     filePath?: string,
   ): Promise<Omit<ContextParams, 'model'>> => {
-    return this.getEffectiveContextInitParams(filePath);
+    return runtimeStore.getEffectiveInitSettings(filePath);
   };
 
   /** @deprecated Use getEffectiveBatchValues instead */
-  getEffectiveValues = () => {
-    return this.getEffectiveBatchValues();
+  getEffectiveValues = (): {
+    n_ctx: number;
+    n_batch: number;
+    n_ubatch: number;
+  } => {
+    return runtimeStore.getEffectiveValues();
   };
 
   // Drafts downloaded before draft detection existed were classified as
@@ -1024,118 +915,30 @@ export class ModelStore {
     return this.initializeDownloadStatus();
   };
 
+  // ── B4 (phase-4 4a): implementations live in runtimeStore since batch 4 ──
   setupAppStateListener = () => {
-    AppState.addEventListener('change', this.handleAppStateChange);
+    runtimeStore.setupAppStateListener();
   };
 
   // Auto-release management methods
   disableAutoRelease = (reason: string) => {
-    this.autoReleaseDisabledReasons.add(reason);
-    logger.debug(
-      `Auto-release disabled: ${reason}`,
-      Array.from(this.autoReleaseDisabledReasons),
-    );
+    runtimeStore.disableAutoRelease(reason);
   };
 
   enableAutoRelease = (reason: string) => {
-    this.autoReleaseDisabledReasons.delete(reason);
-    logger.debug(
-      `Auto-release enabled: ${reason}`,
-      Array.from(this.autoReleaseDisabledReasons),
-    );
+    runtimeStore.enableAutoRelease(reason);
   };
 
-  get isAutoReleaseEnabled() {
-    return this.useAutoRelease && this.autoReleaseDisabledReasons.size === 0;
+  get isAutoReleaseEnabled(): boolean {
+    return runtimeStore.isAutoReleaseEnabled;
   }
 
-  private markAutoReleased = (modelId: string) => {
-    // Skip auto-release for remote models (no native context to release)
-    const model = this.activeModel;
-    if (model?.origin === ModelOrigin.REMOTE) {
-      return;
-    }
-    logger.debug('Marking auto-released: ', modelId);
-    runInAction(() => {
-      this.wasAutoReleased = true;
-      this.lastAutoReleasedModelId = modelId;
-    });
-  };
-
-  private clearAutoReleaseFlags = () => {
-    logger.debug('Clearing auto-release flags');
-    runInAction(() => {
-      this.wasAutoReleased = false;
-      this.lastAutoReleasedModelId = undefined;
-    });
-  };
-
   checkAndReloadAutoReleasedModel = async () => {
-    if (this.wasAutoReleased && this.lastAutoReleasedModelId) {
-      // Skip if the auto-released model ID refers to a remote model
-      if (this.lastAutoReleasedModelId.includes('/')) {
-        const remoteModel = this.remoteModels.find(
-          m => m.id === this.lastAutoReleasedModelId,
-        );
-        if (remoteModel) {
-          this.clearAutoReleaseFlags();
-          return;
-        }
-      }
-      const model = this.models.find(
-        m => m.id === this.lastAutoReleasedModelId && m.isDownloaded,
-      );
-      if (model) {
-        logger.debug('Reloading auto-released model:', model.id);
-        await this.initContext(model);
-      }
-      this.clearAutoReleaseFlags();
-    }
+    await runtimeStore.checkAndReloadAutoReleasedModel();
   };
 
   handleAppStateChange = async (nextAppState: AppStateStatus) => {
-    logger.debug(`App state change: ${this.appState} → ${nextAppState}`);
-
-    if (
-      this.appState.match(/inactive|background/) &&
-      nextAppState === 'active'
-    ) {
-      // Coming to foreground - check if we need to reload auto-released model
-      await this.checkAndReloadAutoReleasedModel();
-      this.reprobeRemoteCapsIfUnknown();
-    } else if (this.appState === 'active' && nextAppState === 'inactive') {
-      // active → inactive: NO action (per requirements)
-      logger.debug('Active → Inactive: No auto-release action');
-    } else if (this.appState === 'inactive' && nextAppState === 'background') {
-      // inactive → background: release if enabled
-      // Skip for remote models — no native context to release, and
-      // releaseContext() would clear the engine with no reload path.
-      if (
-        this.isAutoReleaseEnabled &&
-        this.activeModelId &&
-        this.activeModel?.origin !== ModelOrigin.REMOTE
-      ) {
-        logger.debug('Inactive → Background: Auto-releasing context');
-        this.markAutoReleased(this.activeModelId);
-        await this.releaseContext();
-      }
-    } else if (this.appState === 'active' && nextAppState === 'background') {
-      // active → background: release if enabled (direct transition)
-      // Skip for remote models — same reason as above.
-      if (
-        this.isAutoReleaseEnabled &&
-        this.activeModelId &&
-        this.activeModel?.origin !== ModelOrigin.REMOTE
-      ) {
-        logger.debug('Active → Background: Auto-releasing context');
-        this.markAutoReleased(this.activeModelId);
-        await this.releaseContext();
-      }
-    }
-
-    runInAction(() => {
-      this.appState = nextAppState;
-    });
+    await runtimeStore.handleAppStateChange(nextAppState);
   };
 
   /**
@@ -1179,13 +982,9 @@ export class ModelStore {
       .catch(() => {});
   };
 
-  reinitializeContext = async () => {
-    if (this.activeModelId) {
-      const model = this.models.find(m => m.id === this.activeModelId);
-      if (model) {
-        await this.initContext(model);
-      }
-    }
+  // ── B8 (phase-4 4a): implementation lives in runtimeStore since batch 8 ──
+  reinitializeContext = async (): Promise<void> => {
+    await runtimeStore.reinitializeContext();
   };
 
   /**
@@ -2008,659 +1807,94 @@ export class ModelStore {
     })();
   };
 
-  /**
-   * Determines whether multimodal (vision) should be enabled for a model load.
-   *
-   * Resolves multimodal config: enables vision if model supports it and a projection
-   * model is available (explicit path or downloaded default).
-   *
-   * @returns
-   * - isMultimodalInit: true if we should initialize with vision support
-   * - resolvedMmProjPath: file path to the projection model (only if isMultimodalInit=true)
-   * - projectionModel: the Model object for the projection (only when auto-resolved from defaults)
-   *
-   * Note: This is a read-only operation safe to call outside the mutex.
-   */
-  private resolveMultimodalConfig = async (
-    model: Model,
-    mmProjPath?: string,
-  ): Promise<{
-    isMultimodalInit: boolean;
-    resolvedMmProjPath?: string;
-    projectionModel?: Model;
-  }> => {
-    const visionEnabled = this.getModelVisionPreference(model);
+  // ── B8 (phase-4 4a): resolveMultimodalConfig / checkMemoryAndConfirm /
+  // proceedWithInitialization left with initContext (module-level helpers in
+  // runtimeStore.ts — private members, no god-object surface needed).
 
-    // Priority 1: Explicit path provided by caller
-    if (mmProjPath && visionEnabled) {
-      return {isMultimodalInit: true, resolvedMmProjPath: mmProjPath};
-    }
-
-    // Priority 2: Auto-resolve from model's default projection model
-    if (
-      model.supportsMultimodal &&
-      model.defaultProjectionModel &&
-      visionEnabled
-    ) {
-      const projectionModel = this.models.find(
-        m => m.id === model.defaultProjectionModel,
-      );
-      if (projectionModel?.isDownloaded) {
-        const resolvedPath = await this.getModelFullPath(projectionModel);
-        return {
-          isMultimodalInit: true,
-          resolvedMmProjPath: resolvedPath,
-          projectionModel,
-        };
-      }
-    }
-
-    // Default: No multimodal support
-    return {isMultimodalInit: false};
-  };
-
-  private resolveDraftConfig = async (model: Model): Promise<DraftConfig> => {
-    const candidate = resolveDraftCandidate(
-      model,
-      this.models,
-      this.contextInitParams,
-    );
-    if (candidate.mode !== 'paired') {
-      return candidate;
-    }
-
-    const resolvedDraftPath = await this.getModelFullPath(candidate.draftModel);
-    if (resolvedDraftPath) {
-      return {
-        mode: 'paired',
-        resolvedDraftPath,
-        draftModel: candidate.draftModel,
-      };
-    }
-
-    return unpairedDraftCandidate(model);
-  };
-
+  // ── B3 (phase-4 4a): implementations live in runtimeStore since batch 3 ──
   get effectiveDraftMode(): DraftConfig['mode'] {
-    return effectiveDraftModeOf(this);
+    return runtimeStore.effectiveDraftMode;
   }
 
   get effectiveDraftCacheDefaults(): {k: CacheType; v: CacheType} {
-    return draftCacheDefaults(
-      this.effectiveDraftMode,
-      this.contextInitParams.flash_attn_type === 'on',
-    );
+    return runtimeStore.effectiveDraftCacheDefaults;
   }
 
-  /**
-   * Check memory/capability requirements and show warning alert if needed.
-   * Returns true if user confirms or no warning needed, false if cancelled.
-   */
-  private checkMemoryAndConfirm = async (
-    model: Model,
-    isMultimodalInit: boolean,
-    projectionModel?: Model,
-    draftModel?: Model,
-  ): Promise<boolean> => {
-    let hasMemory = true;
-    try {
-      hasMemory = await hasEnoughMemory(model, projectionModel, draftModel);
-    } catch (error) {
-      console.error('Memory check failed:', error);
-      return false;
-    }
+  // ── B8 (phase-4 4a): implementation lives in runtimeStore (module
+  // function). This private reverse delegation keeps the god-object surface
+  // identical for the suites that exercise the private name directly (B1
+  // pattern: every moved member keeps its delegation until its call sites
+  // migrate at 4d).
+  private resolveDraftConfig = async (model: Model): Promise<DraftConfig> =>
+    resolveDraftConfigOf(runtimeStore, model);
 
-    const isCapable = isMultimodalInit ? await isHighEndDevice() : true;
-    const hasMemoryIssue = !hasMemory;
-    const hasCapabilityIssue = isMultimodalInit && !isCapable;
-
-    if (!hasMemoryIssue && !hasCapabilityIssue) {
-      return true; // No warning needed
-    }
-
-    console.warn(
-      `Device performance warning for model: ${model.name} - Memory: ${hasMemoryIssue}, Capability: ${hasCapabilityIssue}`,
-    );
-
-    let title: string;
-    let message: string;
-
-    if (hasMemoryIssue && hasCapabilityIssue) {
-      title = uiStore.l10n.memory.alerts.combinedWarningTitle;
-      message = uiStore.l10n.memory.alerts.combinedWarningMessage;
-    } else if (hasMemoryIssue) {
-      title = uiStore.l10n.memory.alerts.memoryWarningTitle;
-      message = uiStore.l10n.memory.alerts.memoryWarningMessage;
-    } else {
-      title = uiStore.l10n.memory.alerts.multimodalWarningTitle;
-      message = uiStore.l10n.memory.alerts.multimodalWarningMessage;
-    }
-
-    // Show alert and wait for user decision - this happens OUTSIDE the mutex
-    return new Promise<boolean>(resolve => {
-      Alert.alert(title, message, [
-        {
-          text: uiStore.l10n.memory.alerts.cancel,
-          style: 'cancel',
-          onPress: () => resolve(false),
-        },
-        {
-          text: uiStore.l10n.memory.alerts.continue,
-          onPress: () => resolve(true),
-        },
-      ]);
-    });
-  };
-
-  /**
-   * Take exclusive ownership of the native context for the e2e benchmark
-   * runner. Sets `benchmarkActive` synchronously so any new auto-load is
-   * gated, then drains the mutex (in case one is already in flight) and
-   * releases whatever context exists. After this resolves, the runner can
-   * safely call `initLlama` directly without racing the rest of the app.
-   *
-   * Pairs with `exitBenchmarkMode()`. The runner MUST call exit even on
-   * failure paths or chat / header / sheet inits will stay rejected.
-   */
+  // ── B5 (phase-4 4a): implementations live in runtimeStore since batch 5 ──
   enterBenchmarkMode = async (): Promise<void> => {
-    runInAction(() => {
-      this.benchmarkActive = true;
-    });
-
-    const op = this.contextOperationMutex.then(async () => {
-      // Release any context the rest of the app loaded (e.g. ChatView's
-      // auto-load on cold launch). clearActiveModel:true so the queued
-      // post-mutex callers see a clean slate if they ever run.
-      await this._releaseContextInternal(true);
-    });
-    this.contextOperationMutex = op.then(() => {}).catch(() => {});
-    await op;
+    await runtimeStore.enterBenchmarkMode();
   };
 
-  /**
-   * Hand context ownership back to the rest of the app. Intentionally
-   * trivial — no native work — so it's safe to call from a `finally` block.
-   */
   exitBenchmarkMode = (): void => {
-    runInAction(() => {
-      this.benchmarkActive = false;
-    });
+    runtimeStore.exitBenchmarkMode();
   };
 
-  /**
-   * Initialize a model context, optionally with multimodal support.
-   *
-   * Architecture:
-   * - Phase 1 (outside mutex): Resolve config, check memory, show alert if needed
-   * - Phase 2 (inside mutex): Release old context, load new context
-   *
-   * The "last-one-wins" pattern uses pendingModelId set at the START, then checked
-   * both after the Alert (to skip if superseded) and inside the mutex (final check).
-   * Note: "last-one-wins" not always loading the last tapped model, but it's ok, as
-   * long as it is not leading the deadlock or mem leak.
-   *
-   * @param model The main LLM model to initialize
-   * @param mmProjPath Optional path to a projection model for multimodal support
-   * @returns The initialized LlamaContext, or null if cancelled/skipped
-   */
-  initContext = async (model: Model, mmProjPath?: string) => {
-    // Benchmark mode owns the native context lifecycle end-to-end.
-    // Reject synchronously so any racing caller (ChatView auto-load, header,
-    // sheet) fails fast instead of silently shadowing the matrix's per-cell
-    // devices / n_gpu_layers via the "already loaded → skip" path.
-    if (this.benchmarkActive) {
-      throw new Error(
-        '[ModelStore] initContext rejected: benchmark mode is active',
-      );
-    }
-
-    // === Phase 1: Pre-flight checks OUTSIDE mutex ===
-
-    // Mark intent immediately - this is the "last-one-wins" tracking
-    // If another model is requested while we're showing an Alert, their
-    // pendingModelId will overwrite ours and we'll detect it later
-    this.pendingModelId = model.id;
-
-    // Set loading state immediately for UI feedback
-    runInAction(() => {
-      this.isContextLoading = true;
-      this.loadingModel = model;
-    });
-
-    try {
-      // Resolve multimodal configuration
-      const {isMultimodalInit, resolvedMmProjPath, projectionModel} =
-        await this.resolveMultimodalConfig(model, mmProjPath);
-
-      const draftConfig = await this.resolveDraftConfig(model);
-
-      // Check memory and get user confirmation if needed (no mutex - UI interaction)
-      const shouldProceed = await this.checkMemoryAndConfirm(
-        model,
-        isMultimodalInit,
-        projectionModel,
-        pairedDraftModel(draftConfig),
-      );
-
-      if (!shouldProceed) {
-        throw new Error('Model loading cancelled by user');
-      }
-
-      // After Alert (if shown), check if we're still the intended model
-      // Another model request might have come in while user was deciding
-      if (this.pendingModelId !== model.id) {
-        logger.debug(
-          `[ModelStore] Skipping "${model.name}" - user switched to "${this.pendingModelId}" during confirmation`,
-        );
-        return null;
-      }
-
-      // === Phase 2: Execute context operations WITH mutex ===
-
-      const operationPromise = this.contextOperationMutex.then(async () => {
-        // A benchmark may have started while this load sat in the mutex
-        // queue (cold-launch deep-link race). Bail before doing native work
-        // — enterBenchmarkMode will release any context we leave behind.
-        if (this.benchmarkActive) {
-          logger.debug(
-            `[ModelStore] Skipping queued load for "${model.name}" - benchmark mode is active`,
-          );
-          return null;
-        }
-
-        // Final check if this request is still current (last-one-wins)
-        // This catches race conditions where another request queued while we waited
-        if (this.pendingModelId !== model.id) {
-          logger.debug(
-            `[ModelStore] Skipping outdated load for "${model.name}" - user now wants model "${this.pendingModelId}"`,
-          );
-          return null;
-        }
-
-        // Skip if already loaded
-        if (this.activeModelId === model.id && this.context) {
-          logger.debug(
-            `[ModelStore] Model "${model.name}" is already loaded, skipping`,
-          );
-          return this.context;
-        }
-
-        // Release existing context
-        await this._releaseContextInternal();
-
-        // Small delay for native cleanup before loading next model
-        await new Promise(resolve => setTimeout(resolve, 100));
-
-        // Proceed with actual initialization
-        return this.proceedWithInitialization(
-          model,
-          resolvedMmProjPath,
-          isMultimodalInit,
-          projectionModel,
-          draftConfig,
-        );
-      });
-
-      // Keep mutex chain intact by swallowing errors
-      this.contextOperationMutex = operationPromise
-        .then(() => {})
-        .catch(() => {});
-
-      return await operationPromise;
-    } finally {
-      runInAction(() => {
-        this.isContextLoading = false;
-        this.loadingModel = undefined;
-      });
-    }
-  };
-
-  /**
-   * Proceed with the actual model initialization after device capability checks
-   */
-  private async proceedWithInitialization(
+  // ── B8 (phase-4 4a): implementation lives in runtimeStore since batch 8
+  // (its pre-flight helpers + proceedWithInitialization went with it as
+  // module functions). Verbatim reverse delegation — dies at 4b when the
+  // call sites migrate. The JSDoc moved with the body.
+  initContext = async (
     model: Model,
     mmProjPath?: string,
-    isMultimodalInit: boolean = false,
-    projectionModel?: Model,
-    draftConfig?: DraftConfig,
-  ): Promise<LlamaContext> {
-    const filePath = await this.getModelFullPath(model);
-    if (!filePath) {
-      throw new Error('Model path is undefined');
-    }
-
-    runInAction(() => {
-      this.isMultimodalActive = false; // Reset until we confirm it's enabled
-      this.activeProjectionModelId = projectionModel?.id;
-    });
-
-    // Get all effective initialization settings BEFORE try block
-    // so they're available for error reporting if initialization fails
-    const effectiveSettings = await this.getEffectiveContextInitParams(
-      filePath,
-      draftConfig,
-    );
-
-    try {
-      // Create properly versioned ContextInitParams
-      const contextInitParams = createContextInitParams(effectiveSettings);
-
-      const t0 = Date.now();
-      const ctx = await initLlama(
-        {
-          model: filePath,
-          ...effectiveSettings, // Use effectiveSettings without version for llama.rn
-          use_progress_callback: true,
-        },
-        (_progress: number) => {
-          //logger.debug('progress: ', _progress);
-        },
-      );
-      const t1 = Date.now();
-      logger.debug('init time: ', t1 - t0);
-
-      await this.updateModelStopTokens(ctx, model);
-
-      // Check and update thinking capabilities
-      await this.updateModelThinkingCapabilities(ctx, model);
-
-      // Initialize multimodal support if mmproj path was provided
-      if (isMultimodalInit && mmProjPath) {
-        try {
-          logger.debug(
-            'Initializing multimodal support with path:',
-            mmProjPath,
-          );
-
-          // Initialize multimodal with the new API format
-          // Apply effective value: clamp image_max_tokens to n_ctx
-          const success = await ctx.initMultimodal({
-            path: mmProjPath,
-            use_gpu: !this.contextInitParams.no_gpu_devices,
-            image_max_tokens: Math.min(
-              this.contextInitParams.image_max_tokens ?? 512,
-              this.contextInitParams.n_ctx,
-            ),
-          });
-
-          if (!success) {
-            console.error('Failed to initialize multimodal support');
-          } else {
-            logger.debug('Multimodal support initialized successfully');
-            // Verify that multimodal is now enabled
-            const isEnabled = await ctx.isMultimodalEnabled();
-            logger.debug('Multimodal enabled status:', isEnabled);
-
-            // Update the multimodal active flag
-            runInAction(() => {
-              this.isMultimodalActive = isEnabled;
-            });
-          }
-        } catch (error) {
-          console.error('Error initializing multimodal support:', error);
-          runInAction(() => {
-            this.isMultimodalActive = false;
-            this.activeProjectionModelId = undefined;
-          });
-        }
-      }
-
-      runInAction(() => {
-        this.context = ctx;
-        this.engine = new LocalCompletionEngine(ctx);
-        this.activeRemoteBinding = undefined;
-        this.activeContextSettings = contextInitParams;
-        this.setActiveModel(model.id);
-        this.pendingModelId = null;
-      });
-
-      // Update largestSuccessfulLoad using GGUF estimator
-      try {
-        const estimated = getModelMemoryRequirement(
-          model,
-          projectionModel,
-          contextInitParams,
-          pairedDraftModel(draftConfig),
-        );
-        runInAction(() => {
-          if (
-            this.largestSuccessfulLoad === undefined ||
-            estimated > this.largestSuccessfulLoad
-          ) {
-            this.largestSuccessfulLoad = estimated;
-          }
-        });
-      } catch (error) {
-        console.warn(
-          '[ModelStore] Failed to update largestSuccessfulLoad:',
-          error,
-        );
-      }
-
-      return ctx;
-    } catch (error) {
-      console.error(
-        `Failed to initialize model context for "${model.name}" (${model.id}):`,
-        error,
-      );
-
-      // Set error state for UI feedback - include model info and context params for error reporting
-      const errorState = createErrorState(error, 'modelInit', undefined, {
-        modelId: model.id,
-        modelName: model.name,
-        modelUrl: model.hfUrl,
-        modelSize: model.size,
-        contextParams: effectiveSettings,
-      });
-      runInAction(() => {
-        this.modelLoadError = errorState;
-      });
-
-      throw error;
-    } finally {
-      runInAction(() => {
-        this.lastUsedModelId = model.id;
-      });
-      try {
-        runInAction(() => {
-          model.lastUsedAt = Date.now();
-        });
-      } catch {
-        // Non-critical bookkeeping — never fail a model load over it.
-      }
-    }
-  }
-
-  /** Internal release - caller must already hold the mutex. */
-  private _releaseContextInternal = async (
-    clearActiveModel: boolean = false,
-  ) => {
-    logger.debug('attempt to release');
-    chatSessionStore.exitEditMode();
-    if (!this.context) {
-      // For remote models or deletion scenarios, clear engine and state
-      if (this.engine || clearActiveModel) {
-        // Stop any active remote completion
-        if (this.engine) {
-          try {
-            await this.engine.stopCompletion();
-          } catch {
-            // Ignore errors from stopping remote completion
-          }
-        }
-        runInAction(() => {
-          this.engine = undefined;
-          this.activeRemoteBinding = undefined;
-          if (clearActiveModel) {
-            this.activeModelId = undefined;
-          }
-          this.isMultimodalActive = false;
-          this.activeProjectionModelId = undefined;
-        });
-      }
-      if (!this.engine && !clearActiveModel) {
-        return 'No context to release';
-      }
-      return 'Remote engine cleared';
-    }
-
-    try {
-      // IMPORTANT: Stop-Await-Release Pattern
-      // This prevents race condition where completion callback fires after context is freed
-      // which causes SIGSEGV in isMultimodalEnabled/createCompletionResult
-      if (
-        this.inferencing ||
-        this.isStreaming ||
-        this.activeCompletionPromise
-      ) {
-        logger.debug('Stopping active completion before context release');
-
-        // Step 1: Signal the completion to stop
-        try {
-          await this.context.stopCompletion();
-        } catch (stopError) {
-          console.warn('Error stopping completion:', stopError);
-          // Continue with release even if stop fails
-        }
-
-        // Step 2: Wait for the completion promise to actually finish
-        // This is critical - stopCompletion() only signals, it doesn't wait
-        if (this.activeCompletionPromise) {
-          logger.debug('Waiting for completion promise to finish...');
-          try {
-            // Wait for promise to settle (ignore errors, just wait for it to complete)
-            await this.activeCompletionPromise.catch(() => {});
-          } catch {
-            // Ignore any errors, we just need to wait
-          }
-          this.activeCompletionPromise = null;
-        }
-
-        // Clear inference flags
-        runInAction(() => {
-          this.inferencing = false;
-          this.isStreaming = false;
-        });
-      }
-
-      // Step 3: Now safe to release - First check if multimodal is enabled and release it if needed
-      if (this.isMultimodalActive) {
-        logger.debug('Releasing multimodal context first');
-        try {
-          await this.context.releaseMultimodal();
-          // Immediately clear multimodal state after successful release
-          runInAction(() => {
-            this.isMultimodalActive = false;
-            this.activeProjectionModelId = undefined;
-          });
-          logger.debug('Multimodal context released and state cleared');
-        } catch (error) {
-          console.error('Error releasing multimodal context:', error);
-          // Even if release fails, clear the state to prevent blocking deletion
-          runInAction(() => {
-            this.isMultimodalActive = false;
-            this.activeProjectionModelId = undefined;
-          });
-        }
-      }
-
-      // Then release the main context
-      await this.context.release();
-      logger.debug('released');
-    } catch (error) {
-      console.error('Error during context release:', error);
-    } finally {
-      runInAction(() => {
-        this.context = undefined;
-        this.engine = undefined;
-        this.activeRemoteBinding = undefined;
-        this.activeContextSettings = undefined;
-        // Ensure multimodal state is cleared even if something went wrong above
-        this.isMultimodalActive = false;
-        this.activeProjectionModelId = undefined;
-        // Clear active model if requested (for deletion scenarios)
-        if (clearActiveModel) {
-          this.activeModelId = undefined;
-        }
-      });
-
-      // Update availableMemoryCeiling after release (clean state)
-      try {
-        const availableBytes = await NativeHardwareInfo.getAvailableMemory();
-        runInAction(() => {
-          if (
-            this.availableMemoryCeiling === undefined ||
-            availableBytes > this.availableMemoryCeiling
-          ) {
-            this.availableMemoryCeiling = availableBytes;
-          }
-        });
-      } catch (error) {
-        console.warn(
-          '[ModelStore] Failed to update availableMemoryCeiling:',
-          error,
-        );
-      }
-    }
-    return 'Context released successfully';
+  ): Promise<LlamaContext | null> => {
+    return runtimeStore.initContext(model, mmProjPath);
   };
 
-  /** Acquires mutex before releasing context. */
-  releaseContext = async (clearActiveModel: boolean = false) => {
-    const operationPromise = this.contextOperationMutex.then(async () => {
-      return this._releaseContextInternal(clearActiveModel);
-    });
+  // ── B7 (phase-4 4a): implementations live in runtimeStore since batch 7 ──
+  releaseContext = async (
+    clearActiveModel: boolean = false,
+  ): Promise<string> => {
+    return runtimeStore.releaseContext(clearActiveModel);
+  };
 
-    // Swallow errors to keep mutex chain intact
-    this.contextOperationMutex = operationPromise
-      .then(() => {})
-      .catch(() => {});
-
-    return operationPromise;
+  /** Internal release - caller must already hold the mutex. */
+  // ── B7: implementation lives in runtimeStore (module function). This
+  // private reverse delegation keeps the god-object surface identical for
+  // the suite that exercises the private name directly (B1 pattern: every
+  // moved member keeps its delegation until its call sites migrate at 4d).
+  private _releaseContextInternal = async (
+    clearActiveModel: boolean = false,
+  ): Promise<string> => {
+    return releaseContextInternal(this, clearActiveModel);
   };
 
   manualReleaseContext = async () => {
-    await this.releaseContext(true); // Clear active model for manual release
+    await runtimeStore.manualReleaseContext();
   };
 
+  // ── B3 (phase-4 4a): implementation lives in runtimeStore since batch 3 ──
   get activeModel(): Model | undefined {
-    // Look in local models first, then remote models
-    return (
-      this.models.find(model => model.id === this.activeModelId) ||
-      this.remoteModels.find(model => model.id === this.activeModelId)
-    );
+    return runtimeStore.activeModel;
   }
 
-  private get capabilityEnv(): CapabilityEnv {
-    return {
-      remoteCaps: serverStore.remoteCaps,
-      listCaps: serverStore.listCaps,
-      binding: this.activeRemoteBinding,
-      isMultimodalActive: this.isMultimodalActive,
-      activeContextSettings: this.activeContextSettings,
-      activeModelId: this.activeModelId,
-    };
-  }
-
+  // ── B3 (phase-4 4a): capabilityEnv moved with its only consumer (capsFor);
+  // implementation lives in runtimeStore since batch 3 ──
   /**
    * Capabilities of any model, active or not — the model card's entry point.
    * Never annotate it explicitly as `action`: that untracks the observable
    * reads, so every card would freeze on its first value while the suite
    * stayed green.
    */
-  capsFor = (model: Model | undefined): ModelCapabilityView =>
-    resolveModelCaps(model, this.capabilityEnv);
+  capsFor = (model: Model | undefined): ModelCapabilityView => {
+    return runtimeStore.capsFor(model);
+  };
 
   /** Capabilities of the live session — chat's entry point. */
   get activeModelCaps(): ModelCapabilityView {
-    return this.capsFor(this.activeModel);
+    return runtimeStore.activeModelCaps;
   }
 
+  // ── B10 (phase-4 4a): implementation lives in catalogStore since batch 10 ──
   get lastUsedModel(): Model | undefined {
-    return this.lastUsedModelId
-      ? this.models.find(m => m.id === this.lastUsedModelId && m.isDownloaded)
-      : undefined;
+    return catalogStore.lastUsedModel;
   }
 
   /**
@@ -2668,15 +1902,9 @@ export class ModelStore {
    * For local models: the numeric native context ID as a string.
    * For remote models: "remote-{serverId}" string.
    */
+  // ── B3 (phase-4 4a): implementation lives in runtimeStore since batch 3 ──
   get contextId(): string | undefined {
-    if (this.context) {
-      return String(this.context.id);
-    }
-    const model = this.activeModel;
-    if (model?.origin === ModelOrigin.REMOTE && model.serverId) {
-      return `remote-${model.serverId}`;
-    }
-    return undefined;
+    return runtimeStore.contextId;
   }
 
   /**
@@ -2685,24 +1913,9 @@ export class ModelStore {
    * change which cards exist. Remote models are never stored in the persisted
    * `models` array.
    */
+  // ── B10 (phase-4 4a): implementation lives in catalogStore since batch 10 ──
   get remoteModels(): Model[] {
-    const models: Model[] = [];
-    for (const selected of serverStore.userSelectedModels) {
-      const server = serverStore.servers.find(s => s.id === selected.serverId);
-      if (!server) {
-        continue;
-      }
-      // Use the remote model ID as the display name
-      models.push(
-        createRemoteModel({
-          serverId: selected.serverId,
-          serverName: server.name,
-          remoteModelId: selected.remoteModelId,
-          modelName: selected.remoteModelId,
-        }),
-      );
-    }
-    return models;
+    return catalogStore.remoteModels;
   }
 
   setActiveModel(modelId: string) {
@@ -3224,10 +2437,9 @@ export class ModelStore {
     });
   };
 
+  // ── B4 (phase-4 4a): implementation lives in runtimeStore since batch 4 ──
   updateUseAutoRelease = (useAutoRelease: boolean) => {
-    runInAction(() => {
-      this.useAutoRelease = useAutoRelease;
-    });
+    runtimeStore.updateUseAutoRelease(useAutoRelease);
   };
 
   /**
@@ -3395,25 +2607,18 @@ export class ModelStore {
    * Returns available (i.e. downloaded models) models with projection models filtered out,
    * plus remote models from configured servers.
    */
+  // ── B10 (phase-4 4a): implementation lives in catalogStore since batch 10 ──
   get availableModels(): Model[] {
-    const localAvailable = filterProjectionModels(
-      this.models.filter(
-        model =>
-          // Include models that are either local or downloaded
-          model.isLocal ||
-          model.origin === ModelOrigin.LOCAL ||
-          model.isDownloaded,
-      ),
-    );
-    return [...localAvailable, ...this.remoteModels];
+    return catalogStore.availableModels;
   }
 
+  // ── B6 (phase-4 4a): implementations live in runtimeStore since batch 6 ──
   setInferencing(value: boolean) {
-    this.inferencing = value;
+    runtimeStore.setInferencing(value);
   }
 
   setIsStreaming(value: boolean) {
-    this.isStreaming = value;
+    runtimeStore.setIsStreaming(value);
   }
 
   /**
@@ -3422,7 +2627,7 @@ export class ModelStore {
    * @param promise The completion promise to track
    */
   registerCompletionPromise(promise: Promise<any>) {
-    this.activeCompletionPromise = promise;
+    registerCompletionPromiseOf(promise);
   }
 
   /**
@@ -3430,7 +2635,7 @@ export class ModelStore {
    * This should be called when the completion finishes (success or error).
    */
   clearCompletionPromise() {
-    this.activeCompletionPromise = null;
+    clearCompletionPromiseOf();
   }
 
   /**
@@ -3495,6 +2700,7 @@ export class ModelStore {
    * @param params - Completion parameters including image paths
    * @returns Promise<void>
    */
+  // ── B6 (phase-4 4a): implementation lives in runtimeStore since batch 6 ──
   startImageCompletion = async (params: {
     prompt: string;
     image_path?: string; // For backward compatibility
@@ -3504,125 +2710,7 @@ export class ModelStore {
     onComplete?: (text: string) => void;
     onError?: (error: Error) => void;
   }): Promise<void> => {
-    if (!this.context) {
-      throw new Error('No model context available');
-    }
-
-    // Check if multimodal is enabled
-    if (!this.isMultimodalActive) {
-      throw new Error('Multimodal is not enabled for this model');
-    }
-
-    runInAction(() => {
-      this.inferencing = true;
-      this.isStreaming = false;
-    });
-
-    try {
-      // Handle both single image_path and multiple image_paths
-      let imagePaths: string[] = [];
-
-      if (params.image_paths && params.image_paths.length > 0) {
-        // Use the provided image_paths array
-        imagePaths = [...params.image_paths];
-      } else if (params.image_path) {
-        // Backward compatibility: convert single image_path to array
-        imagePaths = [params.image_path];
-      }
-
-      if (imagePaths.length === 0) {
-        throw new Error('No images provided for multimodal completion');
-      }
-
-      // Process all image paths to handle file:// prefix
-      const processedImagePaths = imagePaths.map(path =>
-        path.startsWith('file://')
-          ? Platform.OS === 'ios'
-            ? path.substring(7) // iOS: remove 'file://'
-            : path // Android: keep as is
-          : path,
-      );
-
-      // Create a system message if provided
-      const systemMessage = params.systemMessage?.trim()
-        ? {
-            role: 'system',
-            content: params.systemMessage,
-          }
-        : undefined;
-
-      // Create a user message with text and all images
-      const userMessage = {
-        role: 'user',
-        content: [
-          {
-            type: 'text',
-            text: params.prompt,
-          },
-          // Add all images to the content array
-          ...processedImagePaths.map(path => ({
-            type: 'image_url',
-            image_url: {url: path},
-          })),
-        ],
-      };
-
-      // Start the completion
-      runInAction(() => {
-        this.isStreaming = true;
-      });
-
-      const completionParams =
-        await chatSessionRepository.getGlobalCompletionSettings();
-      const stopWords = toJS(modelStore.activeModel?.stopWords);
-
-      // Create completion params with app-specific properties
-      const messages = systemMessage
-        ? [systemMessage, userMessage]
-        : [userMessage];
-      const completionParamsWithAppProps = {
-        ...completionParams,
-        messages: messages,
-        stop: stopWords,
-      } as CompletionParams;
-
-      // Strip app-specific properties before passing to llama.rn
-      const cleanCompletionParams = toApiCompletionParams(
-        completionParamsWithAppProps,
-      );
-
-      // Create the completion promise and register it for safe context release
-      const completionPromise = this.context.completion(
-        cleanCompletionParams,
-        data => {
-          if (data.token) {
-            params.onToken?.(data.token);
-          }
-        },
-      );
-
-      // Register the promise so releaseContext can wait for it
-      this.registerCompletionPromise(completionPromise);
-
-      const result = await completionPromise;
-
-      // Clear the promise after completion finishes
-      this.clearCompletionPromise();
-
-      params.onComplete?.(result.text);
-    } catch (error) {
-      // Clear the promise on error too
-      this.clearCompletionPromise();
-      console.error('Error in multi-image completion:', error);
-      params.onError?.(
-        error instanceof Error ? error : new Error(String(error)),
-      );
-    } finally {
-      runInAction(() => {
-        this.inferencing = false;
-        this.isStreaming = false;
-      });
-    }
+    await runtimeStore.startImageCompletion(params);
   };
 
   /**
@@ -3695,8 +2783,9 @@ export class ModelStore {
     this.downloadError = null;
   };
 
+  // ── B7 (phase-4 4a): implementation lives in runtimeStore since batch 7 ──
   clearModelLoadError = () => {
-    this.modelLoadError = null;
+    runtimeStore.clearModelLoadError();
   };
 
   retryDownload = () => {

@@ -5,7 +5,9 @@ import {useNavigation, NavigationProp} from '@react-navigation/native';
 
 import {XIcon} from '../../assets/icons';
 import {useTheme} from '../../hooks';
-import {modelStore, assistantStore, uiStore} from '../../store';
+import {assistantStore, uiStore} from '../../store';
+
+import {downloadStore} from '../../store/model/downloadStore';
 import {L10nContext} from '../../utils';
 import {ROUTES} from '../../utils/navigationConstants';
 import {bannerStyles as createStyles} from './styles';
@@ -38,7 +40,7 @@ export const DownloadBanner: React.FC = observer(() => {
   const navigation = useNavigation<NavigationProp<any>>();
   const l10n = useContext(L10nContext);
 
-  const visible = modelStore.activeDownloads.find(
+  const visible = downloadStore.activeDownloads.find(
     d => !uiStore.isDownloadBannerDismissed(d.modelId),
   );
   if (!visible) {
@@ -63,7 +65,7 @@ export const DownloadBanner: React.FC = observer(() => {
   ).replace('{{name}}', subject);
   const eta = visible.etaLabel || formatSize(visible.bytesTotal);
   const clamped = Math.max(0, Math.min(100, visible.progress));
-  const extraCount = Math.max(0, modelStore.activeDownloads.length - 1);
+  const extraCount = Math.max(0, downloadStore.activeDownloads.length - 1);
   const extraLabel = l10n.downloadBanner.extraInProgress.replace(
     '{{count}}',
     String(extraCount),
@@ -112,7 +114,7 @@ export const DownloadBanner: React.FC = observer(() => {
         testID="download-banner-stop"
         accessibilityRole="button"
         accessibilityLabel={l10n.common.stop}
-        onPress={() => modelStore.cancelDownload(visible.modelId)}
+        onPress={() => downloadStore.cancelDownload(visible.modelId)}
         style={styles.stop}
         hitSlop={8}>
         <Text style={styles.stopText}>{l10n.common.stop}</Text>

@@ -1,7 +1,9 @@
 import * as RNFS from '@dr.pogodin/react-native-fs';
 
 import {l10n} from '../locales';
-import {modelStore} from '../store';
+import {catalogStore} from '../store/model/catalogStore';
+import {downloadStore} from '../store/model/downloadStore';
+import {runtimeStore} from '../store/model/runtimeStore';
 import {formatBytes, formatNumber} from './formatters';
 import {getVisionModelSizeBreakdown} from './multimodalHelpers';
 import {Model, ModelOrigin} from './types';
@@ -20,8 +22,8 @@ export const getModelSizeString = (
   // This is relevant only for local models (when we don't know size upfront),
   // otherwise the values should be the same.
   const size =
-    isActiveModel && modelStore.context?.model
-      ? modelStore.context.model.size
+    isActiveModel && runtimeStore.context?.model
+      ? runtimeStore.context.model.size
       : model.size;
 
   const notAvailable = l10nData.models.modelDescription.notAvailable;
@@ -50,10 +52,10 @@ export const getModelDescription = (
   // This is relevant only for local models (when we don't know size/params upfront),
   // otherwise the values should be the same.
   const {size, params} =
-    isActiveModel && modelStore.context?.model
+    isActiveModel && runtimeStore.context?.model
       ? {
-          size: modelStore.context.model.size,
-          params: modelStore.context.model.nParams,
+          size: runtimeStore.context.model.size,
+          params: runtimeStore.context.model.nParams,
         }
       : {
           size: model.size,
@@ -95,10 +97,10 @@ export const checkModelFileIntegrity = async (
   try {
     // For HF models, if we don't have lfs details, fetch them
     if (model.origin === ModelOrigin.HF && !model.hfModelFile?.lfs?.size) {
-      await modelStore.fetchAndUpdateModelFileDetails(model);
+      await catalogStore.fetchAndUpdateModelFileDetails(model);
     }
 
-    const filePath = await modelStore.getModelFullPath(model);
+    const filePath = await downloadStore.getModelFullPath(model);
     const fileStats = await RNFS.stat(filePath);
 
     // If we have expected file size from HF, compare it
@@ -112,7 +114,7 @@ export const checkModelFileIntegrity = async (
 
       // If size difference is more than 0.1% and hash doesn't match, consider it corrupted
       if (sizeDiffPercentage > 0.001) {
-        modelStore.updateModelHash(model.id, false);
+        catalogStore.updateModelHash(model.id, false);
 
         // If hash matches, consider it valid
         if (model.hash && model.hfModelFile?.lfs?.oid) {

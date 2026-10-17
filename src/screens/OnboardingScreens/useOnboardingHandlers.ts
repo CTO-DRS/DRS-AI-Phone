@@ -1,7 +1,9 @@
 import {useCallback, useContext, useEffect, useRef, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 
-import {uiStore, assistantStore, modelStore} from '../../store';
+import {uiStore, assistantStore} from '../../store';
+import {catalogStore} from '../../store/model/catalogStore';
+import {downloadStore} from '../../store/model/downloadStore';
 import {L10nContext} from '../../utils';
 import {ROUTES} from '../../utils/navigationConstants';
 import {
@@ -17,7 +19,7 @@ import type {OnboardingStep, TopicKey} from '../../store/onboarding/types';
  * `goNext` / `goBack` / `skip` / `finish` / `selectTopic` that route through
  * the single-writer methods on `uiStore` (and, on finish, materialise the
  * topic-matched local assistant, bind the picked model, and kick off the download
- * via `modelStore`).
+ * via the model sub-stores (`catalogStore` / `downloadStore`).
  */
 export const useOnboardingHandlers = (step: OnboardingStep) => {
   const navigation = useNavigation<any>();
@@ -93,7 +95,7 @@ export const useOnboardingHandlers = (step: OnboardingStep) => {
       const assistantDef = resolveAssistantForTopic(topic);
       const entry = assistantDef.models.find(m => entryId(m) === modelId);
       const picked = entry
-        ? await modelStore.registerOnboardingAssistantModel(entry)
+        ? await catalogStore.registerOnboardingAssistantModel(entry)
         : undefined;
       // Greeting resolution: static English definitions (Codie/Sage/Echo/
       // Muse) copy as-is; Pip has no static copy — its curated greeting is
@@ -147,10 +149,10 @@ export const useOnboardingHandlers = (step: OnboardingStep) => {
       if (picked) {
         // Fire-and-forget. checkSpaceAndDownload returns cleanly on user
         // cancel (DownloadCancelledError is swallowed there) and re-throws
-        // genuine failures, which surface through `modelStore.downloadError`
+        // genuine failures, which surface through `downloadStore.downloadError`
         // for the dialog. We catch defensively to keep the rejection from
         // becoming an unhandled promise from this no-await call site.
-        modelStore.checkSpaceAndDownload(picked.id).catch(() => {
+        downloadStore.checkSpaceAndDownload(picked.id).catch(() => {
           // intentionally swallowed — downloadError already drives the UI.
         });
       }

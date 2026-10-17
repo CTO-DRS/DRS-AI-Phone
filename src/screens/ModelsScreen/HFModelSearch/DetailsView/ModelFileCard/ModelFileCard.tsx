@@ -14,7 +14,8 @@ import {
 
 import {useTheme, useMemoryCheck} from '../../../../../hooks';
 import {createStyles} from './styles';
-import {modelStore} from '../../../../../store';
+import {catalogStore} from '../../../../../store/model/catalogStore';
+import {downloadStore} from '../../../../../store/model/downloadStore';
 import {
   formatBytes,
   hfAsModel,
@@ -74,20 +75,24 @@ export const ModelFileCard: FC<ModelFileCardProps> = observer(
       [hfModel, modelFile],
     );
 
-    const storeModel = modelStore.models.find(m => m.id === convertedModel.id);
+    const storeModel = catalogStore.models.find(
+      m => m.id === convertedModel.id,
+    );
 
     const isDownloading = storeModel
-      ? modelStore.isDownloading(storeModel.id)
+      ? downloadStore.isDownloading(storeModel.id)
       : false;
     const downloadProgress = storeModel?.progress || 0;
     const downloadSpeed = storeModel?.downloadSpeed;
 
     const isBookmarked = computed(() =>
-      modelStore.models.some(model => model.hfModelFile?.oid === modelFile.oid),
+      catalogStore.models.some(
+        model => model.hfModelFile?.oid === modelFile.oid,
+      ),
     ).get();
 
     const isDownloaded = computed(() =>
-      modelStore.models.some(
+      catalogStore.models.some(
         model => model.hfModelFile?.oid === modelFile.oid && model.isDownloaded,
       ),
     ).get();
@@ -100,14 +105,14 @@ export const ModelFileCard: FC<ModelFileCardProps> = observer(
           convertedModel.supportsMultimodal &&
           convertedModel.defaultProjectionModel
         ) {
-          return modelStore.models.find(
+          return catalogStore.models.find(
             m => m.id === convertedModel.defaultProjectionModel,
           );
         }
         return undefined;
       },
       // eslint-disable-next-line react-hooks/exhaustive-deps -- MobX observable tracked by observer()
-      [convertedModel, modelStore.models],
+      [convertedModel, catalogStore.models],
     );
 
     const {shortMemoryWarning, multimodalWarning} = useMemoryCheck(
@@ -144,13 +149,13 @@ export const ModelFileCard: FC<ModelFileCardProps> = observer(
 
     const handleBookmark = () => {
       if (!isBookmarked) {
-        modelStore.addHFModel(hfModel, modelFile);
+        catalogStore.addHFModel(hfModel, modelFile);
       }
     };
 
     const handleUnbookmark = () => {
       if (isBookmarked) {
-        const model = modelStore.models.find(
+        const model = catalogStore.models.find(
           (m: Model) => m.hfModelFile?.oid === modelFile.oid,
         );
         if (model?.origin === ModelOrigin.PRESET) {
@@ -172,7 +177,7 @@ export const ModelFileCard: FC<ModelFileCardProps> = observer(
               {
                 text: l10n.models.modelFile.buttons.remove,
                 onPress: () => {
-                  const removed = modelStore.removeModelFromList(model);
+                  const removed = catalogStore.removeModelFromList(model);
                   if (!removed) {
                     Alert.alert(
                       l10n.common.error,
@@ -204,18 +209,18 @@ export const ModelFileCard: FC<ModelFileCardProps> = observer(
       } else {
         // Direct download with default projection for all models
         // VisionDownloadSheet is only opened via the vision chip
-        modelStore.downloadHFModel(hfModel, modelFile, {enableVision: true});
+        downloadStore.downloadHFModel(hfModel, modelFile, {enableVision: true});
       }
     };
 
     const handleCancel = () => {
       if (storeModel && isDownloading) {
-        modelStore.cancelDownload(storeModel.id);
+        downloadStore.cancelDownload(storeModel.id);
       }
     };
 
     const handleDelete = () => {
-      const model = modelStore.models.find(
+      const model = catalogStore.models.find(
         m => m.hfModelFile?.oid === modelFile.oid,
       );
       if (model?.isDownloaded) {
@@ -227,7 +232,7 @@ export const ModelFileCard: FC<ModelFileCardProps> = observer(
             {
               text: l10n.common.delete,
               onPress: async () => {
-                await modelStore.deleteModel(model);
+                await downloadStore.deleteModel(model);
               },
             },
           ],
