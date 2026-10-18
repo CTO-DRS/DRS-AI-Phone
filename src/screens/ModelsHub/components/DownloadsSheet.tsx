@@ -13,7 +13,9 @@ import LinearGradient from 'react-native-linear-gradient';
 import {useTheme} from '../../../hooks';
 import {hubStatusColors} from '../hubStatus';
 import {L10nContext} from '../../../utils';
-import {modelStore, modelHubStore} from '../../../store';
+import {modelHubStore} from '../../../store';
+import {catalogStore} from '../../../store/model/catalogStore';
+import {downloadStore} from '../../../store/model/downloadStore';
 import {downloadManager} from '../../../services/downloads';
 import {formatBytes} from '../../../utils';
 import {
@@ -41,8 +43,8 @@ export const DownloadsSheet: React.FC<DownloadsSheetProps> = observer(
     const t = (l10n as any).modelsHub ?? {};
     const activeJobs = downloadManager.activeJobs;
     const pausedJobs = downloadManager.pausedJobs;
-    const verifyingIds = modelStore.verifyingModelIds;
-    const recentlyCompleted = modelStore.models
+    const verifyingIds = downloadStore.verifyingModelIds;
+    const recentlyCompleted = catalogStore.models
       .filter(m => m.isDownloaded && m.downloadedAt)
       .sort((a, b) => (b.downloadedAt ?? 0) - (a.downloadedAt ?? 0))
       .slice(0, 8);
@@ -123,14 +125,16 @@ export const DownloadsSheet: React.FC<DownloadsSheetProps> = observer(
                         <SheetAction
                           theme={theme}
                           label={t.downloads?.pause ?? ''}
-                          onPress={() => modelStore.pauseDownload(job.model.id)}
+                          onPress={() =>
+                            downloadStore.pauseDownload(job.model.id)
+                          }
                         />
                         <SheetAction
                           theme={theme}
                           destructive
                           label={t.downloads?.cancel ?? ''}
                           onPress={() =>
-                            modelStore.cancelDownload(job.model.id)
+                            downloadStore.cancelDownload(job.model.id)
                           }
                         />
                       </>
@@ -161,13 +165,17 @@ export const DownloadsSheet: React.FC<DownloadsSheetProps> = observer(
                       <SheetAction
                         theme={theme}
                         label={t.downloads?.resume ?? ''}
-                        onPress={() => modelStore.resumeDownload(job.model.id)}
+                        onPress={() =>
+                          downloadStore.resumeDownload(job.model.id)
+                        }
                       />
                       <SheetAction
                         theme={theme}
                         destructive
                         label={t.downloads?.cancel ?? ''}
-                        onPress={() => modelStore.cancelDownload(job.model.id)}
+                        onPress={() =>
+                          downloadStore.cancelDownload(job.model.id)
+                        }
                       />
                     </>
                   }
@@ -180,7 +188,7 @@ export const DownloadsSheet: React.FC<DownloadsSheetProps> = observer(
           {verifyingIds.length > 0 && (
             <Section title={t.downloads?.verifying ?? ''}>
               {verifyingIds.map(id => {
-                const model = modelStore.models.find(m => m.id === id);
+                const model = catalogStore.models.find(m => m.id === id);
                 return (
                   <JobCard
                     key={id}

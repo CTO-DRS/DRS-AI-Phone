@@ -1,6 +1,7 @@
 import React, {useContext} from 'react';
 import {Button, Paragraph, ProgressBar, Text} from 'react-native-paper';
-import {modelStore} from '../../store';
+import {catalogStore} from '../../store/model/catalogStore';
+import {downloadStore} from '../../store/model/downloadStore';
 import {Model} from '../../utils/types';
 import {useTheme} from '../../hooks';
 import {View} from 'react-native';
@@ -24,32 +25,32 @@ export const ModelNotAvailable = observer(
     const styles = createStyles(theme);
     const l10n = useContext(L10nContext);
 
-    const isAssistantModelDownloaded = modelStore.isModelAvailable(model?.id);
-    const defaultModel = modelStore.models.find(m => m.id === model?.id);
+    const isAssistantModelDownloaded = catalogStore.isModelAvailable(model?.id);
+    const defaultModel = catalogStore.models.find(m => m.id === model?.id);
 
     // Check if currently selected model is downloaded (if any)
     const isCurrentlySelectedModelDownloaded = currentlySelectedModel
-      ? modelStore.isModelAvailable(currentlySelectedModel.id)
+      ? catalogStore.isModelAvailable(currentlySelectedModel.id)
       : false;
 
     const isDownloading = defaultModel
-      ? modelStore.isDownloading(defaultModel.id)
+      ? downloadStore.isDownloading(defaultModel.id)
       : false;
     const downloadProgress = (defaultModel?.progress || 0) / 100;
     const downloadSpeed = defaultModel?.downloadSpeed;
 
-    const hasAnyDownloadedModel = modelStore.availableModels.length > 0;
+    const hasAnyDownloadedModel = catalogStore.availableModels.length > 0;
 
     const handleDownloadModel = async (modelToDownload: Model) => {
       if (modelToDownload.hfModel) {
         // For HF models, use default vision preference (enabled) for backward compatibility
-        await modelStore.downloadHFModel(
+        await downloadStore.downloadHFModel(
           modelToDownload.hfModel!,
           modelToDownload.hfModelFile!,
           {enableVision: true},
         );
       } else {
-        await modelStore.checkSpaceAndDownload(modelToDownload.id);
+        await downloadStore.checkSpaceAndDownload(modelToDownload.id);
       }
     };
 
@@ -116,7 +117,7 @@ export const ModelNotAvailable = observer(
           <Button
             onPress={() =>
               isDownloading
-                ? modelStore.cancelDownload(model.id)
+                ? downloadStore.cancelDownload(model.id)
                 : handleDownloadModel(model)
             }
             mode="contained-tonal">

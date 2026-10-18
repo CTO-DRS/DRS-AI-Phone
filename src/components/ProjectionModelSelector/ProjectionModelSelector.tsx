@@ -9,7 +9,9 @@ import {useTheme} from '../../hooks';
 
 import {createStyles} from './styles';
 
-import {modelStore} from '../../store';
+import {catalogStore} from '../../store/model/catalogStore';
+import {downloadStore} from '../../store/model/downloadStore';
+import {runtimeStore} from '../../store/model/runtimeStore';
 
 import {Model} from '../../utils/types';
 import {L10nContext, formatBytes} from '../../utils';
@@ -54,7 +56,7 @@ export const ProjectionModelSelector = observer(
         projectionModels = availableProjectionModels;
       } else {
         // Use store-based lookup for downloaded models context
-        projectionModels = modelStore.getCompatibleProjectionModels(model.id);
+        projectionModels = catalogStore.getCompatibleProjectionModels(model.id);
       }
 
       setCompatibleModels(projectionModels);
@@ -72,8 +74,8 @@ export const ProjectionModelSelector = observer(
       }
 
       // If this is the active model, we need to reload the context with the new projection model
-      if (modelStore.activeModelId === model.id) {
-        const projectionModel = modelStore.models.find(
+      if (runtimeStore.activeModelId === model.id) {
+        const projectionModel = catalogStore.models.find(
           m => m.id === projectionModelId,
         );
         if (projectionModel && projectionModel.isDownloaded) {
@@ -91,10 +93,10 @@ export const ProjectionModelSelector = observer(
                 onPress: async () => {
                   // Get the projection model path
                   const projModelPath =
-                    await modelStore.getModelFullPath(projectionModel);
+                    await downloadStore.getModelFullPath(projectionModel);
                   if (projModelPath) {
                     // Reload the model with the new projection model
-                    modelStore.initContext(model, projModelPath);
+                    runtimeStore.initContext(model, projModelPath);
                   }
                 },
               },
@@ -105,12 +107,12 @@ export const ProjectionModelSelector = observer(
     };
 
     const handleDownloadModel = (projectionModel: Model) => {
-      modelStore.checkSpaceAndDownload(projectionModel.id);
+      downloadStore.checkSpaceAndDownload(projectionModel.id);
     };
 
     const handleDeleteModel = (projectionModel: Model) => {
       // Check if model is currently active - this is the only case we prevent deletion
-      if (modelStore.activeModelId === projectionModel.id) {
+      if (runtimeStore.activeModelId === projectionModel.id) {
         Alert.alert(
           l10n.models.multimodal.cannotDeleteTitle,
           l10n.models.multimodal.cannotDeleteActive,
@@ -120,9 +122,8 @@ export const ProjectionModelSelector = observer(
       }
 
       // Get dependent models for warning message (manual deletion always allowed)
-      const dependentModels = modelStore.getDownloadedLLMsUsingProjectionModel(
-        projectionModel.id,
-      );
+      const dependentModels =
+        downloadStore.getDownloadedLLMsUsingProjectionModel(projectionModel.id);
 
       let message = l10n.models.multimodal.deleteProjectionMessage;
       if (dependentModels.length > 0) {
@@ -140,10 +141,10 @@ export const ProjectionModelSelector = observer(
             try {
               // Disable vision for dependent models before deletion
               dependentModels.forEach(dependentModel => {
-                modelStore.setModelVisionEnabled(dependentModel.id, false);
+                catalogStore.setModelVisionEnabled(dependentModel.id, false);
               });
 
-              await modelStore.deleteModel(projectionModel);
+              await downloadStore.deleteModel(projectionModel);
             } catch (error) {
               console.error('Failed to delete projection model:', error);
               Alert.alert(

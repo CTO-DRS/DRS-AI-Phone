@@ -1,6 +1,7 @@
 import {createClient} from '@supabase/supabase-js';
 import {SUPABASE_URL, SUPABASE_ANON_KEY} from '@env';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import {supabaseSecureStorage} from '../../api/supabaseSecureStorage';
 
 // Check if Supabase is configured
 const isSupabaseConfigured = !!(SUPABASE_URL && SUPABASE_ANON_KEY);
@@ -9,7 +10,12 @@ const isSupabaseConfigured = !!(SUPABASE_URL && SUPABASE_ANON_KEY);
 export const supabase = isSupabaseConfigured
   ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
       auth: {
-        storage: AsyncStorage,
+        // Keychain-backed adapter (fix 2): sessions live in the device
+        // Keychain (drs.supabase.* namespace, iOS THIS_DEVICE_ONLY) with a
+        // read-through AsyncStorage fallback for pre-migration sessions —
+        // see src/api/supabaseSecureStorage.ts + docs/audit-worklog.md.
+        // migrateLegacySession() (App.tsx startup) formalizes the copy.
+        storage: supabaseSecureStorage,
         autoRefreshToken: true,
         persistSession: true,
         detectSessionInUrl: false,

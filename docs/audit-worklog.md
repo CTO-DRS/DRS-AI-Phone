@@ -1,0 +1,121 @@
+# سجل عمل تدقيق وتقوية DRS-AI-Phone (audit-worklog)
+
+> هذا الملف هو الذاكرة المؤسسية الرسمية لفرع `fix/audit-hardening`.
+> الدرس المؤسس: ما خارج المستودع يضيع — لذلك يعيش السجل هنا ويبقى في PR النهائي.
+
+---
+
+## الجلسة 1 — التدقيق الشامل (v1.41.0)
+
+- تدقيق كامل لمستودع `CTO-DRS/DRS-AI-Phone` (React Native 0.82.1، New Architecture/Fabric/Hermes، MobX 6، WatermelonDB، llama.rn، Supabase).
+- النتيجة: تقريران (عربي 40 ص / إنجليزي 45 ص)، مجموع 8.1/10، مع قائمة نقاط ضعف أمنية وهندسية.
+- الأساس المدقق: tag `v1.41.0` = commit `400e0ead` = `main`.
+
+## الجلسة 2 — تنفيذ الإصلاحات (ضاعت محلياً)
+
+نُفذت 4 مجموعات إصلاح على فرع محلي `fix/audit-hardening` (commits `debe822` → `c3eb262` → `8fca3a9` → `2902867`)، **لم تُدفع لـ GitHub** ثم ضاعت بإعادة ضبط الحاوية:
+
+1. **fix 1** (`debe822`): تثبيت `onnxruntime-react-native` على `1.24.3` بدل `^1.23.2` (الـ lockfile كان يحسم 1.24.3 أصلاً — الانجراف كان بين الـ manifest والقفل) + سكربت حارس + ربطه كخطوة fail-fast في CI.
+2. **fix 2** (`c3eb262`): تخزين جلسات Supabase في Keychain عبر `supabaseSecureStorage` (خدمة `drs.supabase.*`، iOS `WHEN_UNLOCKED_THIS_DEVICE_ONLY`، حارس JSON على مفاتيح `*-auth-token` فقط، الـ verifier الخام يمر كما هو، الحالة غير الصالحة صامتة بلا console.warn) + `migrateLegacySession` بترتيب اكتب→تحقق→احذف (idempotent، لا يُحذف المفتاح القديم إلا بعد تطابق القراءة) + `googleNonce.ts` **خامل** (فحص 16.0.0 و16.1.5 عبر npm pack: صفر دعم nonce) + 22 اختباراً شاملاً ثابت "لا تفقد جلسة أبداً".
+3. **fix 3** (`8fca3a9`): TypeScript `5.0.4 → 5.9.3` (صفر أخطاء typecheck) + محاذاة عائلة jest على 29.7.0 (محاولة jest-30 فشلت فعلياً: 21 suite ماتت تحت preset RN — أُعيدت للـ 29 وفق قاعدة التراجع) + **ESLint بقي على 8** (‏`@react-native/eslint-config` يسحب `eslint-plugin-ft-flow` الذي يستخدم `context.getAllComments` المزال في 9).
+4. **fix 4 مرحلة 1** (`2902867`): سقالة `src/store/model/` — `catalogStore.ts` + `downloadStore.ts` + `runtimeStore.ts` بعقود هجرة موثقة داخل الملفات + `index.ts` فاصاد تمريري صفر-منطق + `facade.test.ts` اختبار عقد (هوية singleton + سطح النطاقات) + إصلاح flake teardown قائم مسبقاً (DraftRulesManager) عبر فلتر console محصور في jest setup.
+
+خط الأساس المقدس بعد المرحلة 1 حينها: **312 suites / 4987 اختباراً / 310 لقطات / EXIT=0**.
+
+## الجلسة 3 — الحالية (إعادة البناء + المرحلة 2)
+
+### الحوادث
+- **إعادة ضبط 1**: الحاوية مُسحت بين الجلسات؛ الاستنساخ والcommits المحلية كلها ضاعت. `git ls-remote` أثبت أن `fix/audit-hardening` لم يُدفع أبداً (فقط `main`). استُعيد الأساس من `v1.41.0` العام.
+- **إعادة ضبط 2**: أثناء الجلسة نفسها (`uptime 5 دقائق`) — مُسح كل شيء حتى worklog/scripts المحلية. استُعيد الأساس مجدداً.
+- **فشل مصادقة الدفع**: التوكن القديم أُلغي عمداً (قرار أمني صحيح) — توقف كامل حتى توكن جديد وفق البروتوكول المعتمد.
+
+### خط الأساس المقدس للشجرة المستعادة (v1.41.0 نظيفة)
+- **308 suites / 4961 passed + 2 skipped / 310 snapshots** — بتشغيل مجزأ أمامي (8 دفعات عبر قوائم ملفات صريحة، `--runInBand`، `NODE_OPTIONS=--max-old-space-size=1536`).
+- الحاوية تقتل العمليات الخلفية بين استدعاءات الأدوات (setsid/nohup لا ينجيان) — **ممنوع أي تشغيل خلفي؛ التشغيل مجزأ في المقدمة فقط**.
+- lint ✅ (25.3s) + typecheck ✅ (13.7s). تحذير "Jest did not exit" مُستنسخ على دفعة c2 — سلوك قائم في الأساس (open handles)، ليس تراجعاً.
+- فارق الأرقام عن 312/4987 = بالضبط ما أضافته المرحلة 1 الضائعة (+4 suites من: facade.test.ts واختبارات fix 2، +26 اختباراً).
+
+### الجرد والتصنيف (مواضع `modelStore.`)
+- **1974 سطر استدعاء في 86 ملفاً** (1986 match خام؛ سطر واحد false positive: نص مسار `__mocks__/stores/modelStore.ts` داخل تعليق في `BenchmarkRunnerScreen.test.tsx:1659` — العداد الحقيقي 1973 سطر API).
+- الفئات النهائية المعتمدة:
+  - **أ (تنزيلات فقط)**: 4 ملفات / 6 أسطر — `DownloadOverlay.tsx`(1)، `VisionDownloadSheet.tsx`(1)، `DownloadConfirmDialog.tsx`(1)، `DownloadBanner.tsx`(3).
+  - **ب (كتالوج/تشغيل فقط)**: 60 ملفاً / 802 — لا تُلمس في المرحلة 2.
+  - **ج (مختلط)**: 21 ملفاً / 1176 — مؤجلة للمرحلة 3 (منها `ModelStore.test.ts` ذاته بـ 902 — يسافر مع الفاصاد حتى المرحلة 4).
+- **`isDownloading` getter يُرجع دالة**: `get isDownloading() { return (modelId) => downloadManager.isDownloading(modelId); }` — شكل الاستدعاء `isDownloading(modelId)` يجب حفظه.
+- **كل الاستيرادات عبر البرميل** `'.../store'` (73 استيراداً) وليس `'./ModelStore'` مباشرة.
+- لا يوجد destructuring أو تمرير singleton في كود الإنتاج (فقط casts خاصة داخل `ModelStore.test.ts`).
+
+### قرارات خريطة النطاقات (معتمدة من المالك)
+- تخزين/ملفات → `downloadStore`: `getModelFullPath`(24)، `resolveLocalModelPath`(4)، `checkFileExists`، `deleteModel`(19)، `removeInvalidLocalModels`(4).
+- `removeModelByFullPath` → **catalogStore** (أدلة الكود: `models.splice` خالص — سطر 2968).
+- عائلة projection (مؤقت حتى مراجعة مرحلة 3): status/canDelete/getDownloadedLLMs → تنزيلات؛ compat/default/hasRequired/getLLMsUsing → كتالوج؛ cleanup/pending → تشغيل.
+- `downloadHFModel` (سطر 2768) → تنزيلات (دالة تركيبية تستدعي addHFModel داخلياً — تركيبها شأن المتجر).
+
+## بروتوكولات التشغيل المعتمدة
+
+1. **الدفع بعد كل commit** — الدفع لفرع feature نسخ احتياطي وليس دمجاً.
+2. **النجاة المزدوجة**: بعد كل commit وقبل الدفع — `git bundle create ../download/audit-fixes.bundle 400e0ead..fix/audit-hardening` + `git bundle verify`. مجلد `download/` ينجو من إعادة الضبط.
+3. **استعادة إعادة الضبط الثالثة (المتوقعة)**: (1) افحص `../download/audit-fixes.bundle` → استنساخ ضحل + `git fetch` من الـ bundle = صفر إعادة عمل؛ (2) وإلا `git fetch origin fix/audit-hardening`؛ (3) وإلا إعادة بناء من هذا السجل. أي استعادة تُوثق هنا.
+4. **commitlint**: بادئات lowercase فقط (feat/fix/docs/chore/refactor)، بلا uppercase.
+5. **mocks للاختبارات الجديدة**: انسخ نمط `ModelStore.test.ts` (المُنشئ يطلق جلباً شبكياً) + mock محلي للـ AsyncStorage داخل كل ملف (المشترك مكسور دائرياً) + بادئة `mock` لمتغيرات الهوِيستنغ + صفر تسجيل بعد اكتمال suites.
+6. **verify-deps.js بالفئتين من البداية**: `MUST_BE_PINNED` (onnxruntime-react-native = 1.24.3 تماماً) + `MUST_BE_ALIGNED` (jest/babel-jest/@types/jest نفس الـ major).
+
+## خطة الست commits المعتمدة (هذه الجلسة)
+
+| # | المحتوى |
+|---|---|
+| 0 | `docs/audit-worklog.md` — هذا الملف |
+| 1 | fix 1: onnxruntime 1.24.3 exact + verify-deps.js (الفئتان) + ci.yml |
+| 2 | fix 2: supabaseSecureStorage + migrateLegacySession + googleNonce خامل + اختبارات |
+| 3 | fix 3: TS 5.9.3 + عائلة jest 29.7.0 (ESLint يبقى 8 — ft-flow يحجب 9) |
+| 4 | fix 4-م1: سقالة src/store/model/ + العقود داخل الملفات + facade.test.ts |
+| 5 | المرحلة 2: دفعة الفئة أ (4 ملفات) + @deprecated على دوال التنزيل في الفاصاد + قاعدة eslint تحذير |
+
+نقاط التفتيش: بعد (4): 312/4987/310 + lint/typecheck/verify:deps خضراء. بعد (5): العداد 1974→1968 + facade.test.ts أخضر + أمر CI الحقيقي EXIT=0.
+
+---
+
+## سجل تنفيذ الجلسة 3 (مكتمل)
+
+### الـ commits (كلها مدفوعة + bundle نجاة بعد كل واحد)
+| # | Hash | المحتوى |
+|---|---|---|
+| 0 | `5995560` | docs: سجل العمل |
+| 1 | `c234cdf` | fix: onnxruntime 1.24.3 exact + verify-deps (الفئتان) + CI fail-fast |
+| — | `4dfc469` | chore: prettier لسكربت الحارس (تصحيح انزلاق تنسيق من commit 1) |
+| 2 | `42fb37f` | fix: Keychain storage + ترحيل idempotent + اختبارات عقد nonce |
+| 3 | `fc92f8e` | fix: TS 5.9.3 + عائلة jest مثبتة 29.7.0 (ESLint يبقى 8) |
+| 4 | `b1ee42a` | chore(store): سقالة store/model — المخازن الثلاثة + الفاصاد + facade.test |
+| 5 | `a29e7cf` | chore(store): هجرة دفعة الفئة أ (4 ملفات) + @deprecated + قاعدة eslint |
+
+ملاحظة تصحيح تاريخ: commit برسالة chore محتواه fix-2 كاملاً (`834e59f`) أُعيد بناؤه عبر reset soft + force-with-lease فوراً قبل أي عمل آخر — الفرع نسخة احتياطية خاصة، والتصحيح موثق هنا.
+
+### مفاجآت موثقة وقراراتها
+1. **googleNonce موجود أصلاً upstream**: `src/utils/nonce.ts` + `sha256.ts` بنفس التصميم الخامل (v16 nonce-free) وsha256 مختبر — لم يُكرر؛ أُضيفا اختباران لعقدNonce (`nonce.contract.test.ts`).
+2. **commitlint يرفض refactor**: قائمة المستودع feat/fix/docs/chore فقط — استُخدم chore(store) وأصلح التزام المالك.
+3. **ESLint severity**: لا يمكن خلط warn/error في قاعدة واحدة (ESLint 8) — قاعدة الفاصاد دخلت error ضمن القاعدة الجذرية القائمة؛ لا يمكنها إطلاقاً إطلاق على الفئتين المؤجلتين (صفر استيرادات store/model عندها).
+4. **jest.mock factory لا يبلغ الوحدات المستوردة انتقالياً** عند وجود moduleNameMapper (4 م_validatorات مضبوطة) — اختبارات الهجرة تسخر واجهة الـ adapter بمسار نسبي (حتمي)، وسلوك الـ adapter الحقيقي مغطى في suiteه المباشر.
+5. **تسريب mock عبر السقالة (أخطر اكتشاف)**: استيراد السقالة `'../ModelStore'` مباشرة يجاوز السخرية البرميلية لأي suite يسخر البرميل فقط → المفرد الحقيقي يُبنى (شبكة + DeviceInfo) → فشل IncreaseContextSheet حتمي. **الإصلاح**: السقالة تستورد `'../'` (البرميل) عمداً + `import type` للكلاس يبقي حارس Pick وقت الترجمة. موثق داخل الملفات الثلاثة.
+6. **activeDownloads computed getter**: يبني مصفوفة جديدة كل وصول — هوية مرجعية مستحيلة تصميماً؛ عقد الفاصاد يفحص تطابق المحتوى.
+7. **عداد المواضع**: الخام الكلي 2113 يشمل 145 داخل السقالة (delegations بالتصميم)؛ **خارج السقالة: 1968 سطراً / 82 ملفاً = 1974 − 6 بالضبط** (مع false positive المعلوم).
+8. **فارق اختبارات +2 عن checkpoint**: 4989 بدل 4987 (اختباران لعقد nonce — القاعدة "نفس العدد أو أكثر" مستوفاة).
+
+### نقاط التفتيش النهائية (محققة)
+- بعد commit 4: **312 suites / 4989 passed / 310 snapshots** + lint + typecheck + verify:deps خضراء
+- بعد commit 5: العداد 1974→1968 خارج السقالة + facade.test أخضر + **أمر CI الحقيقي `yarn test --coverage` EXIT=0** (312/4989/310، 231 ث، workers وضع CI الفعلي) + verify:deps/l10n/fonts/lint/typecheck كلها خضراء
+- السلسلة الكاملة النهائية: verify:deps ✓ l10n ✓ fonts ✓ lint ✓ typecheck ✓ test --coverage ✓
+
+### الخطوة التالية (مرحلة 3)
+الهجرة المختلطة: 19 ملفاً إنتاجياً (236 موضعاً خارج جناحي المتجر الذاتيين) + مراجعة الانقسام المؤقت لعائلة projection.
+
+## Phase 3 closing record (session 5 — head 1f2f1f6 + closing commit)
+
+- Class C fully migrated: 19 files (13 production + 6 test suites), batches 1-8.
+- Batch 6 re-applied from documented backup after environment reset #5 (BenchmarkRunnerScreen 21 events + ModelsHubScreen 25 events); cast-form remnant resolved by dropping provably-dead ErrorState.error access.
+- Batch 8 test migration used LOCAL sub-store mocks only (zero central test-utils changes, zero assertion deletions): requireActual + Object.create(real) inheritance + jest.fn overrides replicating central mock defaults + defineProperty for accessor-shadowed state (activeModelId, downloadError, models get/set).
+- @deprecated expansion: catalogStore/runtimeStore facade re-exports now carry the same facade-path deprecation as downloadStore (phase-2 pattern, phase-3 expansion). ESLint no-restricted-syntax facade rule unchanged (error severity, as-is).
+- madge circular: 42 chains at d68ebb9 == 42 chains at closing head, identical set — zero new cycles.
+- Final triple counter (recipe: official = rg 'modelStore\.[a-zA-Z]' lines outside src/store/model; real = official − FP(modelStore\.ts\b); raw = official + 145 scaffold delegation lines): raw 1878 / official 1733 / real 1732 — exact match with the approved plan table. FP=1 (BenchmarkRunnerScreen.test comment referencing __mocks__/stores/modelStore.ts).
+- Real CI command (test --coverage): EXIT=0 — 312 suites / 4989 passed + 2 skipped / 310 snapshots.
+- Untouched (verified byte-level per-file against d68ebb9): B-class (all surviving files' modelStore line counts identical), ModelStore.ts (2 lines incl. singleton export), ModelStore.test.ts (932 lines), ModelStore.localModelPath.test.ts (39 lines), scaffold (161 lines constant).
+- Deferred to Phase 4: ModelStore.ts self-reference (line 3577), ModelStore.test.ts, localModelPath.test, initializeStore cross-member, canDelete internal runtime read documentation.

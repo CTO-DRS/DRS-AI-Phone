@@ -15,7 +15,7 @@ import {useTheme} from '../../hooks';
 import {L10nContext, hfAsModel, getMmprojFiles} from '../../utils';
 import {Model, HuggingFaceModel, ModelFile} from '../../utils/types';
 
-import {modelStore} from '../../store';
+import {downloadStore} from '../../store/model/downloadStore';
 
 import {createStyles} from './styles';
 
@@ -65,7 +65,7 @@ export const VisionDownloadSheet: React.FC<VisionDownloadSheetProps> = ({
   const handleDownload = async () => {
     setIsDownloading(true);
     try {
-      await modelStore.downloadHFModel(hfModel, modelFile, {
+      await downloadStore.downloadHFModel(hfModel, modelFile, {
         enableVision: visionEnabled,
         projectionModelId: selectedProjectionModel || undefined,
       });

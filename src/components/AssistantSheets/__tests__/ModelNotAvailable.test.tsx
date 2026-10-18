@@ -7,18 +7,53 @@ import {
   basicModel,
   downloadingModel,
 } from '../../../../jest/fixtures/models';
-import {modelStore} from '../../../store';
+import {catalogStore} from '../../../store/model/catalogStore';
+import {downloadStore} from '../../../store/model/downloadStore';
+
+jest.mock('../../../store/model/catalogStore', () => {
+  const state: {models: Array<{id?: string; isDownloaded?: boolean}>} = {
+    models: [],
+  };
+  const catalogBase = {
+    get models() {
+      return state.models;
+    },
+    set models(v: Array<{id?: string; isDownloaded?: boolean}>) {
+      state.models = v;
+    },
+    get availableModels() {
+      return state.models.filter(m => m.isDownloaded);
+    },
+    isModelAvailable(modelId: string) {
+      return state.models
+        .filter(m => m.isDownloaded)
+        .some(m => m.id === modelId);
+    },
+  };
+  return {catalogStore: catalogBase};
+});
+
+jest.mock('../../../store/model/downloadStore', () => {
+  const real = jest.requireActual('../../../store/model/downloadStore');
+  return {
+    downloadStore: Object.assign(Object.create(real.downloadStore), {
+      cancelDownload: jest.fn(),
+      checkSpaceAndDownload: jest.fn(),
+      downloadHFModel: jest.fn(),
+    }),
+  };
+});
 
 describe('ModelNotAvailable', () => {
   const mockCloseSheet = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
-    modelStore.models = modelsList;
+    catalogStore.models = modelsList;
   });
 
   it('should show message when no models are downloaded', () => {
-    modelStore.models = [];
+    catalogStore.models = [];
     const {getByText} = render(
       <ModelNotAvailable
         model={undefined}
@@ -79,7 +114,9 @@ describe('ModelNotAvailable', () => {
     );
 
     fireEvent.press(getByText('Cancel download'));
-    expect(modelStore.cancelDownload).toHaveBeenCalledWith(downloadingModel.id);
+    expect(downloadStore.cancelDownload).toHaveBeenCalledWith(
+      downloadingModel.id,
+    );
   });
 
   it('should call checkSpaceAndDownload when download button is pressed', () => {
@@ -93,7 +130,7 @@ describe('ModelNotAvailable', () => {
     );
 
     fireEvent.press(getByText('Download'));
-    expect(modelStore.checkSpaceAndDownload).toHaveBeenCalledWith(
+    expect(downloadStore.checkSpaceAndDownload).toHaveBeenCalledWith(
       basicModel.id,
     );
   });
@@ -109,7 +146,7 @@ describe('ModelNotAvailable', () => {
     );
 
     fireEvent.press(getByText('Download'));
-    expect(modelStore.downloadHFModel).toHaveBeenCalledWith(
+    expect(downloadStore.downloadHFModel).toHaveBeenCalledWith(
       hfModel1.hfModel,
       hfModel1.hfModelFile,
       {enableVision: true},
@@ -119,7 +156,7 @@ describe('ModelNotAvailable', () => {
   it('should hide warning when a downloaded model is currently selected', () => {
     // Mock that the currently selected model is downloaded
     const downloadedModel = {...basicModel, isDownloaded: true};
-    modelStore.isModelAvailable = jest.fn().mockImplementation(id => {
+    catalogStore.isModelAvailable = jest.fn().mockImplementation(id => {
       if (id === downloadedModel.id) {
         return true;
       }

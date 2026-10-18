@@ -4,7 +4,9 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {observer} from 'mobx-react';
 import {reaction} from 'mobx';
 
-import {modelStore, uiStore} from '../../store';
+import {uiStore} from '../../store';
+
+import {downloadStore} from '../../store/model/downloadStore';
 import {DownloadBanner} from './DownloadBanner';
 import {overlayStyles as createStyles} from './styles';
 import {useTheme} from '../../hooks';
@@ -26,7 +28,7 @@ export const DownloadOverlay: React.FC = observer(() => {
   // or cancelled) so the next ready-to-load surface isn't pre-suppressed.
   useEffect(() => {
     return reaction(
-      () => modelStore.activeDownloads.map(d => d.modelId),
+      () => downloadStore.activeDownloads.map(d => d.modelId),
       ids => {
         const current = new Set(ids);
         previousIds.current.forEach(id => {
