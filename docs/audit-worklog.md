@@ -431,3 +431,17 @@ bootstrap). حافة النوع ModelStore↔ProjectionModelManager (الحلق�
 الاستيرادين.
 الأرقام: 312/4989+2/310 ✓ من أول بوابة؛ عدادات 1732/1731/**1829**/**97** (−7 مولود
 +6 مضيف = −1 مطابق للتنبؤ)؛ madge **44** (45−1)؛ tsc 0؛ ModelStore.ts → 2,017.
+
+## B16 (phase-4 4a) — حالة التنزيل + الطابور → downloadStore؛ ج26 حقق جوهره بتعديل معلن
+
+الحالتان العابرتان (verifyingModelIds/downloadError — §2 #7/#5) صندوقان حقيقيان على
+downloadStore مع أزواج وصول على الإله (نمط B10)؛ العائلة: activeDownloads/isDownloading
+(الفخ المنحني محفوظ حرفياً)/getDownloadProgress/clearDownloadError/
+refreshDownloadStatuses/initializeDownloadStatus أصبحت تنفيذاً حقيقياً على المالك.
+**ج26 — الجوهر حقق والميكانيزم انضم لعائلة ج32**: الاستيراد الثابت
+catalogStore→downloadStore كان سيغلق حلقة ترتيب التحميل (5 suites تسخر downloadStore
+بمصانع requireActual) — فبقيت رحلة الكتالوج عبر الواجهة وموتها النهائي مع العائلة.
+**ج34 وُلد** (checkFileExists + flushPendingLocalPathRecoveries — الأخير خاص بعرض ضيق
+نمط ج18؛ الموت B18). **مدج 46 = انحراف معلن**: حافة ModelStore→downloadStore أغلقت
+حلقتين (المباشرة + النوعية السابقة) — الدفتر توقع +1.
+الأرقام: 312/4989+2/310 ✓؛ عدادات 1732/1731/**1823**/**91**؛ tsc 0؛ ModelStore.ts → 2,012.

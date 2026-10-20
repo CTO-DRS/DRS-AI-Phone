@@ -83,6 +83,11 @@ import {
   injectCatalogHost,
   projectionManager,
 } from './model/catalogStore';
+// B16 (phase-4 4a): the download-status family (state + implementations)
+// physically lives in downloadStore — reverse delegations and writable
+// accessor pairs below (B10 shape). Direct import: the god→download edge is
+// the declared madge step toward the B16 ledger value.
+import {downloadStore} from './model/downloadStore';
 // B1 (phase-4 4a): the 16 context-parameter setters physically live in
 // runtimeStore; these are verbatim reverse delegations (each dies at 4b
 // when its call sites migrate). The host injection below gives runtimeStore
@@ -232,7 +237,14 @@ export class ModelStore {
   }
 
   /** Model ids currently in the post-download verification gate. */
-  verifyingModelIds: string[] = [];
+  // ── B16 (phase-4 4a): real state lives in downloadStore (box; §2 #7
+  // transient). Writable accessor pair — the B10 shape.
+  get verifyingModelIds(): string[] {
+    return downloadStore.verifyingModelIds;
+  }
+  set verifyingModelIds(value: string[]) {
+    downloadStore.verifyingModelIds = value;
+  }
 
   // Auto-release tracking (persist keys — state stays on the god object
   // until the v2 persist roots exist; see runtimeStore.ts B4 note)
@@ -284,7 +296,16 @@ export class ModelStore {
     runtimeStore.benchmarkActive = value;
   }
 
-  downloadError: ErrorState | null = null;
+  // ── B16 (phase-4 4a): real state lives in downloadStore (box; §2 #5
+  // transient). Writable accessor pair — the B10 shape. The mutationSync
+  // block and the B17/B19 download flows keep writing through it until
+  // their batches.
+  get downloadError(): ErrorState | null {
+    return downloadStore.downloadError;
+  }
+  set downloadError(value: ErrorState | null) {
+    downloadStore.downloadError = value;
+  }
   // ── B7 (phase-4 4a): real state lives in runtimeStore (box; not persisted) ──
   get modelLoadError(): ErrorState | null {
     return runtimeStore.modelLoadError;
@@ -984,32 +1005,28 @@ export class ModelStore {
     }
   }
 
+  /**
+   * Reactive list of in-flight downloads. Each entry carries the Model object
+   * plus the latest formatted progress strings so observers can render a
+   * banner / sheet / list row without re-deriving anything per frame.
+   */
+  // ── B16 (phase-4 4a): real implementation lives in downloadStore (see the
+  // delegating getter further below, next to its original site).
+  getDownloadProgress = (modelId: string): number =>
+    downloadStore.getDownloadProgress(modelId);
+
+  // ── B16 (phase-4 4a): implementation lives in downloadStore since batch 16
+  // (ج34: its body still reaches the file-family through the facade until B18;
+  // ج26's substance lands — the owner implements the family — while the hop
+  // stays facade-mediated because a static catalogStore→downloadStore import
+  // would re-close the B14 load-order cycle).
   refreshDownloadStatuses = async () => {
-    // Await every check: callers (notably initializeStore, which then runs
-    // removeInvalidLocalModels) depend on isDownloaded being settled before they
-    // prune.
-    //
-    // Each check is isolated: a single failure (e.g. an RNFS error, or a local
-    // model with no fullPath) must not abort the others, and must leave
-    // isDownloaded untouched rather than defaulting it to false — an
-    // indeterminate result is not evidence the file is gone.
-    await Promise.all(
-      this.models.map(model =>
-        this.checkFileExists(model).catch(error => {
-          console.warn(
-            '[ModelStore] Could not determine file status for model:',
-            model.id,
-            error,
-          );
-        }),
-      ),
-    );
-    // Persist every path re-anchored during the pass in a single write.
-    this.flushPendingLocalPathRecoveries();
+    await downloadStore.refreshDownloadStatuses();
   };
 
+  // ── B16 (phase-4 4a): implementation lives in downloadStore since batch 16.
   initializeDownloadStatus = async () => {
-    await this.refreshDownloadStatuses();
+    await downloadStore.initializeDownloadStatus();
   };
 
   removeInvalidLocalModels = () => {
@@ -1177,8 +1194,10 @@ export class ModelStore {
     this.refreshDownloadStatuses();
   };
 
-  get isDownloading() {
-    return (modelId: string) => downloadManager.isDownloading(modelId);
+  // ── B16 (phase-4 4a): implementation lives in downloadStore since batch 16
+  // (SEMANTIC TRAP preserved: getter returning a function).
+  get isDownloading(): (modelId: string) => boolean {
+    return downloadStore.isDownloading;
   }
 
   /** Android pause (WorkManager PAUSED); no-op/false on iOS. */
@@ -1265,15 +1284,12 @@ export class ModelStore {
     }
   };
 
-  getDownloadProgress = (modelId: string) => {
-    return downloadManager.getDownloadProgress(modelId);
-  };
-
   /**
    * Reactive list of in-flight downloads. Each entry carries the Model object
    * plus the latest formatted progress strings so observers can render a
    * banner / sheet / list row without re-deriving anything per frame.
    */
+  // ── B16 (phase-4 4a): implementation lives in downloadStore since batch 16.
   get activeDownloads(): Array<{
     modelId: string;
     model: Model;
@@ -1283,15 +1299,7 @@ export class ModelStore {
     speedLabel: string;
     etaLabel: string;
   }> {
-    return downloadManager.activeJobs.map(job => ({
-      modelId: job.model.id,
-      model: job.model,
-      progress: job.state.progress?.progress ?? 0,
-      bytesDownloaded: job.state.progress?.bytesDownloaded ?? 0,
-      bytesTotal: job.state.progress?.bytesTotal ?? 0,
-      speedLabel: job.state.progress?.speed ?? '',
-      etaLabel: job.state.progress?.eta ?? '',
-    }));
+    return downloadStore.activeDownloads;
   }
 
   /**
@@ -2023,8 +2031,9 @@ export class ModelStore {
   //   return l10n[language];
   // }
 
+  // ── B16 (phase-4 4a): implementation lives in downloadStore since batch 16.
   clearDownloadError = () => {
-    this.downloadError = null;
+    downloadStore.clearDownloadError();
   };
 
   // ── B7 (phase-4 4a): implementation lives in runtimeStore since batch 7 ──
