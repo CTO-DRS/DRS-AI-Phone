@@ -3,10 +3,33 @@ import {runInAction} from 'mobx';
 import {Model, ModelType} from '../../utils/types';
 import {downloadManager} from '../../services/downloads';
 import {logger} from '../../utils/logger';
+import type {LlamaContext} from 'llama.rn';
 
-// Type-only import: keeps the runtime dependency graph acyclic while the
-// manager reads/writes the observable fields of the store it belongs to.
-import type {ModelStore} from '../ModelStore';
+/**
+ * Narrow host contract (B15 part-1 re-homing — the god-object ModelStore type
+ * is retired). The manager serves catalog-, download- and runtime-scope
+ * members, so its host mixes three documented sources (§2 governance):
+ *   • models — catalog owner state (the catalogStore box pair);
+ *   • context / activeModelId / activeProjectionModelId / isMultimodalActive
+ *     — the runtimeBridge reads (§2 #1/#2/#3/#4), reached through the injected
+ *     facade bindings (ج33 — dies at 4e when bootstrap injects runtime
+ *     directly);
+ *   • initContext / deleteModel — cross-scope calls dispatched through the
+ *     facade (runtimeStore member / B19 member respectively).
+ * Every name here is declared exactly once across src/store/model.
+ */
+export interface ProjectionHost {
+  readonly models: Model[];
+  readonly context: LlamaContext | undefined;
+  readonly activeModelId: string | undefined;
+  readonly activeProjectionModelId: string | undefined;
+  readonly isMultimodalActive: boolean;
+  initContext(
+    model: Model,
+    mmProjPath?: string,
+  ): Promise<LlamaContext | null>;
+  deleteModel(model: Model): Promise<void>;
+}
 
 /**
  * Projection (multimodal mmproj) model management, extracted from
@@ -19,7 +42,7 @@ import type {ModelStore} from '../ModelStore';
  * members with the same names and signatures as before the extraction.
  */
 export class ProjectionModelManager {
-  constructor(private readonly host: ModelStore) {}
+  constructor(private readonly host: ProjectionHost) {}
 
   /** Get compatible projection models for a given LLM */
   getCompatibleProjectionModels = (modelId: string): Model[] => {

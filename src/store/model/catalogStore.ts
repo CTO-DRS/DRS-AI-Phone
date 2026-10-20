@@ -29,7 +29,7 @@ import {fetchModelFilesDetails} from '../../api/hf';
 import {OpenAICompletionEngine} from '../../api/completionEngines';
 import {detectThinkingCapability} from '../../utils/thinkingCapabilityDetection';
 import type {ReasoningCapability} from '../../utils/reasoningCapability';
-import type {ProjectionModelManager} from './ProjectionModelManager';
+import {ProjectionModelManager} from './ProjectionModelManager';
 import type {CompletionEngine} from '../../utils/completionTypes';
 import type {RemoteSessionBinding} from '../../utils/types';
 import {downloadManager} from '../../services/downloads';
@@ -401,17 +401,9 @@ export function catalogLoadMissingGGUFMetadata() {
   })();
 }
 
-// ج31 (B14): setModelVisionEnabled / getModelVisionPreference delegate to the
-// ProjectionModelManager — still constructed on the god object (private field)
-// until its part-1 re-homing at B15. Production reaches the PM through a
-// narrow structural view of the barrel singleton (ج18 precedent); mocked
-// suites whose central mock carries no projectionManager fall back to the
-// barrel MEMBER (the mock-compat rule — the member is consumed during render
-// by migrated components). Both mechanisms die at B15 when catalog hosts the
-// PM directly.
-type GodProjectionManager = {
-  projectionManager?: ProjectionModelManager;
-};
+// ج31 (B14): ✅ DIED AT B15 — the narrow PM view and its barrel fallback are
+// gone: catalogStore constructs and exports THE ProjectionModelManager
+// instance (module bottom), so the vision members call it directly.
 
 // ج32 (B14): setRemoteModel's runtime writes (engine / activeRemoteBinding /
 // setActiveModel / releaseContext) dispatch through the god facade instead of
@@ -1420,26 +1412,6 @@ export const catalogStore: CatalogStore = {
       .catch(() => {});
   },
 
-  setModelVisionEnabled(modelId: string, enabled: boolean) {
-    const pm = (modelStore as unknown as GodProjectionManager)
-      .projectionManager;
-    if (pm) {
-      return pm.setModelVisionEnabled(modelId, enabled);
-    }
-    // Barrel-mocked suite fallback (mock-compat rule) — dies at B15.
-    return modelStore.setModelVisionEnabled(modelId, enabled);
-  },
-
-  getModelVisionPreference(model: Model): boolean {
-    const pm = (modelStore as unknown as GodProjectionManager)
-      .projectionManager;
-    if (pm) {
-      return pm.getModelVisionPreference(model);
-    }
-    // Barrel-mocked suite fallback (mock-compat rule) — dies at B15.
-    return modelStore.getModelVisionPreference(model);
-  },
-
   /**
    * Manual model-card override. Top of precedence; routes remote ids to
    * ServerStore, local to the persisted Model.
@@ -1485,15 +1457,67 @@ export const catalogStore: CatalogStore = {
     });
   },
 
-  // ── pass-through methods (move in B15 — untouched by B14) ──
-  getCompatibleProjectionModels: (...args) =>
-    modelStore.getCompatibleProjectionModels(...args),
-  getDefaultProjectionModel: (...args) =>
-    modelStore.getDefaultProjectionModel(...args),
-  setDefaultProjectionModel: (...args) =>
-    modelStore.setDefaultProjectionModel(...args),
-  getLLMsUsingProjectionModel: (...args) =>
-    modelStore.getLLMsUsingProjectionModel(...args),
-  hasRequiredProjectionModel: (...args) =>
-    modelStore.hasRequiredProjectionModel(...args),
+  // ── B15 (phase-4 4a): real implementations (projection-catalog family).
+  // Bodies live in the re-homed ProjectionModelManager (part-1: the manager
+  // instance is constructed below and exported from this module — ONE
+  // instance serves the remaining download/runtime-facing god members until
+  // B19/B20). ج31 DIED: the ج14-era narrow view + barrel fallback are gone.
+  getCompatibleProjectionModels(modelId: string): Model[] {
+    return projectionManager.getCompatibleProjectionModels(modelId);
+  },
+
+  setDefaultProjectionModel(modelId: string, projectionModelId: string) {
+    projectionManager.setDefaultProjectionModel(modelId, projectionModelId);
+  },
+
+  getDefaultProjectionModel(modelId: string): Model | undefined {
+    return projectionManager.getDefaultProjectionModel(modelId);
+  },
+
+  getLLMsUsingProjectionModel(projectionModelId: string): Model[] {
+    return projectionManager.getLLMsUsingProjectionModel(projectionModelId);
+  },
+
+  hasRequiredProjectionModel(model: Model): boolean {
+    return projectionManager.hasRequiredProjectionModel(model);
+  },
+
+  setModelVisionEnabled(modelId: string, enabled: boolean) {
+    return projectionManager.setModelVisionEnabled(modelId, enabled);
+  },
+
+  getModelVisionPreference(model: Model): boolean {
+    return projectionManager.getModelVisionPreference(model);
+  },
 };
+
+// ───────────── B15 (phase-4 4a): ProjectionModelManager re-homing, part 1 ─────────────
+// ONE instance, constructed here and EXPORTED: the remaining god members
+// (getProjectionModelStatus / canDeleteProjectionModel / cleanupOrphaned* /
+// getDownloadedLLMsUsingProjectionModel — B19/B20) flip their delegation to
+// this instance, and the god's own field dies with the batch. The host mixes
+// three documented sources (see ProjectionHost): catalog state from THIS
+// store, and the runtimeBridge reads + initContext/deleteModel calls through
+// the god facade (ج33 — the ج32 family: no static runtimeStore import, the
+// load-order cycle it would close breaks requireActual factories). ج33 dies
+// at 4e when bootstrap becomes the sole composition root and injects runtime
+// directly into the manager.
+export const projectionManager = new ProjectionModelManager({
+  get models() {
+    return catalogStore.models;
+  },
+  get context() {
+    return modelStore.context;
+  },
+  get activeModelId() {
+    return modelStore.activeModelId;
+  },
+  get activeProjectionModelId() {
+    return modelStore.activeProjectionModelId;
+  },
+  get isMultimodalActive() {
+    return modelStore.isMultimodalActive;
+  },
+  initContext: (model, mmProjPath) => modelStore.initContext(model, mmProjPath),
+  deleteModel: model => modelStore.deleteModel(model),
+});

@@ -416,3 +416,18 @@ recordReasoningObserved → catalogStore؛ updateModelThinkingCapabilities (خا
 الأرقام: 312/4989+2/310 ✓؛ عدادات 1732/1731/**1830**/**98** (احتياطا ج31 +2 عن 1828/96
 المؤقت — مصدره معلن)؛ madge **45** (إعادة تأسيس بعد قطع حافة B14 المعلنة؛ دفتر §7
 أُعيد معايرته: 46 عند B15)؛ tsc 0؛ ModelStore.ts → **2,049**.
+
+## B15 (phase-4 4a) — عائلة projection-كتالوج → catalogStore + إعادة إيواء المدير جزء 1
+
+الأعضاء الخمسة (getCompatibleProjectionModels/getDefault+setDefaultProjectionModel/
+getLLMsUsingProjectionModel/hasRequiredProjectionModel) + عائلا الرؤية أصبحا حقيقيين على
+catalogStore. **الإعادة الإيواء جزء 1**: ProjectionModelManager — عقد host ضيق
+(ProjectionHost: نماذج الكتالوج + قراءات runtimeBridge الأربع + استدعاءا
+initContext/deleteModel) بدل نوع الإله الكامل؛ **مثال واحد** يبنيه ويصدّره catalogStore
+(أسفل الوحدة) ويخدم حتى أعضاء B19/B20 المتبقين على الإله (انقلبت مفوضاتهم للمثال
+المُعاد إيواؤه) وحقل الإله مات. **ج31 مات** (العرض الضيق + الاحتياط). **ج33 وُلد**:
+قراءات runtimeBridge عبر الواجهة المحقونة (عائلة ج32؛ الموت 4e بحقن runtime مباشرة من
+bootstrap). حافة النوع ModelStore↔ProjectionModelManager (الحلقة #18) ماتت مع تقاعد
+الاستيرادين.
+الأرقام: 312/4989+2/310 ✓ من أول بوابة؛ عدادات 1732/1731/**1829**/**97** (−7 مولود
++6 مضيف = −1 مطابق للتنبؤ)؛ madge **44** (45−1)؛ tsc 0؛ ModelStore.ts → 2,017.

@@ -61,7 +61,6 @@ import {t} from '../locales';
 import {createDefaultContextInitParams} from '../utils/contextInitParamsVersions';
 import NativeHardwareInfo from '../specs/NativeHardwareInfo';
 import {logger} from '../utils/logger';
-import {ProjectionModelManager} from './model/ProjectionModelManager';
 // Phase-4 R0 (docs/extraction-plan.md, condition 4): DI composition root.
 // bootstrap is imported ALONE — never the three pass-through stores. They
 // import the store barrel (which re-exports ModelStore), so a static import
@@ -82,6 +81,7 @@ import {
   catalogUpgradeToFetchedRules,
   importLegacyCatalogState,
   injectCatalogHost,
+  projectionManager,
 } from './model/catalogStore';
 // B1 (phase-4 4a): the 16 context-parameter setters physically live in
 // runtimeStore; these are verbatim reverse delegations (each dies at 4b
@@ -309,9 +309,8 @@ export class ModelStore {
       contextId: computed,
       remoteModels: computed,
       activeDownloads: computed,
-      // Plain helper object (see src/store/model/ProjectionModelManager.ts):
-      // it holds no state of its own, so keep it out of the observable tree.
-      projectionManager: false,
+      // B15: the PM field moved to catalogStore (module singleton) — the
+      // annotation entry retired with it.
     });
     // B1 (phase-4 4a): host injection for runtimeStore's physical setters —
     // must precede any setter call (persist.then / UI). See runtimeStore.ts.
@@ -1915,32 +1914,34 @@ export class ModelStore {
    * in src/store/model/ProjectionModelManager.ts (audit F-12). Delegating
    * members preserve the public API of the store.
    */
-  readonly projectionManager = new ProjectionModelManager(this);
-
+  // ── B15 (phase-4 4a): ProjectionModelManager re-homed, part 1 — the ONE
+  // instance is constructed and exported by catalogStore (module bottom); the
+  // god's field died with the batch. The five projection-catalog members are
+  // real on catalogStore (below); the download/runtime-facing members (B19/
+  // B20) flip their delegation to the re-homed instance until their batches.
   getCompatibleProjectionModels = (modelId: string): Model[] =>
-    this.projectionManager.getCompatibleProjectionModels(modelId);
+    catalogStore.getCompatibleProjectionModels(modelId);
 
-  setDefaultProjectionModel = (modelId: string, projectionModelId: string) =>
-    this.projectionManager.setDefaultProjectionModel(
-      modelId,
-      projectionModelId,
-    );
+  setDefaultProjectionModel = (
+    modelId: string,
+    projectionModelId: string,
+  ): void => catalogStore.setDefaultProjectionModel(modelId, projectionModelId);
 
   getDefaultProjectionModel = (modelId: string): Model | undefined =>
-    this.projectionManager.getDefaultProjectionModel(modelId);
+    catalogStore.getDefaultProjectionModel(modelId);
 
   getLLMsUsingProjectionModel = (projectionModelId: string): Model[] =>
-    this.projectionManager.getLLMsUsingProjectionModel(projectionModelId);
+    catalogStore.getLLMsUsingProjectionModel(projectionModelId);
 
   getDownloadedLLMsUsingProjectionModel = (
     projectionModelId: string,
   ): Model[] =>
-    this.projectionManager.getDownloadedLLMsUsingProjectionModel(
+    projectionManager.getDownloadedLLMsUsingProjectionModel(
       projectionModelId,
     );
 
   hasRequiredProjectionModel = (model: Model): boolean =>
-    this.projectionManager.hasRequiredProjectionModel(model);
+    catalogStore.hasRequiredProjectionModel(model);
 
   getProjectionModelStatus = (
     model: Model,
@@ -1948,22 +1949,21 @@ export class ModelStore {
     isAvailable: boolean;
     state: 'not_needed' | 'downloaded' | 'downloading' | 'missing';
     projectionModel?: Model;
-  } => this.projectionManager.getProjectionModelStatus(model);
+  } => projectionManager.getProjectionModelStatus(model);
 
   canDeleteProjectionModel = (
     projectionModelId: string,
   ): {canDelete: boolean; reason?: string; dependentModels?: Model[]} =>
-    this.projectionManager.canDeleteProjectionModel(projectionModelId);
+    projectionManager.canDeleteProjectionModel(projectionModelId);
 
   cleanupOrphanedProjectionModel = async (projectionModelId: string) =>
-    this.projectionManager.cleanupOrphanedProjectionModel(projectionModelId);
+    projectionManager.cleanupOrphanedProjectionModel(projectionModelId);
 
   cleanupOrphanedProjectionModels = async (projectionModelIds: string[]) =>
-    this.projectionManager.cleanupOrphanedProjectionModels(projectionModelIds);
+    projectionManager.cleanupOrphanedProjectionModels(projectionModelIds);
 
   // ── B14 (phase-4 4a): implementations live in catalogStore since batch 14
-  // (they delegate to the ProjectionModelManager there through the ج31 narrow
-  // view until PM re-homing at B15).
+  // (ج31 died at B15: the members call the re-homed PM directly).
   setModelVisionEnabled = async (
     modelId: string,
     enabled: boolean,
