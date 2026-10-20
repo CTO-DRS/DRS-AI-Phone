@@ -225,7 +225,7 @@ pendingLocalPathRecoveries/flushPendingLocalPathRecoveries→download)، + مد�
 | ج2: مصدر effectiveDraftMode (`effectiveDraftModeOf(modelStore)`) | B3 | **4e** (مُعدَّل من B10 — جلسة 9) | خيار البقاء عبر زوج التفويض المعلن في هذا السطر: المصدر يقرأ models عبر المفوِّض العكسي (الوصول نفسه يصل المالك)؛ الاستيراد المباشر يتطلب مصدراً كاملاً (activeModel + contextInitParams غير كتالوجيين) |
 | ج3: الاحتياط المحمي في activeModel (فرع `modelStore.activeModel` بلا host) | B3 | **4e** (قسري) | آخر mock برميلي جزئي يموت مع 4e؛ وفاة مبكرة suite-by-suite خلال 4b مع هجرة كل suite إلى mock الفصاد |
 | ج4: optional-chains على المتعاونين (activeModel/checkAndReload) | B3/B4 | **4e** (قسري) | نفس سبب ج3 — بلا أثر إنتاجياً (القوائم موجودة دائماً) |
-| ج5: قراءة reprobe عبر cast من handleAppStateChange | B4 | **B14** | reprobeRemoteCapsIfUnknown تهاجر مع عائلة remote/vision — الاستدعاء يصبح داخلياً (this.) في runtimeStore |
+| ج5: قراءة reprobe عبر cast من handleAppStateChange | B4 | ✅ **B14** | reprobeRemoteCapsIfUnknown هاجرت إلى runtimeStore (دالة وحدة تقرأ activeModel/activeRemoteBinding من مالكها) — الاستدعاء داخلي والcast مات |
 | ج6: كتابات مفاتيح persist عبر ربط البرميل (mark/clear/update) | B4 | **B22** | الجذر `runtimeStore:v2` يستقبل الحالة — الكتابات تصبح this. (§3-أ) |
 | ج7: injectRuntimeHost (كتابات contextInitParams في محددات B1) | R0/B1 | **B22** | §8 سطر «بعد B22»: الـ host يُحذف مع هجرة contextInitParams |
 | ج8: زوج max_threads على الإله الكائن | B2 | **B22** | الكاتب (initializeThreadCount) يهاجر إلى bootstrap — الزوج يُحذف |
@@ -236,9 +236,9 @@ pendingLocalPathRecoveries/flushPendingLocalPathRecoveries→download)، + مد�
 | ج13: كتابات حالة runtime عبر ربط البرميل من releaseContextInternal (engine/activeRemoteBinding/activeModelId/isMultimodalActive/activeProjectionModelId/activeContextSettings/availableMemoryCeiling — 17 سطراً) | B7 | ✅ B8 (B22 لـ activeContextSettings/availableMemoryCeiling) | الحالة الثمانية هاجرت إلى صناديق runtimeStore — الكتابات صارت s.* عبر أزواج الوصول (15 سطراً)؛ سطرا activeContextSettings/availableMemoryCeiling بقيا برميلين (ذيل ج13، B22) |
 | ج14: استدعاء الإفلات الداخلي من initContext عبر releaseContextInternal(this) المصدَّرة | B7 | ✅ B8 | initContext تهاجر — الاستدعاء محلي في نفس الوحدة |
 | ج15: قراءات models عبر البرميل (resolveMultimodalConfig/resolveDraftConfig/reinitializeContext — 3 أسطر) | B8 | ✅ **B10** | القائمة هاجرت إلى catalogStore — القراءات الثلاث قُلبت إلى المالك باستيراد مباشر (حافة madge المعلنة) |
-| ج16: قراءة getModelVisionPreference من resolveMultimodalConfig | B8 | **B14** | العضو يهاجر مع عائلة remote/vision |
+| ج16: قراءة getModelVisionPreference من resolveMultimodalConfig | B8 | ✅ **B14** | العضو هاجر إلى catalogStore — القراءة انقلبت للمالك مباشرة |
 | ج17: قراءات getModelFullPath (resolveMultimodalConfig/resolveDraftConfig/proceedWithInitialization — 3 أسطر) | B8 | **B18** | العضو يهاجر مع عائلة الملفات (download) |
-| ج18: استدعاءا updateModelStopTokens/updateModelThinkingCapabilities من proceedWithInitialization (cast ضيق — ج5 نمط، غير مرئي للعداد) | B8 | **B23 / B14** | العضوان خاصّان على الإله الكائن؛ يهاجران مع B23/B14 فيصير الاستدعاء محلياً |
+| ج18: استدعاءا updateModelStopTokens/updateModelThinkingCapabilities من proceedWithInitialization (cast ضيق — ج5 نمط، غير مرئي للعداد) | B8 | **B23 / ✅ B14** | updateModelStopTokens يبقى حتى B23؛ updateModelThinkingCapabilities هاجر إلى catalogStore (دالة وحدة) والcast نصفه مات بالاستيراد المباشر |
 | ج19: كتابة activeContextSettings من proceedWithInitialization (برميل) | B8 | **B22** | §3-أ: تبقى على الإله الكائن حتى جذري v2 — الكتابة تنقلب this. |
 | ج20: كتابة largestSuccessfulLoad من proceedWithInitialization (برميل) | B8 | **B22** | مفتاح persist — §3-أ: نفس مصير ج19 |
 | ج21: كتابة lastUsedModelId من proceedWithInitialization (برميل) | B8 | ✅ **B10** | مفتاح persist كتالوجي — هاجر مع حالة القائمة؛ الكتابة قُلبت إلى `catalogStore.lastUsedModelId` |
@@ -249,6 +249,8 @@ pendingLocalPathRecoveries/flushPendingLocalPathRecoveries→download)، + مد�
 | ج26: استدعاءات download-status من كتالوج مهاجر (mergeModelLists→initializeDownloadStatus؛ addHFModel→refreshDownloadStatuses؛ addLocalModel→refreshDownloadStatuses — عبر ربط البرميل) | B11 | **B16** | عائلة حالة التنزيل تهاجر إلى downloadStore — الاستدعاءات تنقلب s.* داخلياً (نمط ج13) |
 | ج27: استدعاءات GGUF من كتالوج مهاجر (addLocalModel→fetchAndPersistGGUFMetadata؛ resetModels→loadMissingGGUFMetadata — الأخير خاص: عرض بنيوي ضيق نمط ج18) | B11 | **B13** | عائلة GGUF تهاجر إلى catalogStore نفسها — الاستدعاءات تصبح this. (موت مبكر بالقلب) |
 | ج28: استدعاء داخل-كتالوجي يمر عبر الواجهة (resetModels→mergeModelLists عبر modelStore بدل this.) — ModelStore.test يركّب overrides على أعضاء الإله والواجهة هي سطح الإرسال (نمط ج2) | B11 | **4d** | انقسام ModelStore.test إلى أجنحة المتاجر المالك — الأجنحة تمرّس catalogStore مباشرة فيقلب الاستدعاء this. |
+| ج31: وصولا PM من كتالوج مهاجر (setModelVisionEnabled/getModelVisionPreference): إنتاجاً عبر عرض بنيوي ضيق لـ projectionManager الخاص على الإله، واحتياطاً عبر عضو البرميل (قاعدة mock-compat — العضو يُستهلك أثناء render من مكون مهاجر) | B14 | **B15** | إعادة إيواء ProjectionModelManager جزء 1 — الكتالوج يستضيف المدير فيصير الوصول مباشراً |
+| ج32: كتابات runtime من setRemoteModel المهاجر (engine/activeRemoteBinding/setActiveModel/releaseContext) عبر الواجهة بدل استيراد static لـ runtimeStore — الاستيراد الثابت يغلق حلقة ترتيب تحميل (runtimeStore←catalogStore←runtimeStore) كسرت مصانع requireActual في suites المكونات | B14 | **4d** | يموت مع مفوضات الواجهة العكسية (عائلة ج28) عند انقسام الاختبارات |
 
 قاعدة السجل: أي جسر جديد يولد في دفعة = سطر جديد هنا في نفس الـ commit؛ جسر بلا موت
 معلن = يوقف الدفعة.

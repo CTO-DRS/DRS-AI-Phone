@@ -9,7 +9,8 @@ import {modelStore, serverStore, chatSessionStore, uiStore} from '../';
 // death mode per the §8 registry: "استيراد المالك بحافة madge معلنة").
 // The module is never mocked; in barrel-mocked suites its guard getters
 // fall through to the central mock exactly like the pre-B10 pass-through.
-import {catalogStore} from './catalogStore';
+import {catalogStore, catalogUpdateModelThinkingCapabilities} from './catalogStore';
+import {capsMatchBinding} from '../../utils/remoteCaps';
 import {observable, runInAction, toJS} from 'mobx';
 import {Alert, AppState, AppStateStatus, Platform} from 'react-native';
 import {ContextParams, LlamaContext, initLlama} from 'llama.rn';
@@ -526,7 +527,7 @@ async function resolveMultimodalConfig(
   resolvedMmProjPath?: string;
   projectionModel?: Model;
 }> {
-  const visionEnabled = modelStore.getModelVisionPreference(model);
+  const visionEnabled = catalogStore.getModelVisionPreference(model);
 
   // Priority 1: Explicit path provided by caller
   if (mmProjPath && visionEnabled) {
@@ -690,16 +691,18 @@ async function proceedWithInitialization(
     const t1 = Date.now();
     logger.debug('init time: ', t1 - t0);
 
-    // ج18: still-private god-object members (see GodObjectPrivates above).
+    // ج18: still-private god-object member updateModelStopTokens (see
+    // GodObjectPrivates above; death B23). updateModelThinkingCapabilities
+    // MOVED to catalogStore in B14 — its cast died with the move (ج18
+    // member-half honored).
     await (modelStore as unknown as GodObjectPrivates).updateModelStopTokens(
       ctx,
       model,
     );
 
-    // Check and update thinking capabilities (ج18, death B14)
-    await (
-      modelStore as unknown as GodObjectPrivates
-    ).updateModelThinkingCapabilities(ctx, model);
+    // Check and update thinking capabilities (direct since B14 — the member
+    // lives in catalogStore now).
+    await catalogUpdateModelThinkingCapabilities(ctx, model);
 
     // Initialize multimodal support if mmproj path was provided
     if (isMultimodalInit && mmProjPath) {
@@ -809,6 +812,38 @@ async function proceedWithInitialization(
       // Non-critical bookkeeping — never fail a model load over it.
     }
   }
+}
+
+// ج5 death (B14): reprobeRemoteCapsIfUnknown moved here from the god object
+// (verbatim body; activeModel / activeRemoteBinding read through THIS store's
+// own getters — runtime state, owner access). handleAppStateChange calls it
+// internally now; the god's private member and the barrel cast are gone.
+function reprobeRemoteCapsIfUnknown() {
+  const model = runtimeStore.activeModel;
+  if (
+    model?.origin !== ModelOrigin.REMOTE ||
+    !model.serverId ||
+    !model.remoteModelId ||
+    capsMatchBinding(
+      serverStore.remoteCaps[model.id],
+      runtimeStore.activeRemoteBinding,
+      model.id,
+    )
+  ) {
+    return;
+  }
+  const binding = runtimeStore.activeRemoteBinding;
+  if (binding?.modelId === model.id) {
+    const configuredUrl = serverStore.servers.find(
+      s => s.id === model.serverId,
+    )?.url;
+    if (configuredUrl !== undefined && configuredUrl !== binding.url) {
+      return;
+    }
+  }
+  serverStore
+    .fetchRemoteModelCaps(model.serverId, model.remoteModelId)
+    .catch(() => {});
 }
 
 export const runtimeStore: RuntimeStore = {
@@ -1781,13 +1816,9 @@ export const runtimeStore: RuntimeStore = {
     ) {
       // Coming to foreground - check if we need to reload auto-released model
       await this.checkAndReloadAutoReleasedModel();
-      // Cross-domain bridge (documented): the reprobe belongs to the
-      // remote-caps surface (B14) and is private on the god object, so the
-      // call goes through a narrow structural view; optional-call keeps
-      // partial barrel mocks (which never fire AppState) safe.
-      (
-        modelStore as unknown as {reprobeRemoteCapsIfUnknown?: () => void}
-      ).reprobeRemoteCapsIfUnknown?.();
+      // ج5 DIED at B14: reprobeRemoteCapsIfUnknown moved into this module
+      // (below) — the call is internal now, the god-cast is gone.
+      reprobeRemoteCapsIfUnknown();
     } else if (this.appState === 'active' && nextAppState === 'inactive') {
       // active → inactive: NO action (per requirements)
       logger.debug('Active → Inactive: No auto-release action');

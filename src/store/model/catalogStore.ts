@@ -23,8 +23,15 @@ import {filterProjectionModels, getRecommendedProjectionModel} from '../../utils
 import {hfAsModel, getMmprojFiles, deepMerge, inferRepoFromModelId, getSHA256Hash, parseSizeLabel} from '../../utils';
 import {isDraftOnlyModel} from '../../utils/mtp';
 import {loadLlamaModelInfo} from 'llama.rn';
+import type {LlamaContext} from 'llama.rn';
 import {getOriginalModelName} from '../../utils/formatters';
 import {fetchModelFilesDetails} from '../../api/hf';
+import {OpenAICompletionEngine} from '../../api/completionEngines';
+import {detectThinkingCapability} from '../../utils/thinkingCapabilityDetection';
+import type {ReasoningCapability} from '../../utils/reasoningCapability';
+import type {ProjectionModelManager} from './ProjectionModelManager';
+import type {CompletionEngine} from '../../utils/completionTypes';
+import type {RemoteSessionBinding} from '../../utils/types';
 import {downloadManager} from '../../services/downloads';
 import {getLocalModelDefaultSettings, getHFDefaultSettings} from '../../utils/chat';
 import {logger} from '../../utils/logger';
@@ -392,6 +399,83 @@ export function catalogLoadMissingGGUFMetadata() {
       }
     }
   })();
+}
+
+// ج31 (B14): setModelVisionEnabled / getModelVisionPreference delegate to the
+// ProjectionModelManager — still constructed on the god object (private field)
+// until its part-1 re-homing at B15. Production reaches the PM through a
+// narrow structural view of the barrel singleton (ج18 precedent); mocked
+// suites whose central mock carries no projectionManager fall back to the
+// barrel MEMBER (the mock-compat rule — the member is consumed during render
+// by migrated components). Both mechanisms die at B15 when catalog hosts the
+// PM directly.
+type GodProjectionManager = {
+  projectionManager?: ProjectionModelManager;
+};
+
+// ج32 (B14): setRemoteModel's runtime writes (engine / activeRemoteBinding /
+// setActiveModel / releaseContext) dispatch through the god facade instead of
+// a static runtimeStore import. A static import here closes a load-order
+// cycle (runtimeStore ← catalogStore ← runtimeStore) that broke the
+// requireActual factories of suites mocking this module; the facade hop is
+// the ج28 shape (dispatch surface those suites and overrides live on) and
+// reaches the identical owner state through the god's B8 accessor pairs.
+// Dies at 4d with the facade's reverse delegations.
+type GodRuntimeWrites = {
+  releaseContext: (clearActiveModel?: boolean) => Promise<string>;
+  engine: CompletionEngine | undefined;
+  activeRemoteBinding: RemoteSessionBinding | undefined;
+  setActiveModel: (modelId: string) => void;
+};
+
+/**
+ * Update model thinking capabilities based on the loaded context.
+ * (Private member of the god object — module function here, the B8 pattern;
+ * runtimeStore's proceedWithInitialization imports it directly since B14 —
+ * the ج18 member-half cast died with the move.)
+ */
+export async function catalogUpdateModelThinkingCapabilities(
+  ctx: LlamaContext,
+  model: Model,
+) {
+  try {
+    const storeModel = catalogStore.models.find(m => m.id === model.id);
+    if (!storeModel) {
+      return;
+    }
+
+    // Detection is the 'detected' writer; it must not override a user
+    // declaration or a learned flip (precedence: user > learned > detected).
+    if (
+      storeModel.reasoning?.source === 'user' ||
+      storeModel.reasoning?.source === 'learned'
+    ) {
+      return;
+    }
+
+    const result = await detectThinkingCapability(ctx);
+
+    runInAction(() => {
+      // Keep the deprecated boolean + tags in sync for back-compat readers.
+      storeModel.supportsThinking = result.supported;
+      if (result.thinkingStartTag) {
+        storeModel.thinkingStartTag = result.thinkingStartTag;
+      }
+      if (result.thinkingEndTag) {
+        storeModel.thinkingEndTag = result.thinkingEndTag;
+      }
+      storeModel.reasoning = {
+        isReasoning: result.supported ? 'yes' : 'no',
+        source: 'detected',
+        supportsEffort: false,
+        effortValues: [],
+        effortSource: 'none',
+      };
+    });
+  } catch (error) {
+    console.error('Error updating model thinking capabilities:', error);
+    // Continue execution - thinking capability detection is not critical
+  }
 }
 
 export const CATALOG_MEMBERS = [
@@ -1285,14 +1369,123 @@ export const catalogStore: CatalogStore = {
     }
   },
 
-  // ── pass-through methods (move in B14..B15 — untouched by B13) ──
-  setRemoteModel: (...args) => modelStore.setRemoteModel(...args),
-  setModelVisionEnabled: (...args) => modelStore.setModelVisionEnabled(...args),
-  getModelVisionPreference: (...args) =>
-    modelStore.getModelVisionPreference(...args),
-  setReasoningOverride: (...args) => modelStore.setReasoningOverride(...args),
-  recordReasoningObserved: (...args) =>
-    modelStore.recordReasoningObserved(...args),
+  // ── B14 (phase-4 4a): real implementations (remote + vision/reasoning).
+  // setRemoteModel dispatches its runtime writes through the god facade (ج32
+  // — no static runtimeStore import: it would close a load-order cycle and
+  // break requireActual factories). ج31 below reaches the PM until B15.
+
+  /**
+   * Set a remote model as the active model and create an OpenAI completion
+   * engine. Releases any active local context first.
+   */
+  async setRemoteModel(model: Model): Promise<void> {
+    if (!model.serverId || !model.remoteModelId) {
+      throw new Error('Model is missing remote configuration');
+    }
+
+    // ج32: runtime writes through the god facade (owner state via the B8
+    // accessor pairs — no static runtimeStore import, see the type above).
+    const god = modelStore as unknown as GodRuntimeWrites;
+    // Release any existing context (local or remote)
+    await god.releaseContext();
+
+    const apiKey = await serverStore.getApiKey(model.serverId);
+    const server = serverStore.servers.find(s => s.id === model.serverId);
+    if (!server) {
+      throw new Error('Server not found');
+    }
+
+    runInAction(() => {
+      god.engine = new OpenAICompletionEngine(
+        server.url,
+        model.remoteModelId!,
+        apiKey,
+        server.requestTimeoutMs,
+        server.serverType,
+      );
+      god.activeRemoteBinding = {
+        modelId: model.id,
+        serverId: model.serverId!,
+        remoteModelId: model.remoteModelId!,
+        url: server.url,
+        serverType: server.serverType,
+      };
+      god.setActiveModel(model.id);
+      // Do NOT set lastUsedModelId for remote models -- server may be offline
+      // on next launch
+    });
+
+    serverStore
+      .fetchRemoteModelCaps(model.serverId, model.remoteModelId, apiKey)
+      .catch(() => {});
+  },
+
+  setModelVisionEnabled(modelId: string, enabled: boolean) {
+    const pm = (modelStore as unknown as GodProjectionManager)
+      .projectionManager;
+    if (pm) {
+      return pm.setModelVisionEnabled(modelId, enabled);
+    }
+    // Barrel-mocked suite fallback (mock-compat rule) — dies at B15.
+    return modelStore.setModelVisionEnabled(modelId, enabled);
+  },
+
+  getModelVisionPreference(model: Model): boolean {
+    const pm = (modelStore as unknown as GodProjectionManager)
+      .projectionManager;
+    if (pm) {
+      return pm.getModelVisionPreference(model);
+    }
+    // Barrel-mocked suite fallback (mock-compat rule) — dies at B15.
+    return modelStore.getModelVisionPreference(model);
+  },
+
+  /**
+   * Manual model-card override. Top of precedence; routes remote ids to
+   * ServerStore, local to the persisted Model.
+   */
+  setReasoningOverride(modelId: string, cap: ReasoningCapability): void {
+    const localModel = this.models.find(m => m.id === modelId);
+    if (!localModel) {
+      serverStore.setRemoteReasoningOverride(modelId, cap);
+      return;
+    }
+    runInAction(() => {
+      localModel.reasoning = cap;
+      localModel.supportsThinking = cap.isReasoning === 'yes';
+    });
+  },
+
+  /**
+   * Learn-from-stream entry point. The first time a model actually emits
+   * reasoning, flip axis-1 to learned 'yes'. Routes remote ids to ServerStore
+   * (one direction). Idempotent and monotonic; never overrides a user
+   * declaration (handled by the per-store writers).
+   */
+  recordReasoningObserved(modelId: string): void {
+    const localModel = this.models.find(m => m.id === modelId);
+    if (!localModel) {
+      // Not a persisted local model → remote; delegate to ServerStore.
+      serverStore.recordRemoteReasoningObserved(modelId);
+      return;
+    }
+    const existing = localModel.reasoning;
+    if (existing?.source === 'user' || existing?.isReasoning === 'yes') {
+      return;
+    }
+    runInAction(() => {
+      localModel.reasoning = {
+        isReasoning: 'yes',
+        source: 'learned',
+        supportsEffort: existing?.supportsEffort ?? false,
+        effortValues: existing?.effortValues ?? [],
+        effortSource: existing?.effortSource ?? 'none',
+      };
+      localModel.supportsThinking = true;
+    });
+  },
+
+  // ── pass-through methods (move in B15 — untouched by B14) ──
   getCompatibleProjectionModels: (...args) =>
     modelStore.getCompatibleProjectionModels(...args),
   getDefaultProjectionModel: (...args) =>

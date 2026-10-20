@@ -397,3 +397,22 @@ resetModels/addLocalModel قلبا داخليين وطُرح عرض GodCatalogPr
 الأرقام: 312/4989+2/310 ✓؛ عدادات 1732/1731/1834/102 (صافي صفر: −3 مولود +3 —
 التنبؤ −2 كان خطأ عدّ أسطر pass-through متعددة الأسطر؛ المقيس متسق ذاتياً)؛ madge 45؛
 tsc 0؛ ModelStore.ts → 2,174؛ ModelStore.test بلا تعديل ✓.
+
+## B14 (phase-4 4a) — remote + vision/reasoning → catalogStore؛ ثلاثة جسور ماتت في موعدها
+
+setRemoteModel/setModelVisionEnabled/getModelVisionPreference/setReasoningOverride/
+recordReasoningObserved → catalogStore؛ updateModelThinkingCapabilities (خاص → دالة
+وحدة مُصدَّرة)؛ reprobeRemoteCapsIfUnknown → runtimeStore (دالة وحدة — حالتها runtime).
+**موتا ج5 وج16 ونصف ج18 في موعدهما** (كما أُعلن): reprobe أصبح داخلياً في runtimeStore؛
+قراءة resolveMultimodalConfig انقلبت للمالك؛ cast updateModelThinkingCapabilities حل
+باستيراد مباشر.
+**مشكلتان قيستا وعولجتا إنتاجياً (بلا أي تعديل اختبار)**:
+1. استيراد catalogStore→runtimeStore الثابت (للكتابات عبر سطح المالك) أغلق حلقة ترتيب
+   تحميل كسرت مصانع requireActual في 6 suites مكونات → قُطع الإعلان، والحل ج32:
+   الكتابات عبر الواجهة (نمط ج28) — بلا حافة madge جديدة (45 بقيت).
+2. ج31 (وصول PM) كسر render في ChatAssistantModelPickerSheet (الموك المركزي بلا
+   projectionManager) → قاعدة mock-compat (B2-B4): إنتاجاً العرض الضيق، واحتياطاً عضو
+   البرميل — الاثنان يموتان B15.
+الأرقام: 312/4989+2/310 ✓؛ عدادات 1732/1731/**1830**/**98** (احتياطا ج31 +2 عن 1828/96
+المؤقت — مصدره معلن)؛ madge **45** (إعادة تأسيس بعد قطع حافة B14 المعلنة؛ دفتر §7
+أُعيد معايرته: 46 عند B15)؛ tsc 0؛ ModelStore.ts → **2,049**.

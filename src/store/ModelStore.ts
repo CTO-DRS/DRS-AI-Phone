@@ -15,7 +15,6 @@ import {ContextParams, LlamaContext} from 'llama.rn';
 import {CompletionParams, CompletionEngine} from '../utils/completionTypes';
 
 import {fetchModelFilesDetails} from '../api/hf';
-import {OpenAICompletionEngine} from '../api/completionEngines';
 
 import {uiStore, hfStore, modelHubStore} from '.';
 import {serverStore} from './ServerStore';
@@ -56,9 +55,7 @@ import {
   getRecommendedThreadCount,
   getCpuCoreCount,
 } from '../utils/deviceCapabilities';
-import {detectThinkingCapability} from '../utils/thinkingCapabilityDetection';
 import {ReasoningCapability} from '../utils/reasoningCapability';
-import {capsMatchBinding} from '../utils/remoteCaps';
 import type {ModelCapabilityView} from '../utils/modelCaps';
 import {t} from '../locales';
 import {createDefaultContextInitParams} from '../utils/contextInitParamsVersions';
@@ -761,33 +758,9 @@ export class ModelStore {
    * it cannot produce caps this session could use. The next activation
    * rebuilds the binding and probes the url it is built from.
    */
-  private reprobeRemoteCapsIfUnknown = () => {
-    const model = this.activeModel;
-    if (
-      model?.origin !== ModelOrigin.REMOTE ||
-      !model.serverId ||
-      !model.remoteModelId ||
-      capsMatchBinding(
-        serverStore.remoteCaps[model.id],
-        this.activeRemoteBinding,
-        model.id,
-      )
-    ) {
-      return;
-    }
-    const binding = this.activeRemoteBinding;
-    if (binding?.modelId === model.id) {
-      const configuredUrl = serverStore.servers.find(
-        s => s.id === model.serverId,
-      )?.url;
-      if (configuredUrl !== undefined && configuredUrl !== binding.url) {
-        return;
-      }
-    }
-    serverStore
-      .fetchRemoteModelCaps(model.serverId, model.remoteModelId)
-      .catch(() => {});
-  };
+  // ── B14 (phase-4 4a): reprobeRemoteCapsIfUnknown moved into runtimeStore
+  // (module function) — its only caller was handleAppStateChange there; the
+  // private member and the ج5 cast died with the move.
 
   // ── B8 (phase-4 4a): implementation lives in runtimeStore since batch 8 ──
   reinitializeContext = async (): Promise<void> => {
@@ -1588,43 +1561,9 @@ export class ModelStore {
    * Set a remote model as the active model and create an OpenAI completion engine.
    * Releases any active local context first.
    */
-  setRemoteModel = async (model: Model): Promise<void> => {
-    if (!model.serverId || !model.remoteModelId) {
-      throw new Error('Model is missing remote configuration');
-    }
-
-    // Release any existing context (local or remote)
-    await this.releaseContext();
-
-    const apiKey = await serverStore.getApiKey(model.serverId);
-    const server = serverStore.servers.find(s => s.id === model.serverId);
-    if (!server) {
-      throw new Error('Server not found');
-    }
-
-    runInAction(() => {
-      this.engine = new OpenAICompletionEngine(
-        server.url,
-        model.remoteModelId!,
-        apiKey,
-        server.requestTimeoutMs,
-        server.serverType,
-      );
-      this.activeRemoteBinding = {
-        modelId: model.id,
-        serverId: model.serverId!,
-        remoteModelId: model.remoteModelId!,
-        url: server.url,
-        serverType: server.serverType,
-      };
-      this.setActiveModel(model.id);
-      // Do NOT set lastUsedModelId for remote models -- server may be offline on next launch
-    });
-
-    serverStore
-      .fetchRemoteModelCaps(model.serverId, model.remoteModelId, apiKey)
-      .catch(() => {});
-  };
+  // ── B14 (phase-4 4a): implementation lives in catalogStore since batch 14.
+  setRemoteModel = async (model: Model): Promise<void> =>
+    catalogStore.setRemoteModel(model);
 
   /**
    * Public method that routes model selection to the appropriate handler.
@@ -1913,52 +1852,10 @@ export class ModelStore {
     }
   }
 
-  /**
-   * Update model thinking capabilities based on the loaded context
-   */
-  private async updateModelThinkingCapabilities(
-    ctx: LlamaContext,
-    model: Model,
-  ) {
-    try {
-      const storeModel = this.models.find(m => m.id === model.id);
-      if (!storeModel) {
-        return;
-      }
-
-      // Detection is the 'detected' writer; it must not override a user
-      // declaration or a learned flip (precedence: user > learned > detected).
-      if (
-        storeModel.reasoning?.source === 'user' ||
-        storeModel.reasoning?.source === 'learned'
-      ) {
-        return;
-      }
-
-      const result = await detectThinkingCapability(ctx);
-
-      runInAction(() => {
-        // Keep the deprecated boolean + tags in sync for back-compat readers.
-        storeModel.supportsThinking = result.supported;
-        if (result.thinkingStartTag) {
-          storeModel.thinkingStartTag = result.thinkingStartTag;
-        }
-        if (result.thinkingEndTag) {
-          storeModel.thinkingEndTag = result.thinkingEndTag;
-        }
-        storeModel.reasoning = {
-          isReasoning: result.supported ? 'yes' : 'no',
-          source: 'detected',
-          supportsEffort: false,
-          effortValues: [],
-          effortSource: 'none',
-        };
-      });
-    } catch (error) {
-      console.error('Error updating model thinking capabilities:', error);
-      // Continue execution - thinking capability detection is not critical
-    }
-  }
+  // ── B14 (phase-4 4a): updateModelThinkingCapabilities moved into
+  // catalogStore (module function catalogUpdateModelThinkingCapabilities) —
+  // its caller proceedWithInitialization (runtimeStore) imports it directly;
+  // the private member and the ج18 member-half cast died with the move.
 
   /**
    * Learn-from-stream entry point. The first time a model actually emits
@@ -1966,44 +1863,17 @@ export class ModelStore {
    * (one direction). Idempotent and monotonic; never overrides a user
    * declaration (handled by the per-store writers).
    */
-  recordReasoningObserved = (modelId: string): void => {
-    const localModel = this.models.find(m => m.id === modelId);
-    if (!localModel) {
-      // Not a persisted local model → remote; delegate to ServerStore.
-      serverStore.recordRemoteReasoningObserved(modelId);
-      return;
-    }
-    const existing = localModel.reasoning;
-    if (existing?.source === 'user' || existing?.isReasoning === 'yes') {
-      return;
-    }
-    runInAction(() => {
-      localModel.reasoning = {
-        isReasoning: 'yes',
-        source: 'learned',
-        supportsEffort: existing?.supportsEffort ?? false,
-        effortValues: existing?.effortValues ?? [],
-        effortSource: existing?.effortSource ?? 'none',
-      };
-      localModel.supportsThinking = true;
-    });
-  };
+  // ── B14 (phase-4 4a): implementation lives in catalogStore since batch 14.
+  recordReasoningObserved = (modelId: string): void =>
+    catalogStore.recordReasoningObserved(modelId);
 
   /**
    * Manual model-card override. Top of precedence; routes remote ids to
    * ServerStore, local to the persisted Model.
    */
-  setReasoningOverride = (modelId: string, cap: ReasoningCapability): void => {
-    const localModel = this.models.find(m => m.id === modelId);
-    if (!localModel) {
-      serverStore.setRemoteReasoningOverride(modelId, cap);
-      return;
-    }
-    runInAction(() => {
-      localModel.reasoning = cap;
-      localModel.supportsThinking = cap.isReasoning === 'yes';
-    });
-  };
+  // ── B14 (phase-4 4a): implementation lives in catalogStore since batch 14.
+  setReasoningOverride = (modelId: string, cap: ReasoningCapability): void =>
+    catalogStore.setReasoningOverride(modelId, cap);
 
   /**
    * Returns available (i.e. downloaded models) models with projection models filtered out,
@@ -2091,11 +1961,16 @@ export class ModelStore {
   cleanupOrphanedProjectionModels = async (projectionModelIds: string[]) =>
     this.projectionManager.cleanupOrphanedProjectionModels(projectionModelIds);
 
-  setModelVisionEnabled = async (modelId: string, enabled: boolean) =>
-    this.projectionManager.setModelVisionEnabled(modelId, enabled);
+  // ── B14 (phase-4 4a): implementations live in catalogStore since batch 14
+  // (they delegate to the ProjectionModelManager there through the ج31 narrow
+  // view until PM re-homing at B15).
+  setModelVisionEnabled = async (
+    modelId: string,
+    enabled: boolean,
+  ): Promise<void> => catalogStore.setModelVisionEnabled(modelId, enabled);
 
   getModelVisionPreference = (model: Model): boolean =>
-    this.projectionManager.getModelVisionPreference(model);
+    catalogStore.getModelVisionPreference(model);
 
   /**
    * Starts a completion with one or more images
