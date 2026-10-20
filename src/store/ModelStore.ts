@@ -16,7 +16,7 @@ import {CompletionParams, CompletionEngine} from '../utils/completionTypes';
 
 import {fetchModelFilesDetails} from '../api/hf';
 
-import {uiStore, hfStore, modelHubStore} from '.';
+import {uiStore} from '.';
 import {serverStore} from './ServerStore';
 import {resolveDraftModelId} from './draftResolution';
 import {checkGpuSupport} from '../utils/deviceCapabilities';
@@ -28,7 +28,7 @@ import {
 import {getOriginalModelName} from '../utils/formatters';
 import type {OnboardingAssistantModelEntry} from './onboarding/onboardingAssistants';
 
-import {downloadManager, DownloadCancelledError} from '../services/downloads';
+import {downloadManager} from '../services/downloads';
 import {Tier} from '../services/deviceRules/types';
 import type {DeviceRules, DeviceSignals} from '../services/deviceRules/types';
 
@@ -87,7 +87,7 @@ import {
 // physically lives in downloadStore — reverse delegations and writable
 // accessor pairs below (B10 shape). Direct import: the god→download edge is
 // the declared madge step toward the B16 ledger value.
-import {downloadStore} from './model/downloadStore';
+import {downloadStore, mutationSync} from './model/downloadStore';
 // B1 (phase-4 4a): the 16 context-parameter setters physically live in
 // runtimeStore; these are verbatim reverse delegations (each dies at 4b
 // when its call sites migrate). The host injection below gives runtimeStore
@@ -381,62 +381,10 @@ export class ModelStore {
 
     this.setupAppStateListener();
 
-    // Set up download manager callbacks
-    downloadManager.setCallbacks({
-      onProgress: (modelId, progress) => {
-        const model = this.models.find(m => m.id === modelId);
-        if (model) {
-          runInAction(() => {
-            model.progress = progress.progress;
-            model.downloadSpeed = `${progress.speed} ${uiStore.l10n.common.downloadETA}: ${progress.eta}`;
-          });
-        }
-      },
-      onComplete: async modelId => {
-        const model = this.models.find(m => m.id === modelId);
-        if (model) {
-          runInAction(() => {
-            model.progress = 100;
-          });
-
-          // Verification gate: the model only counts as installed after its
-          // file passes the integrity checks (size + checksum when available).
-          const verified = await this.verifyDownloadedModel(model);
-          if (!verified) {
-            return; // error state already surfaced by the gate
-          }
-
-          runInAction(() => {
-            model.isDownloaded = true;
-            model.downloadedAt = Date.now();
-          });
-
-          // Fetch and persist GGUF metadata after download completes
-          // Skip for projection models (CLIP) - they have different metadata structure
-          if (model.modelType !== ModelType.PROJECTION) {
-            await this.fetchAndPersistGGUFMetadata(model);
-          }
-        }
-      },
-      onError: (modelId, error) => {
-        console.error('Download error for model', modelId, error);
-        const model = this.models.find(m => m.id === modelId);
-        if (model) {
-          runInAction(() => {
-            model.progress = 0;
-            model.isDownloaded = false;
-          });
-        }
-
-        const errorState = createErrorState(error, 'download', 'huggingface', {
-          modelId,
-        });
-
-        runInAction(() => {
-          this.downloadError = errorState;
-        });
-      },
-    });
+    // ── B17 (phase-4 4a): the mutationSync composition (downloadManager
+    // setCallbacks block) moved verbatim into downloadStore — the constructor
+    // calls it (ج25-family wiring — dies at 4e with the composition root).
+    mutationSync();
   }
 
   private async initializeThreadCount() {
@@ -1135,63 +1083,14 @@ export class ModelStore {
     }
   };
 
-  checkSpaceAndDownload = async (modelId: string) => {
-    const model = this.models.find(m => m.id === modelId);
-    // Skip if model is undefined, already downloaded, local or doesn't have a download URL
-    // TODO: we need a better way to handle this. Why this could ever happen?
-    if (
-      !model ||
-      model.isDownloaded ||
-      model.isLocal ||
-      model.origin === ModelOrigin.LOCAL ||
-      !model.downloadUrl
-    ) {
-      return;
-    }
-
-    try {
-      const destinationPath = await this.getModelFullPath(model);
-      const authToken = hfStore.shouldUseToken ? hfStore.hfToken : null;
-      await downloadManager.startDownload(model, destinationPath, authToken, {
-        networkType: modelHubStore.wifiOnlyDownloads ? 'WIFI' : 'ANY',
-      });
-
-      // For vision models, automatically download the projection model
-      await this._downloadProjectionModelIfNeeded(model);
-      await this._downloadDraftModelIfNeeded(model);
-    } catch (err) {
-      if (err instanceof DownloadCancelledError) {
-        // User cancelled — not a failure. Don't surface an error and don't
-        // chain the projection-model download for multimodal models.
-        return;
-      }
-
-      console.error('Failed to start download:', err);
-
-      // Create proper error state for the snackbar system
-      const errorState = createErrorState(err, 'download', 'huggingface', {
-        modelId,
-      });
-
-      runInAction(() => {
-        this.downloadError = errorState;
-      });
-
-      // Re-throw so the caller knows the download failed
-      throw err;
-    }
+  // ── B17 (phase-4 4a): implementations live in downloadStore since batch 17.
+  checkSpaceAndDownload = async (modelId: string): Promise<void> => {
+    await downloadStore.checkSpaceAndDownload(modelId);
   };
 
-  cancelDownload = async (modelId: string) => {
-    await downloadManager.cancelDownload(modelId);
-    const model = this.models.find(m => m.id === modelId);
-    if (model) {
-      runInAction(() => {
-        model.isDownloaded = false;
-        model.progress = 0;
-      });
-    }
-    this.refreshDownloadStatuses();
+  // ── B17 (phase-4 4a): implementation lives in downloadStore since batch 17.
+  cancelDownload = async (modelId: string): Promise<void> => {
+    await downloadStore.cancelDownload(modelId);
   };
 
   // ── B16 (phase-4 4a): implementation lives in downloadStore since batch 16
@@ -1200,13 +1099,15 @@ export class ModelStore {
     return downloadStore.isDownloading;
   }
 
-  /** Android pause (WorkManager PAUSED); no-op/false on iOS. */
+  // ── B17 (phase-4 4a): implementation lives in downloadStore since batch 17.
   pauseDownload = async (modelId: string): Promise<boolean> =>
-    downloadManager.pauseDownload(modelId);
+    downloadStore.pauseDownload(modelId);
+
+  // ── B17 (phase-4 4a): implementation lives in downloadStore since batch 17.
+  resumeDownload = async (modelId: string): Promise<boolean> =>
+    downloadStore.resumeDownload(modelId);
 
   /** Resume a paused Android download from its persisted byte offset. */
-  resumeDownload = async (modelId: string): Promise<boolean> =>
-    downloadManager.resumeDownload(modelId);
 
   /**
    * Post-download verification gate.
@@ -2041,17 +1942,9 @@ export class ModelStore {
     runtimeStore.clearModelLoadError();
   };
 
-  retryDownload = () => {
-    const modelId = this.downloadError?.metadata?.modelId;
-    this.clearDownloadError();
-
-    if (modelId) {
-      // Find the model and retry download
-      const model = this.models.find(m => m.id === modelId);
-      if (model) {
-        this.checkSpaceAndDownload(model.id);
-      }
-    }
+  // ── B17 (phase-4 4a): implementation lives in downloadStore since batch 17.
+  retryDownload = (): void => {
+    downloadStore.retryDownload();
   };
 }
 

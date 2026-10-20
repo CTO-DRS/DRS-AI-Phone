@@ -445,3 +445,18 @@ catalogStore→downloadStore كان سيغلق حلقة ترتيب التحمي�
 نمط ج18؛ الموت B18). **مدج 46 = انحراف معلن**: حافة ModelStore→downloadStore أغلقت
 حلقتين (المباشرة + النوعية السابقة) — الدفتر توقع +1.
 الأرقام: 312/4989+2/310 ✓؛ عدادات 1732/1731/**1823**/**91**؛ tsc 0؛ ModelStore.ts → 2,012.
+
+## B17 (phase-4 4a) — دورة التنزيل + جسر mutationSync → downloadStore
+
+الأعضاء الخمسة (checkSpaceAndDownload/cancelDownload/pauseDownload/resumeDownload/
+retryDownload) تنفيذاً حقيقياً على downloadStore؛ **كتلة setCallbacks انتقلت كتركيب**
+(mutationSync() مُصدَّرة ويستدعيها constructor الإله — سلك ج25-عائلة، موته 4e) —
+كتابات downloadError صارت على صندوق downloadStore نفسه؛ القراءات الكتالوجية واستدعاءا
+verifyDownloadedModel (B19)/fetchAndPersistGGUFMetadata (الكتالوج) عبر الواجهة
+(ج35b/ج26-tail — لا استيراد static: درس ج32). **ج35 وُلد**: ثنائيا B20
+(_downloadProjectionModelIfNeeded/_downloadDraftModelIfNeeded) بعرض بنيوي ضيق — الموت B20.
+**مشكلة قيست وعولجت (بلا تعديل اختبار)**: 12 فشلاً مرتبياً — اختبار retryDownload
+يركّب override على god.checkSpaceAndDownload ويتوقع أن يمرر إليه retryDownload؛ فشله
+سرّب الـ override إلى عائلة اختبارات B20 كلها (1ms، صفر startDownload) → العلاج:
+retryDownload يرسل عبر الواجهة (شكل ج28، الموت 4d).
+الأرقام: 312/4989+2/310 ✓؛ عدادات 1732/1731/**1828**/**96**؛ madge 46؛ tsc 0.

@@ -4,11 +4,16 @@ import type {ModelStore} from '../ModelStore';
 // singleton (network fetch + DeviceInfo) inside every suite that renders
 // a migrated component. Type-only import keeps the Pick<ModelStore,...>
 // compile-time drift guard. Revisit at Phase 4 dissolution.
-import {modelStore} from '../';
-import {observable} from 'mobx';
+import {modelStore, uiStore, hfStore, modelHubStore} from '../';
+import {observable, runInAction} from 'mobx';
 import type {Model} from '../../utils/types';
+import {ModelOrigin, ModelType} from '../../utils/types';
 import type {ErrorState} from '../../utils/errors';
-import {downloadManager} from '../../services/downloads';
+import {createErrorState} from '../../utils/errors';
+import {
+  downloadManager,
+  DownloadCancelledError,
+} from '../../services/downloads';
 
 /**
  * downloadStore — Phase-1 scaffold (fix 4, stage 1 of 4).
@@ -102,6 +107,84 @@ type GodDownloadPrivates = {
   flushPendingLocalPathRecoveries: () => void;
 };
 
+// ج35 (B17): the projection-download pair (_downloadProjectionModelIfNeeded /
+// _downloadDraftModelIfNeeded) is still god-resident until B20 — reached
+// through the facade (narrow structural view, ج18 precedent).
+type GodDownloadB20 = {
+  _downloadProjectionModelIfNeeded: (model: Model) => Promise<void>;
+  _downloadDraftModelIfNeeded: (model: Model) => Promise<void>;
+};
+
+/**
+ * mutationSync (B17) — the downloadManager.setCallbacks composition moved
+ * verbatim out of the god constructor. The god constructor calls this export
+ * (ج25-family wiring — dies at 4e when bootstrap becomes the sole composition
+ * root). Callback bodies read the catalog through the facade barrel and
+ * dispatch the B19/B13 members through it too (ج35b/ج26-tail family — no
+ * static downloadStore→catalogStore import: it would close the B14 load-order
+ * cycle). downloadError writes hit THIS store's own box.
+ */
+export function mutationSync() {
+  downloadManager.setCallbacks({
+    onProgress: (modelId, progress) => {
+      const model = modelStore.models.find(m => m.id === modelId);
+      if (model) {
+        runInAction(() => {
+          model.progress = progress.progress;
+          model.downloadSpeed = `${progress.speed} ${uiStore.l10n.common.downloadETA}: ${progress.eta}`;
+        });
+      }
+    },
+    onComplete: async modelId => {
+      const model = modelStore.models.find(m => m.id === modelId);
+      if (model) {
+        runInAction(() => {
+          model.progress = 100;
+        });
+
+        // Verification gate: the model only counts as installed after its
+        // file passes the integrity checks (size + checksum when available).
+        // ج35b: verifyDownloadedModel is B19 — facade dispatch until then.
+        const verified = await modelStore.verifyDownloadedModel(model);
+        if (!verified) {
+          return; // error state already surfaced by the gate
+        }
+
+        runInAction(() => {
+          model.isDownloaded = true;
+          model.downloadedAt = Date.now();
+        });
+
+        // Fetch and persist GGUF metadata after download completes
+        // Skip for projection models (CLIP) - they have different metadata
+        // structure. ج26-tail: GGUF family lives on catalogStore — facade
+        // dispatch (no static import, see the B14 load-order lesson).
+        if (model.modelType !== ModelType.PROJECTION) {
+          await modelStore.fetchAndPersistGGUFMetadata(model);
+        }
+      }
+    },
+    onError: (modelId, error) => {
+      console.error('Download error for model', modelId, error);
+      const model = modelStore.models.find(m => m.id === modelId);
+      if (model) {
+        runInAction(() => {
+          model.progress = 0;
+          model.isDownloaded = false;
+        });
+      }
+
+      const errorState = createErrorState(error, 'download', 'huggingface', {
+        modelId,
+      });
+
+      runInAction(() => {
+        downloadErrorBox.set(errorState);
+      });
+    },
+  });
+}
+
 export const downloadStore: DownloadStore = {
   // ── B16 (phase-4 4a): real state (boxes above) ──
   get verifyingModelIds(): string[] {
@@ -185,12 +268,91 @@ export const downloadStore: DownloadStore = {
   initializeDownloadStatus: async () => {
     await downloadStore.refreshDownloadStatuses();
   },
-  // ── pass-through methods (move in B17..B19 — untouched by B16) ──
-  checkSpaceAndDownload: (...args) => modelStore.checkSpaceAndDownload(...args),
-  cancelDownload: (...args) => modelStore.cancelDownload(...args),
-  pauseDownload: (...args) => modelStore.pauseDownload(...args),
-  resumeDownload: (...args) => modelStore.resumeDownload(...args),
-  retryDownload: (...args) => modelStore.retryDownload(...args),
+  // ── B17 (phase-4 4a): real implementations (download lifecycle). ج35:
+  // the B20 projection-download pair + ج34's getModelFullPath still dispatch
+  // through the facade until their batches.
+  checkSpaceAndDownload: async (modelId: string) => {
+    const model = modelStore.models.find(m => m.id === modelId);
+    // Skip if model is undefined, already downloaded, local or doesn't have a
+    // download URL
+    // TODO: we need a better way to handle this. Why this could ever happen?
+    if (
+      !model ||
+      model.isDownloaded ||
+      model.isLocal ||
+      model.origin === ModelOrigin.LOCAL ||
+      !model.downloadUrl
+    ) {
+      return;
+    }
+
+    try {
+      // ج34: file-path owner still on the god object until B18.
+      const destinationPath = await modelStore.getModelFullPath(model);
+      const authToken = hfStore.shouldUseToken ? hfStore.hfToken : null;
+      await downloadManager.startDownload(model, destinationPath, authToken, {
+        networkType: modelHubStore.wifiOnlyDownloads ? 'WIFI' : 'ANY',
+      });
+
+      // For vision models, automatically download the projection model
+      // ج35: B20 pair — facade dispatch until then.
+      const god = modelStore as unknown as GodDownloadB20;
+      await god._downloadProjectionModelIfNeeded(model);
+      await god._downloadDraftModelIfNeeded(model);
+    } catch (err) {
+      if (err instanceof DownloadCancelledError) {
+        // User cancelled — not a failure. Don't surface an error and don't
+        // chain the projection-model download for multimodal models.
+        return;
+      }
+
+      console.error('Failed to start download:', err);
+
+      // Create proper error state for the snackbar system
+      const errorState = createErrorState(err, 'download', 'huggingface', {
+        modelId,
+      });
+
+      runInAction(() => {
+        downloadErrorBox.set(errorState);
+      });
+
+      // Re-throw so the caller knows the download failed
+      throw err;
+    }
+  },
+  cancelDownload: async (modelId: string) => {
+    await downloadManager.cancelDownload(modelId);
+    const model = modelStore.models.find(m => m.id === modelId);
+    if (model) {
+      runInAction(() => {
+        model.isDownloaded = false;
+        model.progress = 0;
+      });
+    }
+    downloadStore.refreshDownloadStatuses();
+  },
+  pauseDownload: async (modelId: string): Promise<boolean> =>
+    downloadManager.pauseDownload(modelId),
+  resumeDownload: async (modelId: string): Promise<boolean> =>
+    downloadManager.resumeDownload(modelId),
+  retryDownload: () => {
+    const modelId = downloadErrorBox.get()?.metadata?.modelId;
+    downloadStore.clearDownloadError();
+
+    if (modelId) {
+      // Find the model and retry download.
+      // ج28 shape: dispatched through the god facade, not this.* —
+      // ModelStore.test overrides god members (retryDownload spies
+      // checkSpaceAndDownload) and the facade is the dispatch surface those
+      // overrides live on. Dies at 4d with the facade family.
+      const model = modelStore.models.find(m => m.id === modelId);
+      if (model) {
+        modelStore.checkSpaceAndDownload(model.id);
+      }
+    }
+  },
+  // ── pass-through methods (move in B18..B19 — untouched by B17) ──
   verifyDownloadedModel: (...args) => modelStore.verifyDownloadedModel(...args),
   getModelFullPath: (...args) => modelStore.getModelFullPath(...args),
   resolveLocalModelPath: (...args) => modelStore.resolveLocalModelPath(...args),
