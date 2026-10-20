@@ -246,6 +246,9 @@ pendingLocalPathRecoveries/flushPendingLocalPathRecoveries→download)، + مد�
 | ج24: حارس catalogHost على المحتسبات المشتقة الأربعة (displayModels/availableModels/lastUsedModel/remoteModels) — الموك المركزي يحمل حساباته الخاصة وينقصه remoteModels | B10 | **4e** (قسري) | نفس موت ج23 — السقوط يحافظ على سلوك suites حرفياً |
 | ج25: استدعاءا الجذر `catalogStore:v2` + الاستيراد الإرثي في constructor الإله (سلك تركيب) | B10 | **4e** | bootstrap يصبح جذر التركيب الوحيد — السلك ينتقل معه (§8 صف النهاية)؛ الدالة نفسها (importLegacyCatalogState) تبقى ملك كتالوجي |
 | ج22: حارس قراءة الحالة الثمانية المنقولة (runtimeHost ? box : برميل — نمط ج3) | B8 | **4e** (قسري) | suites البرميلية تملك الحالة على الموك المركزي (لا constructor ← لا host)؛ موت مبكر suite-by-suite من 4b/4c مع هجرة mock الفصاد |
+| ج26: استدعاءات download-status من كتالوج مهاجر (mergeModelLists→initializeDownloadStatus؛ addHFModel→refreshDownloadStatuses؛ addLocalModel→refreshDownloadStatuses — عبر ربط البرميل) | B11 | **B16** | عائلة حالة التنزيل تهاجر إلى downloadStore — الاستدعاءات تنقلب s.* داخلياً (نمط ج13) |
+| ج27: استدعاءات GGUF من كتالوج مهاجر (addLocalModel→fetchAndPersistGGUFMetadata؛ resetModels→loadMissingGGUFMetadata — الأخير خاص: عرض بنيوي ضيق نمط ج18) | B11 | **B13** | عائلة GGUF تهاجر إلى catalogStore نفسها — الاستدعاءات تصبح this. (موت مبكر بالقلب) |
+| ج28: استدعاء داخل-كتالوجي يمر عبر الواجهة (resetModels→mergeModelLists عبر modelStore بدل this.) — ModelStore.test يركّب overrides على أعضاء الإله والواجهة هي سطح الإرسال (نمط ج2) | B11 | **4d** | انقسام ModelStore.test إلى أجنحة المتاجر المالك — الأجنحة تمرّس catalogStore مباشرة فيقلب الاستدعاء this. |
 
 قاعدة السجل: أي جسر جديد يولد في دفعة = سطر جديد هنا في نفس الـ commit؛ جسر بلا موت
 معلن = يوقف الدفعة.
@@ -338,7 +341,10 @@ post-4a: official 1732 / real 1731 / raw 1732 → post-4b: **951/950/951** → p
 > ممثلها فقط: 44 بالضبط قبل وبعد، مقيساً)
 > → 46 عند B10 (**مقيس 46 بالضبط — جلسة 9**؛ أول حافة ModelStore→catalogStore:
 > المباشر في ModelStore.ts + البرميل؛ استيراد runtimeStore→catalogStore المباشر
-> (ج1/ج15/ج21) لم يضف حلقةً ثالثة — العنقود المعدود نفسه) → 47 عند B15 (برميل catalog
+> (ج1/ج15/ج21) لم يضف حلقةً ثالثة — العنقود المعدود نفسه) → **45 عند B11** (انحراف
+> معلن عن الدفتر: حل المدير DraftRulesManager قتل الحلقة #17
+> ModelStore↔DraftRulesManager — حافة من العنقود نفسه، لم تحسبها توقعات الدفتر)
+> → 47 عند B15 (برميل catalog
 > يموت مع آخر مرجع pass-through) → **48 = السقف** عند B16 (أول حافة ModelStore→downloadStore)
 > → 47 عند B20 (برميل download) → 46 عند B23 (برميل runtime) → **42 بالضبط** عند B24
 > (حواف type-guard الثلاث تموت مع استبدال دروع الانجراف).

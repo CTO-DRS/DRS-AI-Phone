@@ -6,7 +6,6 @@ import {
 } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 
-import {v4 as uuidv4} from 'uuid';
 import 'react-native-get-random-values';
 import {makePersistable} from 'mobx-persist-store';
 import * as RNFS from '@dr.pogodin/react-native-fs';
@@ -23,37 +22,24 @@ import {serverStore} from './ServerStore';
 import {resolveDraftModelId} from './draftResolution';
 import {checkGpuSupport} from '../utils/deviceCapabilities';
 import {
-  deepMerge,
   getSHA256Hash,
-  hfAsModel,
   getMmprojFiles,
   inferRepoFromModelId,
   parseSizeLabel,
 } from '../utils';
-import {getRecommendedProjectionModel} from '../utils/multimodalHelpers';
 import {isDraftOnlyModel} from '../utils/mtp';
 import {getOriginalModelName} from '../utils/formatters';
 import type {OnboardingAssistantModelEntry} from './onboarding/onboardingAssistants';
 
 import {downloadManager, DownloadCancelledError} from '../services/downloads';
-import {classify, ClassifyPlatform} from '../services/deviceRules/classify';
-import {
-  DeviceRules,
-  DeviceSignals,
-  RuleCandidate,
-  RuleDraft,
-  Tier,
-} from '../services/deviceRules/types';
+import {Tier} from '../services/deviceRules/types';
+import type {DeviceRules, DeviceSignals} from '../services/deviceRules/types';
 
 // Bump when the migration logic that re-merges the persisted model list
 // changes. Crossing this version runs the one-time prune-and-reconcile.
 export const MODEL_LIST_VERSION = 15;
 
-import {
-  getHFDefaultSettings,
-  getLocalModelDefaultSettings,
-  stops,
-} from '../utils/chat';
+import {stops} from '../utils/chat';
 import {
   CacheType,
   ChatTemplateConfig,
@@ -82,7 +68,6 @@ import NativeHardwareInfo from '../specs/NativeHardwareInfo';
 import {loadLlamaModelInfo} from 'llama.rn';
 import {logger} from '../utils/logger';
 import {ProjectionModelManager} from './model/ProjectionModelManager';
-import {DraftRulesManager} from './model/DraftRulesManager';
 // Phase-4 R0 (docs/extraction-plan.md, condition 4): DI composition root.
 // bootstrap is imported ALONE — never the three pass-through stores. They
 // import the store barrel (which re-exports ModelStore), so a static import
@@ -98,6 +83,8 @@ import {initializeModelSystem} from './model/bootstrap';
 // below (ج25 — composition wiring, dies at 4e per §8).
 import {
   catalogStore,
+  catalogResolvePresets,
+  catalogUpgradeToFetchedRules,
   importLegacyCatalogState,
   injectCatalogHost,
 } from './model/catalogStore';
@@ -735,185 +722,28 @@ export class ModelStore {
     this.checkAndReloadAutoReleasedModel();
   };
 
-  // Synthesize the minimal {hfModel, modelFile} pair the unchanged hfAsModel
-  // reads from a thin candidate, with no network. The deterministic downloadUrl
-  // is set here; HF-derivable data (oid/lfs/templates) resolves at download. A
-  // multimodal candidate's explicit mmproj is synthesized into a sibling so
-  // vision detection pairs the projector and its size enters the fit check.
-  // Draft/device-rules resolution lives in DraftRulesManager (audit F-12
-  // continuation, mirroring src/store/model/ProjectionModelManager.ts).
-  // Delegating members preserve the store's internal interface, so call
-  // sites and tests are untouched.
-  private readonly draftRulesManager = new DraftRulesManager(this);
-
-  private resolvePresets = (): Promise<Model[]> =>
-    this.draftRulesManager.resolvePresets();
+  // ── B11 (phase-4 4a): preset-pipeline implementations live in catalogStore
+  // since batch 11. DraftRulesManager dissolved there — its file died with the
+  // batch (every host usage co-moved: deviceTier/rulesVersion writes onto the
+  // catalog boxes, resolvePresetModels/reconcilePresets onto co-moved
+  // members). Verbatim reverse delegations (B8 pattern) until call sites
+  // migrate at 4d; initializeStore keeps exercising the two private names
+  // until its own dissolution at B23.
+  private resolvePresets = (): Promise<Model[]> => catalogResolvePresets();
 
   private upgradeToFetchedRules = (): Promise<void> =>
-    this.draftRulesManager.upgradeToFetchedRules();
+    catalogUpgradeToFetchedRules();
 
-  private candidateToPair = (candidate: RuleCandidate) =>
-    this.draftRulesManager.candidateToPair(candidate);
-
-  private draftToStub = (draft: RuleDraft): Model =>
-    this.draftRulesManager.draftToStub(draft);
-
-  // A draft usually lives in a repo other than its target's, so unlike mmproj it
-  // cannot be an hfAsModel sibling and needs its own {hfModel, modelFile} pair.
-
-  // Materialize the device-tier preset list from rules. Each thin candidate is
-  // turned into the minimal pair hfAsModel reads (candidateToPair), so the
-  // result is origin:HF, identical to an HF-browser add. Multimodal candidates
-  // also push their mmproj projector stub (mirrors addHFModel) so the projection
-  // is resolvable for download. Deduped by model.id (author/repo/filename),
-  // first wins.
   resolvePresetModels = (
     rules: DeviceRules,
     signals: DeviceSignals,
-  ): Model[] => {
-    const tier = classify(
-      signals,
-      rules.classifier,
-      Platform.OS as ClassifyPlatform,
-    );
-    const flat = rules.tiers[tier].models.flatMap(candidate => {
-      const {hfModel, modelFile} = this.candidateToPair(candidate);
-      const llm = hfAsModel(hfModel, modelFile);
-      let named = candidate.displayName
-        ? {...llm, name: candidate.displayName}
-        : llm;
+  ): Model[] => catalogStore.resolvePresetModels(rules, signals);
 
-      const extras: Model[] = [];
-      if (named.supportsMultimodal) {
-        const projModels = getMmprojFiles(hfModel.siblings || []).map(file =>
-          hfAsModel(hfModel, file),
-        );
-        extras.push(...projModels);
-      }
-      if (candidate.draft) {
-        const draftStub = this.draftToStub(candidate.draft);
-        named = {...named, defaultDraftModel: draftStub.id};
-        extras.push(draftStub);
-      }
-      return [named, ...extras];
-    });
+  reconcilePresets = (presets: Model[]): void =>
+    catalogStore.reconcilePresets(presets);
 
-    // Dedup on the full model id (author/repo/filename) so two authors sharing a
-    // repo name + filename don't collapse. The id also spans origins, matching a
-    // legacy origin:PRESET download against a new origin:HF rule entry.
-    const seen = new Set<string>();
-    const presets: Model[] = [];
-    for (const model of flat) {
-      if (seen.has(model.id)) {
-        continue;
-      }
-      seen.add(model.id);
-      presets.push({...model, isRulePreset: true});
-    }
-    return presets;
-  };
-
-  // Resolve the preset list from the bundled offline floor only — no network. This
-  // populates the model list immediately on first launch so a slow or hanging
-  // rules fetch can never leave the list empty. The fetched online override is
-  // applied afterwards by upgradeToFetchedRules (fire-and-forget).
-
-  // Fetch the online rules override and, if it parses to a usable rule set,
-  // re-classify and reconcile so the list upgrades past the bundled floor. Runs
-  // off the first-population path (fire-and-forget); any failure leaves the
-  // already-applied bundled presets in place.
-
-  // Reconcile the freshly-resolved rule presets into the model list. Keyed on the
-  // full model id (author/repo/filename), which spans origins: a downloaded
-  // legacy PRESET and a new origin:HF rule entry share it, so the kept download
-  // suppresses the rule stub (no duplicate card, no re-download).
-  //
-  // Two-sided so the list stays equal to the current rule set:
-  //  - prune non-downloaded rule-provenance stubs no longer in the fresh set
-  //    (a newer rulesVersion dropped them, or the device re-tiered). Downloaded
-  //    models of any origin and user-added HF/LOCAL models are never pruned.
-  //  - append the fresh presets not already represented by a kept model.
-  reconcilePresets = (presets: Model[]) => {
-    if (presets.length === 0) {
-      return;
-    }
-    const freshIds = new Set(presets.map(p => p.id));
-    const kept = this.models.filter(
-      m => !(m.isRulePreset && !m.isDownloaded && !freshIds.has(m.id)),
-    );
-    const existing = new Set(kept.map(m => m.id));
-    const toAdd = presets.filter(p => !existing.has(p.id));
-    if (kept.length === this.models.length && toAdd.length === 0) {
-      return;
-    }
-    runInAction(() => {
-      this.models = [...kept, ...toAdd];
-    });
-  };
-
-  mergeModelLists = (presets: Model[] = []) => {
-    // The default list is data-driven: rule-resolved origin:HF presets replace
-    // the old static PRESET array. Keep every downloaded model regardless of
-    // origin, drop non-downloaded PRESET stubs, then reconcile the resolved
-    // presets in by model.id (author/repo/filename, origin-spanning) so a kept
-    // legacy PRESET download suppresses its rule stub.
-    const mergedModels = [...this.models].filter(
-      model => model.origin !== ModelOrigin.PRESET || model.isDownloaded,
-    );
-
-    // Handle HF and LOCAL models
-    mergedModels.forEach(model => {
-      if (
-        model.origin === ModelOrigin.HF ||
-        model.origin === ModelOrigin.LOCAL ||
-        model.isLocal
-      ) {
-        // Reset default settings
-        if (model.origin === ModelOrigin.LOCAL || model.isLocal) {
-          const defaultSettings = getLocalModelDefaultSettings();
-          model.defaultChatTemplate = {...defaultSettings.chatTemplate};
-          model.defaultStopWords = defaultSettings.completionParams.stop;
-        } else if (model.origin === ModelOrigin.HF) {
-          const defaultSettings = getHFDefaultSettings(
-            model.hfModel as HuggingFaceModel,
-          );
-          model.defaultChatTemplate = {...defaultSettings.chatTemplate};
-          model.defaultStopWords = defaultSettings.completionParams.stop;
-        }
-
-        // Update current settings while preserving any customizations
-        model.chatTemplate = deepMerge(
-          model.chatTemplate || {},
-          model.defaultChatTemplate,
-        );
-        model.stopWords = [
-          ...(model.stopWords || []),
-          ...(model.defaultStopWords || []),
-        ];
-
-        // Infer repo from model.id if missing (for existing HF models)
-        if (model.origin === ModelOrigin.HF && !model.repo) {
-          const inferredRepo = inferRepoFromModelId(model.id);
-          if (inferredRepo) {
-            model.repo = inferredRepo;
-            logger.debug(
-              `[ModelStore] Inferred repo "${inferredRepo}" from model.id: ${model.id}`,
-            );
-          }
-        }
-      }
-    });
-
-    runInAction(() => {
-      this.models = mergedModels;
-    });
-
-    this.reconcilePresets(presets);
-
-    // Returned (not awaited) so callers inside runInAction can stay sync while
-    // initializeStore can still await settlement before pruning local models.
-    return this.initializeDownloadStatus();
-  };
+  mergeModelLists = (presets: Model[] = []): Promise<void> =>
+    catalogStore.mergeModelLists(presets);
 
   // ── B4 (phase-4 4a): implementations live in runtimeStore since batch 4 ──
   setupAppStateListener = () => {
@@ -1520,21 +1350,9 @@ export class ModelStore {
    * @param modelId - The ID of the model to remove.
    * @returns boolean - Returns true if the model was removed, false otherwise.
    */
-  removeModelFromList = (model: Model): boolean => {
-    const modelIndex = this.models.findIndex(
-      m => m.id === model.id && m.origin === model.origin,
-    );
-    if (modelIndex !== -1) {
-      const _model = this.models[modelIndex];
-      if (!_model.isDownloaded) {
-        runInAction(() => {
-          this.models.splice(modelIndex, 1);
-        });
-        return true;
-      }
-    }
-    return false;
-  };
+  // ── B11 (phase-4 4a): implementation lives in catalogStore since batch 11.
+  removeModelFromList = (model: Model): boolean =>
+    catalogStore.removeModelFromList(model);
 
   deleteModel = async (model: Model) => {
     // id should work as well, as long as we are differentiating between models by origin.
@@ -2047,110 +1865,11 @@ export class ModelStore {
    * @param modelFile - The model file to add.
    * @returns The new model that was added.
    */
-  addHFModel = async (hfModel: HuggingFaceModel, modelFile: ModelFile) => {
-    const newModel = hfAsModel(hfModel, modelFile);
-    const storeModel = this.models.find(m => m.id === newModel.id);
-
-    // For non-multimodal models, return early if the model already exists
-    if (storeModel && !newModel.supportsMultimodal) {
-      return storeModel;
-    }
-
-    // Add the model to the store if it doesn't exist
-    let modelToReturn = storeModel;
-    if (!storeModel) {
-      runInAction(() => {
-        this.models.push(newModel);
-      });
-      modelToReturn = newModel;
-    }
-
-    // For multimodal models, always ensure projection models are in the store
-    if (
-      newModel.supportsMultimodal &&
-      newModel.compatibleProjectionModels?.length
-    ) {
-      // Get the mmproj files from the repository
-      const mmprojFiles = getMmprojFiles(hfModel.siblings || []);
-
-      // Add each projection model to the store if it doesn't exist
-      for (const mmprojFile of mmprojFiles) {
-        const projModelId = `${hfModel.id}/${mmprojFile.rfilename}`;
-        const existingProjModel = this.models.find(m => m.id === projModelId);
-
-        if (!existingProjModel) {
-          // Create and add the projection model
-          const projModel = hfAsModel(hfModel, mmprojFile);
-          runInAction(() => {
-            this.models.push(projModel);
-          });
-        }
-      }
-
-      // If we're working with an existing model, update its projection model references
-      // to ensure they're current with what's now in the store
-      if (storeModel) {
-        const updatedCompatibleModels = mmprojFiles.map(
-          file => `${hfModel.id}/${file.rfilename}`,
-        );
-
-        runInAction(() => {
-          // Update compatible projection models list
-          storeModel.compatibleProjectionModels = updatedCompatibleModels;
-
-          // Ensure default projection model is set if not already set
-          if (
-            !storeModel.defaultProjectionModel &&
-            updatedCompatibleModels.length > 0
-          ) {
-            // Use the same logic as hfAsModel to determine the default
-            const mmprojFilenames = mmprojFiles.map(file => file.rfilename);
-            const recommendedFile = getRecommendedProjectionModel(
-              modelFile.rfilename,
-              mmprojFilenames,
-            );
-            if (recommendedFile) {
-              storeModel.defaultProjectionModel = `${hfModel.id}/${recommendedFile}`;
-            }
-          }
-        });
-      }
-    }
-
-    // If this is a projection model, check if we need to update any vision models
-    if (newModel.modelType === ModelType.PROJECTION) {
-      // Get the repository ID from the model ID
-      const repoId = newModel.id.split('/').slice(0, 2).join('/');
-
-      // Find vision models from the same repository
-      const visionModels = this.models.filter(
-        m =>
-          m.supportsMultimodal &&
-          m.id.startsWith(repoId) &&
-          m.id !== newModel.id,
-      );
-
-      // Update the compatible projection models for each vision model
-      for (const visionModel of visionModels) {
-        if (!visionModel.compatibleProjectionModels?.includes(newModel.id)) {
-          runInAction(() => {
-            if (!visionModel.compatibleProjectionModels) {
-              visionModel.compatibleProjectionModels = [];
-            }
-            visionModel.compatibleProjectionModels.push(newModel.id);
-
-            // If no default projection model is set, set this one as default
-            if (!visionModel.defaultProjectionModel) {
-              visionModel.defaultProjectionModel = newModel.id;
-            }
-          });
-        }
-      }
-    }
-
-    await this.refreshDownloadStatuses();
-    return modelToReturn;
-  };
+  // ── B11 (phase-4 4a): implementation lives in catalogStore since batch 11.
+  addHFModel = async (
+    hfModel: HuggingFaceModel,
+    modelFile: ModelFile,
+  ): Promise<Model | undefined> => catalogStore.addHFModel(hfModel, modelFile);
 
   /**
    * Lazy-register a curated onboarding-assistant HF entry into `models`.
@@ -2160,86 +1879,19 @@ export class ModelStore {
    * provides idempotency. `siblings: []` keeps `isVisionRepo` false so
    * no projection model materializes (text-only by design).
    */
+  // ── B11 (phase-4 4a): implementation lives in catalogStore since batch 11.
   registerOnboardingAssistantModel = async (
     entry: OnboardingAssistantModelEntry,
-  ): Promise<Model | undefined> => {
-    const modelFile: ModelFile = {
-      rfilename: entry.filename,
-      url: entry.downloadUrl,
-      size: entry.sizeBytes,
-    } as ModelFile;
-    const hfModel: HuggingFaceModel = {
-      id: entry.repo,
-      author: entry.author,
-      url: `https://huggingface.co/${entry.repo}`,
-      specs: {gguf: {total: entry.params}},
-      siblings: [] as ModelFile[],
-    } as HuggingFaceModel;
-    return this.addHFModel(hfModel, modelFile);
-  };
+  ): Promise<Model | undefined> =>
+    catalogStore.registerOnboardingAssistantModel(entry);
 
-  removeModelByFullPath = (fullPath: string) => {
-    const index = this.models.findIndex(
-      m =>
-        (m.isLocal || m.origin === ModelOrigin.LOCAL) &&
-        m.fullPath === fullPath,
-    );
-    if (index !== -1) {
-      this.models.splice(index, 1);
-    }
-  };
+  // ── B11 (phase-4 4a): implementation lives in catalogStore since batch 11.
+  removeModelByFullPath = (fullPath: string): void =>
+    catalogStore.removeModelByFullPath(fullPath);
 
+  // ── B11 (phase-4 4a): implementation lives in catalogStore since batch 11.
   addLocalModel = async (localFilePath: string) => {
-    const filename = localFilePath.split('/').pop(); // Extract filename from path
-    if (!filename) {
-      throw new Error('Invalid local file path');
-    }
-
-    // Read file size from disk
-    let fileSize = 0;
-    try {
-      const stat = await RNFS.stat(localFilePath);
-      fileSize = Number(stat.size) || 0;
-    } catch (e) {
-      console.warn('[ModelStore] Failed to read file size:', e);
-    }
-
-    const defaultSettings = getLocalModelDefaultSettings();
-
-    const model: Model = {
-      id: uuidv4(), // Generate a unique ID
-      author: '',
-      name: filename,
-      size: fileSize,
-      params: 0, // Will be updated after GGUF metadata read
-      isDownloaded: true,
-      downloadUrl: '',
-      hfUrl: '',
-      progress: 0,
-      filename,
-      fullPath: localFilePath,
-      isLocal: true, // Kept for backward compatibility
-      origin: ModelOrigin.LOCAL,
-      defaultChatTemplate: {...defaultSettings.chatTemplate},
-      chatTemplate: {...defaultSettings.chatTemplate},
-      defaultStopWords: [...(defaultSettings?.completionParams?.stop || [])],
-      stopWords: [...(defaultSettings?.completionParams?.stop || [])],
-      defaultCompletionSettings: defaultSettings.completionParams,
-      completionSettings: {...defaultSettings.completionParams},
-    };
-
-    runInAction(() => {
-      this.models.push(model);
-      this.refreshDownloadStatuses();
-    });
-
-    // Get the MobX observable version — the plain `model` object was wrapped
-    // in a proxy when pushed into the observable array. We must pass the proxy
-    // so that mutations inside fetchAndPersistGGUFMetadata trigger reactivity.
-    const observableModel = this.models.find(m => m.id === model.id);
-    if (observableModel) {
-      await this.fetchAndPersistGGUFMetadata(observableModel);
-    }
+    await catalogStore.addLocalModel(localFilePath);
   };
 
   updateModelChatTemplate = (
@@ -2275,67 +1927,9 @@ export class ModelStore {
     }
   };
 
-  resetModels = async () => {
-    const localModels = this.models.filter(
-      model => model.isLocal || model.origin === ModelOrigin.LOCAL,
-    );
-    localModels.forEach(model => {
-      const defaultSettings = getLocalModelDefaultSettings();
-      // We change the default settings as well, in case the app introduces new settings.
-      model.defaultChatTemplate = {...defaultSettings.chatTemplate};
-      model.defaultStopWords = [
-        ...(defaultSettings?.completionParams?.stop || []),
-      ];
-      model.chatTemplate = {...defaultSettings.chatTemplate};
-      model.stopWords = [...(defaultSettings?.completionParams?.stop || [])];
-
-      // Clear GGUF metadata to force re-fetch with correct number types
-      model.ggufMetadata = undefined;
-    });
-
-    const hfModels = this.models.filter(
-      model => model.origin === ModelOrigin.HF,
-    );
-    hfModels.forEach(model => {
-      const defaultSettings = getHFDefaultSettings(
-        model.hfModel as HuggingFaceModel,
-      );
-      // We change the default settings as well, in case the app introduces new settings.
-      model.defaultChatTemplate = {...defaultSettings.chatTemplate};
-      model.defaultStopWords = [
-        ...(defaultSettings?.completionParams?.stop || []),
-      ];
-      model.chatTemplate = {...defaultSettings.chatTemplate};
-      model.stopWords = [...(defaultSettings?.completionParams?.stop || [])];
-
-      // Clear GGUF metadata to force re-fetch with correct number types
-      model.ggufMetadata = undefined;
-    });
-
-    // Re-resolve the device-appropriate presets so reset repopulates the
-    // default rule list synchronously, mirroring initializeStore (rather than
-    // leaving it empty until the next launch re-migrates).
-    const presets = await this.resolvePresets();
-
-    runInAction(() => {
-      // Seed with the kept local/HF models so the preset reconcile dedups
-      // against them (a downloaded HF model matching a rule preset is not
-      // duplicated).
-      this.models = [...localModels, ...hfModels];
-      this.version = 0;
-      this.mergeModelLists(presets);
-
-      // mergeModelLists appends defaultStopWords onto existing stopWords to
-      // preserve user customizations; on the just-reset kept models that
-      // duplicates the seeded defaults. Dedup the affected models (distinct
-      // entries are preserved).
-      [...localModels, ...hfModels].forEach(model => {
-        model.stopWords = [...new Set(model.stopWords)];
-      });
-    });
-
-    // Re-fetch GGUF metadata with correct number types
-    this.loadMissingGGUFMetadata();
+  // ── B11 (phase-4 4a): implementation lives in catalogStore since batch 11.
+  resetModels = async (): Promise<void> => {
+    await catalogStore.resetModels();
   };
 
   resetModelChatTemplate = (modelId: string) => {

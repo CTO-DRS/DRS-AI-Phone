@@ -7,11 +7,32 @@ import type {ModelStore} from '../ModelStore';
 import {modelStore, serverStore} from '../';
 import {observable, runInAction} from 'mobx';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {ModelOrigin} from '../../utils/types';
+import {ModelOrigin, ModelType} from '../../utils/types';
 import type {Model} from '../../utils/types';
+import type {HuggingFaceModel, ModelFile} from '../../utils/types';
 import type {CompletionParams} from '../../utils/completionTypes';
-import type {Tier} from '../../services/deviceRules/types';
-import {filterProjectionModels} from '../../utils/multimodalHelpers';
+import {
+  DeviceRules,
+  DeviceSignals,
+  RuleCandidate,
+  RuleDraft,
+  Tier,
+} from '../../services/deviceRules/types';
+import {filterProjectionModels, getRecommendedProjectionModel} from '../../utils/multimodalHelpers';
+import {hfAsModel, getMmprojFiles, deepMerge, inferRepoFromModelId} from '../../utils';
+import {getLocalModelDefaultSettings, getHFDefaultSettings} from '../../utils/chat';
+import {logger} from '../../utils/logger';
+import {classify, ClassifyPlatform} from '../../services/deviceRules/classify';
+import {deriveUrl, parseDeviceRules} from '../../services/deviceRules/parse';
+import {fetchRules} from '../../services/deviceRules/rules';
+import {readDeviceSignals} from '../../services/deviceRules/signals';
+import type {OnboardingAssistantModelEntry} from '../onboarding/onboardingAssistants';
+import androidRulesRaw from '../bundledDeviceRules/rules.android.json';
+import iosRulesRaw from '../bundledDeviceRules/rules.ios.json';
+import {Platform} from 'react-native';
+import DeviceInfo from 'react-native-device-info';
+import * as RNFS from '@dr.pogodin/react-native-fs';
+import {v4 as uuidv4} from 'uuid';
 
 /**
  * catalogStore — Phase-1 scaffold (fix 4, stage 1 of 4).
@@ -83,6 +104,16 @@ import {filterProjectionModels} from '../../utils/multimodalHelpers';
  * ج25 (B10): the v2-root + legacy-import call-sites in the god constructor
  * — composition wiring, dies at 4e when bootstrap becomes the sole
  * composition root (§8 lifecycle table, final row).
+ *
+ * B11 (phase-4 4a): the list-mutation + preset-pipeline members moved home —
+ * nine public members plus resolvePresetModels (travels with the manager:
+ * its only callers are the manager itself and the pass-through) and the four
+ * preset privates. DraftRulesManager DISSOLVED here: its host usages all
+ * co-moved (deviceTier/rulesVersion writes → this module's boxes;
+ * resolvePresetModels/reconcilePresets calls → members below), so the class
+ * became module functions and its file was deleted. The god object keeps
+ * verbatim reverse delegations (B8 pattern) until 4d. New documented bridges:
+ * ج26 download-status calls (die B16), ج27 GGUF calls (die B13).
  * ═══════════════════════════════════════════════════════════════════
  */
 
@@ -204,6 +235,118 @@ export async function importLegacyCatalogState(): Promise<void> {
     // layer, and this must never abort the constructor chain.
   }
 }
+
+// ───────────── B11 (phase-4 4a): preset pipeline — DraftRulesManager dissolved ─────────────
+// The manager (audit F-12) re-homes into the catalog domain it always served:
+// every one of its host usages co-moves with this batch — the deviceTier /
+// rulesVersion writes land on THIS module's own boxes, and the
+// resolvePresetModels / reconcilePresets calls land on members defined below.
+// The class file dies; the four methods become module functions with verbatim
+// bodies. resolvePresets / upgradeToFetchedRules are EXPORTED because the god
+// object's initializeStore (dissolves at B23) reaches them through private
+// reverse delegations (B8 pattern); candidateToPair / draftToStub stay
+// module-private (their only consumer, resolvePresetModels, co-moved).
+function catalogCandidateToPair(
+  candidate: RuleCandidate,
+): {hfModel: HuggingFaceModel; modelFile: ModelFile} {
+  const modelFile: ModelFile = {
+    rfilename: candidate.hfFilename,
+    url: deriveUrl(candidate.hfRepo, candidate.hfFilename),
+    size: candidate.sizeBytes,
+  };
+  const siblings: ModelFile[] | undefined = candidate.mmproj
+    ? [
+        {rfilename: candidate.hfFilename, size: candidate.sizeBytes},
+        {
+          rfilename: candidate.mmproj.hfFilename,
+          url: deriveUrl(
+            candidate.mmproj.hfRepo,
+            candidate.mmproj.hfFilename,
+          ),
+          size: candidate.mmproj.sizeBytes,
+        },
+      ]
+    : undefined;
+  const hfModel = {
+    id: candidate.hfRepo,
+    author: candidate.hfRepo.split('/')[0],
+    url: `https://huggingface.co/${candidate.hfRepo}`,
+    specs: {gguf: {total: candidate.params ?? 0}},
+    siblings,
+  } as unknown as HuggingFaceModel;
+  return {hfModel, modelFile};
+}
+
+function catalogDraftToStub(draft: RuleDraft): Model {
+  const modelFile: ModelFile = {
+    rfilename: draft.hfFilename,
+    url: deriveUrl(draft.hfRepo, draft.hfFilename),
+    size: draft.sizeBytes,
+  };
+  const hfModel = {
+    id: draft.hfRepo,
+    author: draft.hfRepo.split('/')[0],
+    url: `https://huggingface.co/${draft.hfRepo}`,
+    specs: {gguf: {total: 0}},
+    siblings: undefined,
+  } as unknown as HuggingFaceModel;
+  return {...hfAsModel(hfModel, modelFile), modelType: ModelType.DRAFT};
+}
+
+export async function catalogResolvePresets(): Promise<Model[]> {
+  try {
+    const signals = await readDeviceSignals();
+    const bundledRaw = Platform.OS === 'ios' ? iosRulesRaw : androidRulesRaw;
+    const rules = parseDeviceRules(bundledRaw, DeviceInfo.getVersion());
+    const tier = classify(
+      signals,
+      rules.classifier,
+      Platform.OS as ClassifyPlatform,
+    );
+    runInAction(() => {
+      // Owner-direct writes (ج21 shape): the manager now lives in the module
+      // that owns these boxes — the god-host round trip dies with the move.
+      deviceTierBox.set(tier);
+      rulesVersionBox.set(rules.rulesVersion);
+    });
+    return catalogStore.resolvePresetModels(rules, signals);
+  } catch (error) {
+    console.warn('[ModelStore] preset resolution failed:', error);
+    return [];
+  }
+}
+
+export async function catalogUpgradeToFetchedRules(): Promise<void> {
+  try {
+    const fetched = await fetchRules(DeviceInfo.getVersion());
+    if (!fetched) {
+      return;
+    }
+    const signals = await readDeviceSignals();
+    const tier = classify(
+      signals,
+      fetched.classifier,
+      Platform.OS as ClassifyPlatform,
+    );
+    runInAction(() => {
+      deviceTierBox.set(tier);
+      rulesVersionBox.set(fetched.rulesVersion);
+    });
+    catalogStore.reconcilePresets(
+      catalogStore.resolvePresetModels(fetched, signals),
+    );
+  } catch (error) {
+    console.warn('[ModelStore] fetched-rules upgrade failed:', error);
+  }
+}
+
+// ج27 (B11): GGUF-family member still private on the god object, reached
+// through a narrow structural view — the ج18 precedent (GodObjectPrivates in
+// runtimeStore.ts). The cast form is invisible to the line counter by design;
+// the death is the registry's (B13).
+type GodCatalogPrivates = {
+  loadMissingGGUFMetadata: () => void;
+};
 
 export const CATALOG_MEMBERS = [
   'models',
@@ -359,17 +502,468 @@ export const catalogStore: CatalogStore = {
     }
     return models;
   },
-  // ── pass-through methods (move in B11..B15 — untouched by B10) ──
-  resolvePresetModels: (...args) => modelStore.resolvePresetModels(...args),
-  reconcilePresets: (...args) => modelStore.reconcilePresets(...args),
-  mergeModelLists: (...args) => modelStore.mergeModelLists(...args),
-  addHFModel: (...args) => modelStore.addHFModel(...args),
-  addLocalModel: (...args) => modelStore.addLocalModel(...args),
-  resetModels: (...args) => modelStore.resetModels(...args),
-  removeModelFromList: (...args) => modelStore.removeModelFromList(...args),
-  removeModelByFullPath: (...args) => modelStore.removeModelByFullPath(...args),
-  registerOnboardingAssistantModel: (...args) =>
-    modelStore.registerOnboardingAssistantModel(...args),
+  // ── B11 (phase-4 4a): real implementations (moved from the god object).
+  // Bodies verbatim; `this.*` reaches the members and boxes of THIS store.
+  // Cross-scope calls go through the barrel binding (mocked in suites):
+  // ج26 = initializeDownloadStatus / refreshDownloadStatuses (die B16),
+  // ج27 = fetchAndPersistGGUFMetadata / loadMissingGGUFMetadata (die B13).
+
+  // Materialize the device-tier preset list from rules. Each thin candidate is
+  // turned into the minimal pair hfAsModel reads (catalogCandidateToPair), so
+  // the result is origin:HF, identical to an HF-browser add. Multimodal
+  // candidates also push their mmproj projector stub (mirrors addHFModel) so
+  // the projection is resolvable for download. Deduped by model.id
+  // (author/repo/filename), first wins.
+  resolvePresetModels(
+    rules: DeviceRules,
+    signals: DeviceSignals,
+  ): Model[] {
+    const tier = classify(
+      signals,
+      rules.classifier,
+      Platform.OS as ClassifyPlatform,
+    );
+    const flat = rules.tiers[tier].models.flatMap(candidate => {
+      const {hfModel, modelFile} = catalogCandidateToPair(candidate);
+      const llm = hfAsModel(hfModel, modelFile);
+      let named = candidate.displayName
+        ? {...llm, name: candidate.displayName}
+        : llm;
+
+      const extras: Model[] = [];
+      if (named.supportsMultimodal) {
+        const projModels = getMmprojFiles(hfModel.siblings || []).map(file =>
+          hfAsModel(hfModel, file),
+        );
+        extras.push(...projModels);
+      }
+      if (candidate.draft) {
+        const draftStub = catalogDraftToStub(candidate.draft);
+        named = {...named, defaultDraftModel: draftStub.id};
+        extras.push(draftStub);
+      }
+      return [named, ...extras];
+    });
+
+    // Dedup on the full model id (author/repo/filename) so two authors sharing
+    // a repo name + filename don't collapse. The id also spans origins,
+    // matching a legacy origin:PRESET download against a new origin:HF rule
+    // entry.
+    const seen = new Set<string>();
+    const presets: Model[] = [];
+    for (const model of flat) {
+      if (seen.has(model.id)) {
+        continue;
+      }
+      seen.add(model.id);
+      presets.push({...model, isRulePreset: true});
+    }
+    return presets;
+  },
+
+  // Resolve the preset list from the bundled offline floor only — no network.
+  // This populates the model list immediately on first launch so a slow or
+  // hanging rules fetch can never leave the list empty. The fetched online
+  // override is applied afterwards by upgradeToFetchedRules
+  // (fire-and-forget; see catalogUpgradeToFetchedRules above).
+
+  // Reconcile the freshly-resolved rule presets into the model list. Keyed on
+  // the full model id (author/repo/filename), which spans origins: a
+  // downloaded legacy PRESET and a new origin:HF rule entry share it, so the
+  // kept download suppresses the rule stub (no duplicate card, no
+  // re-download).
+  //
+  // Two-sided so the list stays equal to the current rule set:
+  //  - prune non-downloaded rule-provenance stubs no longer in the fresh set
+  //    (a newer rulesVersion dropped them, or the device re-tiered). Downloaded
+  //    models of any origin and user-added HF/LOCAL models are never pruned.
+  //  - append the fresh presets not already represented by a kept model.
+  reconcilePresets(presets: Model[]) {
+    if (presets.length === 0) {
+      return;
+    }
+    const freshIds = new Set(presets.map(p => p.id));
+    const kept = this.models.filter(
+      m => !(m.isRulePreset && !m.isDownloaded && !freshIds.has(m.id)),
+    );
+    const existing = new Set(kept.map(m => m.id));
+    const toAdd = presets.filter(p => !existing.has(p.id));
+    if (kept.length === this.models.length && toAdd.length === 0) {
+      return;
+    }
+    runInAction(() => {
+      this.models = [...kept, ...toAdd];
+    });
+  },
+
+  mergeModelLists(presets: Model[] = []) {
+    // The default list is data-driven: rule-resolved origin:HF presets replace
+    // the old static PRESET array. Keep every downloaded model regardless of
+    // origin, drop non-downloaded PRESET stubs, then reconcile the resolved
+    // presets in by model.id (author/repo/filename, origin-spanning) so a kept
+    // legacy PRESET download suppresses its rule stub.
+    const mergedModels = [...this.models].filter(
+      model => model.origin !== ModelOrigin.PRESET || model.isDownloaded,
+    );
+
+    // Handle HF and LOCAL models
+    mergedModels.forEach(model => {
+      if (
+        model.origin === ModelOrigin.HF ||
+        model.origin === ModelOrigin.LOCAL ||
+        model.isLocal
+      ) {
+        // Reset default settings
+        if (model.origin === ModelOrigin.LOCAL || model.isLocal) {
+          const defaultSettings = getLocalModelDefaultSettings();
+          model.defaultChatTemplate = {...defaultSettings.chatTemplate};
+          model.defaultStopWords = defaultSettings.completionParams.stop;
+        } else if (model.origin === ModelOrigin.HF) {
+          const defaultSettings = getHFDefaultSettings(
+            model.hfModel as HuggingFaceModel,
+          );
+          model.defaultChatTemplate = {...defaultSettings.chatTemplate};
+          model.defaultStopWords = defaultSettings.completionParams.stop;
+        }
+
+        // Update current settings while preserving any customizations
+        model.chatTemplate = deepMerge(
+          model.chatTemplate || {},
+          model.defaultChatTemplate,
+        );
+        model.stopWords = [
+          ...(model.stopWords || []),
+          ...(model.defaultStopWords || []),
+        ];
+
+        // Infer repo from model.id if missing (for existing HF models)
+        if (model.origin === ModelOrigin.HF && !model.repo) {
+          const inferredRepo = inferRepoFromModelId(model.id);
+          if (inferredRepo) {
+            model.repo = inferredRepo;
+            logger.debug(
+              `[ModelStore] Inferred repo "${inferredRepo}" from model.id: ${model.id}`,
+            );
+          }
+        }
+      }
+    });
+
+    runInAction(() => {
+      this.models = mergedModels;
+    });
+
+    this.reconcilePresets(presets);
+
+    // Returned (not awaited) so callers inside runInAction can stay sync while
+    // initializeStore can still await settlement before pruning local models.
+    // ج26: download-status owner still on the god object until B16.
+    return modelStore.initializeDownloadStatus();
+  },
+
+  /**
+   * Removes a model from the models list if it is not downloaded.
+   * @param modelId - The ID of the model to remove.
+   * @returns boolean - Returns true if the model was removed, false otherwise.
+   */
+  removeModelFromList(model: Model): boolean {
+    const modelIndex = this.models.findIndex(
+      m => m.id === model.id && m.origin === model.origin,
+    );
+    if (modelIndex !== -1) {
+      const _model = this.models[modelIndex];
+      if (!_model.isDownloaded) {
+        runInAction(() => {
+          this.models.splice(modelIndex, 1);
+        });
+        return true;
+      }
+    }
+    return false;
+  },
+
+  /**
+   * Adds a new HF model to the models list, only if it doesn't exist yet.
+   * For multimodal models, ensures all required projection models are also
+   * added.
+   * @param hfModel - The Hugging Face model to add.
+   * @param modelFile - The model file to add.
+   * @returns The new model that was added.
+   */
+  async addHFModel(hfModel: HuggingFaceModel, modelFile: ModelFile) {
+    const newModel = hfAsModel(hfModel, modelFile);
+    const storeModel = this.models.find(m => m.id === newModel.id);
+
+    // For non-multimodal models, return early if the model already exists
+    if (storeModel && !newModel.supportsMultimodal) {
+      return storeModel;
+    }
+
+    // Add the model to the store if it doesn't exist
+    let modelToReturn = storeModel;
+    if (!storeModel) {
+      runInAction(() => {
+        this.models.push(newModel);
+      });
+      modelToReturn = newModel;
+    }
+
+    // For multimodal models, always ensure projection models are in the store
+    if (
+      newModel.supportsMultimodal &&
+      newModel.compatibleProjectionModels?.length
+    ) {
+      // Get the mmproj files from the repository
+      const mmprojFiles = getMmprojFiles(hfModel.siblings || []);
+
+      // Add each projection model to the store if it doesn't exist
+      for (const mmprojFile of mmprojFiles) {
+        const projModelId = `${hfModel.id}/${mmprojFile.rfilename}`;
+        const existingProjModel = this.models.find(m => m.id === projModelId);
+
+        if (!existingProjModel) {
+          // Create and add the projection model
+          const projModel = hfAsModel(hfModel, mmprojFile);
+          runInAction(() => {
+            this.models.push(projModel);
+          });
+        }
+      }
+
+      // If we're working with an existing model, update its projection model
+      // references to ensure they're current with what's now in the store
+      if (storeModel) {
+        const updatedCompatibleModels = mmprojFiles.map(
+          file => `${hfModel.id}/${file.rfilename}`,
+        );
+
+        runInAction(() => {
+          // Update compatible projection models list
+          storeModel.compatibleProjectionModels = updatedCompatibleModels;
+
+          // Ensure default projection model is set if not already set
+          if (
+            !storeModel.defaultProjectionModel &&
+            updatedCompatibleModels.length > 0
+          ) {
+            // Use the same logic as hfAsModel to determine the default
+            const mmprojFilenames = mmprojFiles.map(file => file.rfilename);
+            const recommendedFile = getRecommendedProjectionModel(
+              modelFile.rfilename,
+              mmprojFilenames,
+            );
+            if (recommendedFile) {
+              storeModel.defaultProjectionModel = `${hfModel.id}/${recommendedFile}`;
+            }
+          }
+        });
+      }
+    }
+
+    // If this is a projection model, check if we need to update any vision
+    // models
+    if (newModel.modelType === ModelType.PROJECTION) {
+      // Get the repository ID from the model ID
+      const repoId = newModel.id.split('/').slice(0, 2).join('/');
+
+      // Find vision models from the same repository
+      const visionModels = this.models.filter(
+        m =>
+          m.supportsMultimodal &&
+          m.id.startsWith(repoId) &&
+          m.id !== newModel.id,
+      );
+
+      // Update the compatible projection models for each vision model
+      for (const visionModel of visionModels) {
+        if (!visionModel.compatibleProjectionModels?.includes(newModel.id)) {
+          runInAction(() => {
+            if (!visionModel.compatibleProjectionModels) {
+              visionModel.compatibleProjectionModels = [];
+            }
+            visionModel.compatibleProjectionModels.push(newModel.id);
+
+            // If no default projection model is set, set this one as default
+            if (!visionModel.defaultProjectionModel) {
+              visionModel.defaultProjectionModel = newModel.id;
+            }
+          });
+        }
+      }
+    }
+
+    // ج26: download-status owner still on the god object until B16.
+    await modelStore.refreshDownloadStatuses();
+    return modelToReturn;
+  },
+
+  /**
+   * Lazy-register a curated onboarding-assistant HF entry into `models`.
+   * Single writer for HF-origin onboarding picks; only call site is
+   * `useOnboardingHandlers.finish`. Synthesizes the minimal
+   * `{hfModel, modelFile}` pair and delegates to `addHFModel`, which
+   * provides idempotency. `siblings: []` keeps `isVisionRepo` false so
+   * no projection model materializes (text-only by design).
+   */
+  async registerOnboardingAssistantModel(
+    entry: OnboardingAssistantModelEntry,
+  ): Promise<Model | undefined> {
+    const modelFile: ModelFile = {
+      rfilename: entry.filename,
+      url: entry.downloadUrl,
+      size: entry.sizeBytes,
+    } as ModelFile;
+    const hfModel: HuggingFaceModel = {
+      id: entry.repo,
+      author: entry.author,
+      url: `https://huggingface.co/${entry.repo}`,
+      specs: {gguf: {total: entry.params}},
+      siblings: [] as ModelFile[],
+    } as HuggingFaceModel;
+    return this.addHFModel(hfModel, modelFile);
+  },
+
+  removeModelByFullPath(fullPath: string) {
+    const index = this.models.findIndex(
+      m =>
+        (m.isLocal || m.origin === ModelOrigin.LOCAL) &&
+        m.fullPath === fullPath,
+    );
+    if (index !== -1) {
+      this.models.splice(index, 1);
+    }
+  },
+
+  async addLocalModel(localFilePath: string) {
+    const filename = localFilePath.split('/').pop(); // Extract filename from path
+    if (!filename) {
+      throw new Error('Invalid local file path');
+    }
+
+    // Read file size from disk
+    let fileSize = 0;
+    try {
+      const stat = await RNFS.stat(localFilePath);
+      fileSize = Number(stat.size) || 0;
+    } catch (e) {
+      console.warn('[ModelStore] Failed to read file size:', e);
+    }
+
+    const defaultSettings = getLocalModelDefaultSettings();
+
+    const model: Model = {
+      id: uuidv4(), // Generate a unique ID
+      author: '',
+      name: filename,
+      size: fileSize,
+      params: 0, // Will be updated after GGUF metadata read
+      isDownloaded: true,
+      downloadUrl: '',
+      hfUrl: '',
+      progress: 0,
+      filename,
+      fullPath: localFilePath,
+      isLocal: true, // Kept for backward compatibility
+      origin: ModelOrigin.LOCAL,
+      defaultChatTemplate: {...defaultSettings.chatTemplate},
+      chatTemplate: {...defaultSettings.chatTemplate},
+      defaultStopWords: [...(defaultSettings?.completionParams?.stop || [])],
+      stopWords: [...(defaultSettings?.completionParams?.stop || [])],
+      defaultCompletionSettings: defaultSettings.completionParams,
+      completionSettings: {...defaultSettings.completionParams},
+    };
+
+    runInAction(() => {
+      this.models.push(model);
+      // ج26: download-status owner still on the god object until B16.
+      modelStore.refreshDownloadStatuses();
+    });
+
+    // Get the MobX observable version — the plain `model` object was wrapped
+    // in a proxy when pushed into the observable array. We must pass the proxy
+    // so that mutations inside fetchAndPersistGGUFMetadata trigger reactivity.
+    const observableModel = this.models.find(m => m.id === model.id);
+    if (observableModel) {
+      // ج27: GGUF family still on the god object until B13.
+      await modelStore.fetchAndPersistGGUFMetadata(observableModel);
+    }
+  },
+
+  async resetModels() {
+    const localModels = this.models.filter(
+      model => model.isLocal || model.origin === ModelOrigin.LOCAL,
+    );
+    localModels.forEach(model => {
+      const defaultSettings = getLocalModelDefaultSettings();
+      // We change the default settings as well, in case the app introduces
+      // new settings.
+      model.defaultChatTemplate = {...defaultSettings.chatTemplate};
+      model.defaultStopWords = [
+        ...(defaultSettings?.completionParams?.stop || []),
+      ];
+      model.chatTemplate = {...defaultSettings.chatTemplate};
+      model.stopWords = [...(defaultSettings?.completionParams?.stop || [])];
+
+      // Clear GGUF metadata to force re-fetch with correct number types
+      model.ggufMetadata = undefined;
+    });
+
+    const hfModels = this.models.filter(
+      model => model.origin === ModelOrigin.HF,
+    );
+    hfModels.forEach(model => {
+      const defaultSettings = getHFDefaultSettings(
+        model.hfModel as HuggingFaceModel,
+      );
+      // We change the default settings as well, in case the app introduces
+      // new settings.
+      model.defaultChatTemplate = {...defaultSettings.chatTemplate};
+      model.defaultStopWords = [
+        ...(defaultSettings?.completionParams?.stop || []),
+      ];
+      model.chatTemplate = {...defaultSettings.chatTemplate};
+      model.stopWords = [...(defaultSettings?.completionParams?.stop || [])];
+
+      // Clear GGUF metadata to force re-fetch with correct number types
+      model.ggufMetadata = undefined;
+    });
+
+    // Re-resolve the device-appropriate presets so reset repopulates the
+    // default rule list synchronously, mirroring initializeStore (rather than
+    // leaving it empty until the next launch re-migrates).
+    const presets = await catalogResolvePresets();
+
+    runInAction(() => {
+      // Seed with the kept local/HF models so the preset reconcile dedups
+      // against them (a downloaded HF model matching a rule preset is not
+      // duplicated).
+      this.models = [...localModels, ...hfModels];
+      this.version = 0;
+      // ج28: dispatched through the god facade, not this.* — ModelStore.test
+      // overrides god members (e.g. resetModels spies mergeModelLists) and
+      // the facade is the dispatch surface those overrides live on. Same
+      // shape as ج2 (read via reverse delegation). The call reaches the same
+      // implementation (facade → catalogStore.mergeModelLists). Dies at 4d
+      // when ModelStore.test splits and suites exercise catalogStore
+      // directly.
+      modelStore.mergeModelLists(presets);
+
+      // mergeModelLists appends defaultStopWords onto existing stopWords to
+      // preserve user customizations; on the just-reset kept models that
+      // duplicates the seeded defaults. Dedup the affected models (distinct
+      // entries are preserved).
+      [...localModels, ...hfModels].forEach(model => {
+        model.stopWords = [...new Set(model.stopWords)];
+      });
+    });
+
+    // Re-fetch GGUF metadata with correct number types
+    // ج27: GGUF family still on the god object until B13 (private there —
+    // narrow structural view, ج18 precedent).
+    (modelStore as unknown as GodCatalogPrivates).loadMissingGGUFMetadata();
+  },
+
+  // ── pass-through methods (move in B12..B15 — untouched by B11) ──
   updateModelName: (...args) => modelStore.updateModelName(...args),
   resetModelName: (...args) => modelStore.resetModelName(...args),
   updateModelChatTemplate: (...args) =>

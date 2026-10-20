@@ -339,3 +339,48 @@ B10 خضراء ومدفوعة (انظر commit). التالي: B11 (طفرات �
 addLocalModel/resetModels/removeModelFromList/removeModelByFullPath/
 registerOnboardingAssistantModel/mergeModelLists/reconcilePresets/resolvePresets
 + خاصو preset + draftRulesManager/DraftRulesManager) — إعلان ما قبل الدفعة أولاً.
+
+---
+
+## B11 (phase-4 4a) — طفرات القائمة + خط الأنابيب preset → catalogStore
+
+**الإعلان قبل الدفعة**: الأعضاء التسعة العامون + resolvePresets/upgradeToFetchedRules/
+candidateToPair/draftToStub (خاصة preset) + draftRulesManager/DraftRulesManager.
+resolvePresetModels سافر مع المدير (مستدعوه الوحيد المدير نفسه + pass-through؛ إبقاؤه
+يولّد حلقة catalog→god→catalog بلا موت معلن). **حل المدير**: كل استخدامات host تشاركت
+الانتقال (كتابات deviceTier/rulesVersion → صناديق الكتالوج نفسها؛ استدعاءات
+resolvePresetModels/reconcilePresets → أعضاء مُشارِكة) → الملف حُلّ داخل catalogStore.ts
+كدوال وحدة (catalogResolvePresets/catalogUpgradeToFetchedRules مُصدَّرتان لمس initializeStore
+حتى B23؛ catalogCandidateToPair/catalogDraftToStub خاصتان) وحُذف الملف — قتل حلقة #17
+(ModelStore↔DraftRulesManager) فنزل madge 46→45 (انحراف معلن عن دفتر madge).
+
+**التنفيذ**: الأجسام حرفية؛ this.* يصل أعضاء وصناديق catalogStore نفسها. الإله يحتفظ
+بمفوضين عكسيين حرفيين (نمط B8) حتى 4d — منهم خاصّان (resolvePresets/
+upgradeToFetchedRules) يستمر initializeStore في استخدامهما حتى B23. privates
+candidateToPair/draftToStub انتهت مفوضاتها على الإله (مستهلكها الوحيد انتقل).
+
+**الجسور المولودة** (سجلت في §8): ج26 download-status (→B16)؛ ج27 GGUF (→B13، الأخير
+بعرض بنيوي ضيق نمط ج18 لأن loadMissingGGUFMetadata خاص)؛ **ج28** استدعاء داخل-كتالوجي
+عبر الواجهة (resetModels→mergeModelLists عبر modelStore بدل this.، نمط ج2 →4d).
+
+**المشكلة ومنحها (توثيق، بلا أي تعديل اختبار)**: أول بوابة كاملة فشلت بمجموعتين
+(2 اختبار في ModelStore.test). التشخيص المقيس:
+1. `resetting models › should reset models...`: الاختبار يركّب override على
+   `modelStore.mergeModelLists` ويتوقع أن يستدعيه resetModels — pre-B11 كان
+   `this.mergeModelLists` داخل جسم الإله يمر بالـ override (ظل المثيل)؛ post-B11
+   الاستدعاء داخل-كتالوجي مباشر فتجاوز الـ override → 0 استدعاءات.
+2. `mergeModelLists - repo inference`: يمر منفرداً ويفشل في الترتيب — أثر جانبي:
+   فشل (1) جعل سلسلة resetModels الحقيقية كاملة تعمل داخل الاختبار الأول فتسرّب
+   كتابات مؤجلة إلى الصندوق خلال tick الاختبار الثاني.
+**العلاج المعلن**: ج28 — الاستدعاء داخل-كتالوجي يمر عبر الواجهة (سطح الإرسال الذي تعيش
+عليه overrides الاختبار). بوابة كاملة بعدها: ModelStore.test 298/298 بلا تعديل.
+
+**الأرقام المقيسة بعد الدفعة**: suites 312/4989+2/310 ✓؛ عدادات official/real/raw/inside
+= 1732/1731/**1842**/**110** (التوقع 1841/109 — ج28 المعلنة +1 داخل؛ die 4d)؛ madge **45**؛
+tsc EXIT=0؛ ModelStore.ts **2,805 → 2,400** (−405)؛ catalogStore.ts 406 → ~1,000؛
+DraftRulesManager.ts حُذف (−125). Net src: −530 سطراً.
+
+### نقطة التوقف الحالية
+B11 خضراء ومدفوعة (انظر commit). التالي: B12 (محدّثات البيانات الوصفية —
+updateModelName/resetModelName، updateModelChatTemplate/reset، updateModelStopWords/
+reset، updateModelHash، isModelAvailable، fetchAndUpdateModelFileDetails).
