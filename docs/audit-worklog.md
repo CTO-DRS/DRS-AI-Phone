@@ -384,3 +384,16 @@ DraftRulesManager.ts حُذف (−125). Net src: −530 سطراً.
 B11 خضراء ومدفوعة (انظر commit). التالي: B12 (محدّثات البيانات الوصفية —
 updateModelName/resetModelName، updateModelChatTemplate/reset، updateModelStopWords/
 reset، updateModelHash، isModelAvailable، fetchAndUpdateModelFileDetails).
+
+## B13 (phase-4 4a) — عائلة GGUF → catalogStore؛ موت ج27 في موعدها
+
+fetchAndPersistGGUFMetadata + loadMissingGGUFMetadata (خاص → دالة وحدة
+catalogLoadMissingGGUFMetadata مُصدَّرة لمفوض initializeStore الخاص حتى B23) +
+healDraftVisionClassification. **ج27 مات** (المعلن B11→B13): استدعاءا
+resetModels/addLocalModel قلبا داخليين وطُرح عرض GodCatalogPrivates البنيوي.
+**ج29 اكتسب عضواً**: fetchAndPersistGGUFMetadata→getModelFullPath (الموت B18).
+**ج30 وُلد**: heal يقرأ/يكتب pendingProjectionCleanupIds عبر البرميل (مفتاح persist
+مقيم على الإله حتى B22 وفق §3-أ؛ الجهة المنتجة لـ cleanupQueueBridge؛ الموت B22).
+الأرقام: 312/4989+2/310 ✓؛ عدادات 1732/1731/1834/102 (صافي صفر: −3 مولود +3 —
+التنبؤ −2 كان خطأ عدّ أسطر pass-through متعددة الأسطر؛ المقيس متسق ذاتياً)؛ madge 45؛
+tsc 0؛ ModelStore.ts → 2,174؛ ModelStore.test بلا تعديل ✓.
