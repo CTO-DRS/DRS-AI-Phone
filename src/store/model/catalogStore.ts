@@ -9,6 +9,7 @@ import {observable, runInAction} from 'mobx';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {ModelOrigin, ModelType} from '../../utils/types';
 import type {Model} from '../../utils/types';
+import type {ChatTemplateConfig} from '../../utils/types';
 import type {HuggingFaceModel, ModelFile} from '../../utils/types';
 import type {CompletionParams} from '../../utils/completionTypes';
 import {
@@ -19,7 +20,10 @@ import {
   Tier,
 } from '../../services/deviceRules/types';
 import {filterProjectionModels, getRecommendedProjectionModel} from '../../utils/multimodalHelpers';
-import {hfAsModel, getMmprojFiles, deepMerge, inferRepoFromModelId} from '../../utils';
+import {hfAsModel, getMmprojFiles, deepMerge, inferRepoFromModelId, getSHA256Hash} from '../../utils';
+import {getOriginalModelName} from '../../utils/formatters';
+import {fetchModelFilesDetails} from '../../api/hf';
+import {downloadManager} from '../../services/downloads';
 import {getLocalModelDefaultSettings, getHFDefaultSettings} from '../../utils/chat';
 import {logger} from '../../utils/logger';
 import {classify, ClassifyPlatform} from '../../services/deviceRules/classify';
@@ -963,21 +967,128 @@ export const catalogStore: CatalogStore = {
     (modelStore as unknown as GodCatalogPrivates).loadMissingGGUFMetadata();
   },
 
-  // ── pass-through methods (move in B12..B15 — untouched by B11) ──
-  updateModelName: (...args) => modelStore.updateModelName(...args),
-  resetModelName: (...args) => modelStore.resetModelName(...args),
-  updateModelChatTemplate: (...args) =>
-    modelStore.updateModelChatTemplate(...args),
-  resetModelChatTemplate: (...args) =>
-    modelStore.resetModelChatTemplate(...args),
-  updateModelStopWords: (...args) => modelStore.updateModelStopWords(...args),
-  resetModelStopWords: (...args) => modelStore.resetModelStopWords(...args),
-  updateModelHash: (...args) => modelStore.updateModelHash(...args),
+  // ── B12 (phase-4 4a): real implementations (metadata updaters).
+  // Bodies verbatim; ج29 = getModelFullPath still on the god (die B18).
+  updateModelChatTemplate(
+    modelId: string,
+    newConfig: ChatTemplateConfig,
+  ) {
+    const model = this.models.find(m => m.id === modelId);
+    if (model) {
+      runInAction(() => {
+        model.chatTemplate = newConfig;
+      });
+    }
+  },
+
+  updateModelStopWords(
+    modelId: string,
+    newStopWords: CompletionParams['stop'],
+  ) {
+    const model = this.models.find(m => m.id === modelId);
+    if (model) {
+      runInAction(() => {
+        model.stopWords = newStopWords;
+      });
+    }
+  },
+
+  updateModelName(modelId: string, newName: string) {
+    const model = this.models.find(m => m.id === modelId);
+    if (model) {
+      runInAction(() => {
+        model.name = newName;
+      });
+    }
+  },
+
+  resetModelChatTemplate(modelId: string) {
+    const model = this.models.find(m => m.id === modelId);
+    if (model) {
+      runInAction(() => {
+        model.chatTemplate = {...model.defaultChatTemplate};
+      });
+    }
+  },
+
+  resetModelStopWords(modelId: string) {
+    const model = this.models.find(m => m.id === modelId);
+    if (model) {
+      runInAction(() => {
+        model.stopWords = [...(model.defaultStopWords || [])];
+      });
+    }
+  },
+
+  resetModelName(modelId: string) {
+    const model = this.models.find(m => m.id === modelId);
+    if (model) {
+      runInAction(() => {
+        model.name = getOriginalModelName(model);
+      });
+    }
+  },
+
+  /**
+   * Fetches and updates model file details from HuggingFace.
+   * This is used when we need to get the lfs.oid for integrity checks.
+   * @param model - The model to update
+   * @returns Promise<void>
+   */
+  async fetchAndUpdateModelFileDetails(model: Model): Promise<void> {
+    if (!model.hfModel?.id) {
+      return;
+    }
+
+    try {
+      const fileDetails = await fetchModelFilesDetails(model.hfModel.id);
+      const matchingFile = fileDetails.find(
+        file => file.path === model.hfModelFile?.rfilename,
+      );
+
+      if (matchingFile && matchingFile.lfs) {
+        runInAction(() => {
+          if (model.hfModelFile) {
+            model.hfModelFile.lfs = matchingFile.lfs;
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Failed to fetch model file details:', error);
+    }
+  },
+
+  // Expensive operation.
+  // It will be calculating hash if hash is not set, unless force is true.
+  async updateModelHash(modelId: string, force: boolean = false) {
+    const model = this.models.find(m => m.id === modelId);
+
+    // We only update hash if the model is downloaded and not currently being
+    // downloaded.
+    if (model?.isDownloaded && !downloadManager.isDownloading(modelId)) {
+      // If not forced, we only update hash if it's not already set.
+      if (model.hash && !force) {
+        return;
+      }
+      // ج29: file-path owner still on the god object until B18.
+      const filePath = await modelStore.getModelFullPath(model);
+      const hash = await getSHA256Hash(filePath);
+      runInAction(() => {
+        model.hash = hash;
+      });
+    }
+  },
+
+  isModelAvailable(modelId?: string): boolean {
+    if (!modelId) {
+      return false;
+    }
+    return this.availableModels.some(m => m.id === modelId);
+  },
+
+  // ── pass-through methods (move in B13..B15 — untouched by B12) ──
   fetchAndPersistGGUFMetadata: (...args) =>
     modelStore.fetchAndPersistGGUFMetadata(...args),
-  fetchAndUpdateModelFileDetails: (...args) =>
-    modelStore.fetchAndUpdateModelFileDetails(...args),
-  isModelAvailable: (...args) => modelStore.isModelAvailable(...args),
   setRemoteModel: (...args) => modelStore.setRemoteModel(...args),
   healDraftVisionClassification: (...args) =>
     modelStore.healDraftVisionClassification(...args),

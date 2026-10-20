@@ -1894,70 +1894,34 @@ export class ModelStore {
     await catalogStore.addLocalModel(localFilePath);
   };
 
+  // ── B12 (phase-4 4a): implementations live in catalogStore since batch 12.
   updateModelChatTemplate = (
     modelId: string,
     newConfig: ChatTemplateConfig,
-  ) => {
-    const model = this.models.find(m => m.id === modelId);
-    if (model) {
-      runInAction(() => {
-        model.chatTemplate = newConfig;
-      });
-    }
-  };
+  ): void => catalogStore.updateModelChatTemplate(modelId, newConfig);
 
   updateModelStopWords = (
     modelId: string,
     newStopWords: CompletionParams['stop'],
-  ) => {
-    const model = this.models.find(m => m.id === modelId);
-    if (model) {
-      runInAction(() => {
-        model.stopWords = newStopWords;
-      });
-    }
-  };
+  ): void => catalogStore.updateModelStopWords(modelId, newStopWords);
 
-  updateModelName = (modelId: string, newName: string) => {
-    const model = this.models.find(m => m.id === modelId);
-    if (model) {
-      runInAction(() => {
-        model.name = newName;
-      });
-    }
-  };
+  updateModelName = (modelId: string, newName: string): void =>
+    catalogStore.updateModelName(modelId, newName);
 
   // ── B11 (phase-4 4a): implementation lives in catalogStore since batch 11.
   resetModels = async (): Promise<void> => {
     await catalogStore.resetModels();
   };
 
-  resetModelChatTemplate = (modelId: string) => {
-    const model = this.models.find(m => m.id === modelId);
-    if (model) {
-      runInAction(() => {
-        model.chatTemplate = {...model.defaultChatTemplate};
-      });
-    }
-  };
+  // ── B12 (phase-4 4a): implementations live in catalogStore since batch 12.
+  resetModelChatTemplate = (modelId: string): void =>
+    catalogStore.resetModelChatTemplate(modelId);
 
-  resetModelStopWords = (modelId: string) => {
-    const model = this.models.find(m => m.id === modelId);
-    if (model) {
-      runInAction(() => {
-        model.stopWords = [...(model.defaultStopWords || [])];
-      });
-    }
-  };
+  resetModelStopWords = (modelId: string): void =>
+    catalogStore.resetModelStopWords(modelId);
 
-  resetModelName = (modelId: string) => {
-    const model = this.models.find(m => m.id === modelId);
-    if (model) {
-      runInAction(() => {
-        model.name = getOriginalModelName(model);
-      });
-    }
-  };
+  resetModelName = (modelId: string): void =>
+    catalogStore.resetModelName(modelId);
 
   private async initializeGpuSettings() {
     const gpuCapabilities = await checkGpuSupport();
@@ -2313,54 +2277,21 @@ export class ModelStore {
    * @param model - The model to update
    * @returns Promise<void>
    */
+  // ── B12 (phase-4 4a): implementation lives in catalogStore since batch 12.
   async fetchAndUpdateModelFileDetails(model: Model): Promise<void> {
-    if (!model.hfModel?.id) {
-      return;
-    }
-
-    try {
-      const fileDetails = await fetchModelFilesDetails(model.hfModel.id);
-      const matchingFile = fileDetails.find(
-        file => file.path === model.hfModelFile?.rfilename,
-      );
-
-      if (matchingFile && matchingFile.lfs) {
-        runInAction(() => {
-          if (model.hfModelFile) {
-            model.hfModelFile.lfs = matchingFile.lfs;
-          }
-        });
-      }
-    } catch (error) {
-      console.error('Failed to fetch model file details:', error);
-    }
+    return catalogStore.fetchAndUpdateModelFileDetails(model);
   }
 
   // Expensive operation.
   // It will be calculating hash if hash is not set, unless force is true.
+  // ── B12 (phase-4 4a): implementation lives in catalogStore since batch 12.
   updateModelHash = async (modelId: string, force: boolean = false) => {
-    const model = this.models.find(m => m.id === modelId);
-
-    // We only update hash if the model is downloaded and not currently being downloaded.
-    if (model?.isDownloaded && !downloadManager.isDownloading(modelId)) {
-      // If not forced, we only update hash if it's not already set.
-      if (model.hash && !force) {
-        return;
-      }
-      const filePath = await this.getModelFullPath(model);
-      const hash = await getSHA256Hash(filePath);
-      runInAction(() => {
-        model.hash = hash;
-      });
-    }
+    await catalogStore.updateModelHash(modelId, force);
   };
 
-  isModelAvailable = (modelId?: string): boolean => {
-    if (!modelId) {
-      return false;
-    }
-    return this.availableModels.some(m => m.id === modelId);
-  };
+  // ── B12 (phase-4 4a): implementation lives in catalogStore since batch 12.
+  isModelAvailable = (modelId?: string): boolean =>
+    catalogStore.isModelAvailable(modelId);
 
   // /**
   //  * Gets localized strings based on the current language from uiStore
