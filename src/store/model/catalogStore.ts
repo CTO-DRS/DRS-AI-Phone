@@ -20,7 +20,9 @@ import {
   Tier,
 } from '../../services/deviceRules/types';
 import {filterProjectionModels, getRecommendedProjectionModel} from '../../utils/multimodalHelpers';
-import {hfAsModel, getMmprojFiles, deepMerge, inferRepoFromModelId, getSHA256Hash} from '../../utils';
+import {hfAsModel, getMmprojFiles, deepMerge, inferRepoFromModelId, getSHA256Hash, parseSizeLabel} from '../../utils';
+import {isDraftOnlyModel} from '../../utils/mtp';
+import {loadLlamaModelInfo} from 'llama.rn';
 import {getOriginalModelName} from '../../utils/formatters';
 import {fetchModelFilesDetails} from '../../api/hf';
 import {downloadManager} from '../../services/downloads';
@@ -346,11 +348,51 @@ export async function catalogUpgradeToFetchedRules(): Promise<void> {
 
 // ج27 (B11): GGUF-family member still private on the god object, reached
 // through a narrow structural view — the ج18 precedent (GodObjectPrivates in
-// runtimeStore.ts). The cast form is invisible to the line counter by design;
-// the death is the registry's (B13).
-type GodCatalogPrivates = {
-  loadMissingGGUFMetadata: () => void;
-};
+// runtimeStore.ts). ✅ DIED AT B13: the GGUF family moved home; the cast and
+// this type are retired (kept as a tombstone comment only).
+
+// ج30 (B13): healDraftVisionClassification reads/writes
+// pendingProjectionCleanupIds — a runtime-owned persist key still resident on
+// the god object until B22 (§3-أ: persist keys stay god-object fields until
+// runtimeStore:v2 exists). Access goes through the barrel binding — this is
+// the PRODUCER side of the documented cleanupQueueBridge (catalog→runtime→
+// download). The hop dies at B22 when the key migrates to runtimeStore:v2.
+
+/**
+ * Load GGUF metadata for downloaded models that don't have it yet.
+ * Runs in background, doesn't block startup.
+ * (Private member of the god object — module function here, the B8 pattern;
+ * callers: resetModels below and initializeStore through the god's private
+ * reverse delegation until B23.)
+ */
+export function catalogLoadMissingGGUFMetadata() {
+  const modelsNeedingMetadata = catalogStore.models.filter(
+    m =>
+      m.isDownloaded &&
+      !m.ggufMetadata &&
+      m.modelType !== ModelType.PROJECTION,
+  );
+
+  if (modelsNeedingMetadata.length === 0) {
+    return;
+  }
+
+  // Fetch in background, don't block startup
+  (async () => {
+    for (const model of modelsNeedingMetadata) {
+      try {
+        await catalogStore.fetchAndPersistGGUFMetadata(model);
+      } catch (error) {
+        // Log but continue - not critical for startup
+        console.warn(
+          '[ModelStore] Failed to fetch metadata for',
+          model.name,
+          error,
+        );
+      }
+    }
+  })();
+}
 
 export const CATALOG_MEMBERS = [
   'models',
@@ -888,8 +930,8 @@ export const catalogStore: CatalogStore = {
     // so that mutations inside fetchAndPersistGGUFMetadata trigger reactivity.
     const observableModel = this.models.find(m => m.id === model.id);
     if (observableModel) {
-      // ج27: GGUF family still on the god object until B13.
-      await modelStore.fetchAndPersistGGUFMetadata(observableModel);
+      // ج27 DIED at B13: the GGUF family lives here now — internal call.
+      await this.fetchAndPersistGGUFMetadata(observableModel);
     }
   },
 
@@ -962,9 +1004,9 @@ export const catalogStore: CatalogStore = {
     });
 
     // Re-fetch GGUF metadata with correct number types
-    // ج27: GGUF family still on the god object until B13 (private there —
-    // narrow structural view, ج18 precedent).
-    (modelStore as unknown as GodCatalogPrivates).loadMissingGGUFMetadata();
+    // ج27 DIED at B13: internal module call (the GodCatalogPrivates cast is
+    // gone with the bridge).
+    catalogLoadMissingGGUFMetadata();
   },
 
   // ── B12 (phase-4 4a): real implementations (metadata updaters).
@@ -1086,12 +1128,165 @@ export const catalogStore: CatalogStore = {
     return this.availableModels.some(m => m.id === modelId);
   },
 
-  // ── pass-through methods (move in B13..B15 — untouched by B12) ──
-  fetchAndPersistGGUFMetadata: (...args) =>
-    modelStore.fetchAndPersistGGUFMetadata(...args),
+  // ── B13 (phase-4 4a): real implementations (GGUF family). ج27 DIES here
+  // (declared B11→B13): the resetModels / addLocalModel calls flipped
+  // internal. ج29 gains fetchAndPersistGGUFMetadata→getModelFullPath.
+
+  // Drafts downloaded before draft detection existed were classified as
+  // vision models (their repo carries an mmproj); re-derive so they heal.
+  // The pairing may have auto-downloaded that mmproj, and projection models
+  // are only reachable through a multimodal model's UI — which the heal
+  // removes — so the cleared ids are recorded (persisted with the same write
+  // that strips the pairing) and drained after download state is synced.
+  healDraftVisionClassification() {
+    runInAction(() => {
+      this.models.forEach(model => {
+        // A downloaded record without ggufMetadata is only draft-classified by
+        // its filename; wait for the header backfill so it can veto first.
+        if (model.isDownloaded && !model.ggufMetadata) {
+          return;
+        }
+        if (model.supportsMultimodal && isDraftOnlyModel(model)) {
+          // ج30: cleanupQueueBridge producer side — key god-resident until B22.
+          const cleared = new Set(modelStore.pendingProjectionCleanupIds);
+          model.compatibleProjectionModels?.forEach(id => cleared.add(id));
+          if (model.defaultProjectionModel) {
+            cleared.add(model.defaultProjectionModel);
+          }
+          modelStore.pendingProjectionCleanupIds = [...cleared];
+          model.supportsMultimodal = false;
+          model.capabilities = model.capabilities?.filter(c => c !== 'vision');
+          model.compatibleProjectionModels = undefined;
+          model.defaultProjectionModel = undefined;
+          model.visionEnabled = undefined;
+        }
+      });
+    });
+  },
+
+  /**
+   * Fetch and persist GGUF metadata for a downloaded model
+   * Called after download completes to enable accurate memory estimation
+   */
+  async fetchAndPersistGGUFMetadata(model: Model) {
+    try {
+      // ج29: file-path owner still on the god object until B18.
+      const filePath = await modelStore.getModelFullPath(model);
+      if (!filePath) {
+        console.warn(
+          '[ModelStore] Cannot fetch GGUF metadata: model path is undefined',
+        );
+        return;
+      }
+
+      const modelInfo = await loadLlamaModelInfo(filePath);
+      if (!modelInfo || typeof modelInfo !== 'object') {
+        console.warn('[ModelStore] Invalid model info returned');
+        return;
+      }
+
+      // Default vocab sizes by architecture (matches Python memory_estimator.py)
+      const ARCH_DEFAULT_VOCAB: Record<string, number> = {
+        llama: 128256,
+        gemma2: 256000,
+        gemma3n: 262144,
+        qwen2: 151936,
+        qwen3: 151936,
+        lfm2: 65536,
+        phi3: 32064,
+        mistral: 32000,
+        deepseek2: 102400,
+        clip: 49408, // CLIP models have smaller vocab
+      };
+
+      // Get the architecture to determine the correct key prefix
+      const architecture: string =
+        (modelInfo as any)['general.architecture'] || 'llama';
+
+      // Helper to get architecture-specific value with fallback (matches Python get_arch_value)
+      const getArchValue = (
+        field: string,
+        defaultValue?: number,
+      ): number | undefined => {
+        const key = `${architecture}.${field}`;
+        const value = (modelInfo as any)[key];
+        if (value !== undefined && value !== null) {
+          // Handle string values (GGUF sometimes returns strings)
+          if (typeof value === 'string') {
+            const parsed = value.includes('.')
+              ? parseFloat(value)
+              : parseInt(value, 10);
+            return isNaN(parsed) ? defaultValue : parsed;
+          }
+          return typeof value === 'number' ? value : defaultValue;
+        }
+        return defaultValue;
+      };
+
+      // Extract core fields (these are required)
+      const n_layers = getArchValue('block_count');
+      const n_embd = getArchValue('embedding_length');
+      const n_head = getArchValue('attention.head_count');
+
+      // Validate core fields exist - without these we can't estimate memory
+      if (!n_layers || !n_embd || !n_head) {
+        return;
+      }
+
+      // Extract optional fields with fallbacks (matches Python ModelInfo.__post_init__)
+      const n_head_kv = getArchValue('attention.head_count_kv', n_head); // fallback to n_head
+      const n_vocab =
+        getArchValue('vocab_size') ||
+        ARCH_DEFAULT_VOCAB[architecture] ||
+        128000;
+
+      // Derive head dimensions if not present (matches Python)
+      const n_embd_head_k =
+        getArchValue('attention.key_length') || Math.floor(n_embd / n_head);
+      const n_embd_head_v =
+        getArchValue('attention.value_length') || Math.floor(n_embd / n_head);
+
+      // SWA (Sliding Window Attention) - optional
+      const sliding_window = getArchValue('attention.sliding_window');
+
+      // Context length from GGUF
+      const context_length = getArchValue('context_length');
+
+      const nextn_predict_layers = getArchValue('nextn_predict_layers');
+      const embedding_length_out = getArchValue('embedding_length_out');
+
+      const metadata = {
+        architecture,
+        n_layers,
+        n_embd,
+        n_head,
+        n_head_kv: n_head_kv!,
+        n_vocab,
+        n_embd_head_k,
+        n_embd_head_v,
+        sliding_window,
+        context_length,
+        nextn_predict_layers,
+        embedding_length_out,
+      };
+
+      const paramCount = parseSizeLabel(
+        (modelInfo as any)['general.size_label'],
+      );
+
+      runInAction(() => {
+        model.ggufMetadata = metadata;
+        if (!model.params && paramCount) {
+          model.params = paramCount;
+        }
+      });
+    } catch (error) {
+      console.warn('[ModelStore] Failed to fetch GGUF metadata:', error);
+    }
+  },
+
+  // ── pass-through methods (move in B14..B15 — untouched by B13) ──
   setRemoteModel: (...args) => modelStore.setRemoteModel(...args),
-  healDraftVisionClassification: (...args) =>
-    modelStore.healDraftVisionClassification(...args),
   setModelVisionEnabled: (...args) => modelStore.setModelVisionEnabled(...args),
   getModelVisionPreference: (...args) =>
     modelStore.getModelVisionPreference(...args),
