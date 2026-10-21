@@ -19,8 +19,18 @@ import {
   RuleDraft,
   Tier,
 } from '../../services/deviceRules/types';
-import {filterProjectionModels, getRecommendedProjectionModel} from '../../utils/multimodalHelpers';
-import {hfAsModel, getMmprojFiles, deepMerge, inferRepoFromModelId, getSHA256Hash, parseSizeLabel} from '../../utils';
+import {
+  filterProjectionModels,
+  getRecommendedProjectionModel,
+} from '../../utils/multimodalHelpers';
+import {
+  hfAsModel,
+  getMmprojFiles,
+  deepMerge,
+  inferRepoFromModelId,
+  getSHA256Hash,
+  parseSizeLabel,
+} from '../../utils';
 import {isDraftOnlyModel} from '../../utils/mtp';
 import {loadLlamaModelInfo} from 'llama.rn';
 import type {LlamaContext} from 'llama.rn';
@@ -33,7 +43,10 @@ import {ProjectionModelManager} from './ProjectionModelManager';
 import type {CompletionEngine} from '../../utils/completionTypes';
 import type {RemoteSessionBinding} from '../../utils/types';
 import {downloadManager} from '../../services/downloads';
-import {getLocalModelDefaultSettings, getHFDefaultSettings} from '../../utils/chat';
+import {
+  getLocalModelDefaultSettings,
+  getHFDefaultSettings,
+} from '../../utils/chat';
 import {logger} from '../../utils/logger';
 import {classify, ClassifyPlatform} from '../../services/deviceRules/classify';
 import {deriveUrl, parseDeviceRules} from '../../services/deviceRules/parse';
@@ -259,9 +272,10 @@ export async function importLegacyCatalogState(): Promise<void> {
 // object's initializeStore (dissolves at B23) reaches them through private
 // reverse delegations (B8 pattern); candidateToPair / draftToStub stay
 // module-private (their only consumer, resolvePresetModels, co-moved).
-function catalogCandidateToPair(
-  candidate: RuleCandidate,
-): {hfModel: HuggingFaceModel; modelFile: ModelFile} {
+function catalogCandidateToPair(candidate: RuleCandidate): {
+  hfModel: HuggingFaceModel;
+  modelFile: ModelFile;
+} {
   const modelFile: ModelFile = {
     rfilename: candidate.hfFilename,
     url: deriveUrl(candidate.hfRepo, candidate.hfFilename),
@@ -272,10 +286,7 @@ function catalogCandidateToPair(
         {rfilename: candidate.hfFilename, size: candidate.sizeBytes},
         {
           rfilename: candidate.mmproj.hfFilename,
-          url: deriveUrl(
-            candidate.mmproj.hfRepo,
-            candidate.mmproj.hfFilename,
-          ),
+          url: deriveUrl(candidate.mmproj.hfRepo, candidate.mmproj.hfFilename),
           size: candidate.mmproj.sizeBytes,
         },
       ]
@@ -381,9 +392,7 @@ export async function catalogUpgradeToFetchedRules(): Promise<void> {
 export function catalogLoadMissingGGUFMetadata() {
   const modelsNeedingMetadata = catalogStore.models.filter(
     m =>
-      m.isDownloaded &&
-      !m.ggufMetadata &&
-      m.modelType !== ModelType.PROJECTION,
+      m.isDownloaded && !m.ggufMetadata && m.modelType !== ModelType.PROJECTION,
   );
 
   if (modelsNeedingMetadata.length === 0) {
@@ -642,10 +651,7 @@ export const catalogStore: CatalogStore = {
   // candidates also push their mmproj projector stub (mirrors addHFModel) so
   // the projection is resolvable for download. Deduped by model.id
   // (author/repo/filename), first wins.
-  resolvePresetModels(
-    rules: DeviceRules,
-    signals: DeviceSignals,
-  ): Model[] {
+  resolvePresetModels(rules: DeviceRules, signals: DeviceSignals): Model[] {
     const tier = classify(
       signals,
       rules.classifier,
@@ -1093,10 +1099,7 @@ export const catalogStore: CatalogStore = {
 
   // ── B12 (phase-4 4a): real implementations (metadata updaters).
   // Bodies verbatim; ج29 = getModelFullPath still on the god (die B18).
-  updateModelChatTemplate(
-    modelId: string,
-    newConfig: ChatTemplateConfig,
-  ) {
+  updateModelChatTemplate(modelId: string, newConfig: ChatTemplateConfig) {
     const model = this.models.find(m => m.id === modelId);
     if (model) {
       runInAction(() => {

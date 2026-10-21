@@ -11,18 +11,11 @@ import {observable, runInAction} from 'mobx';
 import {Alert} from 'react-native';
 import * as RNFS from '@dr.pogodin/react-native-fs';
 import type {Model} from '../../utils/types';
-import {
-  ModelOrigin,
-  ModelType,
-} from '../../utils/types';
+import {ModelOrigin, ModelType} from '../../utils/types';
 import type {HuggingFaceModel, ModelFile} from '../../utils/types';
 import type {ErrorState} from '../../utils/errors';
 import {createErrorState} from '../../utils/errors';
-import {
-  getMmprojFiles,
-  getSHA256Hash,
-  inferRepoFromModelId,
-} from '../../utils';
+import {getMmprojFiles, getSHA256Hash, inferRepoFromModelId} from '../../utils';
 import {logger} from '../../utils/logger';
 import {t} from '../../locales';
 import {
@@ -760,10 +753,7 @@ export const downloadStore: DownloadStore = {
   verifyDownloadedModel: async (model: Model): Promise<boolean> => {
     const MAX_HASH_VERIFY_BYTES = 4 * 1024 * 1024 * 1024;
     runInAction(() => {
-      verifyingModelIdsBox.set([
-        ...verifyingModelIdsBox.get(),
-        model.id,
-      ]);
+      verifyingModelIdsBox.set([...verifyingModelIdsBox.get(), model.id]);
     });
     try {
       const filePath = await downloadStore.getModelFullPath(model);
@@ -1051,9 +1041,7 @@ export const downloadStore: DownloadStore = {
       if (!projection || projection.modelType !== ModelType.PROJECTION) {
         continue;
       }
-      if (
-        modelStore.getDownloadedLLMsUsingProjectionModel(id).length > 0
-      ) {
+      if (modelStore.getDownloadedLLMsUsingProjectionModel(id).length > 0) {
         continue;
       }
       if (downloadManager.isDownloading(id)) {

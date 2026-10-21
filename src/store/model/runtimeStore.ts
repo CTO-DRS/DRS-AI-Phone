@@ -9,7 +9,10 @@ import {modelStore, serverStore, chatSessionStore, uiStore} from '../';
 // death mode per the §8 registry: "استيراد المالك بحافة madge معلنة").
 // The module is never mocked; in barrel-mocked suites its guard getters
 // fall through to the central mock exactly like the pre-B10 pass-through.
-import {catalogStore, catalogUpdateModelThinkingCapabilities} from './catalogStore';
+import {
+  catalogStore,
+  catalogUpdateModelThinkingCapabilities,
+} from './catalogStore';
 import {capsMatchBinding} from '../../utils/remoteCaps';
 import {observable, runInAction, toJS} from 'mobx';
 import {Alert, AppState, AppStateStatus, Platform} from 'react-native';
@@ -48,10 +51,7 @@ import {LocalCompletionEngine} from '../../api/completionEngines';
 import {hasEnoughMemory} from '../../hooks/useMemoryCheck';
 import {createContextInitParams} from '../../utils/contextInitParamsVersions';
 import {getModelMemoryRequirement} from '../../utils/memoryEstimator';
-import {
-  checkGpuSupport,
-  isHighEndDevice,
-} from '../../utils/deviceCapabilities';
+import {checkGpuSupport, isHighEndDevice} from '../../utils/deviceCapabilities';
 
 /**
  * runtimeStore — Phase-1 scaffold (fix 4, stage 1 of 4).
@@ -281,15 +281,11 @@ export function markRuntimeLive(): void {
 const contextInitParamsBox = observable.box<ContextInitParams>(
   createDefaultContextInitParams(),
 );
-const activeContextSettingsBox = observable.box<
-  ContextInitParams | undefined
->(undefined);
-const availableMemoryCeilingBox = observable.box<number | undefined>(
+const activeContextSettingsBox = observable.box<ContextInitParams | undefined>(
   undefined,
 );
-const largestSuccessfulLoadBox = observable.box<number | undefined>(
-  undefined,
-);
+const availableMemoryCeilingBox = observable.box<number | undefined>(undefined);
+const largestSuccessfulLoadBox = observable.box<number | undefined>(undefined);
 
 const maxThreads = observable.box<number>(4);
 
@@ -896,9 +892,7 @@ export async function importLegacyRuntimeState(): Promise<void> {
     const legacy = JSON.parse(raw) as Record<string, unknown>;
     runInAction(() => {
       if (typeof legacy.contextInitParams !== 'undefined') {
-        contextInitParamsBox.set(
-          legacy.contextInitParams as ContextInitParams,
-        );
+        contextInitParamsBox.set(legacy.contextInitParams as ContextInitParams);
       }
       if (typeof legacy.availableMemoryCeiling !== 'undefined') {
         availableMemoryCeilingBox.set(
@@ -1050,7 +1044,9 @@ export const runtimeStore: RuntimeStore = {
     });
   },
   get isContextLoading() {
-    return runtimeLive ? isContextLoadingBox.get() : modelStore.isContextLoading;
+    return runtimeLive
+      ? isContextLoadingBox.get()
+      : modelStore.isContextLoading;
   },
   set isContextLoading(value: boolean) {
     runInAction(() => {
@@ -1097,7 +1093,9 @@ export const runtimeStore: RuntimeStore = {
     return MIN_CONTEXT_SIZE;
   },
   get isMultimodalActive() {
-    return runtimeLive ? isMultimodalActiveBox.get() : modelStore.isMultimodalActive;
+    return runtimeLive
+      ? isMultimodalActiveBox.get()
+      : modelStore.isMultimodalActive;
   },
   set isMultimodalActive(value: boolean) {
     runInAction(() => {
@@ -1105,7 +1103,9 @@ export const runtimeStore: RuntimeStore = {
     });
   },
   get activeProjectionModelId() {
-    return runtimeLive ? activeProjectionModelIdBox.get() : modelStore.activeProjectionModelId;
+    return runtimeLive
+      ? activeProjectionModelIdBox.get()
+      : modelStore.activeProjectionModelId;
   },
   set activeProjectionModelId(value: string | undefined) {
     runInAction(() => {
@@ -1190,7 +1190,9 @@ export const runtimeStore: RuntimeStore = {
     });
   },
   get activeRemoteBinding() {
-    return runtimeLive ? activeRemoteBindingBox.get() : modelStore.activeRemoteBinding;
+    return runtimeLive
+      ? activeRemoteBindingBox.get()
+      : modelStore.activeRemoteBinding;
   },
   set activeRemoteBinding(value: RemoteSessionBinding | undefined) {
     runInAction(() => {

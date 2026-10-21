@@ -1,27 +1,13 @@
-import {
-  AppStateStatus,
-  InteractionManager,
-  Platform,
-  Alert,
-} from 'react-native';
-import DeviceInfo from 'react-native-device-info';
+import {AppStateStatus} from 'react-native';
 
 import 'react-native-get-random-values';
 import {makePersistable} from 'mobx-persist-store';
-import * as RNFS from '@dr.pogodin/react-native-fs';
-import {computed, makeAutoObservable, runInAction} from 'mobx';
+import {computed, makeAutoObservable} from 'mobx';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {ContextParams, LlamaContext} from 'llama.rn';
 import {CompletionParams, CompletionEngine} from '../utils/completionTypes';
-
-import {fetchModelFilesDetails} from '../api/hf';
-
-import {uiStore} from '.';
-import {serverStore} from './ServerStore';
-import {getOriginalModelName} from '../utils/formatters';
 import type {OnboardingAssistantModelEntry} from './onboarding/onboardingAssistants';
 
-import {downloadManager} from '../services/downloads';
 import {Tier} from '../services/deviceRules/types';
 import type {DeviceRules, DeviceSignals} from '../services/deviceRules/types';
 
@@ -31,8 +17,6 @@ import type {DeviceRules, DeviceSignals} from '../services/deviceRules/types';
 // state since B10; initializeStore dissolves into bootstrap in this batch
 // and reads it there) — re-exported for the legacy import surface.
 export {MODEL_LIST_VERSION} from './model/catalogStore';
-
-import {stops} from '../utils/chat';
 import {
   CacheType,
   ChatTemplateConfig,
@@ -42,17 +26,12 @@ import {
   Model,
   ModelFile,
   ModelOrigin,
-  ModelType,
   RemoteSessionBinding,
 } from '../utils/types';
 
-import {ErrorState, createErrorState} from '../utils/errors';
+import {ErrorState} from '../utils/errors';
 import {ReasoningCapability} from '../utils/reasoningCapability';
 import type {ModelCapabilityView} from '../utils/modelCaps';
-import {t} from '../locales';
-import {createDefaultContextInitParams} from '../utils/contextInitParamsVersions';
-import NativeHardwareInfo from '../specs/NativeHardwareInfo';
-import {logger} from '../utils/logger';
 // Phase-4 R0 (docs/extraction-plan.md, condition 4): DI composition root.
 // bootstrap is imported ALONE — never the three pass-through stores. They
 // import the store barrel (which re-exports ModelStore), so a static import
@@ -610,10 +589,8 @@ export class ModelStore {
   private upgradeToFetchedRules = (): Promise<void> =>
     catalogUpgradeToFetchedRules();
 
-  resolvePresetModels = (
-    rules: DeviceRules,
-    signals: DeviceSignals,
-  ): Model[] => catalogStore.resolvePresetModels(rules, signals);
+  resolvePresetModels = (rules: DeviceRules, signals: DeviceSignals): Model[] =>
+    catalogStore.resolvePresetModels(rules, signals);
 
   reconcilePresets = (presets: Model[]): void =>
     catalogStore.reconcilePresets(presets);
@@ -674,20 +651,15 @@ export class ModelStore {
   getModelFullPath = async (model: Model): Promise<string> =>
     downloadStore.getModelFullPath(model);
 
-
   // ── B18 (phase-4 4a): implementation lives in downloadStore since batch
   // 18 (files/storage family — doc comment moved verbatim with it).
   resolveLocalModelPath = async (model: Model): Promise<string> =>
     downloadStore.resolveLocalModelPath(model);
 
-
-
-
   // ── B18 (phase-4 4a): implementation lives in downloadStore since batch 18.
   checkFileExists = async (model: Model): Promise<void> => {
     await downloadStore.checkFileExists(model);
   };
-
 
   /**
    * Reactive list of in-flight downloads. Each entry carries the Model object
@@ -719,7 +691,6 @@ export class ModelStore {
   removeInvalidLocalModels = () => {
     downloadStore.removeInvalidLocalModels();
   };
-
 
   // ── B20 (phase-4 4a): the pair is module-local on downloadStore — these
   // PRIVATE reverse delegates keep the god-object surface identical for the
@@ -764,7 +735,6 @@ export class ModelStore {
   verifyDownloadedModel = async (model: Model): Promise<boolean> =>
     downloadStore.verifyDownloadedModel(model);
 
-
   /**
    * Reactive list of in-flight downloads. Each entry carries the Model object
    * plus the latest formatted progress strings so observers can render a
@@ -798,7 +768,6 @@ export class ModelStore {
   deleteModel = async (model: Model) => {
     await downloadStore.deleteModel(model);
   };
-
 
   /**
    * Fetch and persist GGUF metadata for a downloaded model
@@ -970,7 +939,6 @@ export class ModelStore {
   ) => {
     await downloadStore.downloadHFModel(hfModel, modelFile, options);
   };
-
 
   /**
    * Adds a new HF model to the models list, only if it doesn't exist yet.
@@ -1167,9 +1135,7 @@ export class ModelStore {
   getDownloadedLLMsUsingProjectionModel = (
     projectionModelId: string,
   ): Model[] =>
-    projectionManager.getDownloadedLLMsUsingProjectionModel(
-      projectionModelId,
-    );
+    projectionManager.getDownloadedLLMsUsingProjectionModel(projectionModelId);
 
   hasRequiredProjectionModel = (model: Model): boolean =>
     catalogStore.hasRequiredProjectionModel(model);

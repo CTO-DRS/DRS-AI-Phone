@@ -24,10 +24,7 @@ export interface ProjectionHost {
   readonly activeModelId: string | undefined;
   readonly activeProjectionModelId: string | undefined;
   readonly isMultimodalActive: boolean;
-  initContext(
-    model: Model,
-    mmProjPath?: string,
-  ): Promise<LlamaContext | null>;
+  initContext(model: Model, mmProjPath?: string): Promise<LlamaContext | null>;
   deleteModel(model: Model): Promise<void>;
 }
 
