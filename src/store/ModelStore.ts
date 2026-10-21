@@ -27,7 +27,10 @@ import type {DeviceRules, DeviceSignals} from '../services/deviceRules/types';
 
 // Bump when the migration logic that re-merges the persisted model list
 // changes. Crossing this version runs the one-time prune-and-reconcile.
-export const MODEL_LIST_VERSION = 15;
+// B23: the constant moved to catalogStore (version semantics are catalog
+// state since B10; initializeStore dissolves into bootstrap in this batch
+// and reads it there) — re-exported for the legacy import surface.
+export {MODEL_LIST_VERSION} from './model/catalogStore';
 
 import {stops} from '../utils/chat';
 import {
@@ -59,6 +62,7 @@ import {logger} from '../utils/logger';
 import {
   initializeModelSystem,
   initializeThreadCount as initializeThreadCountOf,
+  initializeStore as initializeStoreOf,
 } from './model/bootstrap';
 // B10 (phase-4 4a): the nine catalog state members physically live in
 // catalogStore (five persist keys as the catalogStore:v2 root's fields,
@@ -430,7 +434,7 @@ export class ModelStore {
         catalog: this,
         download: this,
         runtime: this,
-        initializeStore: () => this.initializeStore(),
+        initializeStore: initializeStoreOf,
         initializeThreadCount: initializeThreadCountOf,
       });
     });
@@ -586,90 +590,12 @@ export class ModelStore {
     await downloadStore.drainPendingProjectionCleanup();
   };
 
+  // ── B23 (phase-4 4a): implementation dissolved into bootstrap (exported
+  // initializeStore — catalog/download/runtime dispatches native there).
+  // Public reverse delegate (B1 shape) for the external surface; the DI
+  // wiring passes the bootstrap export directly.
   initializeStore = async () => {
-    const storedVersion = this.version || 0;
-    logger.debug('models: ', this.models);
-
-    this.healDraftVisionClassification();
-
-    // Sync download manager with active downloads
-    await downloadManager.syncWithActiveDownloads(this.models);
-
-    // After the sync so an in-flight mmproj download is visible and waits. A
-    // failure retries next launch; it must not abort the rest of init.
-    try {
-      await this.drainPendingProjectionCleanup();
-    } catch (error) {
-      console.warn('[ModelStore] projection cleanup drain failed:', error);
-    }
-
-    // Apply the bundled offline floor immediately (no network) so the list is
-    // never empty while a slow rules fetch is in flight, then merge/reconcile.
-    const presets = await this.resolvePresets();
-
-    if (storedVersion < MODEL_LIST_VERSION) {
-      await this.mergeModelLists(presets);
-      // mergeModelLists awaits the download-status checks (which re-anchor stale
-      // container paths), so pruning here — as the non-migration branch does —
-      // is now safe: a recoverable local model has already been settled and will
-      // not be dropped as missing.
-      this.removeInvalidLocalModels();
-      // Only finalize the one-time migration once presets actually resolved.
-      // An empty result signals a transient resolve failure (e.g. the RAM read
-      // rejected); leave the version unbumped so the migration retries next
-      // launch instead of locking in an empty default list.
-      if (presets.length > 0) {
-        runInAction(() => {
-          this.version = MODEL_LIST_VERSION;
-        });
-      }
-    } else {
-      this.reconcilePresets(presets);
-      await this.initializeDownloadStatus();
-      this.removeInvalidLocalModels();
-    }
-
-    // Upgrade past the bundled floor to the online rules override in the
-    // background; reconcile (id-keyed, dedup) folds in any newer set.
-    // v1.36.0: pushed off the launch window — this performs a network fetch
-    // (10s timeout) plus rules parsing on EVERY startup, while the bundled
-    // floor already resolved above keeps presets usable in the meantime.
-    InteractionManager.runAfterInteractions(() => {
-      this.upgradeToFetchedRules();
-    });
-
-    await this.initializeGpuSettings(); // Should be awaited to ensure GPU settings are applied before initializing context
-
-    // Initialize available memory ceiling at app startup if not set
-    if (this.availableMemoryCeiling === undefined) {
-      try {
-        const availableBytes = await NativeHardwareInfo.getAvailableMemory();
-        runInAction(() => {
-          this.availableMemoryCeiling = availableBytes;
-        });
-      } catch (error) {
-        // Fallback when native call fails
-        console.warn(
-          '[ModelStore] Native getAvailableMemory failed, using fallback:',
-          error,
-        );
-        const totalMemory = await DeviceInfo.getTotalMemory();
-        // Use conservative heuristic: min(60% of RAM, RAM - 1.2GB)
-        const fallbackCeiling = Math.min(
-          totalMemory * 0.6,
-          totalMemory - 1.2 * 1e9,
-        );
-        runInAction(() => {
-          this.availableMemoryCeiling = Math.max(fallbackCeiling, 0); // Ensure non-negative
-        });
-      }
-    }
-
-    // Load missing GGUF metadata for downloaded models (background, non-blocking)
-    this.loadMissingGGUFMetadata();
-
-    // Check if we need to reload an auto-released model (for app restarts)
-    this.checkAndReloadAutoReleasedModel();
+    await initializeStoreOf();
   };
 
   // ── B11 (phase-4 4a): preset-pipeline implementations live in catalogStore
@@ -1152,70 +1078,6 @@ export class ModelStore {
    * @param ctx - The LlamaContext instance
    * @param model - App model to update stop tokens for
    */
-  private async updateModelStopTokens(ctx: LlamaContext, model: Model) {
-    const storeModel = this.models.find(m => m.id === model.id);
-    if (!storeModel) {
-      return;
-    }
-
-    const stopTokens: string[] = [];
-
-    try {
-      // Get EOS token from model metadata
-      const eos_token_id = Number(
-        (ctx.model as any)?.metadata?.['tokenizer.ggml.eos_token_id'],
-      );
-
-      if (!isNaN(eos_token_id)) {
-        const detokenized = await ctx.detokenize([eos_token_id]);
-        if (detokenized) {
-          stopTokens.push(detokenized);
-        }
-      }
-
-      // Add relevant stop tokens from chat templates
-      // First check model's custom chat template.
-      const template = storeModel.chatTemplate?.chatTemplate;
-      logger.debug('template: ', template);
-      if (template) {
-        const templateStops = stops.filter(stop => template.includes(stop));
-        stopTokens.push(...templateStops);
-      }
-
-      // Then check context's chat template
-      const ctxtTemplate = (ctx.model as any)?.metadata?.[
-        'tokenizer.chat_template'
-      ];
-      if (ctxtTemplate) {
-        const contextStops = stops.filter(stop => ctxtTemplate.includes(stop));
-        stopTokens.push(...contextStops);
-      }
-
-      logger.debug('stopTokens: ', stopTokens);
-      // Only update if we found stop tokens
-      if (stopTokens.length > 0) {
-        runInAction(() => {
-          // Helper function to check and update stop tokens
-          const updateStopTokens = (words: CompletionParams['stop']) => {
-            const uniqueStops = Array.from(
-              new Set([...(words || []), ...stopTokens]),
-            ).filter(Boolean); // Remove any null/undefined/empty values
-            return uniqueStops;
-          };
-
-          // Update both default and current completion settings
-          storeModel.defaultStopWords = updateStopTokens(
-            storeModel.defaultStopWords,
-          );
-          storeModel.stopWords = updateStopTokens(storeModel.stopWords);
-        });
-      }
-    } catch (error) {
-      console.error('Error updating model stop tokens:', error);
-      // Continue execution - stop token update is not critical
-    }
-  }
-
   // ── B14 (phase-4 4a): updateModelThinkingCapabilities moved into
   // catalogStore (module function catalogUpdateModelThinkingCapabilities) —
   // its caller proceedWithInitialization (runtimeStore) imports it directly;

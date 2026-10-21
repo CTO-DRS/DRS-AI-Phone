@@ -306,6 +306,12 @@ function catalogDraftToStub(draft: RuleDraft): Model {
   return {...hfAsModel(hfModel, modelFile), modelType: ModelType.DRAFT};
 }
 
+// Bump when the migration logic that re-merges the persisted model list
+// changes. Crossing this version runs the one-time prune-and-reconcile.
+// B23: moved here from the god object (version semantics are catalog state
+// since B10; the initializeStore dissolve reads it in bootstrap).
+export const MODEL_LIST_VERSION = 15;
+
 export async function catalogResolvePresets(): Promise<Model[]> {
   try {
     const signals = await readDeviceSignals();

@@ -24,6 +24,7 @@ import {
 } from '../../utils/types';
 import {resolveUseMmap} from '../../utils/memorySettings';
 import {resolveDeviceSelection} from '../../utils/deviceSelection';
+import {stops} from '../../utils/chat';
 import {createDefaultContextInitParams} from '../../utils/contextInitParamsVersions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
@@ -548,13 +549,6 @@ const pairedDraftModel = (config?: DraftConfig): Model | undefined =>
 // ج18 (B8): two still-private god-object members, reached through a narrow
 // structural view — same pattern as the ج5 reprobe read. The cast form is
 // invisible to the line counter by design; the deaths are the registry's.
-type GodObjectPrivates = {
-  updateModelStopTokens: (ctx: LlamaContext, model: Model) => Promise<void>;
-  updateModelThinkingCapabilities: (
-    ctx: LlamaContext,
-    model: Model,
-  ) => Promise<void>;
-};
 
 async function resolveMultimodalConfig(
   model: Model,
@@ -735,14 +729,9 @@ async function proceedWithInitialization(
     const t1 = Date.now();
     logger.debug('init time: ', t1 - t0);
 
-    // ج18: still-private god-object member updateModelStopTokens (see
-    // GodObjectPrivates above; death B23). updateModelThinkingCapabilities
-    // MOVED to catalogStore in B14 — its cast died with the move (ج18
-    // member-half honored).
-    await (modelStore as unknown as GodObjectPrivates).updateModelStopTokens(
-      ctx,
-      model,
-    );
+    // B23: updateModelStopTokens is module-local HERE — direct call
+    // (ج18 died with the move; the GodObjectPrivates cast is deleted).
+    await updateModelStopTokens(ctx, model);
 
     // Check and update thinking capabilities (direct since B14 — the member
     // lives in catalogStore now).
@@ -925,6 +914,75 @@ export async function importLegacyRuntimeState(): Promise<void> {
   } catch {
     // Fail-safe (§3.2): corrupt/unreadable legacy key — retry next launch.
     // Deliberately silent: this must never abort the constructor chain.
+  }
+}
+
+/**
+ * B23 — stop-token updater moved verbatim off the god object's private
+ * (ج18 died: the GodObjectPrivates cast is gone). Catalog read is direct
+ * (runtimeStore→catalogStore static import, the B14 edge).
+ */
+async function updateModelStopTokens(ctx: LlamaContext, model: Model) {
+  const storeModel = catalogStore.models.find(m => m.id === model.id);
+  if (!storeModel) {
+    return;
+  }
+
+  const stopTokens: string[] = [];
+
+  try {
+    // Get EOS token from model metadata
+    const eos_token_id = Number(
+      (ctx.model as any)?.metadata?.['tokenizer.ggml.eos_token_id'],
+    );
+
+    if (!isNaN(eos_token_id)) {
+      const detokenized = await ctx.detokenize([eos_token_id]);
+      if (detokenized) {
+        stopTokens.push(detokenized);
+      }
+    }
+
+    // Add relevant stop tokens from chat templates
+    // First check model's custom chat template.
+    const template = storeModel.chatTemplate?.chatTemplate;
+    logger.debug('template: ', template);
+    if (template) {
+      const templateStops = stops.filter(stop => template.includes(stop));
+      stopTokens.push(...templateStops);
+    }
+
+    // Then check context's chat template
+    const ctxtTemplate = (ctx.model as any)?.metadata?.[
+      'tokenizer.chat_template'
+    ];
+    if (ctxtTemplate) {
+      const contextStops = stops.filter(stop => ctxtTemplate.includes(stop));
+      stopTokens.push(...contextStops);
+    }
+
+    logger.debug('stopTokens: ', stopTokens);
+    // Only update if we found stop tokens
+    if (stopTokens.length > 0) {
+      runInAction(() => {
+        // Helper function to check and update stop tokens
+        const updateStopTokens = (words: CompletionParams['stop']) => {
+          const uniqueStops = Array.from(
+            new Set([...(words || []), ...stopTokens]),
+          ).filter(Boolean); // Remove any null/undefined/empty values
+          return uniqueStops;
+        };
+
+        // Update both default and current completion settings
+        storeModel.defaultStopWords = updateStopTokens(
+          storeModel.defaultStopWords,
+        );
+        storeModel.stopWords = updateStopTokens(storeModel.stopWords);
+      });
+    }
+  } catch (error) {
+    console.error('Error updating model stop tokens:', error);
+    // Continue execution - stop token update is not critical
   }
 }
 

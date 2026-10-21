@@ -557,3 +557,20 @@ suite تمزح الـbarrel + حلقة MobX في activeModel (الدليل: Chat
 الأرقام: 312/4989+2/310 ✓؛ عدادات 1732/1731/**1838**/**106**؛ madge 46=46
 (A/B عبر stash)؛ tsc 0؛ ModelStore.ts 1,396 → **1,418** (الأزواج+الوثائق
 أضافت أكثر مما حذف الأعضاء).
+
+## B23 (phase-4 4a) — initializeStore يذوب في bootstrap؛ updateModelStopTokens → runtimeStore؛ ج18 يموت
+
+**initializeStore** (جسد ~75 سطراً) صار تصديراً في bootstrap — الإرسالات:
+عائلة الكتالوج عبر catalogStore (catalogResolvePresets/mergeModelLists/
+reconcilePresets/heal/upgrade + بوابة الإصدار)، عائلة التنزيل عبر
+downloadStore، GPU+الذاكرة عبر runtimeStore. **MODEL_LIST_VERSION انتقل إلى
+catalogStore** (دلالات الإصدار حالة كتالوج منذ B10) — الإله يعيد تصديره لسطح
+الاستيراد القديم. الإله يبقي مندوباً عاماً (B1) وwiring DI يمرر التصدير
+مباشرة. **updateModelStopTokens** (خاصة) صارت دالة موديولية على runtimeStore
+(قراءة الكتالوج مباشرة — حافة B14) — **ج18 مات**: cast GodObjectPrivates
+حُذف كلياً. حادثة أثناء التنفيذ: regex الحذف الأول التهم ~290 سطراً (الجسد
+method-syntax يغلق بـ`  }` لا `  };`) — استعادة من HEAD وإعادة كاملة بمطابقة
+سطرية آمنة؛ الدرس: الحذف بالـregex على أعضاء الطبقة يمشي على مرسَتَي
+بداية/نهاية معروفتين لا نمط إغلاق.
+الأرقام: 312/4989+2/310 ✓؛ عدادات 1732/1731/1838 (محايدة — الجسد كان this.-)
+؛ madge 46=46 (A/B)؛ tsc 0؛ ModelStore.ts 1,418 → **1,280**.

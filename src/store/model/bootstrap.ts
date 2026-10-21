@@ -46,9 +46,20 @@
  * ══════════════════════════════════════════════════════════════════════════
  */
 
-import {catalogStore} from './catalogStore';
-import {runtimeStore} from './runtimeStore';
+import {
+  catalogStore,
+  MODEL_LIST_VERSION,
+  catalogResolvePresets,
+  catalogUpgradeToFetchedRules,
+  catalogLoadMissingGGUFMetadata,
+} from './catalogStore';
+import {runtimeStore, initializeGpuSettings} from './runtimeStore';
+import {downloadStore} from './downloadStore';
 import {runInAction} from 'mobx';
+import {InteractionManager} from 'react-native';
+import DeviceInfo from 'react-native-device-info';
+import NativeHardwareInfo from '../../specs/NativeHardwareInfo';
+import {downloadManager} from '../../services/downloads';
 import {
   getCpuCoreCount,
   getRecommendedThreadCount,
@@ -111,4 +122,99 @@ export async function initializeModelSystem<C, D, R>(
 ): Promise<void> {
   await deps.initializeThreadCount();
   deps.initializeStore();
+}
+
+/**
+ * B23 — store initialization dissolved verbatim off the god object.
+ * Dispatches: catalog family through catalogStore (the B11 module functions
+ * + the version gate), the download family through downloadStore, GPU +
+ * memory through runtimeStore. The one-time version migration reads
+ * MODEL_LIST_VERSION from catalogStore (B23 move). The god object keeps a
+ * public reverse delegate (B1 shape) for the external surface; the DI
+ * wiring passes THIS export directly.
+ */
+export async function initializeStore() {
+  const storedVersion = catalogStore.version || 0;
+
+  catalogStore.healDraftVisionClassification();
+
+  // Sync download manager with active downloads
+  await downloadManager.syncWithActiveDownloads(catalogStore.models);
+
+  // After the sync so an in-flight mmproj download is visible and waits. A
+  // failure retries next launch; it must not abort the rest of init.
+  try {
+    await downloadStore.drainPendingProjectionCleanup();
+  } catch (error) {
+    console.warn('[ModelStore] projection cleanup drain failed:', error);
+  }
+
+  // Apply the bundled offline floor immediately (no network) so the list is
+  // never empty while a slow rules fetch is in flight, then merge/reconcile.
+  const presets = await catalogResolvePresets();
+
+  if (storedVersion < MODEL_LIST_VERSION) {
+    await catalogStore.mergeModelLists(presets);
+    // mergeModelLists awaits the download-status checks (which re-anchor
+    // stale container paths), so pruning here — as the non-migration branch
+    // does — is now safe: a recoverable local model has already been
+    // settled and will not be dropped as missing.
+    downloadStore.removeInvalidLocalModels();
+    // Only finalize the one-time migration once presets actually resolved.
+    // An empty result signals a transient resolve failure (e.g. the RAM
+    // read rejected); leave the version unbumped so the migration retries
+    // next launch instead of locking in an empty default list.
+    if (presets.length > 0) {
+      runInAction(() => {
+        catalogStore.version = MODEL_LIST_VERSION;
+      });
+    }
+  } else {
+    catalogStore.reconcilePresets(presets);
+    await downloadStore.initializeDownloadStatus();
+    downloadStore.removeInvalidLocalModels();
+  }
+
+  // Upgrade past the bundled floor to the online rules override in the
+  // background; reconcile (id-keyed, dedup) folds in any newer set.
+  // v1.36.0: pushed off the launch window — this performs a network fetch
+  // (10s timeout) plus rules parsing on EVERY startup, while the bundled
+  // floor already resolved above keeps presets usable in the meantime.
+  InteractionManager.runAfterInteractions(() => {
+    catalogUpgradeToFetchedRules();
+  });
+
+  await initializeGpuSettings(); // Should be awaited to ensure GPU settings are applied before initializing context
+
+  // Initialize available memory ceiling at app startup if not set
+  if (runtimeStore.availableMemoryCeiling === undefined) {
+    try {
+      const availableBytes = await NativeHardwareInfo.getAvailableMemory();
+      runInAction(() => {
+        runtimeStore.availableMemoryCeiling = availableBytes;
+      });
+    } catch (error) {
+      // Fallback when native call fails
+      console.warn(
+        '[ModelStore] Native getAvailableMemory failed, using fallback:',
+        error,
+      );
+      const totalMemory = await DeviceInfo.getTotalMemory();
+      // Use conservative heuristic: min(60% of RAM, RAM - 1.2GB)
+      const fallbackCeiling = Math.min(
+        totalMemory * 0.6,
+        totalMemory - 1.2 * 1e9,
+      );
+      runInAction(() => {
+        runtimeStore.availableMemoryCeiling = Math.max(fallbackCeiling, 0); // Ensure non-negative
+      });
+    }
+  }
+
+  // Load missing GGUF metadata for downloaded models (background,
+  // non-blocking)
+  catalogLoadMissingGGUFMetadata();
+
+  // Check if we need to reload an auto-released model (for app restarts)
+  runtimeStore.checkAndReloadAutoReleasedModel();
 }
