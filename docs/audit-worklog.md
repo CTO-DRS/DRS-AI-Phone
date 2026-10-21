@@ -460,3 +460,23 @@ verifyDownloadedModel (B19)/fetchAndPersistGGUFMetadata (الكتالوج) عب�
 سرّب الـ override إلى عائلة اختبارات B20 كلها (1ms، صفر startDownload) → العلاج:
 retryDownload يرسل عبر الواجهة (شكل ج28، الموت 4d).
 الأرقام: 312/4989+2/310 ✓؛ عدادات 1732/1731/**1828**/**96**؛ madge 46؛ tsc 0.
+
+## B18 (phase-4 4a) — عائلة الملفات/التخزين → downloadStore؛ ج17/ج29/ج34 تموت
+
+الأعضاء الستة (getModelFullPath/resolveLocalModelPath/checkFileExists/
+removeInvalidLocalModels + الخاصان pendingLocalPathRecoveries و
+flushPendingLocalPathRecoveries) تنفيذاً حقيقياً على downloadStore —
+**pendingLocalPathRecoveries صار Map على مستوى الموديول** وflush صار دالة
+موديول-محلية (غير مرصودتين، غير محفوظتين — نفس دلالات الإله حرفياً؛ لا
+حاجة لإعادة تسليح persist لأنهما خارج قائمة الحفظ أصلاً).
+**ج34 مات موتاً كاملاً**: استدعاءا refreshDownloadStatuses (checkFileExists +
+cast GodDownloadPrivates) صارا داخليين، والنوع المحذوف؛ وكذلك ذيل ج34 في
+checkSpaceAndDownload (getModelFullPath داخلي).
+**ج17 (3 قراءات في runtimeStore) وج29 (قراءتان في catalogStore)**: سببهما
+مات — المالك هاجر — والخطوط أعيد وسمها إرسالاً عبر الواجهة (عائلة ج28، موتها
+4e): صفر تغيير سلوكي حمايةً لتوبولوجيا الـmocks (11 suite تمزح الـbarrel؛
+الوصول المباشر لـdownloadStore كان سيتجاوز الـmocks).
+قراءة/كتابة الكتالوج في flush/removeInvalid تبقى عبر الواجهة (درس ج32 —
+لا استيراد static من downloadStore نحو catalogStore).
+الأرقام: 312/4989+2/310 ✓؛ عدادات 1732/1731/**1824**/**92**؛ madge 46 (A/B
+عبر stash: 46=46 — صفر حلقات جديدة)؛ tsc 0؛ ModelStore.ts 1,951 → **1,733**.

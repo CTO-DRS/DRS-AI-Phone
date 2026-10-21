@@ -545,6 +545,9 @@ async function resolveMultimodalConfig(
       m => m.id === model.defaultProjectionModel,
     );
     if (projectionModel?.isDownloaded) {
+      // ج17 died at B18 (file-family re-homed to downloadStore; the
+      // implementation now lives there — this line remains a facade dispatch,
+      // ج28-family, dies with the facade at 4e).
       const resolvedPath = await modelStore.getModelFullPath(projectionModel);
       return {
         isMultimodalInit: true,
@@ -571,6 +574,8 @@ export async function resolveDraftConfig(
     return candidate;
   }
 
+  // ج17 died at B18 (file-family re-homed to downloadStore; this line
+  // remains a facade dispatch, ج28-family, dies with the facade at 4e).
   const resolvedDraftPath = await modelStore.getModelFullPath(
     candidate.draftModel,
   );
@@ -656,6 +661,8 @@ async function proceedWithInitialization(
   projectionModel?: Model,
   draftConfig?: DraftConfig,
 ): Promise<LlamaContext> {
+  // ج17 died at B18 (file-family re-homed to downloadStore; this line
+  // remains a facade dispatch, ج28-family, dies with the facade at 4e).
   const filePath = await modelStore.getModelFullPath(model);
   if (!filePath) {
     throw new Error('Model path is undefined');

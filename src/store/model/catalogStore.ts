@@ -1188,7 +1188,9 @@ export const catalogStore: CatalogStore = {
       if (model.hash && !force) {
         return;
       }
-      // ج29: file-path owner still on the god object until B18.
+      // ج29 died at B18 (file-family re-homed to downloadStore; the
+      // implementation now lives there — this line remains a facade
+      // dispatch, ج28-family, dies with the facade at 4e).
       const filePath = await modelStore.getModelFullPath(model);
       const hash = await getSHA256Hash(filePath);
       runInAction(() => {
@@ -1246,7 +1248,9 @@ export const catalogStore: CatalogStore = {
    */
   async fetchAndPersistGGUFMetadata(model: Model) {
     try {
-      // ج29: file-path owner still on the god object until B18.
+      // ج29 died at B18 (file-family re-homed to downloadStore; the
+      // implementation now lives there — this line remains a facade
+      // dispatch, ج28-family, dies with the facade at 4e).
       const filePath = await modelStore.getModelFullPath(model);
       if (!filePath) {
         console.warn(
