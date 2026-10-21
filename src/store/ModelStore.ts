@@ -4,7 +4,7 @@ import 'react-native-get-random-values';
 import {makePersistable} from 'mobx-persist-store';
 import {computed, makeAutoObservable} from 'mobx';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {ContextParams, LlamaContext} from 'llama.rn';
+import type {ContextParams, LlamaContext} from 'llama.rn';
 import {CompletionParams, CompletionEngine} from '../utils/completionTypes';
 import type {OnboardingAssistantModelEntry} from './onboarding/onboardingAssistants';
 

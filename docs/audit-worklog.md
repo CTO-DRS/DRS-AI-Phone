@@ -601,3 +601,36 @@ facade.test)**: كلها أسطح توافق-مع-الـmocks وعائلة ال�
 
 الأرقام النهائية: 312/4989+2/310 ✓؛ tsc 0؛ **4a مكتملة عملياً: 24/24 دفعة
 نُفذت، والبوابة النهائية تتحقق كاملةً عند 4e مع موت عائلة الواجهة**.
+
+## hotfix(startup) — رسم llama.rn خارج سلسلة الإقلاع؛ علاج انهيار الإقلاع المتكرر على أجهزة حقيقية
+
+**الدليل القيادي**: جهاز المالك ينهار ~1 ثانية بعد أول رسم مع كل بناءات v1.40/v1.41
+(tقرار v1.40.0: splash ثم إغلاق صامت؛ البناءات الحالية: نافذة "استمر في التوقف" عند
+كل فتح). الـ safe mode (bootHealth) لا ينقذ الإقلاع = العطل ليس في الأنظمة
+المُخطّاة (widget bridge/update alert) بل في نواة سلسلة الإقلاع.
+
+**الجذر**: تقييم وحدة llama.rn (عبر `TurboModuleRegistry.get('RNLlama')` في
+NativeRNLlama.ts وقت الاستيراد) يُحمّل `librnllama.so` في قلب سلسلة الإقلاع.
+البناء من المصدر (rnllamaBuildFromSource=true، المسار الافتراضي في
+release.yml وandroid-apk.yml منذ البداية) يضمّن backend OpenCL — تعريفات
+OpenCL على شرائح OEM (Transsion وغيرها) من أخطر مصادر dlopen/التهيئة.
+أي فشل في تحميل المكتبة يموت به العملية كاملة قبل أي ErrorBoundary.
+
+**العلاج (نمط notifee في v1.41.0 معمّمًا)**: llama.rn لا يُقيَّم في الإقلاع أبدًا:
+- 9 تحويلات `import type` (نوعيات فقط: types.ts, completionTypes.ts, chat.ts,
+  contextInitParamsVersions.ts, thinkingCapabilityDetection.ts,
+  completionEngines.ts, ModelErrorReportSheet, TestCompletionScreen,
+  ModelStore.ts)
+- 5 مواقع قيمية صارت require متأخرًا داخل try/catch قائم (memorySettings,
+  deviceSelection, catalogStore:fetchAndPersistGGUFMetadata,
+  runtimeStore:initContextInternal, AboutScreen:BuildInfo عبر useMemo
+  بديغريد يعرض "llama.cpp" عند الفشل)
+- النتيجة: فشل native في llama.rن يتحول من موت إقلاع إلى خطأ عادي قابل
+  للالتقاط وقت تحميل النموذج فعليًا — والتشخيصات تصبح قابلة للمشاركة.
+
+**ملاحظة**: AboutScreen كان يستورد BuildInfo قيميًا وهو داخل الرسم الثابت
+للـDrawer — كان يقيّم llama.rn في الإقلاع حتى لو عُزلت المتاجر الثلاثة.
+BenchmarkRunnerScreen يبقى قيميًا لكنه خلف `__E2E__` require متأخر.
+
+الأرقام: 312/4989+2/310 ✓؛ tsc 0؛ eslint 0 أخطاء؛ madge 45=45 (llama.rn خارج
+src)؛ ModelStore.ts 1246→1245.

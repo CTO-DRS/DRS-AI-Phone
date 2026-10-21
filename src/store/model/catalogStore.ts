@@ -32,7 +32,6 @@ import {
   parseSizeLabel,
 } from '../../utils';
 import {isDraftOnlyModel} from '../../utils/mtp';
-import {loadLlamaModelInfo} from 'llama.rn';
 import type {LlamaContext} from 'llama.rn';
 import {getOriginalModelName} from '../../utils/formatters';
 import {fetchModelFilesDetails} from '../../api/hf';
@@ -1268,6 +1267,10 @@ export const catalogStore: CatalogStore = {
         return;
       }
 
+      // Startup-graph hygiene: llama.rn resolved lazily at real use —
+      // a broken native lib is an ordinary catchable error here.
+      const {loadLlamaModelInfo} =
+        require('llama.rn') as typeof import('llama.rn');
       const modelInfo = await loadLlamaModelInfo(filePath);
       if (!modelInfo || typeof modelInfo !== 'object') {
         console.warn('[ModelStore] Invalid model info returned');

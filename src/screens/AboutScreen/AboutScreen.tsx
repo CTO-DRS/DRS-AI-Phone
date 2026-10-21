@@ -5,7 +5,12 @@ import DeviceInfo from 'react-native-device-info';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {Text, Button, SegmentedButtons} from 'react-native-paper';
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
-import {BuildInfo} from 'llama.rn';
+
+// Startup-graph hygiene (mirrors the v1.41.0 notifee pattern): llama.rn's
+// module evaluation resolves the RNLlama TurboModule, which dlopens
+// librnllama.so. This screen is statically imported from the boot graph,
+// so llama.rn must be resolved lazily at render time — a broken native lib
+// degrades this one label instead of killing the boot.
 
 import {submitFeedback} from '../../api/feedback';
 import {checkForAppUpdate, AppUpdateInfo} from '../../utils/appUpdate';
@@ -38,6 +43,17 @@ export const AboutScreen: React.FC = () => {
   const styles = createStyles(theme, insets);
   const l10n = useContext(L10nContext);
   const [showFeedback, setShowFeedback] = useState(false);
+
+  // Startup-graph hygiene: llama.rn is resolved lazily at render time so a
+  // broken native lib degrades this one label instead of killing the boot.
+  const llamaBuildLabel = React.useMemo(() => {
+    try {
+      const {BuildInfo} = require('llama.rn') as typeof import('llama.rn');
+      return `llama.cpp ${BuildInfo.number} (${BuildInfo.commit.substring(0, 7)})`;
+    } catch {
+      return 'llama.cpp';
+    }
+  }, []);
 
   const [appInfo, setAppInfo] = React.useState({
     version: '',
@@ -150,10 +166,7 @@ export const AboutScreen: React.FC = () => {
                   />
                 </TouchableOpacity>
               </View>
-              <Text style={styles.llamaBuildText}>
-                llama.cpp {BuildInfo.number} ({BuildInfo.commit.substring(0, 7)}
-                )
-              </Text>
+              <Text style={styles.llamaBuildText}>{llamaBuildLabel}</Text>
             </View>
           </View>
 

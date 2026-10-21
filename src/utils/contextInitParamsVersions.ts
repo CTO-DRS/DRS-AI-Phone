@@ -3,7 +3,7 @@
 // 2. Increment CURRENT_CONTEXT_INIT_PARAMS_VERSION
 // 3. Add a migration step in migrateContextInitParams
 
-import {ContextParams} from 'llama.rn';
+import type {ContextParams} from 'llama.rn';
 import {ContextInitParams, LegacyContextInitParams} from './types';
 import {Platform} from 'react-native';
 

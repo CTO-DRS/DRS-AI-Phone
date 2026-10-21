@@ -1,4 +1,4 @@
-import {LlamaContext} from 'llama.rn';
+import type {LlamaContext} from 'llama.rn';
 
 import {streamChatCompletion} from './openai';
 import {

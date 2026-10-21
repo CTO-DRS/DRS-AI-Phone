@@ -16,7 +16,13 @@ import {
 import {capsMatchBinding} from '../../utils/remoteCaps';
 import {observable, runInAction, toJS} from 'mobx';
 import {Alert, AppState, AppStateStatus, Platform} from 'react-native';
-import {ContextParams, LlamaContext, initLlama} from 'llama.rn';
+import type {ContextParams, LlamaContext} from 'llama.rn';
+
+// Startup-graph hygiene (mirrors the v1.41.0 notifee pattern): llama.rn's
+// module evaluation resolves the RNLlama TurboModule, which dlopens
+// librnllama.so. A broken/poisoned native lib on some devices must not be
+// able to kill the boot — so initLlama is resolved lazily at first real
+// model load, where a failure is an ordinary catchable error.
 import {
   CacheType,
   ContextInitParams,
@@ -712,6 +718,7 @@ async function proceedWithInitialization(
     const contextInitParams = createContextInitParams(effectiveSettings);
 
     const t0 = Date.now();
+    const {initLlama} = require('llama.rn') as typeof import('llama.rn');
     const ctx = await initLlama(
       {
         model: filePath,
