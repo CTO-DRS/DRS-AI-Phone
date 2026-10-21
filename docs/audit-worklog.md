@@ -480,3 +480,21 @@ checkSpaceAndDownload (getModelFullPath داخلي).
 لا استيراد static من downloadStore نحو catalogStore).
 الأرقام: 312/4989+2/310 ✓؛ عدادات 1732/1731/**1824**/**92**؛ madge 46 (A/B
 عبر stash: 46=46 — صفر حلقات جديدة)؛ tsc 0؛ ModelStore.ts 1,951 → **1,733**.
+
+## B19 (phase-4 4a) — حذف/تحقق/مدخل HF → downloadStore؛ ج35b يموت
+
+الثلاثية (deleteModel 117L / verifyDownloadedModel / downloadHFModel) تنفيذاً
+حقيقياً على downloadStore. **ج35b مات**: dispatch القبّ في mutationSync صار
+داخلياً (downloadStore.verifyDownloadedModel) — الصندوقان verifyingModelIds/
+downloadError صندوقان الموديول مباشرة. **deleteModel**: الإرسالات العابرة
+للنطاق بقيت عبر الواجهة (كتالوج: models/canDelete/cleanupOrphaned/
+setModelVisionEnabled/addHFModel — ج32 و4e؛ runtime: activeModelId/
+releaseContext/contextInitParams/setSelectedDraftModel — B22؛ ج28:
+checkSpaceAndDownload — 4d) والداخلي getModelFullPath/refreshDownloadStatuses
+صار ذاتيّاً. **downloadHFModel**: addHFModel/setModelVisionEnabled عبر الواجهة
+(4e)، انطلاق التنزيل شكل ج28 (سطح الـoverrides — 4d).
+نمو scaffold مؤقت معلن: 92 → **103** (+11: إرسالات deleteModel/downloadHFModel
+حطّت على downloadStore حتى تدفقات B20/4d/4e — النمو يعكس هجرة الأعضاء لا
+عودةً للوراء).
+الأرقام: 312/4989+2/310 ✓؛ عدادات 1732/1731/**1835**/**103**؛ madge 46=46 (A/B
+عبر stash)؛ tsc 0؛ ModelStore.ts 1,733 → **1,502**.

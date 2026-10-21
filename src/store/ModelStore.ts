@@ -20,10 +20,6 @@ import {uiStore} from '.';
 import {serverStore} from './ServerStore';
 import {resolveDraftModelId} from './draftResolution';
 import {checkGpuSupport} from '../utils/deviceCapabilities';
-import {
-  getSHA256Hash,
-  getMmprojFiles,
-} from '../utils';
 import {getOriginalModelName} from '../utils/formatters';
 import type {OnboardingAssistantModelEntry} from './onboarding/onboardingAssistants';
 
@@ -891,81 +887,11 @@ export class ModelStore {
 
   /** Resume a paused Android download from its persisted byte offset. */
 
-  /**
-   * Post-download verification gate.
-   *
-   * 1. File must exist at the expected path.
-   * 2. Size must match the HF LFS record within 0.1% (cheap, always run).
-   * 3. SHA-256 must match the LFS oid when the record exposes one and the
-   *    file is ≤ MAX_HASH_VERIFY_BYTES (hashing multi-GB files on-device is
-   *    slow and the native hasher is known to be unreliable on huge files —
-   *    above the threshold the size check is the honest verification).
-   *
-   * On failure the partial/corrupt file is deleted and a download error state
-   * with `reason: 'verification'` is surfaced so the user can re-download.
-   */
-  verifyDownloadedModel = async (model: Model): Promise<boolean> => {
-    const MAX_HASH_VERIFY_BYTES = 4 * 1024 * 1024 * 1024;
-    runInAction(() => {
-      this.verifyingModelIds = [...this.verifyingModelIds, model.id];
-    });
-    try {
-      const filePath = await this.getModelFullPath(model);
-      if (!(await RNFS.exists(filePath))) {
-        throw new Error('Downloaded model file is missing');
-      }
-      const stat = await RNFS.stat(filePath);
-      const expectedSize = model.hfModelFile?.lfs?.size;
-      if (expectedSize && expectedSize > 0) {
-        const diffRatio = Math.abs(stat.size - expectedSize) / expectedSize;
-        if (diffRatio > 0.001) {
-          throw new Error(
-            `Model file size mismatch (${stat.size} vs ${expectedSize} bytes)`,
-          );
-        }
-      }
-      const expectedHash = model.hfModelFile?.lfs?.oid;
-      if (expectedHash && stat.size <= MAX_HASH_VERIFY_BYTES) {
-        const actualHash = await getSHA256Hash(filePath);
-        if (
-          actualHash &&
-          actualHash.toLowerCase() !== expectedHash.toLowerCase()
-        ) {
-          throw new Error('Model file checksum mismatch');
-        }
-      }
-      return true;
-    } catch (err) {
-      console.error('Model verification failed:', err);
-      // Remove the unusable file so the user can cleanly re-download.
-      try {
-        const filePath = await this.getModelFullPath(model);
-        if (await RNFS.exists(filePath)) {
-          await RNFS.unlink(filePath);
-        }
-      } catch (cleanupErr) {
-        console.error('Failed to clean up unverified model file:', cleanupErr);
-      }
-      const errorState = createErrorState(
-        err instanceof Error ? err : new Error(String(err)),
-        'download',
-        'huggingface',
-        {modelId: model.id, reason: 'verification'},
-      );
-      runInAction(() => {
-        model.progress = 0;
-        model.isDownloaded = false;
-        this.downloadError = errorState;
-      });
-      return false;
-    } finally {
-      runInAction(() => {
-        this.verifyingModelIds = this.verifyingModelIds.filter(
-          id => id !== model.id,
-        );
-      });
-    }
-  };
+  // ── B19 (phase-4 4a): implementation lives in downloadStore since batch
+  // 19 (verification family — doc comment moved verbatim with it).
+  verifyDownloadedModel = async (model: Model): Promise<boolean> =>
+    downloadStore.verifyDownloadedModel(model);
+
 
   /**
    * Reactive list of in-flight downloads. Each entry carries the Model object
@@ -994,123 +920,13 @@ export class ModelStore {
   removeModelFromList = (model: Model): boolean =>
     catalogStore.removeModelFromList(model);
 
+  // ── B19 (phase-4 4a): implementation lives in downloadStore since batch 19
+  // (117-line composite: file delete + list removal + context release +
+  // orphan check + stale draft clear; cross-domain dispatches on the facade).
   deleteModel = async (model: Model) => {
-    // id should work as well, as long as we are differentiating between models by origin.
-    const modelIndex = this.models.findIndex(
-      m => m.id === model.id && m.origin === model.origin,
-    );
-    if (modelIndex === -1) {
-      return;
-    }
-    const _model = this.models[modelIndex];
-
-    // Special handling for projection models
-    if (_model.modelType === ModelType.PROJECTION) {
-      const canDeleteResult = this.canDeleteProjectionModel(_model.id);
-      if (!canDeleteResult.canDelete) {
-        throw new Error(
-          canDeleteResult.reason || 'Cannot delete projection model',
-        );
-      }
-
-      // Disable vision for dependent models when their projection model is deleted
-      if (
-        canDeleteResult.dependentModels &&
-        canDeleteResult.dependentModels.length > 0
-      ) {
-        // Use Promise.allSettled to handle potential errors gracefully
-        await Promise.allSettled(
-          canDeleteResult.dependentModels.map(dependentModel =>
-            this.setModelVisionEnabled(dependentModel.id, false),
-          ),
-        );
-      }
-    }
-
-    // Store all projection model IDs that this LLM could use
-    const projectionModelIds: string[] = [];
-    if (_model.supportsMultimodal) {
-      // Add the default projection model
-      if (_model.defaultProjectionModel) {
-        projectionModelIds.push(_model.defaultProjectionModel);
-      }
-      // Add all compatible projection models (in case user downloaded additional ones)
-      if (_model.compatibleProjectionModels) {
-        _model.compatibleProjectionModels.forEach(id => {
-          if (!projectionModelIds.includes(id)) {
-            projectionModelIds.push(id);
-          }
-        });
-      }
-    }
-
-    const filePath = await this.getModelFullPath(_model);
-    if (_model.isLocal || _model.origin === ModelOrigin.LOCAL) {
-      // Local models are always removed from the list, when the file is deleted.
-
-      // Check if we need to release context (if this model is currently active)
-      const needsContextRelease = this.activeModelId === _model.id;
-
-      // Remove model from list first
-      runInAction(() => {
-        this.models.splice(modelIndex, 1);
-      });
-
-      // Release context if needed - this will handle all state cleanup
-      if (needsContextRelease) {
-        await this.releaseContext(true); // Clear active model and all related state
-      }
-
-      // Delete the file from internal storage
-      try {
-        await RNFS.unlink(filePath);
-      } catch (err) {
-        console.error('Failed to delete local model file:', err);
-      }
-    } else {
-      // Non-local models are not removed from the list, when the file is deleted.
-      logger.debug('deleting: ', filePath);
-
-      try {
-        if (filePath) {
-          await RNFS.unlink(filePath);
-
-          // Check if we need to release context (if this model is currently active)
-          const needsContextRelease = this.activeModelId === _model.id;
-
-          // Update model state first
-          runInAction(() => {
-            _model.progress = 0;
-            _model.isDownloaded = false; // Mark as not downloaded after successful deletion
-          });
-
-          // Release context if needed - this will handle all state cleanup
-          if (needsContextRelease) {
-            await this.releaseContext(true); // Clear active model and all related state
-          }
-
-          //logger.debug('models: ', this.models);
-        } else {
-          console.error("Failed to delete, file doesn't exist: ", filePath);
-        }
-        this.refreshDownloadStatuses();
-      } catch (err) {
-        console.error('Failed to delete:', err);
-      }
-    }
-
-    // After deleting an LLM, check if any of its projection models have become orphaned
-    if (
-      projectionModelIds.length > 0 &&
-      _model.modelType !== ModelType.PROJECTION
-    ) {
-      await this.cleanupOrphanedProjectionModels(projectionModelIds);
-    }
-
-    if (this.contextInitParams.selectedDraftModelId === _model.id) {
-      this.setSelectedDraftModel(undefined);
-    }
+    await downloadStore.deleteModel(model);
   };
+
 
   /**
    * Fetch and persist GGUF metadata for a downloaded model
@@ -1269,6 +1085,9 @@ export class ModelStore {
     }
   };
 
+  // ── B19 (phase-4 4a): implementation lives in downloadStore since batch 19
+  // (HF entry composite: addHFModel catalog dispatch + vision/projection
+  // options + checkSpaceAndDownload kick-off via the ج28 facade shape).
   downloadHFModel = async (
     hfModel: HuggingFaceModel,
     modelFile: ModelFile,
@@ -1277,59 +1096,9 @@ export class ModelStore {
       projectionModelId?: string; // User-selected projection model
     },
   ) => {
-    try {
-      const newModel = await this.addHFModel(hfModel, modelFile);
-      if (!newModel) {
-        throw new Error('Failed to add model to store');
-      }
-
-      // Set vision preference based on user choice
-      if (newModel.supportsMultimodal && options?.enableVision !== undefined) {
-        this.setModelVisionEnabled(newModel.id, options.enableVision);
-        // runInAction(() => {
-        //   newModel.visionEnabled = options.enableVision;
-        // });
-      }
-
-      // Override default projection model with user selection if provided
-      if (newModel.supportsMultimodal && options?.projectionModelId) {
-        // Validate that selected projection model exists in repository
-        const mmprojFiles = getMmprojFiles(hfModel.siblings || []);
-        const selectedExists = mmprojFiles.some(
-          file =>
-            `${hfModel.id}/${file.rfilename}` === options.projectionModelId,
-        );
-
-        if (selectedExists) {
-          runInAction(() => {
-            newModel.defaultProjectionModel = options.projectionModelId;
-          });
-        } else {
-          console.warn(
-            'Selected projection model not found in repository, using auto-determined default',
-          );
-        }
-      }
-
-      // Wait a bit to ensure the projection model is added to the store
-      // This is needed because addHFModel adds mmproj models asynchronously
-      await new Promise(resolve => setTimeout(resolve, 200));
-
-      // Use the centralized download method which handles mmproj automatically
-      this.checkSpaceAndDownload(newModel.id);
-
-      // The error handling is now done in the downloadManager callbacks
-    } catch (error) {
-      // Only handle errors related to the initial setup before the download starts
-      console.error('Failed to set up HF model download:', error);
-      Alert.alert(
-        uiStore.l10n.errors.downloadSetupFailedTitle,
-        t(uiStore.l10n.errors.downloadSetupFailedMessage, {
-          message: (error as Error).message,
-        }),
-      );
-    }
+    await downloadStore.downloadHFModel(hfModel, modelFile, options);
   };
+
 
   /**
    * Adds a new HF model to the models list, only if it doesn't exist yet.

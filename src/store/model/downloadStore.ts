@@ -6,13 +6,23 @@ import type {ModelStore} from '../ModelStore';
 // compile-time drift guard. Revisit at Phase 4 dissolution.
 import {modelStore, uiStore, hfStore, modelHubStore} from '../';
 import {observable, runInAction} from 'mobx';
+import {Alert} from 'react-native';
 import * as RNFS from '@dr.pogodin/react-native-fs';
 import type {Model} from '../../utils/types';
-import {ModelOrigin, ModelType} from '../../utils/types';
+import {
+  ModelOrigin,
+  ModelType,
+} from '../../utils/types';
+import type {HuggingFaceModel, ModelFile} from '../../utils/types';
 import type {ErrorState} from '../../utils/errors';
 import {createErrorState} from '../../utils/errors';
-import {inferRepoFromModelId} from '../../utils';
+import {
+  getMmprojFiles,
+  getSHA256Hash,
+  inferRepoFromModelId,
+} from '../../utils';
 import {logger} from '../../utils/logger';
+import {t} from '../../locales';
 import {
   downloadManager,
   DownloadCancelledError,
@@ -176,8 +186,9 @@ export function mutationSync() {
 
         // Verification gate: the model only counts as installed after its
         // file passes the integrity checks (size + checksum when available).
-        // ج35b: verifyDownloadedModel is B19 — facade dispatch until then.
-        const verified = await modelStore.verifyDownloadedModel(model);
+        // B19: verifyDownloadedModel is real on THIS store — internal
+        // dispatch (ج35b died with the verification-family migration).
+        const verified = await downloadStore.verifyDownloadedModel(model);
         if (!verified) {
           return; // error state already surfaced by the gate
         }
@@ -611,10 +622,294 @@ export const downloadStore: DownloadStore = {
     });
   },
 
-  // ── pass-through methods (move in B19..B20 — untouched by B18) ──
-  verifyDownloadedModel: (...args) => modelStore.verifyDownloadedModel(...args),
-  deleteModel: (...args) => modelStore.deleteModel(...args),
-  downloadHFModel: (...args) => modelStore.downloadHFModel(...args),
+  // ── B19 (phase-4 4a): real implementations (verification + delete + HF
+  // entry). Cross-domain dispatches stay on the facade (ج32: catalog; ج28:
+  // override surface) — they die with their families at 4d/4e/B20.
+  /**
+   * Post-download verification gate.
+   *
+   * 1. File must exist at the expected path.
+   * 2. Size must match the HF LFS record within 0.1% (cheap, always run).
+   * 3. SHA-256 must match the LFS oid when the record exposes one and the
+   *    file is ≤ MAX_HASH_VERIFY_BYTES (hashing multi-GB files on-device is
+   *    slow and the native hasher is known to be unreliable on huge files —
+   *    above the threshold the size check is the honest verification).
+   *
+   * On failure the partial/corrupt file is deleted and a download error state
+   * with `reason: 'verification'` is surfaced so the user can re-download.
+   */
+  verifyDownloadedModel: async (model: Model): Promise<boolean> => {
+    const MAX_HASH_VERIFY_BYTES = 4 * 1024 * 1024 * 1024;
+    runInAction(() => {
+      verifyingModelIdsBox.set([
+        ...verifyingModelIdsBox.get(),
+        model.id,
+      ]);
+    });
+    try {
+      const filePath = await downloadStore.getModelFullPath(model);
+      if (!(await RNFS.exists(filePath))) {
+        throw new Error('Downloaded model file is missing');
+      }
+      const stat = await RNFS.stat(filePath);
+      const expectedSize = model.hfModelFile?.lfs?.size;
+      if (expectedSize && expectedSize > 0) {
+        const diffRatio = Math.abs(stat.size - expectedSize) / expectedSize;
+        if (diffRatio > 0.001) {
+          throw new Error(
+            `Model file size mismatch (${stat.size} vs ${expectedSize} bytes)`,
+          );
+        }
+      }
+      const expectedHash = model.hfModelFile?.lfs?.oid;
+      if (expectedHash && stat.size <= MAX_HASH_VERIFY_BYTES) {
+        const actualHash = await getSHA256Hash(filePath);
+        if (
+          actualHash &&
+          actualHash.toLowerCase() !== expectedHash.toLowerCase()
+        ) {
+          throw new Error('Model file checksum mismatch');
+        }
+      }
+      return true;
+    } catch (err) {
+      console.error('Model verification failed:', err);
+      // Remove the unusable file so the user can cleanly re-download.
+      try {
+        const filePath = await downloadStore.getModelFullPath(model);
+        if (await RNFS.exists(filePath)) {
+          await RNFS.unlink(filePath);
+        }
+      } catch (cleanupErr) {
+        console.error('Failed to clean up unverified model file:', cleanupErr);
+      }
+      const errorState = createErrorState(
+        err instanceof Error ? err : new Error(String(err)),
+        'download',
+        'huggingface',
+        {modelId: model.id, reason: 'verification'},
+      );
+      runInAction(() => {
+        model.progress = 0;
+        model.isDownloaded = false;
+        downloadErrorBox.set(errorState);
+      });
+      return false;
+    } finally {
+      runInAction(() => {
+        verifyingModelIdsBox.set(
+          verifyingModelIdsBox.get().filter(id => id !== model.id),
+        );
+      });
+    }
+  },
+
+  /**
+   * Deletes a model: removes the file, and for local models also removes the
+   * list entry; releases the context when the deleted model is the active
+   * one; orphans-check for projection models; clears a stale draft selection.
+   *
+   * Cross-domain dispatches stay on the facade at B19 (ج32: no static
+   * downloadStore→catalogStore import; runtime reads/writes ride the god's
+   * B8 accessors) — catalog re-homes at 4e, runtime at B22, B20 pair at B20.
+   */
+  deleteModel: async (model: Model) => {
+    // id should work as well, as long as we are differentiating between
+    // models by origin.
+    const modelIndex = modelStore.models.findIndex(
+      m => m.id === model.id && m.origin === model.origin,
+    );
+    if (modelIndex === -1) {
+      return;
+    }
+    const _model = modelStore.models[modelIndex];
+
+    // Special handling for projection models
+    if (_model.modelType === ModelType.PROJECTION) {
+      const canDeleteResult = modelStore.canDeleteProjectionModel(_model.id);
+      if (!canDeleteResult.canDelete) {
+        throw new Error(
+          canDeleteResult.reason || 'Cannot delete projection model',
+        );
+      }
+
+      // Disable vision for dependent models when their projection model is
+      // deleted
+      if (
+        canDeleteResult.dependentModels &&
+        canDeleteResult.dependentModels.length > 0
+      ) {
+        // Use Promise.allSettled to handle potential errors gracefully
+        await Promise.allSettled(
+          canDeleteResult.dependentModels.map(dependentModel =>
+            modelStore.setModelVisionEnabled(dependentModel.id, false),
+          ),
+        );
+      }
+    }
+
+    // Store all projection model IDs that this LLM could use
+    const projectionModelIds: string[] = [];
+    if (_model.supportsMultimodal) {
+      // Add the default projection model
+      if (_model.defaultProjectionModel) {
+        projectionModelIds.push(_model.defaultProjectionModel);
+      }
+      // Add all compatible projection models (in case user downloaded
+      // additional ones)
+      if (_model.compatibleProjectionModels) {
+        _model.compatibleProjectionModels.forEach(id => {
+          if (!projectionModelIds.includes(id)) {
+            projectionModelIds.push(id);
+          }
+        });
+      }
+    }
+
+    const filePath = await downloadStore.getModelFullPath(_model);
+    if (_model.isLocal || _model.origin === ModelOrigin.LOCAL) {
+      // Local models are always removed from the list, when the file is
+      // deleted.
+
+      // Check if we need to release context (if this model is currently
+      // active)
+      const needsContextRelease = modelStore.activeModelId === _model.id;
+
+      // Remove model from list first
+      runInAction(() => {
+        modelStore.models.splice(modelIndex, 1);
+      });
+
+      // Release context if needed - this will handle all state cleanup
+      if (needsContextRelease) {
+        await modelStore.releaseContext(true); // Clear active model and all related state
+      }
+
+      // Delete the file from internal storage
+      try {
+        await RNFS.unlink(filePath);
+      } catch (err) {
+        console.error('Failed to delete local model file:', err);
+      }
+    } else {
+      // Non-local models are not removed from the list, when the file is
+      // deleted.
+      logger.debug('deleting: ', filePath);
+
+      try {
+        if (filePath) {
+          await RNFS.unlink(filePath);
+
+          // Check if we need to release context (if this model is currently
+          // active)
+          const needsContextRelease = modelStore.activeModelId === _model.id;
+
+          // Update model state first
+          runInAction(() => {
+            _model.progress = 0;
+            _model.isDownloaded = false; // Mark as not downloaded after successful deletion
+          });
+
+          // Release context if needed - this will handle all state cleanup
+          if (needsContextRelease) {
+            await modelStore.releaseContext(true); // Clear active model and all related state
+          }
+        } else {
+          console.error("Failed to delete, file doesn't exist: ", filePath);
+        }
+        downloadStore.refreshDownloadStatuses();
+      } catch (err) {
+        console.error('Failed to delete:', err);
+      }
+    }
+
+    // After deleting an LLM, check if any of its projection models have
+    // become orphaned
+    if (
+      projectionModelIds.length > 0 &&
+      _model.modelType !== ModelType.PROJECTION
+    ) {
+      await modelStore.cleanupOrphanedProjectionModels(projectionModelIds);
+    }
+
+    if (modelStore.contextInitParams.selectedDraftModelId === _model.id) {
+      modelStore.setSelectedDraftModel(undefined);
+    }
+  },
+
+  /**
+   * HF entry point (composite — it calls addHFModel internally; the
+   * composition is the store's business, callers of downloadHFModel are
+   * download-domain callers).
+   *
+   * Catalog dispatches (addHFModel / setModelVisionEnabled) stay on the
+   * facade (ج32 — dies with the facade family at 4e); the download kick-off
+   * keeps the ج28 facade shape (override surface — dies at 4d).
+   */
+  downloadHFModel: async (
+    hfModel: HuggingFaceModel,
+    modelFile: ModelFile,
+    options?: {
+      enableVision?: boolean;
+      projectionModelId?: string; // User-selected projection model
+    },
+  ) => {
+    try {
+      const newModel = await modelStore.addHFModel(hfModel, modelFile);
+      if (!newModel) {
+        throw new Error('Failed to add model to store');
+      }
+
+      // Set vision preference based on user choice
+      if (newModel.supportsMultimodal && options?.enableVision !== undefined) {
+        modelStore.setModelVisionEnabled(newModel.id, options.enableVision);
+      }
+
+      // Override default projection model with user selection if provided
+      if (newModel.supportsMultimodal && options?.projectionModelId) {
+        // Validate that selected projection model exists in repository
+        const mmprojFiles = getMmprojFiles(hfModel.siblings || []);
+        const selectedExists = mmprojFiles.some(
+          file =>
+            `${hfModel.id}/${file.rfilename}` === options.projectionModelId,
+        );
+
+        if (selectedExists) {
+          runInAction(() => {
+            newModel.defaultProjectionModel = options.projectionModelId;
+          });
+        } else {
+          console.warn(
+            'Selected projection model not found in repository, using auto-determined default',
+          );
+        }
+      }
+
+      // Wait a bit to ensure the projection model is added to the store
+      // This is needed because addHFModel adds mmproj models asynchronously
+      await new Promise(resolve => setTimeout(resolve, 200));
+
+      // Use the centralized download method which handles mmproj automatically
+      // ج28 shape: dispatched through the god facade — ModelStore.test
+      // overrides god members and the facade is the dispatch surface those
+      // overrides live on. Dies at 4d with the facade family.
+      modelStore.checkSpaceAndDownload(newModel.id);
+
+      // The error handling is now done in the downloadManager callbacks
+    } catch (error) {
+      // Only handle errors related to the initial setup before the download
+      // starts
+      console.error('Failed to set up HF model download:', error);
+      Alert.alert(
+        uiStore.l10n.errors.downloadSetupFailedTitle,
+        t(uiStore.l10n.errors.downloadSetupFailedMessage, {
+          message: (error as Error).message,
+        }),
+      );
+    }
+  },
+
+  // ── pass-through methods (move in B20 — untouched by B19) ──
   getProjectionModelStatus: (...args) =>
     modelStore.getProjectionModelStatus(...args),
   canDeleteProjectionModel: (...args) =>
