@@ -24,6 +24,8 @@ import {
 } from '../../utils/types';
 import {resolveUseMmap} from '../../utils/memorySettings';
 import {resolveDeviceSelection} from '../../utils/deviceSelection';
+import {createDefaultContextInitParams} from '../../utils/contextInitParamsVersions';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   draftCacheDefaults,
   effectiveDraftModeOf,
@@ -108,36 +110,6 @@ import {
 // by exactly the 16 delegation lines this batch replaces.
 // The host stays NARROW (B1 shape): real members that are consumed during
 // render by migrated components read state through the store's own
-// pass-through getters / the barrel binding — which suites mock — never
-// through requireHost() (no constructor runs in barrel-mocked suites).
-// The host is for WRITE paths only until B22 retires it (extraction-plan §8).
-export interface RuntimeHost {
-  contextInitParams: ContextInitParams;
-}
-
-let runtimeHost: RuntimeHost | null = null;
-
-/**
- * DI injection point (ModelStore constructor). Must run before any parameter
- * setter; a setter called without a host is a lifecycle bug and throws.
- */
-export function injectRuntimeHost(host: RuntimeHost): void {
-  runtimeHost = host;
-}
-
-function requireHost(): RuntimeHost {
-  if (!runtimeHost) {
-    throw new Error(
-      'runtimeStore: host not injected — ModelStore must call injectRuntimeHost before store members run',
-    );
-  }
-  return runtimeHost;
-}
-
-// B1 setters keep their narrow alias — their bodies stay byte-identical.
-function hostInitParams(): RuntimeHost {
-  return requireHost();
-}
 
 /**
  * B21 — GPU initialization probe (moved off the god object's private).
@@ -151,15 +123,14 @@ export async function initializeGpuSettings() {
 
   if (
     !gpuCapabilities.isSupported &&
-    hostInitParams().contextInitParams.no_gpu_devices === false
+    contextInitParamsBox.get().no_gpu_devices === false
   ) {
     runInAction(() => {
-      const host = hostInitParams();
-      host.contextInitParams = {
-        ...host.contextInitParams,
+      contextInitParamsBox.set({
+        ...contextInitParamsBox.get(),
         no_gpu_devices: true,
         n_gpu_layers: 0,
-      };
+      });
     });
   }
   // If GPU is supported, the persisted value will be used
@@ -282,6 +253,43 @@ function clearAutoReleaseFlags() {
 // Settings UI reads it; MobX tracks the same box through both paths, so
 // observer re-render semantics are unchanged. Writes wrap in runInAction
 // like every B1 setter.
+// ── B22 (phase-4 4a): host retirement — WRITE paths are host-free (the B1
+// setters + B21 GPU family write the boxes natively). The READ guards
+// (ج22) survive until 4e as scheduled — they need a liveness signal to
+// distinguish production (constructor ran → the boxes ARE the state) from
+// barrel-mocked suites (no constructor → the mock singleton owns the state).
+// markRuntimeLive() is called from the exact constructor position
+// injectRuntimeHost(this) occupied; the RuntimeHost interface and the
+// contextInitParams write-access injection are gone for good.
+let runtimeLive = false;
+
+/**
+ * Liveness mark (ModelStore constructor). Read-guard signal only — the
+ * write paths never consult it. Dies at 4e together with the guards.
+ */
+export function markRuntimeLive(): void {
+  runtimeLive = true;
+}
+
+// ── B22 (phase-4 4a): real state — the persisted runtime keys move here ──
+// contextInitParams was the god object's field (ModelStore persist list);
+// availableMemoryCeiling / largestSuccessfulLoad were reassigned to B22 by
+// the B9 record (their state rides the runtimeStore:v2 root — rehydration
+// clause honored via importLegacyRuntimeState, B10 pattern). Transient:
+// activeContextSettings (never persisted).
+const contextInitParamsBox = observable.box<ContextInitParams>(
+  createDefaultContextInitParams(),
+);
+const activeContextSettingsBox = observable.box<
+  ContextInitParams | undefined
+>(undefined);
+const availableMemoryCeilingBox = observable.box<number | undefined>(
+  undefined,
+);
+const largestSuccessfulLoadBox = observable.box<number | undefined>(
+  undefined,
+);
+
 const maxThreads = observable.box<number>(4);
 
 // MIN_CONTEXT_SIZE: pure constant — no host, no state. Exported at module
@@ -882,24 +890,61 @@ function reprobeRemoteCapsIfUnknown() {
     .catch(() => {});
 }
 
+/**
+ * One-time legacy import (extraction-plan §3, part 2 — runtime half, B22).
+ * Reads the god object's legacy `ModelStore` persistence key and seeds the
+ * three persisted runtime keys. Leaves the key untouched — cleanup is
+ * deferred to 4e. Fail-safe + idempotent: see importLegacyCatalogState (B10)
+ * for the full ordering argument (v2 root hydration FIRST, then this
+ * import).
+ */
+export async function importLegacyRuntimeState(): Promise<void> {
+  try {
+    const raw = await AsyncStorage.getItem('ModelStore');
+    if (!raw) {
+      return; // fresh install, or legacy payload already migrated to v2 keys
+    }
+    const legacy = JSON.parse(raw) as Record<string, unknown>;
+    runInAction(() => {
+      if (typeof legacy.contextInitParams !== 'undefined') {
+        contextInitParamsBox.set(
+          legacy.contextInitParams as ContextInitParams,
+        );
+      }
+      if (typeof legacy.availableMemoryCeiling !== 'undefined') {
+        availableMemoryCeilingBox.set(
+          legacy.availableMemoryCeiling as number | undefined,
+        );
+      }
+      if (typeof legacy.largestSuccessfulLoad !== 'undefined') {
+        largestSuccessfulLoadBox.set(
+          legacy.largestSuccessfulLoad as number | undefined,
+        );
+      }
+    });
+  } catch {
+    // Fail-safe (§3.2): corrupt/unreadable legacy key — retry next launch.
+    // Deliberately silent: this must never abort the constructor chain.
+  }
+}
+
 export const runtimeStore: RuntimeStore = {
   // ── B3 (phase-4 4a): real implementation (was god-object computed) ──
   // Reads the list through the barrel binding (mocked in suites, the real
   // god object in production) — identical data to the pre-move body; the
   // read flips to catalogStore when B10 relocates the list.
   get activeModel(): Model | undefined {
-    // Derivation over the singleton's lists — the god object's own computed
-    // logic. Optional chains + the host-guarded tail are mock-compat:
-    // partial barrel suites stub `activeModel` as DATA with no lists; there
-    // (and only there — runtimeHost is null because no constructor ran)
-    // this returns exactly what the old pass-through returned. In production
-    // both lists always exist and the host is injected, so the fallback is
-    // unreachable and cannot recurse through the delegating getter. The
-    // fallback dies at 4c (sub-store mocks) / B10 (list relocation).
+    // Derivation over the catalog's lists (owner reads — ج1 dead, §8
+    // registry). The host-guarded tail is mock-compat (ج22, dies 4e):
+    // partial barrel suites stub `activeModel` as DATA with no lists —
+    // there (and only there — runtimeLive is false because no constructor
+    // ran) this returns exactly what the old pass-through returned; the
+    // liveness mark makes the fallback unreachable in production, so it
+    // cannot re-enter the god's delegating computed (MobX cycle).
     const derived =
       catalogStore.models?.find(model => model.id === this.activeModelId) ||
-      catalogStore.remoteModels?.find(model => model.id === this.activeModelId); // B10: owner reads (ج1 dead — §8 registry)
-    if (derived || runtimeHost) {
+      catalogStore.remoteModels?.find(model => model.id === this.activeModelId);
+    if (derived || runtimeLive) {
       return derived;
     }
     return modelStore.activeModel;
@@ -912,7 +957,7 @@ export const runtimeStore: RuntimeStore = {
   // binding — exactly the ج3 shape on activeModel. Dies with it: per-suite
   // as 4b/4c migrate the callers to sub-store mocks, force-killed at 4e.
   get activeModelId() {
-    return runtimeHost ? activeModelIdBox.get() : modelStore.activeModelId;
+    return runtimeLive ? activeModelIdBox.get() : modelStore.activeModelId;
   },
   set activeModelId(value: string | undefined) {
     runInAction(() => {
@@ -920,7 +965,7 @@ export const runtimeStore: RuntimeStore = {
     });
   },
   get context() {
-    return runtimeHost ? contextBox.get() : modelStore.context;
+    return runtimeLive ? contextBox.get() : modelStore.context;
   },
   set context(value: LlamaContext | undefined) {
     runInAction(() => {
@@ -939,7 +984,7 @@ export const runtimeStore: RuntimeStore = {
     return undefined;
   },
   get engine() {
-    return runtimeHost ? engineBox.get() : modelStore.engine;
+    return runtimeLive ? engineBox.get() : modelStore.engine;
   },
   set engine(value: CompletionEngine | undefined) {
     runInAction(() => {
@@ -947,9 +992,7 @@ export const runtimeStore: RuntimeStore = {
     });
   },
   get isContextLoading() {
-    return runtimeHost
-      ? isContextLoadingBox.get()
-      : modelStore.isContextLoading;
+    return runtimeLive ? isContextLoadingBox.get() : modelStore.isContextLoading;
   },
   set isContextLoading(value: boolean) {
     runInAction(() => {
@@ -957,18 +1000,31 @@ export const runtimeStore: RuntimeStore = {
     });
   },
   get loadingModel() {
-    return runtimeHost ? loadingModelBox.get() : modelStore.loadingModel;
+    return runtimeLive ? loadingModelBox.get() : modelStore.loadingModel;
   },
   set loadingModel(value: Model | undefined) {
     runInAction(() => {
       loadingModelBox.set(value);
     });
   },
+  // ── B22 (phase-4 4a): real state (boxes above) — contextInitParams is
+  // PERSISTED via the runtimeStore:v2 root (wired from the god constructor
+  // chain, ج25 — dies 4e); the barrel reads died with the move (ج19 tail).
   get contextInitParams() {
-    return modelStore.contextInitParams;
+    return contextInitParamsBox.get();
+  },
+  set contextInitParams(value: ContextInitParams) {
+    runInAction(() => {
+      contextInitParamsBox.set(value);
+    });
   },
   get activeContextSettings() {
-    return modelStore.activeContextSettings;
+    return activeContextSettingsBox.get();
+  },
+  set activeContextSettings(value: ContextInitParams | undefined) {
+    runInAction(() => {
+      activeContextSettingsBox.set(value);
+    });
   },
   // ── B2 (phase-4 4a): real state (box above) + pure constant (module) ──
   get max_threads() {
@@ -983,9 +1039,7 @@ export const runtimeStore: RuntimeStore = {
     return MIN_CONTEXT_SIZE;
   },
   get isMultimodalActive() {
-    return runtimeHost
-      ? isMultimodalActiveBox.get()
-      : modelStore.isMultimodalActive;
+    return runtimeLive ? isMultimodalActiveBox.get() : modelStore.isMultimodalActive;
   },
   set isMultimodalActive(value: boolean) {
     runInAction(() => {
@@ -993,9 +1047,7 @@ export const runtimeStore: RuntimeStore = {
     });
   },
   get activeProjectionModelId() {
-    return runtimeHost
-      ? activeProjectionModelIdBox.get()
-      : modelStore.activeProjectionModelId;
+    return runtimeLive ? activeProjectionModelIdBox.get() : modelStore.activeProjectionModelId;
   },
   set activeProjectionModelId(value: string | undefined) {
     runInAction(() => {
@@ -1036,11 +1088,25 @@ export const runtimeStore: RuntimeStore = {
       modelLoadErrorBox.set(value);
     });
   },
+  // ── B22 (phase-4 4a): real state (boxes above; PERSISTED via
+  // runtimeStore:v2 — the B9 reassignment lands here). Writable pairs: the
+  // ج13-tail / ج20 barrel writes inside this store become native this.-
+  // shaped box writes.
   get availableMemoryCeiling() {
-    return modelStore.availableMemoryCeiling;
+    return availableMemoryCeilingBox.get();
+  },
+  set availableMemoryCeiling(value: number | undefined) {
+    runInAction(() => {
+      availableMemoryCeilingBox.set(value);
+    });
   },
   get largestSuccessfulLoad() {
-    return modelStore.largestSuccessfulLoad;
+    return largestSuccessfulLoadBox.get();
+  },
+  set largestSuccessfulLoad(value: number | undefined) {
+    runInAction(() => {
+      largestSuccessfulLoadBox.set(value);
+    });
   },
   get useAutoRelease() {
     return modelStore.useAutoRelease;
@@ -1066,9 +1132,7 @@ export const runtimeStore: RuntimeStore = {
     });
   },
   get activeRemoteBinding() {
-    return runtimeHost
-      ? activeRemoteBindingBox.get()
-      : modelStore.activeRemoteBinding;
+    return runtimeLive ? activeRemoteBindingBox.get() : modelStore.activeRemoteBinding;
   },
   set activeRemoteBinding(value: RemoteSessionBinding | undefined) {
     runInAction(() => {
@@ -1427,209 +1491,190 @@ export const runtimeStore: RuntimeStore = {
   },
   setNThreads: (n_threads: number) => {
     runInAction(() => {
-      const host = hostInitParams();
-      host.contextInitParams = {
-        ...host.contextInitParams,
+      contextInitParamsBox.set({
+        ...contextInitParamsBox.get(),
         n_threads,
-      };
+      });
     });
   },
 
   setCacheTypeK: (cache_type: CacheType) => {
     runInAction(() => {
-      const host = hostInitParams();
       // Only allow changing cache type if flash attention is enabled
       // Support both old flash_attn and new flash_attn_type
       const flashAttnEnabled =
-        host.contextInitParams.flash_attn ||
-        (host.contextInitParams.flash_attn_type &&
-          host.contextInitParams.flash_attn_type !== 'off');
+        contextInitParamsBox.get().flash_attn ||
+        (contextInitParamsBox.get().flash_attn_type &&
+          contextInitParamsBox.get().flash_attn_type !== 'off');
 
       if (flashAttnEnabled) {
-        host.contextInitParams = {
-          ...host.contextInitParams,
+        contextInitParamsBox.set({
+          ...contextInitParamsBox.get(),
           cache_type_k: cache_type,
-        };
+        });
       }
     });
   },
 
   setCacheTypeV: (cache_type: CacheType) => {
     runInAction(() => {
-      const host = hostInitParams();
       // Only allow changing cache type if flash attention is enabled
       // Support both old flash_attn and new flash_attn_type
       const flashAttnEnabled =
-        host.contextInitParams.flash_attn ||
-        (host.contextInitParams.flash_attn_type &&
-          host.contextInitParams.flash_attn_type !== 'off');
+        contextInitParamsBox.get().flash_attn ||
+        (contextInitParamsBox.get().flash_attn_type &&
+          contextInitParamsBox.get().flash_attn_type !== 'off');
 
       if (flashAttnEnabled) {
-        host.contextInitParams = {
-          ...host.contextInitParams,
+        contextInitParamsBox.set({
+          ...contextInitParamsBox.get(),
           cache_type_v: cache_type,
-        };
+        });
       }
     });
   },
 
   setNBatch: (n_batch: number) => {
     runInAction(() => {
-      const host = hostInitParams();
-      host.contextInitParams = {
-        ...host.contextInitParams,
+      contextInitParamsBox.set({
+        ...contextInitParamsBox.get(),
         n_batch,
-      };
+      });
     });
   },
 
   setNUBatch: (n_ubatch: number) => {
     runInAction(() => {
-      const host = hostInitParams();
-      host.contextInitParams = {
-        ...host.contextInitParams,
+      contextInitParamsBox.set({
+        ...contextInitParamsBox.get(),
         n_ubatch,
-      };
+      });
     });
   },
 
   setNContext: (n_ctx: number) => {
     runInAction(() => {
-      const host = hostInitParams();
-      host.contextInitParams = {
-        ...host.contextInitParams,
+      contextInitParamsBox.set({
+        ...contextInitParamsBox.get(),
         n_ctx,
-      };
+      });
     });
   },
 
   setNGPULayers: (n_gpu_layers: number) => {
     runInAction(() => {
-      const host = hostInitParams();
-      host.contextInitParams = {
-        ...host.contextInitParams,
+      contextInitParamsBox.set({
+        ...contextInitParamsBox.get(),
         n_gpu_layers,
-      };
+      });
     });
   },
 
   setImageMaxTokens: (image_max_tokens: number) => {
     runInAction(() => {
-      const host = hostInitParams();
-      host.contextInitParams = {
-        ...host.contextInitParams,
+      contextInitParamsBox.set({
+        ...contextInitParamsBox.get(),
         image_max_tokens,
-      };
+      });
     });
   },
 
   setUseMlock: (use_mlock: boolean) => {
     runInAction(() => {
-      const host = hostInitParams();
-      host.contextInitParams = {
-        ...host.contextInitParams,
+      contextInitParamsBox.set({
+        ...contextInitParamsBox.get(),
         use_mlock,
-      };
+      });
     });
   },
 
   setUseMmap: (use_mmap: 'true' | 'false' | 'smart') => {
     runInAction(() => {
-      const host = hostInitParams();
-      host.contextInitParams = {
-        ...host.contextInitParams,
+      contextInitParamsBox.set({
+        ...contextInitParamsBox.get(),
         use_mmap,
-      };
+      });
     });
   },
 
   setNoExtraBufts: (no_extra_bufts: boolean) => {
     runInAction(() => {
-      const host = hostInitParams();
-      host.contextInitParams = {
-        ...host.contextInitParams,
+      contextInitParamsBox.set({
+        ...contextInitParamsBox.get(),
         no_extra_bufts,
-      };
+      });
     });
   },
 
   setSpeculativeEnabled: (speculativeEnabled: boolean) => {
     runInAction(() => {
-      const host = hostInitParams();
-      host.contextInitParams = {
-        ...host.contextInitParams,
+      contextInitParamsBox.set({
+        ...contextInitParamsBox.get(),
         speculativeEnabled,
-      };
+      });
     });
   },
 
   setSelectedDraftModel: (selectedDraftModelId?: string) => {
     runInAction(() => {
-      const host = hostInitParams();
-      host.contextInitParams = {
-        ...host.contextInitParams,
+      contextInitParamsBox.set({
+        ...contextInitParamsBox.get(),
         selectedDraftModelId,
-      };
+      });
     });
   },
 
   setSpecDraftNGpuLayers: (spec_draft_n_gpu_layers: number) => {
     runInAction(() => {
-      const host = hostInitParams();
-      host.contextInitParams = {
-        ...host.contextInitParams,
+      contextInitParamsBox.set({
+        ...contextInitParamsBox.get(),
         spec_draft_n_gpu_layers,
-      };
+      });
     });
   },
 
   setSpecDraftCacheTypeK: (spec_draft_cache_type_k: CacheType) => {
     runInAction(() => {
-      const host = hostInitParams();
-      host.contextInitParams = {
-        ...host.contextInitParams,
+      contextInitParamsBox.set({
+        ...contextInitParamsBox.get(),
         spec_draft_cache_type_k,
-      };
+      });
     });
   },
 
   setSpecDraftCacheTypeV: (spec_draft_cache_type_v: CacheType) => {
     runInAction(() => {
-      const host = hostInitParams();
-      host.contextInitParams = {
-        ...host.contextInitParams,
+      contextInitParamsBox.set({
+        ...contextInitParamsBox.get(),
         spec_draft_cache_type_v,
-      };
+      });
     });
   },
   // ── B21 (phase-4 4a): real implementations (GPU family — host-write
   // shape, the B1 pattern; the host retires at B22 with runtimeStore:v2).
   setNoGpuDevices: (no_gpu_devices: boolean) => {
     runInAction(() => {
-      const host = hostInitParams();
-      host.contextInitParams = {
-        ...host.contextInitParams,
+      contextInitParamsBox.set({
+        ...contextInitParamsBox.get(),
         no_gpu_devices,
-      };
+      });
     });
   },
 
   // New v2.0 setters
   setDevices: (devices: string[] | undefined) => {
     runInAction(() => {
-      const host = hostInitParams();
-      host.contextInitParams = {
-        ...host.contextInitParams,
+      contextInitParamsBox.set({
+        ...contextInitParamsBox.get(),
         devices,
-      };
+      });
     });
   },
 
   setFlashAttnType: (flash_attn_type: 'auto' | 'on' | 'off') => {
     runInAction(() => {
-      const host = hostInitParams();
-      host.contextInitParams = {
-        ...host.contextInitParams,
+      contextInitParamsBox.set({
+        ...contextInitParamsBox.get(),
         flash_attn_type,
         // Reset cache types to F16 if flash attention is disabled
         ...(flash_attn_type !== 'off'
@@ -1638,27 +1683,25 @@ export const runtimeStore: RuntimeStore = {
               cache_type_k: CacheType.F16,
               cache_type_v: CacheType.F16,
             }),
-      };
+      });
     });
   },
 
   setKvUnified: (kv_unified: boolean) => {
     runInAction(() => {
-      const host = hostInitParams();
-      host.contextInitParams = {
-        ...host.contextInitParams,
+      contextInitParamsBox.set({
+        ...contextInitParamsBox.get(),
         kv_unified,
-      };
+      });
     });
   },
 
   setNParallel: (n_parallel: number) => {
     runInAction(() => {
-      const host = hostInitParams();
-      host.contextInitParams = {
-        ...host.contextInitParams,
+      contextInitParamsBox.set({
+        ...contextInitParamsBox.get(),
         n_parallel,
-      };
+      });
     });
   },
   // ── B6 (phase-4 4a): completion surface — real implementations. Method

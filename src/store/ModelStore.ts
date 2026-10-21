@@ -44,10 +44,6 @@ import {
 } from '../utils/types';
 
 import {ErrorState, createErrorState} from '../utils/errors';
-import {
-  getRecommendedThreadCount,
-  getCpuCoreCount,
-} from '../utils/deviceCapabilities';
 import {ReasoningCapability} from '../utils/reasoningCapability';
 import type {ModelCapabilityView} from '../utils/modelCaps';
 import {t} from '../locales';
@@ -60,7 +56,10 @@ import {logger} from '../utils/logger';
 // from here would close a madge cycle (gate: pinned at 42). Until 4a
 // relocates members, the three domain slots receive `this` — the god object
 // IS the sole domain implementation.
-import {initializeModelSystem} from './model/bootstrap';
+import {
+  initializeModelSystem,
+  initializeThreadCount as initializeThreadCountOf,
+} from './model/bootstrap';
 // B10 (phase-4 4a): the nine catalog state members physically live in
 // catalogStore (five persist keys as the catalogStore:v2 root's fields,
 // four derived views computed there). These are verbatim reverse
@@ -94,12 +93,13 @@ import {
 import {
   MIN_CONTEXT_SIZE,
   clearCompletionPromiseOf,
-  injectRuntimeHost,
   registerCompletionPromiseOf,
   releaseContextInternal,
   resolveDraftConfig as resolveDraftConfigOf,
   runtimeStore,
   initializeGpuSettings as initializeGpuSettingsOf,
+  importLegacyRuntimeState,
+  markRuntimeLive,
 } from './model/runtimeStore';
 
 // B10: createRemoteModel moved verbatim to catalogStore.ts with its only
@@ -166,8 +166,16 @@ export class ModelStore {
     runtimeStore.loadingModel = value;
   }
 
-  // Unified context initialization parameters
-  contextInitParams: ContextInitParams = createDefaultContextInitParams();
+  // ── B22 (phase-4 4a): real state lives in runtimeStore (box). PERSISTED
+  // via the `runtimeStore:v2` root since B22 — the rehydration clause is
+  // honored by importLegacyRuntimeState (B10/B20 pattern; legacy-key
+  // cleanup deferred to 4e).
+  get contextInitParams(): ContextInitParams {
+    return runtimeStore.contextInitParams;
+  }
+  set contextInitParams(value: ContextInitParams) {
+    runtimeStore.contextInitParams = value;
+  }
 
   // ── B2 (phase-4 4a): real state lives in runtimeStore (observable box) ──
   // initializeThreadCount (below) writes through the setter; the Settings UI
@@ -203,8 +211,14 @@ export class ModelStore {
     runtimeStore.activeProjectionModelId = value;
   }
 
-  // Track initialization settings for the active context
-  activeContextSettings: ContextInitParams | undefined = undefined;
+  // ── B22 (phase-4 4a): real state lives in runtimeStore (box; transient —
+  // never persisted).
+  get activeContextSettings(): ContextInitParams | undefined {
+    return runtimeStore.activeContextSettings;
+  }
+  set activeContextSettings(value: ContextInitParams | undefined) {
+    runtimeStore.activeContextSettings = value;
+  }
 
   // ── B8 (phase-4 4a): real state lives in runtimeStore (boxes; not persisted) ──
   get context(): LlamaContext | undefined {
@@ -312,11 +326,24 @@ export class ModelStore {
     runtimeStore.modelLoadError = value;
   }
 
-  // Memory calibration variables (persisted)
-  // Updated at app startup and after model release
-  availableMemoryCeiling: number | undefined = undefined;
-  // Updated after successful model load using GGUF estimator
-  largestSuccessfulLoad: number | undefined = undefined;
+  // ── B22 (phase-4 4a): real state lives in runtimeStore (boxes). The B9
+  // reassignment lands: PERSISTED via the `runtimeStore:v2` root
+  // (importLegacyRuntimeState seeds them from the old ModelStore payload).
+  // Memory calibration variables — updated at app startup and after model
+  // release (availableMemoryCeiling), and after successful model load using
+  // the GGUF estimator (largestSuccessfulLoad).
+  get availableMemoryCeiling(): number | undefined {
+    return runtimeStore.availableMemoryCeiling;
+  }
+  set availableMemoryCeiling(value: number | undefined) {
+    runtimeStore.availableMemoryCeiling = value;
+  }
+  get largestSuccessfulLoad(): number | undefined {
+    return runtimeStore.largestSuccessfulLoad;
+  }
+  set largestSuccessfulLoad(value: number | undefined) {
+    runtimeStore.largestSuccessfulLoad = value;
+  }
   // ── B20 (phase-4 4a): real state lives in downloadStore (box). PERSISTED
   // via the `downloadStore:v2` root since B20 — the rehydration clause is
   // honored: the one-time legacy import seeds it from the old ModelStore
@@ -338,9 +365,11 @@ export class ModelStore {
       // B15: the PM field moved to catalogStore (module singleton) — the
       // annotation entry retired with it.
     });
-    // B1 (phase-4 4a): host injection for runtimeStore's physical setters —
-    // must precede any setter call (persist.then / UI). See runtimeStore.ts.
-    injectRuntimeHost(this);
+    // B22 (phase-4 4a): the B1 RuntimeHost WRITE injection retired — the
+    // physical setters write the runtimeStore boxes natively. The liveness
+    // mark (same constructor position injectRuntimeHost(this) occupied)
+    // feeds only the ج22 read guards, which die at 4e as scheduled.
+    markRuntimeLive();
     // B10 (phase-4 4a): catalog host marker — precedes the v2 root hydration
     // (see catalogStore.ts; guards ج23/ج24 read boxes only in production).
     injectCatalogHost({host: this});
@@ -348,11 +377,8 @@ export class ModelStore {
       name: 'ModelStore',
       properties: [
         'useAutoRelease',
-        'contextInitParams',
         'wasAutoReleased',
         'lastAutoReleasedModelId',
-        'availableMemoryCeiling',
-        'largestSuccessfulLoad',
       ],
       storage: AsyncStorage,
     }).then(async () => {
@@ -385,12 +411,27 @@ export class ModelStore {
         storage: AsyncStorage,
       });
       await importLegacyDownloadState();
+      // B22 (phase-4 4a): runtimeStore:v2 persist root — contextInitParams +
+      // availableMemoryCeiling + largestSuccessfulLoad moved physically to
+      // runtimeStore (§3-أ + the B9 reassignment). Ordering mirrors the
+      // catalog/download roots: v2 hydration first, legacy seed second.
+      // ج25 — wiring dies 4e.
+      await makePersistable(runtimeStore, {
+        name: 'runtimeStore:v2',
+        properties: [
+          'contextInitParams',
+          'availableMemoryCeiling',
+          'largestSuccessfulLoad',
+        ],
+        storage: AsyncStorage,
+      });
+      await importLegacyRuntimeState();
       await initializeModelSystem({
         catalog: this,
         download: this,
         runtime: this,
         initializeStore: () => this.initializeStore(),
-        initializeThreadCount: () => this.initializeThreadCount(),
+        initializeThreadCount: initializeThreadCountOf,
       });
     });
 
@@ -402,32 +443,13 @@ export class ModelStore {
     mutationSync();
   }
 
+  // ── B22 (phase-4 4a): implementation lives in bootstrap (exported,
+  // native runtimeStore writes). PRIVATE reverse delegate keeps the
+  // god-object surface identical for the ModelStore.test.ts drives
+  // (`as any`, B1/B13 pattern); the DI wiring passes the bootstrap export
+  // directly.
   private async initializeThreadCount() {
-    try {
-      const cores = await getCpuCoreCount();
-      runInAction(() => {
-        this.max_threads = cores;
-      });
-
-      // Only set recommended thread count on first launch.
-      // After hydration, this.version is set if the store was previously persisted.
-      // On fresh install, this.version is undefined (default).
-      const isFirstLaunch = this.version === undefined;
-      if (isFirstLaunch) {
-        const threads = await getRecommendedThreadCount();
-        runInAction(() => {
-          this.contextInitParams = {
-            ...this.contextInitParams,
-            n_threads: threads,
-          };
-        });
-      }
-    } catch (error) {
-      console.error('Failed to initialize thread count:', error);
-      runInAction(() => {
-        this.max_threads = 4;
-      });
-    }
+    await initializeThreadCountOf();
   }
 
   // ── B1 (phase-4 4a): implementations live in runtimeStore since batch 1 ──

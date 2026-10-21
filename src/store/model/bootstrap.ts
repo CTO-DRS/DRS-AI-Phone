@@ -35,8 +35,57 @@
  *
  * Callers (bootstrap.test.ts, condition 1) arrive at 4d when the six facade
  * tests transform here. R0 adds no suite.
+ *
+ * B22 deviation (announced, §8 row "بعد B22"): the zero-import promise was
+ * R0-scoped. B22 exports initializeThreadCount FROM this module per the
+ * plan — it writes runtimeStore.max_threads + contextInitParams.n_threads
+ * natively (the host retired in the same batch) and reads
+ * catalogStore.version for the first-launch heuristic (the god's `version`
+ * field is catalogStore state since B10). The two direct file imports close
+ * a bounded madge step — measured and announced per batch (A/B protocol).
  * ══════════════════════════════════════════════════════════════════════════
  */
+
+import {catalogStore} from './catalogStore';
+import {runtimeStore} from './runtimeStore';
+import {runInAction} from 'mobx';
+import {
+  getCpuCoreCount,
+  getRecommendedThreadCount,
+} from '../../utils/deviceCapabilities';
+
+/**
+ * B22 — device thread-count initialization (moved verbatim off the god
+ * object's private). Writes runtimeStore state natively; the first-launch
+ * heuristic reads catalogStore.version (catalog state since B10).
+ */
+export async function initializeThreadCount() {
+  try {
+    const cores = await getCpuCoreCount();
+    runInAction(() => {
+      runtimeStore.max_threads = cores;
+    });
+
+    // Only set recommended thread count on first launch.
+    // After hydration, catalogStore.version is set if the store was
+    // previously persisted. On fresh install it is undefined (default).
+    const isFirstLaunch = catalogStore.version === undefined;
+    if (isFirstLaunch) {
+      const threads = await getRecommendedThreadCount();
+      runInAction(() => {
+        runtimeStore.contextInitParams = {
+          ...runtimeStore.contextInitParams,
+          n_threads: threads,
+        };
+      });
+    }
+  } catch (error) {
+    console.error('Failed to initialize thread count:', error);
+    runInAction(() => {
+      runtimeStore.max_threads = 4;
+    });
+  }
+}
 
 export interface ModelSystemDeps<Catalog, Download, Runtime> {
   /** Catalog domain slot (model list, search/filter, HF discovery, metadata). */

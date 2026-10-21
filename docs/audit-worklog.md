@@ -534,3 +534,26 @@ setNParallel) تنفيذاً حقيقياً على runtimeStore بنمط B1 حر
 F16 عند الإيقاف حرفياً.
 الأرقام: 312/4989+2/310 ✓؛ عدادات 1732/1731/**1842**/**110** (−5: موت
 pass-throughs الخمسة)؛ madge 46=46 (A/B)؛ tsc 0؛ ModelStore.ts 1,437 → **1,421**.
+
+## B22 (phase-4 4a) — المفاتيح المحفوظة → runtimeStore؛ جذر runtimeStore:v2؛ تقاعد الـhost؛ initializeThreadCount → bootstrap
+
+**الحالة الحقيقية**: contextInitParams (محفوظ) + availableMemoryCeiling +
+largestSuccessfulLoad (إعادة إسناد B9) صناديقاً حقيقية على runtimeStore مع
+أزواج كتابة؛ activeContextSettings صندوق عابر؛ قراءات البرميل الأربع ماتت
+(ذيل ج19/ج13/ج20) — الكتّاب الداخليون (releaseContextInternal /
+proceedWithInitialization) صاروا كتابة native. **جذر `runtimeStore:v2`
+وُلد** (الخصائص الثلاث المحفوظة + importLegacyRuntimeState نمط B10 — الترطيب
+أولاً ثم البذرة)؛ قائمة persist الإله → 3 مفاتيح (عائلة auto-release تبقى
+حتى 4e). **تقاعد الـhost**: الواجهة RuntimeHost وinjectRuntimeHost
+وrequireHost/hostInitParams حُذفت — الـ24 كاتب Host (16 من B1 + 5 من B21 +
+initializeGpuSettings + الثنائي cache-type) صاروا كتابة native على الصناديق.
+**الحراس ج22 بقوا** بإشارة حيوية markRuntimeLive (نفس موضع الحقن بالضبط؛
+الكتابة لا تسألها) — محاولتَي قتلهم كسرتا مسارات القراءة المباشرة في 11
+suite تمزح الـbarrel + حلقة MobX في activeModel (الدليل: ChatEmptyPlaceholder
++facade.test) — موتهم 4e كما هو مجدول. **initializeThreadCount** صار تصديراً
+من bootstrap (كتابة native + قراءة catalogStore.version) — مندوب خاص B1/B13
+على الإله لسطح الاختبار؛ wiring DI يمرر التصدير مباشرة. انحراف معلن: bootstrap
+أضف استيرادين (runtimeStore/catalogStore) — وعد صفر-الاستيراد كان نطاق R0.
+الأرقام: 312/4989+2/310 ✓؛ عدادات 1732/1731/**1838**/**106**؛ madge 46=46
+(A/B عبر stash)؛ tsc 0؛ ModelStore.ts 1,396 → **1,418** (الأزواج+الوثائق
+أضافت أكثر مما حذف الأعضاء).
