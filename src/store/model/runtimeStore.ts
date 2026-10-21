@@ -45,7 +45,10 @@ import {LocalCompletionEngine} from '../../api/completionEngines';
 import {hasEnoughMemory} from '../../hooks/useMemoryCheck';
 import {createContextInitParams} from '../../utils/contextInitParamsVersions';
 import {getModelMemoryRequirement} from '../../utils/memoryEstimator';
-import {isHighEndDevice} from '../../utils/deviceCapabilities';
+import {
+  checkGpuSupport,
+  isHighEndDevice,
+} from '../../utils/deviceCapabilities';
 
 /**
  * runtimeStore — Phase-1 scaffold (fix 4, stage 1 of 4).
@@ -134,6 +137,32 @@ function requireHost(): RuntimeHost {
 // B1 setters keep their narrow alias — their bodies stay byte-identical.
 function hostInitParams(): RuntimeHost {
   return requireHost();
+}
+
+/**
+ * B21 — GPU initialization probe (moved off the god object's private).
+ * Exported for the god's PRIVATE reverse delegate (B1/B13 pattern — the
+ * ModelStore.test.ts surface stays identical; the initializeStore call site
+ * keeps routing through the delegate until B23). Writes via the host
+ * (B1 shape): if GPU is unsupported but currently enabled, disable it.
+ */
+export async function initializeGpuSettings() {
+  const gpuCapabilities = await checkGpuSupport();
+
+  if (
+    !gpuCapabilities.isSupported &&
+    hostInitParams().contextInitParams.no_gpu_devices === false
+  ) {
+    runInAction(() => {
+      const host = hostInitParams();
+      host.contextInitParams = {
+        ...host.contextInitParams,
+        no_gpu_devices: true,
+        n_gpu_layers: 0,
+      };
+    });
+  }
+  // If GPU is supported, the persisted value will be used
 }
 
 // capabilityEnv moved verbatim (a PRIVATE member of the god object — it is
@@ -1573,11 +1602,65 @@ export const runtimeStore: RuntimeStore = {
       };
     });
   },
-  setNoGpuDevices: (...args) => modelStore.setNoGpuDevices(...args),
-  setDevices: (...args) => modelStore.setDevices(...args),
-  setFlashAttnType: (...args) => modelStore.setFlashAttnType(...args),
-  setKvUnified: (...args) => modelStore.setKvUnified(...args),
-  setNParallel: (...args) => modelStore.setNParallel(...args),
+  // ── B21 (phase-4 4a): real implementations (GPU family — host-write
+  // shape, the B1 pattern; the host retires at B22 with runtimeStore:v2).
+  setNoGpuDevices: (no_gpu_devices: boolean) => {
+    runInAction(() => {
+      const host = hostInitParams();
+      host.contextInitParams = {
+        ...host.contextInitParams,
+        no_gpu_devices,
+      };
+    });
+  },
+
+  // New v2.0 setters
+  setDevices: (devices: string[] | undefined) => {
+    runInAction(() => {
+      const host = hostInitParams();
+      host.contextInitParams = {
+        ...host.contextInitParams,
+        devices,
+      };
+    });
+  },
+
+  setFlashAttnType: (flash_attn_type: 'auto' | 'on' | 'off') => {
+    runInAction(() => {
+      const host = hostInitParams();
+      host.contextInitParams = {
+        ...host.contextInitParams,
+        flash_attn_type,
+        // Reset cache types to F16 if flash attention is disabled
+        ...(flash_attn_type !== 'off'
+          ? {}
+          : {
+              cache_type_k: CacheType.F16,
+              cache_type_v: CacheType.F16,
+            }),
+      };
+    });
+  },
+
+  setKvUnified: (kv_unified: boolean) => {
+    runInAction(() => {
+      const host = hostInitParams();
+      host.contextInitParams = {
+        ...host.contextInitParams,
+        kv_unified,
+      };
+    });
+  },
+
+  setNParallel: (n_parallel: number) => {
+    runInAction(() => {
+      const host = hostInitParams();
+      host.contextInitParams = {
+        ...host.contextInitParams,
+        n_parallel,
+      };
+    });
+  },
   // ── B6 (phase-4 4a): completion surface — real implementations. Method
   // shorthand: `this` must bind to this store (an arrow property's lexical
   // `this` is the module scope — it would crash at runtime).

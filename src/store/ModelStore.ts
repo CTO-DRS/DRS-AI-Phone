@@ -18,7 +18,6 @@ import {fetchModelFilesDetails} from '../api/hf';
 
 import {uiStore} from '.';
 import {serverStore} from './ServerStore';
-import {checkGpuSupport} from '../utils/deviceCapabilities';
 import {getOriginalModelName} from '../utils/formatters';
 import type {OnboardingAssistantModelEntry} from './onboarding/onboardingAssistants';
 
@@ -100,6 +99,7 @@ import {
   releaseContextInternal,
   resolveDraftConfig as resolveDraftConfigOf,
   runtimeStore,
+  initializeGpuSettings as initializeGpuSettingsOf,
 } from './model/runtimeStore';
 
 // B10: createRemoteModel moved verbatim to catalogStore.ts with its only
@@ -1089,76 +1089,35 @@ export class ModelStore {
   resetModelName = (modelId: string): void =>
     catalogStore.resetModelName(modelId);
 
+  // ── B21 (phase-4 4a): implementation lives in runtimeStore (module
+  // function — host-write shape); private reverse delegate keeps the god
+  // surface identical for the initializeStore call site until B23
+  // (B1/B13 pattern).
   private async initializeGpuSettings() {
-    const gpuCapabilities = await checkGpuSupport();
-
-    // If GPU is not supported but currently enabled, disable it
-    if (
-      !gpuCapabilities.isSupported &&
-      this.contextInitParams.no_gpu_devices === false
-    ) {
-      runInAction(() => {
-        this.contextInitParams = {
-          ...this.contextInitParams,
-          no_gpu_devices: true,
-          n_gpu_layers: 0,
-        };
-      });
-    }
-    // If GPU is supported, the persisted value will be used
+    await initializeGpuSettingsOf();
   }
 
+  // ── B21 (phase-4 4a): implementations live in runtimeStore since batch 21
+  // (host-write shape — the B1 family; the host retires at B22).
   setNoGpuDevices = (no_gpu_devices: boolean) => {
-    runInAction(() => {
-      this.contextInitParams = {
-        ...this.contextInitParams,
-        no_gpu_devices,
-      };
-    });
+    runtimeStore.setNoGpuDevices(no_gpu_devices);
   };
 
   // New v2.0 setters
   setDevices = (devices: string[] | undefined) => {
-    runInAction(() => {
-      this.contextInitParams = {
-        ...this.contextInitParams,
-        devices,
-      };
-    });
+    runtimeStore.setDevices(devices);
   };
 
   setFlashAttnType = (flash_attn_type: 'auto' | 'on' | 'off') => {
-    runInAction(() => {
-      this.contextInitParams = {
-        ...this.contextInitParams,
-        flash_attn_type,
-        // Reset cache types to F16 if flash attention is disabled
-        ...(flash_attn_type !== 'off'
-          ? {}
-          : {
-              cache_type_k: CacheType.F16,
-              cache_type_v: CacheType.F16,
-            }),
-      };
-    });
+    runtimeStore.setFlashAttnType(flash_attn_type);
   };
 
   setKvUnified = (kv_unified: boolean) => {
-    runInAction(() => {
-      this.contextInitParams = {
-        ...this.contextInitParams,
-        kv_unified,
-      };
-    });
+    runtimeStore.setKvUnified(kv_unified);
   };
 
   setNParallel = (n_parallel: number) => {
-    runInAction(() => {
-      this.contextInitParams = {
-        ...this.contextInitParams,
-        n_parallel,
-      };
-    });
+    runtimeStore.setNParallel(n_parallel);
   };
 
   // ── B4 (phase-4 4a): implementation lives in runtimeStore since batch 4 ──

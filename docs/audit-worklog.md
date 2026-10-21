@@ -521,3 +521,16 @@ projectionManager.ts) فشلت لسبب الجلسة ذاته — أُبطلت. 
 الأرقام: 312/4989+2/310 ✓؛ عدادات 1732/1731/**1847**/**115** (+12 معلنة:
 إرسالات الرباعية على downloadStore حتى 4e)؛ madge 46=46 (A/B عبر stash)؛
 tsc 0؛ ModelStore.ts 1,502 → **1,437**.
+
+## B21 (phase-4 4a) — عائلة GPU → runtimeStore (شكل الكتابة عبر الـhost — عائلة B1)
+
+الخماسية العامة (setNoGpuDevices/setDevices/setFlashAttnType/setKvUnified/
+setNParallel) تنفيذاً حقيقياً على runtimeStore بنمط B1 حرفياً
+(hostInitParams().contextInitParams = {...spread}) — كانت pass-throughs
+معلنة في RUNTIME_MEMBERS منذ المقدمة. **initializeGpuSettings** (خاصة)
+صارت دالة موديولية مُصدَّرة على runtimeStore + مندوب عكسي خاص على الإله
+(B1/B13 — سطح as any ثابت؛ مستدعى initializeStore يستمر عبر المندوب حتى B23).
+استيراد checkGpuSupport انتقل (ميت على الإله). الفلاش-أتِن يحفظ فخ إعادة
+F16 عند الإيقاف حرفياً.
+الأرقام: 312/4989+2/310 ✓؛ عدادات 1732/1731/**1842**/**110** (−5: موت
+pass-throughs الخمسة)؛ madge 46=46 (A/B)؛ tsc 0؛ ModelStore.ts 1,437 → **1,421**.
