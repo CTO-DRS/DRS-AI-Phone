@@ -498,3 +498,26 @@ checkSpaceAndDownload — 4d) والداخلي getModelFullPath/refreshDownloadS
 عودةً للوراء).
 الأرقام: 312/4989+2/310 ✓؛ عدادات 1732/1731/**1835**/**103**؛ madge 46=46 (A/B
 عبر stash)؛ tsc 0؛ ModelStore.ts 1,733 → **1,502**.
+
+## B20 (phase-4 4a) — عائلة projection-تنزيل → downloadStore؛ اكتمال cleanupQueueBridge؛ ج35 يموت
+
+**الحالة الحقيقية هاجرت**: pendingProjectionCleanupIds (صندوق + إعادة ترطيب —
+المفتاح محفوظ! جذر `downloadStore:v2` وُلد هنا مع الاستيراد الإرثي لمرة واحدة
+نمط B10، بند إعادة الترطيب مُنَّذ: الترطيب أولاً ثم البذرة — تنظيف المفتاح
+القديم B22/4e) + drainPendingProjectionCleanup (تنفيذ حقيقي: deleteModel
+وgetDownloadedLLMs داخلي/عبر الواجهة) + الزوج الخاص
+(_downloadProjectionModelIfNeeded/_downloadDraftModelIfNeeded دوال موديول-
+محلية، موت ج35: cast GodDownloadB20 حُذف) + مندوبان خاصان عكسيان على الإله
+(B1/B13 — ModelStore.test يقود الخاص عبر `as any` والسطح لازم يبقى).
+**الرباعية + المفرد بقي إرسالاً عبر الواجهة** — محاولة جعلها حقيقية عبر
+استيراد PM كسرت 4 suites: مصانع requireActual تُرجع كائنات مُضيّقة
+(`{catalogStore: ...}`) تُسقط تصدير projectionManager، وحلقة
+catalogStore↔PM-المستقبل تكسر المصانع نفسها (درس ج33 حرفياً: «حلقة الترتيب-
+التحميل تكسر مصانع requireActual»). محاولة وسيطة (موديول محايد
+projectionManager.ts) فشلت لسبب الجلسة ذاته — أُبطلت. موت الرباعية = 4e مع
+عائلة الواجهة؛ محركها PM عبر الإله بلا تغيير.
+**درس ج33 صار مقيّداً للحاوية**: ممنوع استيراد projectionManager (أو أي تصدير
+غير المرصود في المصانع) من catalogStore داخل downloadStore.
+الأرقام: 312/4989+2/310 ✓؛ عدادات 1732/1731/**1847**/**115** (+12 معلنة:
+إرسالات الرباعية على downloadStore حتى 4e)؛ madge 46=46 (A/B عبر stash)؛
+tsc 0؛ ModelStore.ts 1,502 → **1,437**.

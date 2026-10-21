@@ -18,7 +18,6 @@ import {fetchModelFilesDetails} from '../api/hf';
 
 import {uiStore} from '.';
 import {serverStore} from './ServerStore';
-import {resolveDraftModelId} from './draftResolution';
 import {checkGpuSupport} from '../utils/deviceCapabilities';
 import {getOriginalModelName} from '../utils/formatters';
 import type {OnboardingAssistantModelEntry} from './onboarding/onboardingAssistants';
@@ -82,7 +81,13 @@ import {
 // physically lives in downloadStore — reverse delegations and writable
 // accessor pairs below (B10 shape). Direct import: the god→download edge is
 // the declared madge step toward the B16 ledger value.
-import {downloadStore, mutationSync} from './model/downloadStore';
+import {
+  downloadStore,
+  mutationSync,
+  importLegacyDownloadState,
+  _downloadDraftModelIfNeeded,
+  _downloadProjectionModelIfNeeded,
+} from './model/downloadStore';
 // B1 (phase-4 4a): the 16 context-parameter setters physically live in
 // runtimeStore; these are verbatim reverse delegations (each dies at 4b
 // when its call sites migrate). The host injection below gives runtimeStore
@@ -312,9 +317,16 @@ export class ModelStore {
   availableMemoryCeiling: number | undefined = undefined;
   // Updated after successful model load using GGUF estimator
   largestSuccessfulLoad: number | undefined = undefined;
-  // Projection models orphaned by the vision heal, awaiting deletion; drained
-  // every launch (see drainPendingProjectionCleanup).
-  pendingProjectionCleanupIds: string[] = [];
+  // ── B20 (phase-4 4a): real state lives in downloadStore (box). PERSISTED
+  // via the `downloadStore:v2` root since B20 — the rehydration clause is
+  // honored: the one-time legacy import seeds it from the old ModelStore
+  // payload (B10 pattern; legacy-key cleanup deferred to B22/4e).
+  get pendingProjectionCleanupIds(): string[] {
+    return downloadStore.pendingProjectionCleanupIds;
+  }
+  set pendingProjectionCleanupIds(value: string[]) {
+    downloadStore.pendingProjectionCleanupIds = value;
+  }
 
   constructor() {
     makeAutoObservable(this, {
@@ -341,7 +353,6 @@ export class ModelStore {
         'lastAutoReleasedModelId',
         'availableMemoryCeiling',
         'largestSuccessfulLoad',
-        'pendingProjectionCleanupIds',
       ],
       storage: AsyncStorage,
     }).then(async () => {
@@ -363,6 +374,17 @@ export class ModelStore {
         storage: AsyncStorage,
       });
       await importLegacyCatalogState();
+      // B20 (phase-4 4a): downloadStore:v2 persist root — the projection-
+      // cleanup queue key moved physically to downloadStore (§3 pattern);
+      // the one-time legacy import distributes the old all-in-one payload.
+      // Ordering mirrors the catalog root: v2 hydration first, legacy seed
+      // second. ج25 — wiring dies 4e.
+      await makePersistable(downloadStore, {
+        name: 'downloadStore:v2',
+        properties: ['pendingProjectionCleanupIds'],
+        storage: AsyncStorage,
+      });
+      await importLegacyDownloadState();
       await initializeModelSystem({
         catalog: this,
         download: this,
@@ -536,39 +558,10 @@ export class ModelStore {
    * file forever. An id whose projection model has downloaded dependents is
    * legitimately shared — dropped, never deleted.
    */
+  // ── B20 (phase-4 4a): implementation lives in downloadStore since batch
+  // 20 (projection-cleanup family; the queue box is downloadStore:v2 state).
   drainPendingProjectionCleanup = async () => {
-    if (this.pendingProjectionCleanupIds.length === 0) {
-      return;
-    }
-    const remaining: string[] = [];
-    for (const id of this.pendingProjectionCleanupIds) {
-      const projection = this.models.find(m => m.id === id);
-      if (!projection || projection.modelType !== ModelType.PROJECTION) {
-        continue;
-      }
-      if (this.getDownloadedLLMsUsingProjectionModel(id).length > 0) {
-        continue;
-      }
-      if (downloadManager.isDownloading(id)) {
-        remaining.push(id);
-        continue;
-      }
-      if (!projection.isDownloaded) {
-        continue;
-      }
-      try {
-        await this.deleteModel(projection);
-        if (this.models.find(m => m.id === id)?.isDownloaded) {
-          remaining.push(id);
-        }
-      } catch (error) {
-        console.warn('[ModelStore] orphaned projection cleanup failed:', error);
-        remaining.push(id);
-      }
-    }
-    runInAction(() => {
-      this.pendingProjectionCleanupIds = remaining;
-    });
+    await downloadStore.drainPendingProjectionCleanup();
   };
 
   initializeStore = async () => {
@@ -780,85 +773,16 @@ export class ModelStore {
   };
 
 
-  /**
-   * Private method to handle projection model download for vision models
-   * @param model The vision model that needs its projection model downloaded
-   */
+  // ── B20 (phase-4 4a): the pair is module-local on downloadStore — these
+  // PRIVATE reverse delegates keep the god-object surface identical for the
+  // ModelStore.test.ts drives (`as any`, B1/B13 pattern); they die with the
+  // facade family at 4d/4e.
   private _downloadProjectionModelIfNeeded = async (model: Model) => {
-    // Only auto-download for vision models that aren't projection models themselves
-    if (
-      !model.supportsMultimodal ||
-      !model.defaultProjectionModel ||
-      model.modelType === ModelType.PROJECTION
-    ) {
-      return;
-    }
-
-    // Check if vision is enabled for this model (uses getModelVisionPreference for proper default handling)
-    if (!this.getModelVisionPreference(model)) {
-      logger.debug(
-        'Vision disabled for model, skipping projection model download:',
-        model.id,
-      );
-      return;
-    }
-
-    const projModelId = model.defaultProjectionModel;
-    const projModel = this.models.find(m => m.id === projModelId);
-
-    if (
-      projModel &&
-      !projModel.isDownloaded &&
-      !downloadManager.isDownloading(projModelId)
-    ) {
-      logger.debug('Auto-downloading projection model for vision model:', {
-        llm: model.id,
-        projection: projModelId,
-      });
-
-      try {
-        // Download the projection model
-        await this.checkSpaceAndDownload(projModelId);
-      } catch (error) {
-        console.error('Failed to auto-download projection model:', error);
-        // Don't re-throw - projection model download failure shouldn't fail the main model download
-        // The user can manually download the projection model later if needed
-      }
-    }
+    await _downloadProjectionModelIfNeeded(model);
   };
 
   private _downloadDraftModelIfNeeded = async (model: Model) => {
-    const draftModelId = resolveDraftModelId(
-      model,
-      this.contextInitParams.selectedDraftModelId,
-    );
-    if (
-      !draftModelId ||
-      model.modelType === ModelType.DRAFT ||
-      !this.contextInitParams.speculativeEnabled
-    ) {
-      return;
-    }
-
-    const draftModel = this.models.find(m => m.id === draftModelId);
-
-    if (
-      draftModel &&
-      !draftModel.isDownloaded &&
-      !downloadManager.isDownloading(draftModelId)
-    ) {
-      logger.debug('Auto-downloading draft model for speculative target:', {
-        target: model.id,
-        draft: draftModelId,
-      });
-
-      try {
-        await this.checkSpaceAndDownload(draftModelId);
-      } catch (error) {
-        console.error('Failed to auto-download draft model:', error);
-        // Don't re-throw - draft download failure shouldn't fail the target download.
-      }
-    }
+    await _downloadDraftModelIfNeeded(model);
   };
 
   // ── B17 (phase-4 4a): implementations live in downloadStore since batch 17.
@@ -1393,6 +1317,10 @@ export class ModelStore {
   getLLMsUsingProjectionModel = (projectionModelId: string): Model[] =>
     catalogStore.getLLMsUsingProjectionModel(projectionModelId);
 
+  // ── B20: the quartet stays a PM delegation on the god — downloadStore's
+  // B20 surface dispatches these THROUGH the facade (importing the PM
+  // singleton into downloadStore breaks the requireActual factories /
+  // load-order: ج32/ج33 family). Dies with the facade family at 4e.
   getDownloadedLLMsUsingProjectionModel = (
     projectionModelId: string,
   ): Model[] =>
@@ -1416,10 +1344,17 @@ export class ModelStore {
   ): {canDelete: boolean; reason?: string; dependentModels?: Model[]} =>
     projectionManager.canDeleteProjectionModel(projectionModelId);
 
-  cleanupOrphanedProjectionModel = async (projectionModelId: string) =>
+  // Explicit Promise<void>: the PM-side inference chain passes through the
+  // un-annotated manager methods + the facade-routed host (ج33) — an
+  // annotation here breaks the circular return inference (TS7024).
+  cleanupOrphanedProjectionModel = async (
+    projectionModelId: string,
+  ): Promise<void> =>
     projectionManager.cleanupOrphanedProjectionModel(projectionModelId);
 
-  cleanupOrphanedProjectionModels = async (projectionModelIds: string[]) =>
+  cleanupOrphanedProjectionModels = async (
+    projectionModelIds: string[],
+  ): Promise<void> =>
     projectionManager.cleanupOrphanedProjectionModels(projectionModelIds);
 
   // ── B14 (phase-4 4a): implementations live in catalogStore since batch 14
