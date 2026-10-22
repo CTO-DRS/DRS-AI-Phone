@@ -164,18 +164,31 @@ android {
             buildConfigField "boolean", "USE_DEV_SUPPORT", "true"
         }
         release {
-            // Audit SEC-03: a release APK silently signed with the public
-            // debug keystore is indistinguishable, from the install side, from
-            // a properly signed one — fail closed instead:
-            //   - CI paths provision their own keystore before assembling
-            //     (ci.yml / e2e-tests.yml create a dummy one with matching
-            //     APP_RELEASE_* env; android-apk.yml decodes the real one),
-            //     so they never reach the fallback.
-            //   - The release workflow's fastlane lane injects the real
-            //     keystore at execution time via android.injected.signing.*,
-            //     which is visible here as a project property.
-            //   - Local release builds must opt in explicitly:
-            //     ./gradlew assembleProdRelease -PallowDebugSignedRelease=true
+            // Caution! In production, you need to generate your own keystore file.
+            // see https://reactnative.dev/docs/signed-apk-android.
+            // Only use release signing config if credentials are available, otherwise use debug
+            //
+            // Audit SEC-03: a release APK silently signed with the public debug
+            // keystore is indistinguishable, from the install side, from a properly
+            // signed one. The configuration-time branches below only PICK a
+            // placeholder; the gradle.taskGraph guard at the end of this buildTypes
+            // block is what enforces fail-closed semantics for release ARTIFACT tasks
+            // (assemble/bundle/package ...Release, excluding the deliberately
+            // debug-signed ...ReleaseE2e variant):
+            //   1. credentials present (APP_RELEASE_STORE_PASSWORD +
+            //      APP_RELEASE_KEY_PASSWORD next to drsai-release-key.keystore —
+            //      ci.yml/e2e-tests.yml provision a dummy one, android-apk.yml
+            //      decodes the real one) -> release signing, as before;
+            //   2. fastlane-injected signing (android.injected.signing.* — the
+            //      release workflow's path) -> debug placeholder here, injection
+            //      replaces it with the real keystore at execution time;
+            //   3. explicit opt-in (-PallowDebugSignedRelease=true or
+            //      ALLOW_DEBUG_SIGNED_RELEASE=1) -> debug-signed with a loud
+            //      warning, for local experiments only;
+            //   4. otherwise -> debug placeholder SO THAT non-artifact tasks
+            //      (lint, unit tests, plain `gradle tasks`, and local debug dev
+            //      builds on a fresh clone with no keystore) still configure —
+            //      the guard below aborts any release artifact task instead.
             def allowDebugSignedRelease =
                 (project.findProperty('allowDebugSignedRelease')?.toString()?.toBoolean() ?: false) ||
                 (['1', 'true'].contains(System.getenv('ALLOW_DEBUG_SIGNED_RELEASE')?.toLowerCase()))
@@ -193,12 +206,10 @@ android {
                 signingConfig signingConfigs.debug
                 println 'Warning: Release signing credentials not found — building a DEBUG-SIGNED release (explicitly allowed).'
             } else {
-                throw new GradleException(
-                    'Release signing credentials not found. A release APK must not be silently signed ' +
-                    'with the public debug keystore (audit SEC-03). Provide APP_RELEASE_STORE_PASSWORD / ' +
-                    'APP_RELEASE_KEY_PASSWORD next to app/drsai-release-key.keystore, or opt in explicitly ' +
-                    'with -PallowDebugSignedRelease=true (or ALLOW_DEBUG_SIGNED_RELEASE=1).'
-                )
+                // No credentials and no opt-in: keep configuration valid for
+                // non-artifact tasks; the taskGraph guard below fails any
+                // release artifact task that would reach this branch.
+                signingConfig signingConfigs.debug
             }
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
@@ -216,6 +227,42 @@ android {
             debuggable true
             signingConfig signingConfigs.debug
             matchingFallbacks = ['release']
+        }
+    }
+
+    // SEC-03 (audit v1.41.0): a "release"-buildType artifact must never be
+    // silently signed with the public debug keystore (android/androiddebugkey)
+    // — such an APK installs anywhere but is trivially re-signable by anyone.
+    // Runs once the task graph is ready, BEFORE execution: if a true release
+    // artifact task is requested without release signing credentials and
+    // without the explicit opt-in (-PallowDebugSignedRelease=true /
+    // ALLOW_DEBUG_SIGNED_RELEASE=1), the build fails loudly instead of
+    // producing a debug-signed "release". Non-artifact tasks (lint, unit
+    // tests, local debug builds on a fresh clone) and the deliberately
+    // debug-signed releaseE2e variant are unaffected — configuration always
+    // succeeds, only the artifact task is aborted. AGP injected signing
+    // (fastlane's android.injected.signing.* in release.yml) counts as proper
+    // credentials: it replaces the signingConfig at execution time.
+    def sec03ReleaseSignable = signingConfigs.release.storeFile != null \
+        || project.hasProperty('android.injected.signing.store.file')
+    def sec03ExplicitOptIn =
+        (project.findProperty('allowDebugSignedRelease')?.toString()?.toBoolean() ?: false) \
+        || (['1', 'true'].contains(System.getenv('ALLOW_DEBUG_SIGNED_RELEASE')?.toLowerCase()))
+    gradle.taskGraph.whenReady { graph ->
+        def trueReleaseArtifactTask = graph.allTasks.any { task ->
+            (task.name.startsWith('assemble') || task.name.startsWith('bundle') \
+                || task.name.startsWith('package')) \
+                && task.name.contains('Release') \
+                && !task.name.contains('ReleaseE2e')
+        }
+        if (trueReleaseArtifactTask && !sec03ReleaseSignable && !sec03ExplicitOptIn) {
+            throw new GradleException(
+                'SEC-03: refusing to sign a release build with the debug keystore. ' +
+                'Provide APP_RELEASE_STORE_PASSWORD + APP_RELEASE_KEY_PASSWORD (with ' +
+                'android/app/drsai-release-key.keystore present), build via fastlane ' +
+                'injected signing (release.yml), or opt in explicitly with ' +
+                '-PallowDebugSignedRelease=true (or ALLOW_DEBUG_SIGNED_RELEASE=1) for ' +
+                'local experiments only — never ship such an artifact.')
         }
     }
 

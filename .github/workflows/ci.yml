@@ -26,7 +26,7 @@ jobs:
       ios_relevant: ${{ steps.check.outputs.ios_relevant }}
     steps:
       - name: Check out code
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           fetch-depth: 0
 
@@ -81,18 +81,26 @@ jobs:
     steps:
       # Step 1: Check out the repository
       - name: Check out code
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      # DEP-01 (audit v1.41.0): fail fast if any workflow / composite-action
+      # `uses:` reference is not pinned to a full commit SHA. Runs before
+      # dependency install so an unpinned reference never reaches a job that
+      # holds secrets. Keep the `# vX.Y.Z` comment on every pin so Dependabot
+      # can still open reviewable version bumps.
+      - name: Verify GitHub Actions are SHA-pinned (DEP-01)
+        run: bash scripts/verify-actions-pinned.sh
 
       # Cache node_modules
       - name: Cache node_modules
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830  # v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: node_modules
           key: ${{ runner.os }}-node-${{ hashFiles('yarn.lock') }}
 
       # Step 2: Set up Node.js environment
       - name: Set up Node.js
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020  # v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: '22.21.0'
           cache: 'yarn'
@@ -137,7 +145,7 @@ jobs:
       ORG_GRADLE_PROJECT_rnllamaBuildFromSource: 'true'
     steps:
       - name: Check out code
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
       # Must precede setup-node and setup-java: /opt/hostedtoolcache is where
       # those install. The Hexagon SDK adds ~3.1 GB on top of a from-source build.
@@ -149,14 +157,14 @@ jobs:
 
       # Set up Node.js environment
       - name: Set up Node.js
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020  # v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: '22.21.0'
           cache: 'yarn'
 
       # Cache node_modules
       - name: Cache node_modules
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830  # v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: node_modules
           key: ${{ runner.os }}-node-${{ hashFiles('yarn.lock') }}
@@ -177,13 +185,13 @@ jobs:
       # Keyed on the manifest as well as yarn.lock: the manifest decides the
       # variant set, so changing it must invalidate the configured build tree.
       - name: Cache llama.rn native build tree
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830  # v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: node_modules/llama.rn/android/.cxx
           key: ${{ runner.os }}-cxx-${{ hashFiles('yarn.lock', 'scripts/android-payload-manifest.json') }}
 
       - name: Set up JDK 17
-        uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3  # v4
+        uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3 # v4.9.1
         with:
           java-version: '17'
           distribution: 'temurin'
@@ -310,7 +318,7 @@ jobs:
       # uploads whether or not the check passed. The APK below does not.
       - name: Upload payload report
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: payload-report
           path: payload-report.txt
@@ -350,7 +358,7 @@ jobs:
           echo "OK: prod bundle contains zero automation markers."
 
       - name: Upload Android APK
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: android-release-apk
           path: android/app/build/outputs/apk/prod/release/app-prod-release.apk
@@ -366,18 +374,18 @@ jobs:
       NODE_OPTIONS: '--max-old-space-size=8192'
     steps:
       - name: Check out code
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
       # Set up Node.js environment
       - name: Set up Node.js
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020  # v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: '22.21.0'
           cache: 'yarn'
 
       # Cache node_modules
       - name: Cache node_modules
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830  # v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: node_modules
           key: ${{ runner.os }}-node-${{ hashFiles('yarn.lock') }}
@@ -464,7 +472,7 @@ jobs:
       # keying on the lockfile makes the ~3-6 min restore a cache hit unless
       # the Podfile actually changed.
       - name: Cache CocoaPods
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830  # v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: ios/Pods
           key: ${{ runner.os }}-pods-${{ hashFiles('ios/Podfile.lock', 'ios/Podfile') }}

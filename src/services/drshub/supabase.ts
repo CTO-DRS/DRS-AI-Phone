@@ -1,6 +1,7 @@
 import {createClient} from '@supabase/supabase-js';
 import {SUPABASE_URL, SUPABASE_ANON_KEY} from '@env';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import {keychainStorage} from './keychainStorage';
 
 // Check if Supabase is configured
 const isSupabaseConfigured = !!(SUPABASE_URL && SUPABASE_ANON_KEY);
@@ -9,7 +10,11 @@ const isSupabaseConfigured = !!(SUPABASE_URL && SUPABASE_ANON_KEY);
 export const supabase = isSupabaseConfigured
   ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
       auth: {
-        storage: AsyncStorage,
+        // SEC-07 (audit v1.41.0): the session (access + refresh tokens) is
+        // persisted through a react-native-keychain-backed adapter instead
+        // of plaintext AsyncStorage. Existing plaintext sessions are
+        // migrated and erased on first read — see keychainStorage.ts.
+        storage: keychainStorage,
         autoRefreshToken: true,
         persistSession: true,
         detectSessionInUrl: false,
