@@ -22,6 +22,11 @@ on:
         default: false
         type: boolean
 
+# Least privilege by default: jobs must declare exactly what they need.
+# build_android holds contents:write (version-bump commit push + GitHub
+# Release); build_ios only checks out the bumped ref and uploads artifacts.
+permissions: {}
+
 jobs:
   # Job 1: Version Bumping and Android Build
   build_android:
@@ -68,6 +73,11 @@ jobs:
         with:
           node-version: '22.21.0' # Use the specified Node.js version
           cache: 'yarn'
+
+      # Step 3b: Runner images ship whatever Yarn they happen to ship; pin to
+      # the version the lockfile is maintained with (package.json engines).
+      - name: Install Yarn (pinned)
+        run: npm install -g yarn@1.22.22
 
       # Step 4: Install dependencies using Yarn
       - name: Install dependencies
@@ -248,6 +258,8 @@ jobs:
     runs-on: macos-26 # macOS 26 includes an iOS 26-capable Xcode toolchain
     needs: build_android
     if: ${{ always() && (needs.build_android.result == 'success' || needs.build_android.result == 'skipped') }}
+    permissions:
+      contents: 'read' # checkout of the version-bump ref; artifacts need none
     env:
       NODE_OPTIONS: '--max-old-space-size=8192'
 
@@ -271,6 +283,11 @@ jobs:
         with:
           node-version: '22.21.0'
           cache: 'yarn'
+
+      # Step 2b: Pin Yarn so the release artifact is built with the same
+      # package-manager version the lockfile is maintained with.
+      - name: Install Yarn (pinned)
+        run: npm install -g yarn@1.22.22
 
       # Step 3: Install dependencies using Yarn
       - name: Install dependencies
