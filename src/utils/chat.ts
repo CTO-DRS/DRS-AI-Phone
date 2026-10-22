@@ -1,5 +1,5 @@
 import {applyTemplate, Templates} from 'chat-formatter';
-import {JinjaFormattedChatResult, LlamaContext} from 'llama.rn';
+import type {JinjaFormattedChatResult, LlamaContext} from 'llama.rn';
 import {CompletionParams} from './completionTypes';
 import {defaultCompletionParams} from './completionSettingsVersions';
 

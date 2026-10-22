@@ -11,4 +11,14 @@
         <item name="android:editTextBackground">@drawable/rn_edit_text_material</item>
     </style>
 
+    <!-- CrashReportActivity: dark, plain, always-readable. Deliberately NOT
+         the splash gradient — this screen shows raw monospace stack traces
+         and must stay legible regardless of day/night. -->
+    <style name="DrsReportTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="android:windowBackground">@color/drsai_dark_bg</item>
+        <item name="android:statusBarColor">@color/drsai_dark_bg</item>
+        <item name="android:navigationBarColor">@color/drsai_dark_bg</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+
 </resources>

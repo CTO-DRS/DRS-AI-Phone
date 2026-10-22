@@ -4,7 +4,13 @@
  */
 
 import {Platform} from 'react-native';
-import {getBackendDevicesInfo, NativeBackendDeviceInfo} from 'llama.rn';
+import type {NativeBackendDeviceInfo} from 'llama.rn';
+
+// Startup-graph hygiene (mirrors the v1.41.0 notifee pattern): llama.rn's
+// module evaluation resolves the RNLlama TurboModule, which dlopens
+// librnllama.so. A broken/poisoned native lib on some devices must not be
+// able to kill the boot — so llama.rn is resolved lazily, here at first
+// real use, where a failure is an ordinary catchable error.
 
 /**
  * Device option for UI selection
@@ -30,6 +36,8 @@ export async function getAvailableDevices(): Promise<
   NativeBackendDeviceInfo[]
 > {
   try {
+    const {getBackendDevicesInfo} =
+      require('llama.rn') as typeof import('llama.rn');
     const devices = await getBackendDevicesInfo();
     return devices || [];
   } catch (error) {

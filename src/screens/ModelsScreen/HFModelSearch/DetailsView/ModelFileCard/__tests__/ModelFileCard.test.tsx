@@ -17,7 +17,45 @@ import {ModelFileCard} from '../ModelFileCard';
 
 import {downloadManager} from '../../../../../../services/downloads';
 
-import {modelStore} from '../../../../../../store';
+import {catalogStore} from '../../../../../../store/model/catalogStore';
+import {downloadStore} from '../../../../../../store/model/downloadStore';
+
+jest.mock('../../../../../../store/model/catalogStore', () => {
+  const real = jest.requireActual('../../../../../../store/model/catalogStore');
+  const state: {models: unknown[]} = {models: []};
+  const catalogBase = Object.create(real.catalogStore);
+  Object.defineProperties(catalogBase, {
+    addHFModel: {
+      value: jest.fn(),
+      writable: true,
+      configurable: true,
+      enumerable: true,
+    },
+    models: {
+      get() {
+        return state.models;
+      },
+      set(v: unknown[]) {
+        state.models = v;
+      },
+      configurable: true,
+      enumerable: true,
+    },
+  });
+  return {catalogStore: catalogBase};
+});
+
+jest.mock('../../../../../../store/model/downloadStore', () => {
+  const real = jest.requireActual(
+    '../../../../../../store/model/downloadStore',
+  );
+  return {
+    downloadStore: Object.assign(Object.create(real.downloadStore), {
+      cancelDownload: jest.fn(),
+      downloadHFModel: jest.fn(),
+    }),
+  };
+});
 
 import type {Model} from '../../../../../../utils/types';
 
@@ -38,7 +76,7 @@ describe('ModelFileCard', () => {
       ...hfModel1,
       isDownloaded: true,
     });
-    modelStore.models = modelsList;
+    catalogStore.models = modelsList;
     jest.clearAllMocks();
     jest.spyOn(Alert, 'alert');
 
@@ -65,14 +103,14 @@ describe('ModelFileCard', () => {
       fireEvent.press(getByTestId('bookmark-button'));
     });
 
-    expect(modelStore.addHFModel).toHaveBeenCalledWith(
+    expect(catalogStore.addHFModel).toHaveBeenCalledWith(
       mockHFModel1,
       mockModelFile,
     );
   });
 
   it('shows alert when trying to remove downloaded model', async () => {
-    modelStore.models = [downloadedHFModel];
+    catalogStore.models = [downloadedHFModel];
 
     const {getByTestId} = render(
       <ModelFileCard
@@ -103,7 +141,7 @@ describe('ModelFileCard', () => {
       fireEvent.press(getByTestId('download-button'));
     });
 
-    expect(modelStore.downloadHFModel).toHaveBeenCalledWith(
+    expect(downloadStore.downloadHFModel).toHaveBeenCalledWith(
       mockHFModel1,
       mockHFModel1.siblings[0],
       {enableVision: true},
@@ -111,7 +149,7 @@ describe('ModelFileCard', () => {
   });
 
   it('handles download cancellation', async () => {
-    modelStore.models = [hfModel1];
+    catalogStore.models = [hfModel1];
 
     (downloadManager.isDownloading as jest.Mock).mockImplementation(modelId => {
       return modelId === hfModel1.id;
@@ -127,7 +165,7 @@ describe('ModelFileCard', () => {
       fireEvent.press(getByTestId('cancel-button'));
     });
 
-    expect(modelStore.cancelDownload).toHaveBeenCalledWith(hfModel1.id);
+    expect(downloadStore.cancelDownload).toHaveBeenCalledWith(hfModel1.id);
   });
 
   it('disables download button when storage is insufficient', () => {
@@ -149,7 +187,7 @@ describe('ModelFileCard', () => {
   });
 
   it('shows delete confirmation for downloaded model', async () => {
-    modelStore.models = [downloadedHFModel];
+    catalogStore.models = [downloadedHFModel];
 
     const {getByTestId} = render(
       <ModelFileCard

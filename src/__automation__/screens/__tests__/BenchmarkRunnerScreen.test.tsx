@@ -4,7 +4,59 @@ import {act} from 'react-test-renderer';
 
 import {fireEvent, render, waitFor} from '../../../../jest/test-utils';
 
-import {modelStore} from '../../../store';
+import {catalogStore} from '../../../store/model/catalogStore';
+import {downloadStore} from '../../../store/model/downloadStore';
+import {runtimeStore} from '../../../store/model/runtimeStore';
+
+jest.mock('../../../store/model/catalogStore', () => {
+  const real = jest.requireActual('../../../store/model/catalogStore');
+  const state: {models: unknown[]} = {models: []};
+  const catalogBase = Object.create(real.catalogStore);
+  Object.defineProperties(catalogBase, {
+    models: {
+      get() {
+        return state.models;
+      },
+      set(v: unknown[]) {
+        state.models = v;
+      },
+      configurable: true,
+      enumerable: true,
+    },
+  });
+  return {catalogStore: catalogBase};
+});
+
+jest.mock('../../../store/model/downloadStore', () => {
+  const real = jest.requireActual('../../../store/model/downloadStore');
+  const ds = Object.assign(Object.create(real.downloadStore), {
+    clearDownloadError: jest.fn(),
+    downloadHFModel: jest.fn(),
+  });
+  Object.defineProperty(ds, 'downloadError', {
+    value: null,
+    writable: true,
+    configurable: true,
+    enumerable: true,
+  });
+  return {downloadStore: ds};
+});
+
+jest.mock('../../../store/model/runtimeStore', () => {
+  const real = jest.requireActual('../../../store/model/runtimeStore');
+  return {
+    runtimeStore: Object.assign(Object.create(real.runtimeStore), {
+      enterBenchmarkMode: jest.fn(),
+      exitBenchmarkMode: jest.fn(),
+      initContext: jest.fn(),
+      selectModel: jest.fn(),
+      setDevices: jest.fn(),
+      setNGPULayers: jest.fn(),
+      releaseContext: jest.fn(),
+      setCacheTypeK: jest.fn(),
+    }),
+  };
+});
 
 // Mock @react-navigation/native's useRoute so the screen can read route
 // params without a real navigator in the tree. The default return covers
@@ -369,7 +421,7 @@ describe('BenchmarkRunnerScreen', () => {
       // Default: a downloaded model exists for the variant filename. The
       // runner reads `models` to resolve the variant; everything else is
       // shaped via the local `cellParams` literal handed to `initLlama`.
-      (modelStore as any).models = [
+      (catalogStore as any).models = [
         {
           id: 'qwen3-1.7b-q4_0',
           name: 'qwen3',
@@ -386,9 +438,11 @@ describe('BenchmarkRunnerScreen', () => {
       (toggleNativeLog as jest.Mock).mockReset();
       (toggleNativeLog as jest.Mock).mockResolvedValue(undefined);
       // Benchmark-mode hooks: default to async-resolve / sync no-op.
-      (modelStore.enterBenchmarkMode as jest.Mock).mockReset();
-      (modelStore.enterBenchmarkMode as jest.Mock).mockResolvedValue(undefined);
-      (modelStore.exitBenchmarkMode as jest.Mock).mockReset();
+      (runtimeStore.enterBenchmarkMode as jest.Mock).mockReset();
+      (runtimeStore.enterBenchmarkMode as jest.Mock).mockResolvedValue(
+        undefined,
+      );
+      (runtimeStore.exitBenchmarkMode as jest.Mock).mockReset();
     });
 
     /** Helper: drive the listener to emit a canonical full-OpenCL-offload
@@ -442,12 +496,12 @@ describe('BenchmarkRunnerScreen', () => {
     it('takes ownership via enterBenchmarkMode at start and releases it via exitBenchmarkMode in finally', async () => {
       stubOpenCLLogs();
       await runMatrix(VALID_CONFIG, setStatus, setLastCell);
-      expect(modelStore.enterBenchmarkMode).toHaveBeenCalledTimes(1);
-      expect(modelStore.exitBenchmarkMode).toHaveBeenCalledTimes(1);
+      expect(runtimeStore.enterBenchmarkMode).toHaveBeenCalledTimes(1);
+      expect(runtimeStore.exitBenchmarkMode).toHaveBeenCalledTimes(1);
       // exit must run AFTER enter — `.invocationCallOrder` is monotonic.
-      const enterOrder = (modelStore.enterBenchmarkMode as jest.Mock).mock
+      const enterOrder = (runtimeStore.enterBenchmarkMode as jest.Mock).mock
         .invocationCallOrder[0];
-      const exitOrder = (modelStore.exitBenchmarkMode as jest.Mock).mock
+      const exitOrder = (runtimeStore.exitBenchmarkMode as jest.Mock).mock
         .invocationCallOrder[0];
       expect(enterOrder).toBeLessThan(exitOrder);
     });
@@ -459,8 +513,8 @@ describe('BenchmarkRunnerScreen', () => {
       await expect(
         runMatrix(VALID_CONFIG, setStatus, setLastCell),
       ).rejects.toThrow('shell-write-failed');
-      expect(modelStore.enterBenchmarkMode).toHaveBeenCalledTimes(1);
-      expect(modelStore.exitBenchmarkMode).toHaveBeenCalledTimes(1);
+      expect(runtimeStore.enterBenchmarkMode).toHaveBeenCalledTimes(1);
+      expect(runtimeStore.exitBenchmarkMode).toHaveBeenCalledTimes(1);
     });
 
     // -------------------------------------------------------------------------
@@ -556,7 +610,7 @@ describe('BenchmarkRunnerScreen', () => {
       await runMatrix(VALID_CONFIG, setStatus, setLastCell);
       expect(activateKeepAwake).toHaveBeenCalledTimes(1);
       expect(deactivateKeepAwake).toHaveBeenCalledTimes(1);
-      const enter = (modelStore.enterBenchmarkMode as jest.Mock).mock
+      const enter = (runtimeStore.enterBenchmarkMode as jest.Mock).mock
         .invocationCallOrder[0];
       const activate = activateKeepAwake.mock.invocationCallOrder[0];
       const deactivate = deactivateKeepAwake.mock.invocationCallOrder[0];
@@ -582,11 +636,11 @@ describe('BenchmarkRunnerScreen', () => {
       });
       await runMatrix(VALID_CONFIG, setStatus, setLastCell);
       expect(setStatus).toHaveBeenLastCalledWith('complete');
-      expect(modelStore.exitBenchmarkMode).toHaveBeenCalledTimes(1);
+      expect(runtimeStore.exitBenchmarkMode).toHaveBeenCalledTimes(1);
     });
 
     it('touches neither keep-awake call when enterBenchmarkMode rejects', async () => {
-      (modelStore.enterBenchmarkMode as jest.Mock).mockRejectedValueOnce(
+      (runtimeStore.enterBenchmarkMode as jest.Mock).mockRejectedValueOnce(
         new Error('enter-failed'),
       );
       await expect(
@@ -598,7 +652,7 @@ describe('BenchmarkRunnerScreen', () => {
     });
 
     // -------------------------------------------------------------------------
-    // initLlama is the SOLE native-load entrypoint (no modelStore.initContext)
+    // initLlama is the SOLE native-load entrypoint (no runtimeStore.initContext)
     // -------------------------------------------------------------------------
 
     it('calls initLlama with composed params (devices + n_gpu_layers from backend slot, n_threads from getRecommendedThreadCount)', async () => {
@@ -620,17 +674,17 @@ describe('BenchmarkRunnerScreen', () => {
       expect(paramsArg.model).toContain('Qwen_Qwen3-1.7B-Q4_0.gguf');
     });
 
-    it('does NOT call modelStore.initContext / selectModel / setDevices / setNGPULayers / releaseContext', async () => {
+    it('does NOT call runtimeStore.initContext / selectModel / setDevices / setNGPULayers / releaseContext', async () => {
       stubOpenCLLogs();
       await runMatrix(VALID_CONFIG, setStatus, setLastCell);
       // The runner is fully isolated from the store's context lifecycle.
-      expect(modelStore.initContext).not.toHaveBeenCalled();
-      expect(modelStore.selectModel).not.toHaveBeenCalled();
-      expect(modelStore.setDevices).not.toHaveBeenCalled();
-      expect(modelStore.setNGPULayers).not.toHaveBeenCalled();
+      expect(runtimeStore.initContext).not.toHaveBeenCalled();
+      expect(runtimeStore.selectModel).not.toHaveBeenCalled();
+      expect(runtimeStore.setDevices).not.toHaveBeenCalled();
+      expect(runtimeStore.setNGPULayers).not.toHaveBeenCalled();
       // releaseContext is exposed on the store but the runner releases its
       // OWN context via the LlamaContext.release() returned by initLlama.
-      const release = (modelStore as any).releaseContext;
+      const release = (runtimeStore as any).releaseContext;
       if (release && release.mock) {
         expect(release).not.toHaveBeenCalled();
       }
@@ -680,7 +734,9 @@ describe('BenchmarkRunnerScreen', () => {
           actualSelection.getDeviceOptions,
         );
         stubHexagonLogs();
-        const saved = JSON.parse(JSON.stringify(modelStore.contextInitParams));
+        const saved = JSON.parse(
+          JSON.stringify(runtimeStore.contextInitParams),
+        );
         try {
           const cfg: BenchConfig = {
             ...VALID_CONFIG,
@@ -705,7 +761,7 @@ describe('BenchmarkRunnerScreen', () => {
               flash_attn_type: 'on',
             },
           });
-          expect(modelStore.contextInitParams).toEqual(saved);
+          expect(runtimeStore.contextInitParams).toEqual(saved);
         } finally {
           Platform.OS = originalOS;
           getBackendDevicesInfo.mockReset().mockResolvedValue([]);
@@ -985,16 +1041,16 @@ describe('BenchmarkRunnerScreen', () => {
     // Download path: cell fails fast on download error
     // -------------------------------------------------------------------------
 
-    it('fails the cell fast when modelStore.downloadError fires during polling', async () => {
+    it('fails the cell fast when downloadStore.downloadError fires during polling', async () => {
       // Variant absent → download path runs.
-      (modelStore as any).models = [];
-      (modelStore as any).downloadHFModel = jest
+      (catalogStore as any).models = [];
+      (downloadStore as any).downloadHFModel = jest
         .fn()
         .mockResolvedValue(undefined);
-      (modelStore as any).clearDownloadError = jest.fn();
+      (downloadStore as any).clearDownloadError = jest.fn();
       // Set the error after a microtask so the polling loop sees it.
       setTimeout(() => {
-        (modelStore as any).downloadError = {message: 'download-failed-msg'};
+        (downloadStore as any).downloadError = {message: 'download-failed-msg'};
       }, 10);
       await runMatrix(VALID_CONFIG, setStatus, setLastCell);
       const lastWrite =
@@ -1003,7 +1059,7 @@ describe('BenchmarkRunnerScreen', () => {
       expect(json.runs[0].status).toBe('failed');
       expect(json.runs[0].error).toContain('download-failed');
       // Reset for the next test.
-      (modelStore as any).downloadError = null;
+      (downloadStore as any).downloadError = null;
     });
 
     // -------------------------------------------------------------------------
@@ -1238,9 +1294,9 @@ describe('BenchmarkRunnerScreen', () => {
       expect(initLlama).toHaveBeenCalledTimes(1);
       const [paramsArg] = (initLlama as jest.Mock).mock.calls[0];
       expect(paramsArg.cache_type_k).toBe('q8_0');
-      // The runner does NOT route through modelStore.setCacheTypeK any more;
+      // The runner does NOT route through runtimeStore.setCacheTypeK any more;
       // the override is a literal field in the cell's ContextParams.
-      expect(modelStore.setCacheTypeK).not.toHaveBeenCalled();
+      expect(runtimeStore.setCacheTypeK).not.toHaveBeenCalled();
     });
 
     // -------------------------------------------------------------------------
@@ -1316,9 +1372,9 @@ describe('BenchmarkRunnerScreen', () => {
       // Wait — actually under the new design the cellParams / fingerprint
       // snapshot are computed BEFORE initLlama. Let's force the pre-init
       // path another way: throw during the model resolve / download step
-      // by emptying modelStore.models and rejecting the download.
-      (modelStore as any).models = [];
-      (modelStore as any).downloadHFModel = jest
+      // by emptying catalogStore.models and rejecting the download.
+      (catalogStore as any).models = [];
+      (downloadStore as any).downloadHFModel = jest
         .fn()
         .mockRejectedValue(new Error('download-rejected'));
       await runMatrix(cfg, setStatus, setLastCell);
@@ -1375,8 +1431,8 @@ describe('BenchmarkRunnerScreen', () => {
       // No axes, pre-init failure (download path rejects). The runner must
       // NOT mint a 'req:'-prefixed fingerprint, because that would dedupe
       // the cell out of its app-default peers.
-      (modelStore as any).models = [];
-      (modelStore as any).downloadHFModel = jest
+      (catalogStore as any).models = [];
+      (downloadStore as any).downloadHFModel = jest
         .fn()
         .mockRejectedValue(new Error('download-rejected'));
       await runMatrix(VALID_CONFIG, setStatus, setLastCell);
@@ -1660,11 +1716,11 @@ describe('BenchmarkRunnerScreen', () => {
   // drop them and break the runner without a clear test signal.
   // ---------------------------------------------------------------------------
 
-  describe('mock modelStore sanity (benchmark-mode hooks wired)', () => {
+  describe('mock runtimeStore sanity (benchmark-mode hooks wired)', () => {
     it.each([['enterBenchmarkMode'], ['exitBenchmarkMode']] as const)(
       'exposes %s as a callable jest.fn()',
       name => {
-        const fn = (modelStore as any)[name];
+        const fn = (runtimeStore as any)[name];
         expect(fn).toBeDefined();
         expect(fn).toEqual(expect.any(Function));
         expect(fn.mock).toBeDefined();

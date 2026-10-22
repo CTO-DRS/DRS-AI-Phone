@@ -1,6 +1,11 @@
 import {Platform} from 'react-native';
-import {loadLlamaModelInfo} from 'llama.rn';
 import {logger} from '../utils/logger';
+
+// Startup-graph hygiene (mirrors the v1.41.0 notifee pattern): llama.rn's
+// module evaluation resolves the RNLlama TurboModule, which dlopens
+// librnllama.so. A broken/poisoned native lib on some devices must not be
+// able to kill the boot — so llama.rn is resolved lazily, here at first
+// real use, where a failure is an ordinary catchable error.
 
 /**
  * Quantization types that are repackable and should use use_mmap=false
@@ -23,6 +28,8 @@ export async function isRepackableQuantization(
   modelPath: string,
 ): Promise<boolean> {
   try {
+    const {loadLlamaModelInfo} =
+      require('llama.rn') as typeof import('llama.rn');
     const modelInfo = await loadLlamaModelInfo(modelPath);
 
     // Check if model info is valid and contains file_type

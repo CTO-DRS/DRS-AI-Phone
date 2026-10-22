@@ -1,4 +1,4 @@
-import {CompletionParams as LlamaRNCompletionParams} from 'llama.rn';
+import type {CompletionParams as LlamaRNCompletionParams} from 'llama.rn';
 
 export type {ToolCall} from 'llama.rn';
 import type {ToolCall} from 'llama.rn';

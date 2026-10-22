@@ -32,6 +32,7 @@ import {Theme} from './src/utils/types';
 import {recordPhase} from './src/utils/diagnostics';
 import {startWidgetBridge} from './src/services/widget';
 import {checkForAppUpdate} from './src/utils/appUpdate';
+import {migrateLegacySession} from './src/api/migrateLegacySession';
 import {
   dismissUpdateVersion,
   getDismissedUpdateVersion,
@@ -118,6 +119,20 @@ const App = observer(() => {
   const theme = useTheme();
   const styles = createStyles(theme);
   const currentL10n = l10n[uiStore.language];
+
+  // One-time legacy session sweep (fix 2): AsyncStorage → Keychain.
+  // Fire-and-forget and never blocking: the Keychain adapter's read-through
+  // fallback already exposes pre-migration sessions to auth-js (the client
+  // initializes from storage at module scope, before this effect can run);
+  // the sweep only formalizes the copy (write → verify → delete). Failures
+  // are warn-only inside migrateLegacySession.
+  React.useEffect(() => {
+    migrateLegacySession().catch(() => {
+      // Unreachable by contract: migrateLegacySession is warn-only and
+      // never throws; this catch simply satisfies the no-floating-promise
+      // discipline without logging (the sweep logs its own warnings).
+    });
+  }, []);
 
   // Initialize locale with the current language
   React.useEffect(() => {

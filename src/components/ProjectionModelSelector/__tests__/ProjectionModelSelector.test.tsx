@@ -8,6 +8,42 @@ import {createModel} from '../../../../jest/fixtures/models';
 
 import {ProjectionModelSelector} from '../ProjectionModelSelector';
 
+import {catalogStore} from '../../../store/model/catalogStore';
+import {downloadStore} from '../../../store/model/downloadStore';
+import {runtimeStore} from '../../../store/model/runtimeStore';
+
+jest.mock('../../../store/model/catalogStore', () => {
+  const real = jest.requireActual('../../../store/model/catalogStore');
+  return {
+    catalogStore: Object.assign(Object.create(real.catalogStore), {
+      setModelVisionEnabled: jest.fn(),
+    }),
+  };
+});
+
+jest.mock('../../../store/model/downloadStore', () => {
+  const real = jest.requireActual('../../../store/model/downloadStore');
+  return {
+    downloadStore: Object.assign(Object.create(real.downloadStore), {
+      checkSpaceAndDownload: jest.fn(),
+      getDownloadedLLMsUsingProjectionModel: jest.fn(),
+      deleteModel: jest.fn(),
+    }),
+  };
+});
+
+jest.mock('../../../store/model/runtimeStore', () => {
+  const real = jest.requireActual('../../../store/model/runtimeStore');
+  const rt = Object.create(real.runtimeStore);
+  Object.defineProperty(rt, 'activeModelId', {
+    value: null,
+    writable: true,
+    configurable: true,
+    enumerable: true,
+  });
+  return {runtimeStore: rt};
+});
+
 describe('ProjectionModelSelector', () => {
   const mockModel = createModel({
     id: 'test-model-1',
@@ -156,9 +192,8 @@ describe('ProjectionModelSelector', () => {
     });
 
     it('should prevent deletion of active projection model', () => {
-      const {modelStore} = require('../../../store');
-      modelStore.activeModelId = 'proj-model-1';
-      modelStore.getDownloadedLLMsUsingProjectionModel = jest
+      runtimeStore.activeModelId = 'proj-model-1';
+      downloadStore.getDownloadedLLMsUsingProjectionModel = jest
         .fn()
         .mockReturnValue([]);
 
@@ -184,12 +219,11 @@ describe('ProjectionModelSelector', () => {
       );
 
       // Verify delete was NOT called
-      expect(modelStore.deleteModel).not.toHaveBeenCalled();
+      expect(downloadStore.deleteModel).not.toHaveBeenCalled();
     });
 
     it('should show warning when deleting projection model with dependent models', () => {
-      const {modelStore} = require('../../../store');
-      modelStore.activeModelId = null;
+      (runtimeStore as any).activeModelId = null;
 
       // Mock dependent models
       const dependentModel = createModel({
@@ -198,10 +232,10 @@ describe('ProjectionModelSelector', () => {
         visionEnabled: true,
       });
 
-      modelStore.getDownloadedLLMsUsingProjectionModel = jest
+      downloadStore.getDownloadedLLMsUsingProjectionModel = jest
         .fn()
         .mockReturnValue([dependentModel]);
-      modelStore.deleteModel = jest.fn().mockResolvedValue(undefined);
+      downloadStore.deleteModel = jest.fn().mockResolvedValue(undefined);
 
       const {getByTestId} = render(
         <ProjectionModelSelector
@@ -232,8 +266,7 @@ describe('ProjectionModelSelector', () => {
     });
 
     it('should disable vision on dependent models before deletion', async () => {
-      const {modelStore} = require('../../../store');
-      modelStore.activeModelId = null;
+      (runtimeStore as any).activeModelId = null;
 
       const dependentModel1 = createModel({
         id: 'llm-1',
@@ -250,11 +283,11 @@ describe('ProjectionModelSelector', () => {
       const mockSetModelVisionEnabled = jest.fn();
       const mockDeleteModel = jest.fn().mockResolvedValue(undefined);
 
-      modelStore.getDownloadedLLMsUsingProjectionModel = jest
+      downloadStore.getDownloadedLLMsUsingProjectionModel = jest
         .fn()
         .mockReturnValue([dependentModel1, dependentModel2]);
-      modelStore.deleteModel = mockDeleteModel;
-      modelStore.setModelVisionEnabled = mockSetModelVisionEnabled;
+      downloadStore.deleteModel = mockDeleteModel;
+      catalogStore.setModelVisionEnabled = mockSetModelVisionEnabled;
 
       // Mock Alert to auto-confirm deletion
       (Alert.alert as jest.Mock).mockImplementation(
@@ -295,14 +328,13 @@ describe('ProjectionModelSelector', () => {
     });
 
     it('should handle deletion errors gracefully', async () => {
-      const {modelStore} = require('../../../store');
-      modelStore.activeModelId = null;
+      (runtimeStore as any).activeModelId = null;
 
       const deletionError = new Error('Failed to delete file');
-      modelStore.getDownloadedLLMsUsingProjectionModel = jest
+      downloadStore.getDownloadedLLMsUsingProjectionModel = jest
         .fn()
         .mockReturnValue([]);
-      modelStore.deleteModel = jest.fn().mockRejectedValue(deletionError);
+      downloadStore.deleteModel = jest.fn().mockRejectedValue(deletionError);
 
       // Track Alert calls
       const alertCalls: any[] = [];
@@ -344,12 +376,11 @@ describe('ProjectionModelSelector', () => {
       });
 
       // Verify deleteModel was called
-      expect(modelStore.deleteModel).toHaveBeenCalled();
+      expect(downloadStore.deleteModel).toHaveBeenCalled();
     });
 
     it('should call checkSpaceAndDownload when download button is pressed', () => {
-      const {modelStore} = require('../../../store');
-      modelStore.checkSpaceAndDownload = jest.fn();
+      downloadStore.checkSpaceAndDownload = jest.fn();
 
       const notDownloadedModel = createModel({
         id: 'proj-model-3',
@@ -373,7 +404,7 @@ describe('ProjectionModelSelector', () => {
       fireEvent.press(downloadButton);
 
       // Verify checkSpaceAndDownload was called with the correct model ID
-      expect(modelStore.checkSpaceAndDownload).toHaveBeenCalledWith(
+      expect(downloadStore.checkSpaceAndDownload).toHaveBeenCalledWith(
         'proj-model-3',
       );
     });
