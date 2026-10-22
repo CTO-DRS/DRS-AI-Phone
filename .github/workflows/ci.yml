@@ -97,8 +97,8 @@ jobs:
           node-version: '22.21.0'
           cache: 'yarn'
 
-      - name: Install Yarn
-        run: npm install -g yarn
+      - name: Install Yarn (pinned)
+        run: npm install -g yarn@1.22.22
 
       # Step 3: Install dependencies and iOS Pods
       - name: Install dependencies
@@ -161,8 +161,8 @@ jobs:
           path: node_modules
           key: ${{ runner.os }}-node-${{ hashFiles('yarn.lock') }}
 
-      - name: Install Yarn
-        run: npm install -g yarn
+      - name: Install Yarn (pinned)
+        run: npm install -g yarn@1.22.22
 
       - name: Install dependencies
         run: yarn install
@@ -382,8 +382,8 @@ jobs:
           path: node_modules
           key: ${{ runner.os }}-node-${{ hashFiles('yarn.lock') }}
 
-      - name: Install Yarn
-        run: npm install -g yarn
+      - name: Install Yarn (pinned)
+        run: npm install -g yarn@1.22.22
 
       - name: Install dependencies
         run: yarn install

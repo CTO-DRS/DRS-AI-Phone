@@ -72,6 +72,11 @@ jobs:
           node-version: '22.21.0'
           cache: 'yarn'
 
+      # Pin Yarn to the version the lockfile is maintained with, so this
+      # distributable APK is not built by whatever the runner image ships.
+      - name: Install Yarn (pinned)
+        run: npm install -g yarn@1.22.22
+
       # 2026-10-08: a history-rewrite replacement pass corrupted one base64
       # substring inside a yarn.lock integrity hash ("Pal" -> "Assistant"
       # inside safe-regex-test's sha512), which made CI fail with EINTEGRITY.
