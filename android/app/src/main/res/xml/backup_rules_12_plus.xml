@@ -9,6 +9,17 @@
         <exclude domain="file" path="BridgeReactNativeDevBundle.js"/>
         <exclude domain="file" path="ReactNativeDevBundle.js"/>
         <exclude domain="root" path="code_cache/"/>
+        <!-- Audit SEC-01: the conversation database (drsai.db*) plus the
+             database domain (RKStorage/AsyncStorage — including the drshub
+             session — and the Room download metadata) and shared prefs hold
+             the user's private history and configuration. Keep them out of
+             cloud backups entirely instead of trusting transport encryption;
+             the app offers explicit chat export (JSON/PDF) instead. -->
+        <exclude domain="root" path="drsai.db"/>
+        <exclude domain="root" path="drsai.db-wal"/>
+        <exclude domain="root" path="drsai.db-shm"/>
+        <exclude domain="database" path="."/>
+        <exclude domain="sharedpref" path="."/>
     </cloud-backup>
 
     <device-transfer>
@@ -17,5 +28,11 @@
         <exclude domain="file" path="BridgeReactNativeDevBundle.js"/>
         <exclude domain="file" path="ReactNativeDevBundle.js"/>
         <exclude domain="root" path="code_cache/"/>
+        <!-- Audit SEC-01: same privacy rationale as cloud-backup above. -->
+        <exclude domain="root" path="drsai.db"/>
+        <exclude domain="root" path="drsai.db-wal"/>
+        <exclude domain="root" path="drsai.db-shm"/>
+        <exclude domain="database" path="."/>
+        <exclude domain="sharedpref" path="."/>
     </device-transfer>
 </data-extraction-rules>
