@@ -164,15 +164,41 @@ android {
             buildConfigField "boolean", "USE_DEV_SUPPORT", "true"
         }
         release {
-            // Caution! In production, you need to generate your own keystore file.
-            // see https://reactnative.dev/docs/signed-apk-android.
-            // Only use release signing config if credentials are available, otherwise use debug
+            // Audit SEC-03: a release APK silently signed with the public
+            // debug keystore is indistinguishable, from the install side, from
+            // a properly signed one — fail closed instead:
+            //   - CI paths provision their own keystore before assembling
+            //     (ci.yml / e2e-tests.yml create a dummy one with matching
+            //     APP_RELEASE_* env; android-apk.yml decodes the real one),
+            //     so they never reach the fallback.
+            //   - The release workflow's fastlane lane injects the real
+            //     keystore at execution time via android.injected.signing.*,
+            //     which is visible here as a project property.
+            //   - Local release builds must opt in explicitly:
+            //     ./gradlew assembleProdRelease -PallowDebugSignedRelease=true
+            def allowDebugSignedRelease =
+                (project.findProperty('allowDebugSignedRelease')?.toString()?.toBoolean() ?: false) ||
+                (['1', 'true'].contains(System.getenv('ALLOW_DEBUG_SIGNED_RELEASE')?.toLowerCase()))
+            def injectedSigning =
+                project.hasProperty('android.injected.signing.store.file')
             if (signingConfigs.release.storeFile != null) {
                 signingConfig signingConfigs.release
-            } else {
-                // Fall back to debug signing for CI builds without credentials
+            } else if (injectedSigning) {
+                // fastlane (release workflow) replaces this placeholder at
+                // execution time with the real keystore; behavior identical
+                // to the pre-hardening fallback.
                 signingConfig signingConfigs.debug
-                println "Warning: Release signing credentials not found, using debug keystore"
+                println 'Note: using execution-time injected release signing (fastlane/IDE).'
+            } else if (allowDebugSignedRelease) {
+                signingConfig signingConfigs.debug
+                println 'Warning: Release signing credentials not found — building a DEBUG-SIGNED release (explicitly allowed).'
+            } else {
+                throw new GradleException(
+                    'Release signing credentials not found. A release APK must not be silently signed ' +
+                    'with the public debug keystore (audit SEC-03). Provide APP_RELEASE_STORE_PASSWORD / ' +
+                    'APP_RELEASE_KEY_PASSWORD next to app/drsai-release-key.keystore, or opt in explicitly ' +
+                    'with -PallowDebugSignedRelease=true (or ALLOW_DEBUG_SIGNED_RELEASE=1).'
+                )
             }
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
@@ -254,7 +280,11 @@ dependencies {
     // by specifying only one version — the BoM's version.
     implementation platform('com.google.firebase:firebase-bom:34.4.0')
     implementation 'com.google.firebase:firebase-appcheck-playintegrity'
-    implementation 'com.google.firebase:firebase-appcheck-debug'
+    // Audit SEC-05: the debug provider is only ever activated for __DEV__ JS
+    // builds (src/utils/fb.ts selects it via __DEV__; release-family bundles
+    // compile with __DEV__ = false), so the debug AAR has no business in
+    // prodRelease or releaseE2e APKs.
+    debugImplementation 'com.google.firebase:firebase-appcheck-debug'
 
     // Room dependencies for DownloadModule
     def room_version = "2.8.2"
