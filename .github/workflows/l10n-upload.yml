@@ -36,6 +36,9 @@ jobs:
         with:
           node-version: '22.21.0'
 
+      - name: Install Yarn (pinned)
+        run: npm install -g yarn@1.22.22
+
       - name: Install dependencies
         run: yarn install
 
