@@ -11,4 +11,10 @@
     <string name="shortcut_models_short">النماذج</string>
     <string name="shortcut_models_long">استعرض نماذج الذكاء الاصطناعي</string>
     <string name="shortcut_models_disabled">اختصار النماذج غير متاح</string>
+    <string name="report_label">تقرير DRS AI</string>
+    <string name="report_title">DRS AI — تقرير الانهيار</string>
+    <string name="report_hint">افتح هذا التطبيق حتى لو كان DRS AI نفسه ينهار عند الإقلاع. يعرض أحدث تقارير الأعطال المحفوظة (آثار Java الكاملة، معالم الإقلاع، ذيل سجل logcat). اضغط «مشاركة» وأرسل النص إلى المطوّر.</string>
+    <string name="report_share">مشاركة التقرير</string>
+    <string name="report_device_header">معلومات الجهاز / التطبيق</string>
+    <string name="report_empty">لا توجد تقارير أعطال بعد. إذا انهار التطبيق، جرّب فتحه مرة أخرى ثم أعد فتح هذا التقرير.</string>
 </resources>

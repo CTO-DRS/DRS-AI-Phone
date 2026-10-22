@@ -94,6 +94,22 @@
             android:resource="@xml/shortcuts" />
       </activity>
 
+        <!-- Standalone crash-report viewer (own launcher entry, zero React
+             dependencies). Exists for the startup-crash-loop failure mode:
+             when the main app cannot reach its Diagnostics screen, the
+             owner opens "DRS AI Report" from the launcher, reads the
+             persisted crash reports, and shares them. -->
+        <activity
+          android:name=".CrashReportActivity"
+          android:label="@string/report_label"
+          android:theme="@style/DrsReportTheme"
+          android:exported="true">
+          <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+          </intent-filter>
+        </activity>
+
         <!-- DRS AI home-screen widget (v1.39.0): static brand card with
              New chat / Models actions. Exported=false — updates are
              delivered by the system widget service, not raw broadcasts. -->

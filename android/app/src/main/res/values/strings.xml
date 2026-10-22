@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">DRS AI</string>
+    <string name="report_label">DRS AI Report</string>
+    <string name="report_title">DRS AI — Crash Report</string>
+    <string name="report_hint">Open this even when DRS AI itself crashes on launch. It shows the newest persisted crash reports (Java stack traces, startup breadcrumbs, logcat tail). Tap Share and send the text back to the developer.</string>
+    <string name="report_share">Share report</string>
+    <string name="report_device_header">Device / app info</string>
+    <string name="report_empty">No crash reports found yet. If the app crashed, try opening it once more, then reopen this report.</string>
 </resources>

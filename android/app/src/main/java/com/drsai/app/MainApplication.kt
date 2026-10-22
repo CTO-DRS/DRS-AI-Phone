@@ -1,6 +1,7 @@
 package com.drsai
 
 import android.app.Application
+import android.content.Context
 import android.system.Os
 import com.facebook.react.PackageList
 import com.facebook.react.ReactApplication
@@ -55,18 +56,41 @@ class MainApplication : Application(), ReactApplication {
   override val reactHost: ReactHost
     get() = getDefaultReactHost(applicationContext, reactNativeHost)
 
+  override fun attachBaseContext(base: Context) {
+    super.attachBaseContext(base)
+    // Forensics go live BEFORE anything else in the process, so every
+    // uncaught Java exception on every thread — including the pre-React
+    // startup window where the in-app Diagnostics handler is not yet
+    // reachable — lands in filesDir/diagnostics/ for CrashReportActivity
+    // to surface (see CrashForensics doc).
+    CrashForensics.install(base)
+    CrashForensics.breadcrumb("app:attachBaseContext")
+  }
+
   override fun onCreate() {
     super.onCreate()
-    // Enable Adreno large buffer support on Qualcomm A7X/A8X GPUs.
-    // The OpenCL backend in llama.rn self-gates on GPU family and the
-    // cl_qcom_large_buffer extension — this is a no-op on non-Adreno devices.
-    // Must be set before SoLoader.init so the native library picks it up.
-    // See: https://github.com/ggml-org/llama.cpp/pull/20997
-    Os.setenv("GGML_OPENCL_ADRENO_USE_LARGE_BUFFER", "1", true)
-    SoLoader.init(this, OpenSourceMergedSoMapping)
-    if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-      // If you opted-in for the New Architecture, we load the native entry point for this app.
-      load()
+    CrashForensics.breadcrumb("app:onCreate-enter")
+    try {
+      // Enable Adreno large buffer support on Qualcomm A7X/A8X GPUs.
+      // The OpenCL backend in llama.rn self-gates on GPU family and the
+      // cl_qcom_large_buffer extension — this is a no-op on non-Adreno devices.
+      // Must be set before SoLoader.init so the native library picks it up.
+      // See: https://github.com/ggml-org/llama.cpp/pull/20997
+      Os.setenv("GGML_OPENCL_ADRENO_USE_LARGE_BUFFER", "1", true)
+      SoLoader.init(this, OpenSourceMergedSoMapping)
+      CrashForensics.breadcrumb("app:soloader-done")
+      if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+        // If you opted-in for the New Architecture, we load the native entry point for this app.
+        load()
+        CrashForensics.breadcrumb("app:newarch-loaded")
+      }
+    } catch (t: Throwable) {
+      // Swallow-and-record: if SoLoader/new-arch load fails we must keep
+      // this process alive so CrashReportActivity can still open and the
+      // failure itself is persisted. The main activity will surface the
+      // real failure on its own (and the handler will capture it).
+      CrashForensics.recordStartupFailure(this, t)
     }
+    CrashForensics.breadcrumb("app:onCreate-exit")
   }
 }

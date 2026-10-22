@@ -24,55 +24,16 @@ import java.io.File
 class DiagnosticsModule(reactContext: ReactApplicationContext) :
     NativeDiagnosticsSpec(reactContext) {
 
-  @Volatile
-  private var crashHandlerInstalled = false
-
   override fun getName(): String = NativeDiagnosticsSpec.NAME
 
   override fun installNativeCrashHandler() {
-    if (crashHandlerInstalled) {
-      return
-    }
-    crashHandlerInstalled = true
-    val previousHandler = Thread.getDefaultUncaughtExceptionHandler()
-    val appContext = reactApplicationContext
-    Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
-      try {
-        val dir = File(appContext.filesDir, "diagnostics")
-        if (!dir.exists()) {
-          dir.mkdirs()
-        }
-        val versionName = try {
-          appContext.packageManager
-              .getPackageInfo(appContext.packageName, 0).versionName ?: "?"
-        } catch (_: Throwable) {
-          "?"
-        }
-        val file = File(dir, "native_crash_${System.currentTimeMillis()}.txt")
-        file.writeText(
-            buildString {
-              appendLine("time: ${System.currentTimeMillis()}")
-              appendLine("app version: $versionName")
-              appendLine("thread: ${thread.name}")
-              appendLine(throwable.toString())
-              appendLine(throwable.stackTraceToString())
-              throwable.cause?.let { cause ->
-                appendLine("caused by:")
-                appendLine(cause.toString())
-                appendLine(cause.stackTraceToString())
-              }
-            }
-        )
-        // Keep only the newest three crash files.
-        dir.listFiles { f -> f.name.startsWith("native_crash_") }
-            ?.sortedByDescending { it.name }
-            ?.drop(3)
-            ?.forEach { it.delete() }
-      } catch (_: Throwable) {
-        // Never let the diagnostics writer break the crash flow.
-      }
-      previousHandler?.uncaughtException(thread, throwable)
-    }
+    // Application.attachBaseContext already installs the process-wide
+    // forensics handler (CrashForensics) — the earliest possible moment.
+    // This JS-triggered path is kept for API compatibility and is now an
+    // idempotent delegation: the first install wins, later calls are
+    // no-ops, so the late-installed handler can never replace the early
+    // one with a narrower window of coverage.
+    CrashForensics.install(reactApplicationContext)
   }
 
   override fun getLogcatTail(lines: Double, promise: Promise) {

@@ -27,6 +27,7 @@ class MainActivity : ReactActivity() {
       DefaultReactActivityDelegate(this, mainComponentName, fabricEnabled)
 
   override fun onCreate(savedInstanceState: Bundle?) {
+      com.drsai.CrashForensics.breadcrumb("activity:onCreate-enter")
       // Prevent react-native-screens from restoring fragments after process death
       // This fixes the "Screen fragments should never be restored" crash
       // See: https://github.com/software-mansion/react-native-screens/issues/17
