@@ -10,8 +10,9 @@ import {TalentEngine, TalentResult, ToolDefinition} from './types';
  * Security model: this engine is a pure pass-through — sanitization is the
  * WebView wrapper's job. See HtmlPreviewBubble for the actual envelope:
  * strict CSP (default-src 'none', no network/external fetch), but JavaScript
- * IS enabled with 'unsafe-inline' + 'unsafe-eval' for interactive HTML/games.
- * Navigation is pinned to about:blank; no native bridge surface.
+ * IS enabled with 'unsafe-inline' for interactive HTML/games ('unsafe-eval'
+ * is deliberately not granted — audit SEC-06). Navigation is pinned to
+ * about:blank; no native bridge surface.
  */
 export class RenderHtmlEngine implements TalentEngine {
   readonly name = 'render_html';

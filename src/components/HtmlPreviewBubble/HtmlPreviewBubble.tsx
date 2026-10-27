@@ -40,11 +40,15 @@ interface HtmlPreviewBubbleProps {
 // preview keeps `javaScriptEnabled={false}` so chat history scrolling
 // cannot pin CPU or drain battery on model-generated `while(true)` /
 // `setInterval` loops. Strict CSP (default-src 'none') blocks network
-// exfiltration regardless. `'unsafe-inline'` + `'unsafe-eval'` on
-// script-src are needed in the fullscreen path so model-generated games
-// can use eval-like patterns (Function, setTimeout(string)).
+// exfiltration regardless. `'unsafe-inline'` on script-src is needed in the
+// fullscreen path so model-generated documents can run their inline
+// `<script>` blocks. `'unsafe-eval'` is deliberately NOT granted
+// (audit SEC-06): eval / new Function / setTimeout(string) on untrusted
+// model output is the highest-value JS escape hatch, and generated games
+// rarely need it — code relying on those patterns degrades with a console
+// error instead of executing.
 const CSP =
-  "default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline' 'unsafe-eval'; img-src data:; font-src data:";
+  "default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:; font-src data:";
 
 const HEAD_INJECTION = `<meta http-equiv="Content-Security-Policy" content="${CSP}" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
