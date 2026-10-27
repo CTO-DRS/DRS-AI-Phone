@@ -70,10 +70,14 @@ react {
 
 /**
  * SEC-04 (audit v1.41.0): enabled. R8 (formerly ProGuard) minifies and
- * obfuscates release bytecode — the shipped APK no longer carries full
- * unobfuscated class/method names. Every JNI/reflection boundary is pinned
- * by keep rules in proguard-rules.pro; CI builds assembleProdRelease on
- * every push so any missing-class or rule regression fails loudly.
+ * obfuscates release bytecode, and the resource shrinker (see the release
+ * buildType below) strips unused resources — the shipped APK no longer
+ * carries full unobfuscated class/method names or dead resources. Every
+ * JNI/reflection boundary is pinned by keep rules in proguard-rules.pro;
+ * resources resolved only at runtime BY NAME (JS-referenced drawables,
+ * notifee's smallIcon) are pinned in src/main/res/raw/keep.xml. CI builds
+ * assembleProdRelease on every push and greps the log for the R8 and
+ * shrinker tasks, so any missing-class or rule regression fails loudly.
  */
 def enableProguardInReleaseBuilds = true
 
@@ -217,11 +221,20 @@ android {
             }
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            // SEC-04, resource half: strip unused resources alongside R8
+            // bytecode shrinking. Follows the same flag so a debugging flip
+            // (enableProguardInReleaseBuilds = false) disables both together
+            // — shrinkResources requires minifyEnabled, so the pair must
+            // never diverge. Resources resolved only at runtime BY NAME
+            // (JS-referenced drawables, notifee's smallIcon) are pinned in
+            // src/main/res/raw/keep.xml — without it the shrinker would
+            // strip them while the build stays green.
+            shrinkResources enableProguardInReleaseBuilds
             buildConfigField "boolean", "USE_DEV_SUPPORT", "false"
         }
         releaseE2e {
-            // E2E buildType: inherits 95% of release (Hermes, minify toggle,
-            // proguard rules), then overrides:
+            // E2E buildType: inherits 95% of release (Hermes, minify +
+            // resource shrink toggles, proguard rules), then overrides:
             //   1. debuggable=true so `adb shell run-as com.drsai.app.e2e`
             //      works for the benchmark-matrix preseed workflow.
             //   2. Debug signing — E2E builds are never shipped to stores.

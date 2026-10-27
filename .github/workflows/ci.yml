@@ -357,6 +357,40 @@ jobs:
           fi
           echo "OK: prod bundle contains zero automation markers."
 
+      # SEC-04: prove the hardening flags actually engaged for THIS
+      # artifact. The greps below are the only build-side evidence that R8
+      # (bytecode shrinking + obfuscation) and the resource shrinker ran —
+      # a silent regression (flag flipped back, DSL refactor, plugin
+      # behavior change) otherwise ships an unminified APK that still
+      # passes every other check in this file.
+      - name: Verify R8 and the resource shrinker ran
+        run: |
+          set -euo pipefail
+          for TASK in minifyProdReleaseWithR8 shrinkProdReleaseRes; do
+            if ! grep -q "$TASK" android/android-build.log; then
+              echo "::error::Gradle did not execute :app:${TASK}. R8 / resource shrinking is OFF — check enableProguardInReleaseBuilds and shrinkResources in android/app/build.gradle."
+              exit 1
+            fi
+          done
+          echo "OK: R8 minification and resource shrinking both ran."
+
+      # SEC-04 acceptance ("compare the size"): record what the APK is made
+      # of so successive releases are comparable across the minify/shrink
+      # transition (pre-R8 baseline: v1.41.1 signed APK was ~78 MB).
+      - name: Report release APK size breakdown
+        run: |
+          set -euo pipefail
+          APK=android/app/build/outputs/apk/prod/release/app-prod-release.apk
+          SIZE=$(stat -c%s "$APK")
+          {
+            echo "### Release APK size — R8 + resource shrinking on"
+            echo ""
+            echo "- APK total: ${SIZE} bytes ($(awk "BEGIN{printf \"%.1f\", ${SIZE}/1048576}") MB)"
+            unzip -l "$APK" 'classes*.dex' | awk 'NF==4 && $4 ~ /^classes[0-9]*\.dex$/ {n++; s+=$1} END {printf "- dex (post-R8): %d files, %.1f MB\n", n, s/1048576}'
+            unzip -l "$APK" 'res/*' | awk 'NF==4 && $4 ~ /^res\// {s+=$1} END {printf "- res (post-shrink): %.1f MB\n", s/1048576}'
+            unzip -l "$APK" 'lib/*' | awk 'NF==4 && $4 ~ /^lib\// {s+=$1} END {printf "- lib (native): %.1f MB\n", s/1048576}'
+          } >> "$GITHUB_STEP_SUMMARY"
+
       - name: Upload Android APK
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:

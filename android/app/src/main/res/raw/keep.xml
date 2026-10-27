@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  SEC-04 (audit v1.41.0): guard rails for the release resource shrinker
+  (shrinkResources in android/app/build.gradle).
+
+  The shrinker keeps a resource only if it can prove it is referenced:
+  from the manifest, from code (R.* references), or from another kept
+  resource. Two families in this app are referenced ONLY by a runtime
+  name lookup, which the shrinker cannot see. Without this file they are
+  stripped from the APK while the build stays green:
+
+  1. @drawable/src_assets_* — every Image that is require()d from JS
+     (src/assets/**). Metro emits them as res/drawable-*/src_assets_*.png
+     and the Hermes bundle resolves them BY NAME at runtime. All bundled
+     images live under src/assets/**, so they share the src_assets_
+     resource-name prefix (path from the repo root, separators -> _).
+  2. @mipmap/ic_launcher* — notifee's smallIcon is the plain string
+     'ic_launcher' from JS (src/services/notificationService.ts),
+     resolved by name at notification-post time.
+
+  shrinkMode stays at the default (safe); this file only adds keeps.
+-->
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:keep="@drawable/src_assets_*,@mipmap/ic_launcher*" />

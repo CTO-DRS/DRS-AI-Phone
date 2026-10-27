@@ -192,6 +192,21 @@ jobs:
           path: android/android-build.log
           retention-days: 14
 
+      # SEC-04: refuse to publish an unminified release. Mirrors ci.yml's
+      # guard on the artifact that actually ships from this workflow: the
+      # greps below are the only build-side evidence that R8 and the
+      # resource shrinker ran for this exact APK.
+      - name: Verify R8 and the resource shrinker ran
+        run: |
+          set -euo pipefail
+          for TASK in minifyProdReleaseWithR8 shrinkProdReleaseRes; do
+            if ! grep -q "$TASK" android/android-build.log; then
+              echo "::error::Gradle did not execute :app:${TASK}. R8 / resource shrinking is OFF — check enableProguardInReleaseBuilds and shrinkResources in android/app/build.gradle."
+              exit 1
+            fi
+          done
+          echo "OK: R8 minification and resource shrinking both ran."
+
       - name: Verify APK signature
         run: |
           APK=android/app/build/outputs/apk/prod/release/app-prod-release.apk
