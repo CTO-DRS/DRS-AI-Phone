@@ -1,12 +1,15 @@
 /* eslint-disable no-bitwise */
 /**
- * Minimal, dependency-free SHA-256 (FIPS 180-4) for short inputs.
+ * Minimal, dependency-free SHA-256 (FIPS 180-4).
  *
- * Used to hash the Google sign-in nonce on-device (audit finding F-08 /
- * recommendation R-08): the raw nonce goes to Google, the hash goes to
- * Supabase `signInWithIdToken`. Input sizes here are tiny (a 32-byte nonce),
- * so a compact pure-JS implementation is appropriate and avoids pulling a
- * crypto dependency into the bundle.
+ * Two consumers:
+ *  - `sha256Hex(input)` hashes short UTF-8 strings (Google sign-in nonce,
+ *    audit finding F-08 / recommendation R-08: the raw nonce goes to
+ *    Google, the hash goes to Supabase `signInWithIdToken`).
+ *  - `IncrementalSha256` feeds arbitrary byte chunks — used by
+ *    `fileSha256.ts` to hash multi-GB model files in bounded-memory chunks
+ *    (audit AI-02: the native RNFS hasher is unreliable beyond ~4 GiB,
+ *    see https://github.com/birdofpreyru/react-native-fs/issues/99).
  */
 
 // Round constants: first 32 bits of the fractional parts of the cube roots
@@ -62,47 +65,101 @@ function utf8Bytes(input: string): number[] {
   return bytes;
 }
 
-/** Compute the SHA-256 digest of `input` and return it as lowercase hex. */
-export function sha256Hex(input: string): string {
-  const bytes = utf8Bytes(input);
-  const bitLenHi = Math.floor((bytes.length * 8) / 0x100000000);
-  const bitLenLo = (bytes.length * 8) >>> 0;
+/**
+ * Incremental SHA-256 over raw byte chunks (FIPS 180-4). Single-use:
+ * call `update()` any number of times, then `digestHex()` once.
+ *
+ * Bounded memory: only one 64-byte block buffer + scratch words are held,
+ * so a multi-GB model file can be hashed in fixed-size chunks without ever
+ * materializing the file in JS memory.
+ */
+export class IncrementalSha256 {
+  private readonly h = new Uint32Array([
+    0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c,
+    0x1f83d9ab, 0x5be0cd19,
+  ]);
+  private readonly pending = new Uint8Array(64);
+  private pendingLen = 0;
+  private totalBytes = 0;
+  private readonly w = new Uint32Array(64);
 
-  // Pad: message + 0x80 + zeros + 64-bit big-endian bit length
-  const padded = [...bytes, 0x80];
-  while (padded.length % 64 !== 56) {
-    padded.push(0);
+  update(bytes: Uint8Array): void {
+    this.totalBytes += bytes.length;
+    let offset = 0;
+
+    // Top up a partially filled block first.
+    if (this.pendingLen > 0) {
+      const take = Math.min(64 - this.pendingLen, bytes.length);
+      this.pending.set(bytes.subarray(0, take), this.pendingLen);
+      this.pendingLen += take;
+      offset = take;
+      if (this.pendingLen === 64) {
+        this.compress(this.pending, 0);
+        this.pendingLen = 0;
+      }
+    }
+
+    // Compress whole blocks directly from the input.
+    while (offset + 64 <= bytes.length) {
+      this.compress(bytes, offset);
+      offset += 64;
+    }
+
+    // Buffer the tail (< 64 bytes).
+    if (offset < bytes.length) {
+      this.pending.set(bytes.subarray(offset), 0);
+      this.pendingLen = bytes.length - offset;
+    }
   }
-  padded.push(
-    (bitLenHi >>> 24) & 0xff,
-    (bitLenHi >>> 16) & 0xff,
-    (bitLenHi >>> 8) & 0xff,
-    bitLenHi & 0xff,
-    (bitLenLo >>> 24) & 0xff,
-    (bitLenLo >>> 16) & 0xff,
-    (bitLenLo >>> 8) & 0xff,
-    bitLenLo & 0xff,
-  );
 
-  let h0 = 0x6a09e667;
-  let h1 = 0xbb67ae85;
-  let h2 = 0x3c6ef372;
-  let h3 = 0xa54ff53a;
-  let h4 = 0x510e527f;
-  let h5 = 0x9b05688c;
-  let h6 = 0x1f83d9ab;
-  let h7 = 0x5be0cd19;
+  digestHex(): string {
+    // Total bit length as a 64-bit big-endian pair. totalBytes stays a safe
+    // integer below 2^53, so totalBytes * 8 is exact for any practical file.
+    const totalBits = this.totalBytes * 8;
+    const bitLenHi = Math.floor(totalBits / 0x100000000);
+    const bitLenLo = totalBits % 0x100000000;
 
-  const w = new Uint32Array(64);
+    // Padding after the pending bytes: 0x80 + zeros + 8-byte big-endian bit
+    // length, sized so that pendingLen + padLen is a multiple of 64.
+    let zeros = (55 - this.pendingLen) % 64;
+    if (zeros < 0) {
+      zeros += 64;
+    }
+    const padLen = 1 + zeros + 8;
+    const pad = new Uint8Array(padLen);
+    pad[0] = 0x80;
+    const lenPos = padLen - 8;
+    pad[lenPos] = (bitLenHi >>> 24) & 0xff;
+    pad[lenPos + 1] = (bitLenHi >>> 16) & 0xff;
+    pad[lenPos + 2] = (bitLenHi >>> 8) & 0xff;
+    pad[lenPos + 3] = bitLenHi & 0xff;
+    pad[lenPos + 4] = (bitLenLo >>> 24) & 0xff;
+    pad[lenPos + 5] = (bitLenLo >>> 16) & 0xff;
+    pad[lenPos + 6] = (bitLenLo >>> 8) & 0xff;
+    pad[lenPos + 7] = bitLenLo & 0xff;
 
-  for (let block = 0; block < padded.length; block += 64) {
+    // pending (0..63 bytes, buffered by update()) + pad == 1 or 2 blocks.
+    const combined = new Uint8Array(this.pendingLen + padLen);
+    combined.set(this.pending.subarray(0, this.pendingLen), 0);
+    combined.set(pad, this.pendingLen);
+    for (let off = 0; off + 64 <= combined.length; off += 64) {
+      this.compress(combined, off);
+    }
+
+    return Array.from(this.h)
+      .map(x => x.toString(16).padStart(8, '0'))
+      .join('');
+  }
+
+  private compress(block: Uint8Array, blockOffset: number): void {
+    const w = this.w;
     for (let t = 0; t < 16; t++) {
-      const i = block + t * 4;
+      const i = blockOffset + t * 4;
       w[t] =
-        ((padded[i] << 24) |
-          (padded[i + 1] << 16) |
-          (padded[i + 2] << 8) |
-          padded[i + 3]) >>>
+        ((block[i] << 24) |
+          (block[i + 1] << 16) |
+          (block[i + 2] << 8) |
+          block[i + 3]) >>>
         0;
     }
     for (let t = 16; t < 64; t++) {
@@ -111,14 +168,14 @@ export function sha256Hex(input: string): string {
       w[t] = (w[t - 16] + s0 + w[t - 7] + s1) >>> 0;
     }
 
-    let a = h0;
-    let b = h1;
-    let c = h2;
-    let d = h3;
-    let e = h4;
-    let f = h5;
-    let g = h6;
-    let h = h7;
+    let a = this.h[0];
+    let b = this.h[1];
+    let c = this.h[2];
+    let d = this.h[3];
+    let e = this.h[4];
+    let f = this.h[5];
+    let g = this.h[6];
+    let h = this.h[7];
 
     for (let t = 0; t < 64; t++) {
       const S1 = rotr(e, 6) ^ rotr(e, 11) ^ rotr(e, 25);
@@ -138,17 +195,20 @@ export function sha256Hex(input: string): string {
       a = (temp1 + temp2) >>> 0;
     }
 
-    h0 = (h0 + a) >>> 0;
-    h1 = (h1 + b) >>> 0;
-    h2 = (h2 + c) >>> 0;
-    h3 = (h3 + d) >>> 0;
-    h4 = (h4 + e) >>> 0;
-    h5 = (h5 + f) >>> 0;
-    h6 = (h6 + g) >>> 0;
-    h7 = (h7 + h) >>> 0;
+    this.h[0] = (this.h[0] + a) >>> 0;
+    this.h[1] = (this.h[1] + b) >>> 0;
+    this.h[2] = (this.h[2] + c) >>> 0;
+    this.h[3] = (this.h[3] + d) >>> 0;
+    this.h[4] = (this.h[4] + e) >>> 0;
+    this.h[5] = (this.h[5] + f) >>> 0;
+    this.h[6] = (this.h[6] + g) >>> 0;
+    this.h[7] = (this.h[7] + h) >>> 0;
   }
+}
 
-  return [h0, h1, h2, h3, h4, h5, h6, h7]
-    .map(x => x.toString(16).padStart(8, '0'))
-    .join('');
+/** Compute the SHA-256 digest of `input` and return it as lowercase hex. */
+export function sha256Hex(input: string): string {
+  const hasher = new IncrementalSha256();
+  hasher.update(new Uint8Array(utf8Bytes(input)));
+  return hasher.digestHex();
 }

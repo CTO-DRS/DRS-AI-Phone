@@ -1,4 +1,4 @@
-import {sha256Hex} from '../sha256';
+import {IncrementalSha256, sha256Hex} from '../sha256';
 
 describe('sha256Hex', () => {
   it('hashes the empty string (FIPS 180-4 vector)', () => {
@@ -45,5 +45,59 @@ describe('sha256Hex', () => {
     expect(sha256Hex(long)).toBe(
       'c2a908d98f5df987ade41b5fce213067efbcc21ef2240212a41e54b5e7c28ae5',
     );
+  });
+});
+
+describe('IncrementalSha256', () => {
+  // Independent reference: Node's crypto implementation.
+  const nodeSha256Hex = (buf: Buffer): string =>
+    require('crypto').createHash('sha256').update(buf).digest('hex');
+
+  const utf8 = (s: string): Uint8Array =>
+    new Uint8Array(Buffer.from(s, 'utf8'));
+
+  it('reproduces the FIPS vectors through update()/digestHex()', () => {
+    const h = new IncrementalSha256();
+    h.update(utf8('abc'));
+    expect(h.digestHex()).toBe(sha256Hex('abc'));
+  });
+
+  it('matches Node crypto when updates align with 64-byte blocks', () => {
+    const buf = Buffer.alloc(128, 0x61);
+    const h = new IncrementalSha256();
+    h.update(new Uint8Array(buf));
+    expect(h.digestHex()).toBe(nodeSha256Hex(buf));
+  });
+
+  it('matches Node crypto across every chunking of a 1000-byte buffer', () => {
+    const buf = Buffer.alloc(1000);
+    for (let i = 0; i < buf.length; i++) {
+      buf[i] = i % 251;
+    }
+    for (const chunk of [1, 3, 63, 64, 65, 127, 128, 129, 500, 1000, 4096]) {
+      const h = new IncrementalSha256();
+      for (let off = 0; off < buf.length; off += chunk) {
+        h.update(
+          new Uint8Array(buf.subarray(off, Math.min(off + chunk, buf.length))),
+        );
+      }
+      expect(h.digestHex()).toBe(nodeSha256Hex(buf));
+    }
+  });
+
+  it('matches Node crypto at the 55/56/57-byte padding boundaries', () => {
+    for (const len of [55, 56, 57, 63, 64, 119, 120]) {
+      const buf = Buffer.alloc(len, 0x37);
+      const h = new IncrementalSha256();
+      h.update(new Uint8Array(buf));
+      expect(h.digestHex()).toBe(nodeSha256Hex(buf));
+    }
+  });
+
+  it('is equivalent to sha256Hex for multibyte UTF-8 input', () => {
+    const s = 'مرحبا drs-ai 🚀';
+    const h = new IncrementalSha256();
+    h.update(utf8(s));
+    expect(h.digestHex()).toBe(sha256Hex(s));
   });
 });
