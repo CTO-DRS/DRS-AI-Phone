@@ -69,9 +69,13 @@ react {
 }
 
 /**
- * Set this to true to Run Proguard on Release builds to minify the Java bytecode.
+ * SEC-04 (audit v1.41.0): enabled. R8 (formerly ProGuard) minifies and
+ * obfuscates release bytecode — the shipped APK no longer carries full
+ * unobfuscated class/method names. Every JNI/reflection boundary is pinned
+ * by keep rules in proguard-rules.pro; CI builds assembleProdRelease on
+ * every push so any missing-class or rule regression fails loudly.
  */
-def enableProguardInReleaseBuilds = false
+def enableProguardInReleaseBuilds = true
 
 /**
  * The preferred build flavor of JavaScriptCore (JSC)
