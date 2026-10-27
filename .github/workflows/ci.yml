@@ -26,7 +26,7 @@ jobs:
       ios_relevant: ${{ steps.check.outputs.ios_relevant }}
     steps:
       - name: Check out code
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
 
@@ -81,7 +81,7 @@ jobs:
     steps:
       # Step 1: Check out the repository
       - name: Check out code
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       # DEP-01 (audit v1.41.0): fail fast if any workflow / composite-action
       # `uses:` reference is not pinned to a full commit SHA. Runs before
@@ -145,7 +145,7 @@ jobs:
       ORG_GRADLE_PROJECT_rnllamaBuildFromSource: 'true'
     steps:
       - name: Check out code
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       # Must precede setup-node and setup-java: /opt/hostedtoolcache is where
       # those install. The Hexagon SDK adds ~3.1 GB on top of a from-source build.
@@ -374,7 +374,7 @@ jobs:
       NODE_OPTIONS: '--max-old-space-size=8192'
     steps:
       - name: Check out code
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       # Set up Node.js environment
       - name: Set up Node.js
