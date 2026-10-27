@@ -23,15 +23,12 @@ updates:
       interval: "weekly"
     open-pull-requests-limit: 5
 
-  # Ruby gems for fastlane (android + ios lanes)
+  # Ruby gems for fastlane lanes. DEP-02 (audit v1.41.0): the single Gemfile
+  # lives at the repository root (used by both the android and ios fastlane
+  # lanes); the previous /android + /ios entries pointed at directories with
+  # no Gemfile, so both bundler update jobs failed on every weekly run.
   - package-ecosystem: "bundler"
-    directory: "/android"
-    schedule:
-      interval: "weekly"
-    open-pull-requests-limit: 5
-
-  - package-ecosystem: "bundler"
-    directory: "/ios"
+    directory: "/"
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 5
