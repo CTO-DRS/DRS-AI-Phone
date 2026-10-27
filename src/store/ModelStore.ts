@@ -49,6 +49,7 @@ import {
 } from '../utils';
 import {getRecommendedProjectionModel} from '../utils/multimodalHelpers';
 import {isDraftOnlyModel} from '../utils/mtp';
+import {sha256FileChunked} from '../utils/fileSha256';
 import {getOriginalModelName} from '../utils/formatters';
 import type {OnboardingAssistantModelEntry} from './onboarding/onboardingAssistants';
 
@@ -840,6 +841,11 @@ export class ModelStore {
     // Load missing GGUF metadata for downloaded models (background, non-blocking)
     this.loadMissingGGUFMetadata();
 
+    // AI-02/AI-03: re-queue hash verification for downloaded models without a
+    // cached hash (legacy installs + oversize verifications interrupted by a
+    // restart). Sequential background chain — never blocks init.
+    this.drainBackgroundHashVerifications();
+
     // Check if we need to reload an auto-released model (for app restarts)
     this.checkAndReloadAutoReleasedModel();
   };
@@ -1616,10 +1622,16 @@ export class ModelStore {
    *
    * 1. File must exist at the expected path.
    * 2. Size must match the HF LFS record within 0.1% (cheap, always run).
-   * 3. SHA-256 must match the LFS oid when the record exposes one and the
-   *    file is ≤ MAX_HASH_VERIFY_BYTES (hashing multi-GB files on-device is
-   *    slow and the native hasher is known to be unreliable on huge files —
-   *    above the threshold the size check is the honest verification).
+   * 3. SHA-256 must match the LFS oid:
+   *    - files ≤ MAX_HASH_VERIFY_BYTES hash synchronously via the native
+   *      hasher (reliable below the threshold) and BLOCK the install gate;
+   *    - LARGER files skip the blocking hash (the native hasher is known to
+   *      be unreliable on huge files — see
+   *      https://github.com/birdofpreyru/react-native-fs/issues/99) and are
+   *      queued for a background chunked SHA-256 (AI-02): the model installs
+   *      after the size gate, then the JS-side streaming hasher validates the
+   *      full contents; a mismatch deletes the file and surfaces the same
+   *      `reason: 'verification'` error state as this gate.
    *
    * On failure the partial/corrupt file is deleted and a download error state
    * with `reason: 'verification'` is surfaced so the user can re-download.
@@ -1653,6 +1665,18 @@ export class ModelStore {
         ) {
           throw new Error('Model file checksum mismatch');
         }
+        // Cache the verified hash (AI-03): load-time checks and the
+        // background queue treat a model with a matching `hash` as verified
+        // and never re-hash it.
+        if (actualHash) {
+          runInAction(() => {
+            model.hash = actualHash;
+          });
+        }
+      } else if (expectedHash) {
+        // Oversize (most flagship 7B+ Q4 models): install now, verify the
+        // full contents in the background (AI-02).
+        this.enqueueBackgroundHashVerification(model.id, 'oversize');
       }
       return true;
     } catch (err) {
@@ -1684,6 +1708,180 @@ export class ModelStore {
           id => id !== model.id,
         );
       });
+    }
+  };
+
+  // --- AI-02 / AI-03: background hash verification --------------------------
+  // Models larger than MAX_HASH_VERIFY_BYTES (and legacy installs predating
+  // the hash cache) cannot / did not hash-verify synchronously. They are
+  // queued here and verified one at a time with the JS chunked hasher
+  // (utils/fileSha256.ts). A verified model gets `model.hash` cached, so
+  // later load-time checks never re-hash it.
+
+  /** Models awaiting a background SHA-256 verification (observable). */
+  backgroundHashVerifyingIds: string[] = [];
+
+  private backgroundHashChain: Promise<void> = Promise.resolve();
+
+  /**
+   * Enqueue a model for background SHA-256 verification. No-op when the
+   * model is not downloaded, has no LFS oid to verify against, already has
+   * a cached hash, or is already queued. Verification is skipped while a
+   * benchmark owns the device (it re-runs on the next enqueue/drain).
+   */
+  enqueueBackgroundHashVerification = (
+    modelId: string,
+    reason: 'oversize' | 'legacy' | 'load' = 'legacy',
+  ): void => {
+    const model = this.models.find(m => m.id === modelId);
+    if (!model?.isDownloaded || downloadManager.isDownloading(modelId)) {
+      return;
+    }
+    if (!model.hfModelFile?.lfs?.oid || model.hash) {
+      return; // nothing to verify against, or already verified
+    }
+    if (this.backgroundHashVerifyingIds.includes(modelId)) {
+      return;
+    }
+    if (this.benchmarkActive) {
+      logger.debug(
+        `[ModelStore] hash verification deferred during benchmark: ${modelId} (${reason})`,
+      );
+      return;
+    }
+    runInAction(() => {
+      this.backgroundHashVerifyingIds = [
+        ...this.backgroundHashVerifyingIds,
+        modelId,
+      ];
+    });
+    logger.debug(
+      `[ModelStore] queued background hash verification: ${modelId} (${reason})`,
+    );
+    this.backgroundHashChain = this.backgroundHashChain
+      .then(() => this.processBackgroundHashQueue())
+      .catch(err =>
+        console.error('[ModelStore] background hash chain error:', err),
+      );
+  };
+
+  /**
+   * Drain queued verifications sequentially until the queue is empty.
+   * Runs exactly one model at a time to bound disk/CPU pressure.
+   */
+  private processBackgroundHashQueue = async (): Promise<void> => {
+    while (this.backgroundHashVerifyingIds.length > 0) {
+      const modelId = this.backgroundHashVerifyingIds[0];
+      const model = this.models.find(m => m.id === modelId);
+      try {
+        if (
+          !model?.isDownloaded ||
+          !model.hfModelFile?.lfs?.oid ||
+          model.hash
+        ) {
+          // State changed while queued (deleted, verified elsewhere, …).
+          continue;
+        }
+        if (this.benchmarkActive) {
+          // Yield the device to the benchmark; the drain below re-queues.
+          return;
+        }
+        await this.verifyModelHashInBackground(model);
+      } finally {
+        runInAction(() => {
+          this.backgroundHashVerifyingIds =
+            this.backgroundHashVerifyingIds.filter(id => id !== modelId);
+        });
+      }
+    }
+  };
+
+  /**
+   * Verify one model's file against its LFS oid in the background.
+   * Re-runs the size gate first (cheap), then hashes: native hasher for
+   * files ≤ MAX_HASH_VERIFY_BYTES, JS chunked hasher above it. A mismatch
+   * deletes the file and surfaces the standard verification error state —
+   * identical to the synchronous gate's failure path.
+   */
+  private verifyModelHashInBackground = async (model: Model): Promise<void> => {
+    const MAX_HASH_VERIFY_BYTES = 4 * 1024 * 1024 * 1024;
+    try {
+      const filePath = await this.getModelFullPath(model);
+      if (!(await RNFS.exists(filePath))) {
+        logger.debug(
+          `[ModelStore] background verify skipped (file gone): ${model.id}`,
+        );
+        return;
+      }
+      const stat = await RNFS.stat(filePath);
+      const expectedSize = model.hfModelFile?.lfs?.size;
+      if (expectedSize && expectedSize > 0) {
+        const diffRatio = Math.abs(stat.size - expectedSize) / expectedSize;
+        if (diffRatio > 0.001) {
+          throw new Error(
+            `Model file size mismatch (${stat.size} vs ${expectedSize} bytes)`,
+          );
+        }
+      }
+      const expectedHash = model.hfModelFile?.lfs?.oid!;
+      const actualHash =
+        stat.size <= MAX_HASH_VERIFY_BYTES
+          ? await getSHA256Hash(filePath)
+          : await sha256FileChunked(filePath);
+      if (
+        !actualHash ||
+        actualHash.toLowerCase() !== expectedHash.toLowerCase()
+      ) {
+        throw new Error('Model file checksum mismatch');
+      }
+      runInAction(() => {
+        model.hash = actualHash;
+      });
+      logger.debug(`[ModelStore] background hash verified OK: ${model.id}`);
+    } catch (err) {
+      console.error(
+        `[ModelStore] background hash verify failed: ${model.id}`,
+        err,
+      );
+      // Mirror the synchronous gate's failure path: drop the unusable file
+      // and surface the verification error so the user can re-download.
+      try {
+        const filePath = await this.getModelFullPath(model);
+        if (await RNFS.exists(filePath)) {
+          await RNFS.unlink(filePath);
+        }
+      } catch (cleanupErr) {
+        console.error('Failed to clean up unverified model file:', cleanupErr);
+      }
+      const errorState = createErrorState(
+        err instanceof Error ? err : new Error(String(err)),
+        'download',
+        'huggingface',
+        {modelId: model.id, reason: 'verification'},
+      );
+      runInAction(() => {
+        model.progress = 0;
+        model.isDownloaded = false;
+        this.downloadError = errorState;
+      });
+    }
+  };
+
+  /**
+   * Scan downloaded models for missing hash caches (legacy installs and
+   * oversize verifications that were interrupted by a restart) and enqueue
+   * them. Called once per store init.
+   */
+  drainBackgroundHashVerifications = (): void => {
+    for (const model of this.models) {
+      if (
+        model.isDownloaded &&
+        model.hfModelFile?.lfs?.oid &&
+        !model.hash &&
+        !this.backgroundHashVerifyingIds.includes(model.id)
+      ) {
+        this.enqueueBackgroundHashVerification(model.id, 'legacy');
+      }
     }
   };
 
@@ -2188,10 +2386,52 @@ export class ModelStore {
   };
 
   /**
-   * Initialize a model context, optionally with multimodal support.
+   * AI-03 (audit v1.41.0): load-time integrity gate.
    *
-   * Architecture:
-   * - Phase 1 (outside mutex): Resolve config, check memory, show alert if needed
+   * Runs at the top of initContext, before any native work:
+   *  1. HF models with an LFS size record must still match it (0.1%
+   *     tolerance) — catches truncation/replacement without hashing.
+   *  2. Models with an LFS oid but no cached verified hash are enqueued for
+   *     background SHA-256 verification (cached hashes short-circuit future
+   *     verification entirely).
+   *
+   * Local / remote / preset models without LFS records are a no-op.
+   * Throws so a truncated file fails the load with a clear reason instead
+   * of surfacing later as an opaque llama.cpp header-parse error.
+   */
+  private performLoadTimeIntegrityGate = async (
+    model: Model,
+  ): Promise<void> => {
+    const expectedSize = model.hfModelFile?.lfs?.size;
+    const expectedHash = model.hfModelFile?.lfs?.oid;
+    if (!expectedSize && !expectedHash) {
+      return; // LOCAL / remote / legacy models without HF metadata
+    }
+    const filePath = await this.getModelFullPath(model);
+    if (!(await RNFS.exists(filePath))) {
+      // The download-status reconciler already flags missing files; let the
+      // normal load path produce its own error rather than double-failing.
+      return;
+    }
+    if (expectedSize && expectedSize > 0) {
+      const stat = await RNFS.stat(filePath);
+      const diffRatio = Math.abs(stat.size - expectedSize) / expectedSize;
+      if (diffRatio > 0.001) {
+        throw new Error(
+          `Model file integrity check failed: size mismatch (${stat.size} vs ${expectedSize} bytes). Delete and re-download the model.`,
+        );
+      }
+    }
+    if (expectedHash && !model.hash) {
+      this.enqueueBackgroundHashVerification(model.id, 'load');
+    }
+  };
+
+  /**
+   * Initialize the LLM context for a given model.
+   *
+   * This method handles two phases:
+   * - Phase 1 (outside mutex): Pre-flight checks, memory confirmation
    * - Phase 2 (inside mutex): Release old context, load new context
    *
    * The "last-one-wins" pattern uses pendingModelId set at the START, then checked
@@ -2228,6 +2468,13 @@ export class ModelStore {
     });
 
     try {
+      // AI-03 (audit v1.41.0): load-time integrity gate. Cheap and
+      // synchronous: the file must exist and its size must still match the
+      // HF LFS record (catches truncation/replacement without hashing).
+      // Full SHA-256 re-verification happens in the background queue, and
+      // only for models without a cached verified hash.
+      await this.performLoadTimeIntegrityGate(model);
+
       // Resolve multimodal configuration
       const {isMultimodalInit, resolvedMmProjPath, projectionModel} =
         await this.resolveMultimodalConfig(model, mmProjPath);
