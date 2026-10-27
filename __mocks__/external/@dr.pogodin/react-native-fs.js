@@ -2,6 +2,12 @@
 const deletedFiles = new Set();
 export const stat = jest.fn();
 export const mkdir = jest.fn();
+// SHA-256 hasher (utils.getSHA256Hash) — default digest is a stable 64-char
+// placeholder; tests override per-file expectations when verification runs.
+export const hash = jest.fn(() => Promise.resolve('a'.repeat(64)));
+// Chunked read (utils/fileSha256.ts) — default empty; fileSha256 tests mock
+// an in-memory filesystem.
+export const read = jest.fn(() => Promise.resolve(''));
 export const unlink = jest.fn().mockImplementation(path => {
   deletedFiles.add(path);
   console.log('deleting: ', path);
@@ -58,6 +64,28 @@ export const __setDocumentDirectoryPath = path => {
 };
 export const copyFile = jest.fn().mockResolvedValue(true);
 
+/**
+ * Configure stat/hash/exists so `verifyTtsFile` passes for the given TTS
+ * file descriptors (AI-01 tests). `extraExists` lists path suffixes that
+ * should also report as existing (e.g. a legacy FP16 `model.onnx`).
+ */
+export const __satisfyIntegrity = (descriptors, extraExists = []) => {
+  exists.mockImplementation(path =>
+    Promise.resolve(
+      descriptors.some(d => path.endsWith(d.name)) ||
+        extraExists.some(suffix => path.endsWith(suffix)),
+    ),
+  );
+  stat.mockImplementation(path => {
+    const d = descriptors.find(x => path.endsWith(x.name));
+    return Promise.resolve({size: d?.bytes ?? 1234});
+  });
+  hash.mockImplementation(path => {
+    const d = descriptors.find(x => path.endsWith(x.name));
+    return Promise.resolve(d?.sha256 ?? 'b'.repeat(64));
+  });
+};
+
 // Expose method to reset state for tests
 export const __resetMockState = () => {
   deletedFiles.clear();
@@ -73,6 +101,11 @@ export const __resetMockState = () => {
     console.log('deleting: ', path);
     return Promise.resolve();
   });
+  stat.mockReset();
+  hash.mockReset();
+  hash.mockImplementation(() => Promise.resolve('a'.repeat(64)));
+  read.mockReset();
+  read.mockImplementation(() => Promise.resolve(''));
 };
 
 // Add namespace export for compatibility

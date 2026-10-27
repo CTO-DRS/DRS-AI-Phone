@@ -79,6 +79,12 @@ describe('KittenEngine', () => {
     });
 
     it('downloads model files plus dict in a single phase', async () => {
+      // AI-01: kitten's gated repo carries no sha256/bytes yet, so
+      // verification is existence-only; files must report as present.
+      (RNFS as any).__satisfyIntegrity?.([
+        ...KITTEN_MODEL_FILES.map(f => ({name: f.name})),
+        {name: TTS_DICT_FILENAME},
+      ]);
       (RNFS.downloadFile as jest.Mock).mockImplementation(okDownload);
 
       await new KittenEngine().downloadModel();
@@ -120,6 +126,10 @@ describe('KittenEngine', () => {
     });
 
     it('reports progress ending at 1.0', async () => {
+      (RNFS as any).__satisfyIntegrity?.([
+        ...KITTEN_MODEL_FILES.map(f => ({name: f.name})),
+        {name: TTS_DICT_FILENAME},
+      ]);
       (RNFS.downloadFile as jest.Mock).mockImplementation(okDownload);
       const progresses: number[] = [];
       await new KittenEngine().downloadModel(p => progresses.push(p));

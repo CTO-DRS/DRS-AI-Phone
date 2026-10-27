@@ -88,11 +88,22 @@ describe('KokoroEngine', () => {
       jobId: 1,
     });
 
-    it('deletes a legacy FP16 weights file (model.onnx) before downloading FP32', async () => {
-      (RNFS.downloadFile as jest.Mock).mockImplementation(okDownload);
-      (RNFS.exists as jest.Mock).mockImplementation((path: string) =>
-        Promise.resolve(path.endsWith('/model.onnx')),
+    // Make verifyTtsFile pass: files "exist" with exact sizes + matching
+    // hashes for every core descriptor; the voices tree API stays offline
+    // (best-effort verification degrades to status-only).
+    const satisfyIntegrity = (extraExists: string[] = []) => {
+      (RNFS as any).__satisfyIntegrity?.(
+        [...KOKORO_MODEL_FILES, {name: TTS_DICT_FILENAME}],
+        extraExists,
       );
+      (global as any).fetch = jest
+        .fn()
+        .mockResolvedValue({ok: false, status: 404});
+    };
+
+    it('deletes a legacy FP16 weights file (model.onnx) before downloading FP32', async () => {
+      satisfyIntegrity(['/model.onnx']);
+      (RNFS.downloadFile as jest.Mock).mockImplementation(okDownload);
 
       await new KokoroEngine().downloadModel();
 
@@ -102,8 +113,8 @@ describe('KokoroEngine', () => {
     });
 
     it('does not unlink anything when no legacy FP16 weights are present', async () => {
+      satisfyIntegrity();
       (RNFS.downloadFile as jest.Mock).mockImplementation(okDownload);
-      (RNFS.exists as jest.Mock).mockResolvedValue(false);
 
       await new KokoroEngine().downloadModel();
 
@@ -113,6 +124,7 @@ describe('KokoroEngine', () => {
     });
 
     it('phase 1 downloads model + tokenizer + dict, phase 2 downloads each voice, then writes manifest', async () => {
+      satisfyIntegrity();
       (RNFS.downloadFile as jest.Mock).mockImplementation(okDownload);
 
       await new KokoroEngine().downloadModel();
@@ -153,6 +165,7 @@ describe('KokoroEngine', () => {
     });
 
     it('phase 1 failure cleans up the model dir and rethrows (manifest NOT written)', async () => {
+      satisfyIntegrity();
       (RNFS.exists as jest.Mock).mockResolvedValue(true);
       (RNFS.downloadFile as jest.Mock)
         .mockImplementationOnce(okDownload) // model.onnx succeeds
@@ -173,6 +186,7 @@ describe('KokoroEngine', () => {
     });
 
     it('phase 2 voice failure is tolerated (best-effort): manifest still written, no throw', async () => {
+      satisfyIntegrity();
       const coreFilesCount = KOKORO_MODEL_FILES.length + 1; // +dict
       let call = 0;
       (RNFS.downloadFile as jest.Mock).mockImplementation(() => {
@@ -198,6 +212,7 @@ describe('KokoroEngine', () => {
     });
 
     it('phase 2 voice rejection is tolerated (best-effort): manifest still written, no throw', async () => {
+      satisfyIntegrity();
       const coreFilesCount = KOKORO_MODEL_FILES.length + 1;
       let call = 0;
       (RNFS.downloadFile as jest.Mock).mockImplementation(() => {
@@ -220,6 +235,7 @@ describe('KokoroEngine', () => {
     });
 
     it('reports monotonic progress ending at 1.0', async () => {
+      satisfyIntegrity();
       (RNFS.downloadFile as jest.Mock).mockImplementation(okDownload);
 
       const progresses: number[] = [];
@@ -229,6 +245,48 @@ describe('KokoroEngine', () => {
       expect(progresses[progresses.length - 1]).toBe(1);
       expect(Math.min(...progresses)).toBeGreaterThanOrEqual(0);
       expect(Math.max(...progresses)).toBeLessThanOrEqual(1);
+    });
+
+    it('AI-01: a core file failing integrity verification cleans up the whole dir and rethrows', async () => {
+      // '/tts/kokoro' extra lets the cleanup's exists(modelDir) see the dir.
+      satisfyIntegrity(['/tts/kokoro']);
+      // All downloads succeed, but the model file hashes to the wrong value.
+      (RNFS.downloadFile as jest.Mock).mockImplementation(okDownload);
+      (RNFS.hash as jest.Mock).mockImplementation((path: string) =>
+        Promise.resolve(
+          path.endsWith('model_fp32.onnx')
+            ? 'f'.repeat(64) // corrupted download
+            : 'a'.repeat(64),
+        ),
+      );
+
+      await expect(new KokoroEngine().downloadModel()).rejects.toThrow(
+        /checksum mismatch/i,
+      );
+
+      // All-or-nothing: the whole model dir is removed.
+      expect(RNFS.unlink).toHaveBeenCalledWith(
+        expect.stringContaining('/tts/kokoro'),
+      );
+      // Manifest must not be written for an unverified core file.
+      expect(RNFS.writeFile).not.toHaveBeenCalled();
+    });
+
+    it('AI-01: a core file with a wrong size is rejected before hashing', async () => {
+      satisfyIntegrity(['/tts/kokoro']);
+      (RNFS.downloadFile as jest.Mock).mockImplementation(okDownload);
+      (RNFS.stat as jest.Mock).mockImplementation((path: string) =>
+        Promise.resolve({
+          size: path.endsWith('model_fp32.onnx') ? 1 : 1234,
+        }),
+      );
+
+      await expect(new KokoroEngine().downloadModel()).rejects.toThrow(
+        /size mismatch/i,
+      );
+      expect(RNFS.unlink).toHaveBeenCalledWith(
+        expect.stringContaining('/tts/kokoro'),
+      );
     });
   });
 

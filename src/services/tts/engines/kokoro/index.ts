@@ -9,10 +9,18 @@ import {
   KOKORO_MODEL_SUBDIR,
   KOKORO_VOICES_BASE_URL,
   KOKORO_VOICES_MANIFEST_FILENAME,
+  TTS_DICT_BYTES,
   TTS_DICT_FILENAME,
+  TTS_DICT_SHA256,
   TTS_DICT_URL,
   TTS_PARENT_SUBDIR,
 } from '../../constants';
+import {
+  fetchHfDirectoryIntegrityMap,
+  hfTreeApiUrl,
+  verifyTtsFile,
+  type TtsFileDescriptor,
+} from '../../fileIntegrity';
 import {ttsRuntime} from '../../runtime';
 import {createEngineStreamingHandle} from '../../streamingHandle';
 import type {Engine, StreamingHandle, Voice} from '../../types';
@@ -107,10 +115,17 @@ export class KokoroEngine implements Engine {
     await this.reclaimLegacySpace();
 
     // Phase 1: core files (model + tokenizer + dict) — all-or-nothing.
+    // Each file is integrity-verified (AI-01) right after its download
+    // completes; any failure throws into the cleanup below.
     const corePhaseWeight = 0.6;
-    const coreFiles = [
+    const coreFiles: TtsFileDescriptor[] = [
       ...KOKORO_MODEL_FILES,
-      {name: TTS_DICT_FILENAME, url: TTS_DICT_URL},
+      {
+        name: TTS_DICT_FILENAME,
+        url: TTS_DICT_URL,
+        sha256: TTS_DICT_SHA256,
+        bytes: TTS_DICT_BYTES,
+      },
     ];
     const corePerFile = new Array(coreFiles.length).fill(0);
     const reportCore = () => {
@@ -126,7 +141,9 @@ export class KokoroEngine implements Engine {
         const file = coreFiles[i]!;
         const target = this.getFilePath(file.name);
         const fromUrl =
-          'url' in file ? file.url : `${KOKORO_MODEL_BASE_URL}/${file.urlPath}`;
+          'url' in file && file.url
+            ? file.url
+            : `${KOKORO_MODEL_BASE_URL}/${file.urlPath ?? ''}`;
         const result = await RNFS.downloadFile({
           fromUrl,
           toFile: target,
@@ -146,6 +163,7 @@ export class KokoroEngine implements Engine {
             `Failed to download ${file.name}: HTTP ${result.statusCode}`,
           );
         }
+        await verifyTtsFile(target, file);
         corePerFile[i] = 1;
         reportCore();
       }
@@ -164,6 +182,13 @@ export class KokoroEngine implements Engine {
     }
 
     // Phase 2: per-voice `.bin` embedding files — best-effort; partial OK.
+    // Voice integrity data comes from one HF tree API call (AI-01): a
+    // corrupted voice bin hashes against the repo-side oid and is rejected
+    // like any other failed voice download. Verification is best-effort:
+    // if the tree request fails, voices keep status-only checks.
+    const voiceIntegrity = await fetchHfDirectoryIntegrityMap(
+      hfTreeApiUrl(KOKORO_MODEL_BASE_URL, 'voices'),
+    );
     const voicePhaseBase = corePhaseWeight;
     const voicePhaseWeight = 1 - corePhaseWeight;
     let voicesDone = 0;
@@ -182,6 +207,29 @@ export class KokoroEngine implements Engine {
           console.warn(
             `[KokoroEngine] voice ${voice.id} download failed: HTTP ${result.statusCode}`,
           );
+        } else {
+          const descriptor = voiceIntegrity.get(`${voice.id}.bin`);
+          if (descriptor) {
+            try {
+              await verifyTtsFile(target, descriptor);
+            } catch (verifyErr) {
+              console.warn(
+                `[KokoroEngine] voice ${voice.id} failed integrity check:`,
+                verifyErr,
+              );
+              voicesDone++;
+              if (onProgress) {
+                onProgress(
+                  Math.min(
+                    1,
+                    voicePhaseBase +
+                      (voicesDone / KOKORO_VOICES.length) * voicePhaseWeight,
+                  ),
+                );
+              }
+              continue;
+            }
+          }
         }
       } catch (voiceErr) {
         console.warn(

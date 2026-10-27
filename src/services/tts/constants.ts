@@ -59,13 +59,44 @@ export const SUPERTONIC_VOICES_BASE_URL = `${SUPERTONIC_MODEL_BASE_URL}/voice_st
  * The five network-downloaded files that make up the Supertonic pipeline.
  * v3 preserves the v2 filenames; a sixth file (`voices-manifest.json`) and a
  * version sentinel are synthesized locally after download.
+ *
+ * AI-01 (audit v1.41.0): `sha256` is the file's HuggingFace LFS oid
+ * (ground-truth SHA-256) and `bytes` its exact size; both are verified
+ * after download by `verifyTtsFile` before the install counts. The LFS
+ * oids were resolved from the HF repo-tree API (Supertone/supertonic-3).
  */
 export const SUPERTONIC_MODEL_FILES = [
-  {name: 'duration_predictor.onnx', urlPath: 'onnx/duration_predictor.onnx'},
-  {name: 'text_encoder.onnx', urlPath: 'onnx/text_encoder.onnx'},
-  {name: 'vector_estimator.onnx', urlPath: 'onnx/vector_estimator.onnx'},
-  {name: 'vocoder.onnx', urlPath: 'onnx/vocoder.onnx'},
-  {name: 'unicode_indexer.json', urlPath: 'onnx/unicode_indexer.json'},
+  {
+    name: 'duration_predictor.onnx',
+    urlPath: 'onnx/duration_predictor.onnx',
+    sha256: 'c3eb91414d5ff8a7a239b7fe9e34e7e2bf8a8140d8375ffb14718b1c639325db',
+    bytes: 3700147,
+  },
+  {
+    name: 'text_encoder.onnx',
+    urlPath: 'onnx/text_encoder.onnx',
+    sha256: 'c7befd5ea8c3119769e8a6c1486c4edc6a3bc8365c67621c881bbb774b9902ff',
+    bytes: 36416150,
+  },
+  {
+    name: 'vector_estimator.onnx',
+    urlPath: 'onnx/vector_estimator.onnx',
+    sha256: '883ac868ea0275ef0e991524dc64f16b3c0376efd7c320af6b53f5b780d7c61c',
+    bytes: 256534781,
+  },
+  {
+    name: 'vocoder.onnx',
+    urlPath: 'onnx/vocoder.onnx',
+    sha256: '085de76dd8e8d5836d6ca66826601f615939218f90e519f70ee8a36ed2a4c4ba',
+    bytes: 101424195,
+  },
+  {
+    name: 'unicode_indexer.json',
+    urlPath: 'onnx/unicode_indexer.json',
+    // Not LFS-tracked: sha256 computed from the exact served bytes.
+    sha256: '9bf7346e43883a81f8645c81224f786d43c5b57f3641f6e7671a7d6c493cb24f',
+    bytes: 277676,
+  },
 ] as const;
 
 /** Name of the voices manifest generated locally after model download. */
@@ -102,10 +133,25 @@ export const KOKORO_VOICES_BASE_URL = `${KOKORO_MODEL_BASE_URL}/voices`;
  * the engine cannot initialize. Local name is `model_fp32.onnx` so users
  * who previously downloaded the FP16 weights (saved as `model.onnx`) get
  * a clean re-download instead of inheriting the silent-audio bug.
+ *
+ * AI-01 (audit v1.41.0): `sha256`/`bytes` are verified after download by
+ * `verifyTtsFile`. The model sha256 is the HF LFS oid
+ * (onnx-community/Kokoro-82M-v1.0-ONNX); the tokenizer is a regular
+ * (non-LFS) file whose sha256 was computed from the exact served bytes.
  */
 export const KOKORO_MODEL_FILES = [
-  {name: 'model_fp32.onnx', urlPath: 'onnx/model.onnx'},
-  {name: 'tokenizer.json', urlPath: 'tokenizer.json'},
+  {
+    name: 'model_fp32.onnx',
+    urlPath: 'onnx/model.onnx',
+    sha256: '8fbea51ea711f2af382e88c833d9e288c6dc82ce5e98421ea61c058ce21a34cb',
+    bytes: 325532232,
+  },
+  {
+    name: 'tokenizer.json',
+    urlPath: 'tokenizer.json',
+    sha256: '77a02c8e164413299b4b4c403b14f8e0e1c1b727db4d46a09d6327b861060a34',
+    bytes: 3497,
+  },
 ] as const;
 
 /**
@@ -119,6 +165,16 @@ export const TTS_DICT_URL =
 
 /** Local filename for the IPA dict (saved inside each engine's model dir). */
 export const TTS_DICT_FILENAME = 'en-us.bin';
+
+/**
+ * IPA dict integrity data (AI-01). The hosting dataset (drshub/phonemizer-dicts)
+ * is gated to anonymous API/resolve requests as of 2026-10, so the sha256/size
+ * could not be resolved from here. In-app downloads still work for users who
+ * already accepted the repo gate; until the owner fills these in, the dict
+ * falls back to status-only verification in `verifyTtsFile`.
+ */
+export const TTS_DICT_SHA256: string | undefined = undefined;
+export const TTS_DICT_BYTES: number | undefined = undefined;
 
 /** Name of the Kokoro voices manifest generated locally after download. */
 export const KOKORO_VOICES_MANIFEST_FILENAME = 'voices-manifest.json';
@@ -138,6 +194,11 @@ export const KITTEN_MODEL_BASE_URL =
  * Kitten files: the ONNX model (saved locally as `kitten.onnx`) and the
  * voices manifest JSON. The IPA dict is downloaded separately via
  * `TTS_DICT_URL` into the same directory.
+ *
+ * AI-01 (audit v1.41.0): `sha256`/`bytes` intentionally undefined — the
+ * hosting repo (drshub/kitten-tts-nano-0.8-fp32) is gated to anonymous
+ * requests as of 2026-10, so integrity data could not be resolved. Files
+ * fall back to status-only verification until the owner fills them in.
  */
 export const KITTEN_MODEL_FILES = [
   {name: 'kitten.onnx', urlPath: 'kitten_tts_nano_v0_8.onnx'},

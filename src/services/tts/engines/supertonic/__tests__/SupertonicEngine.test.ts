@@ -137,7 +137,17 @@ describe('SupertonicEngine', () => {
       jobId: 1,
     });
 
+    // AI-01: core files carry exact bytes + sha256 (LFS oids) — make
+    // verifyTtsFile pass by reporting matching stats and hashes.
+    const satisfyIntegrity = () => {
+      (RNFS as any).__satisfyIntegrity?.([
+        ...SUPERTONIC_MODEL_FILES,
+        {name: SUPERTONIC_VOICES_MANIFEST_FILENAME},
+      ]);
+    };
+
     it('downloads core files + voice styles and writes manifest on iOS', async () => {
+      satisfyIntegrity();
       (RNFS.downloadFile as jest.Mock).mockImplementation(okDownload);
 
       await new SupertonicEngine().downloadModel();
@@ -163,6 +173,7 @@ describe('SupertonicEngine', () => {
     });
 
     it('writes the version sentinel as the final disk write', async () => {
+      satisfyIntegrity();
       (RNFS.downloadFile as jest.Mock).mockImplementation(okDownload);
 
       await new SupertonicEngine().downloadModel();
@@ -185,6 +196,7 @@ describe('SupertonicEngine', () => {
     });
 
     it('sets NSURLIsExcludedFromBackupKey=true on parent tts/ directory (iOS)', async () => {
+      satisfyIntegrity();
       (RNFS.downloadFile as jest.Mock).mockImplementation(okDownload);
 
       await new SupertonicEngine().downloadModel();
@@ -202,6 +214,7 @@ describe('SupertonicEngine', () => {
     });
 
     it('reports 0..1 progress across all files', async () => {
+      satisfyIntegrity();
       let progressCb: any;
       (RNFS.downloadFile as jest.Mock).mockImplementation((opts: any) => {
         progressCb = opts.progress;
@@ -223,6 +236,7 @@ describe('SupertonicEngine', () => {
     });
 
     it('cleans up partial download and rethrows on failure', async () => {
+      satisfyIntegrity();
       (RNFS.exists as jest.Mock).mockResolvedValue(true);
       (RNFS.downloadFile as jest.Mock)
         .mockImplementationOnce(okDownload)

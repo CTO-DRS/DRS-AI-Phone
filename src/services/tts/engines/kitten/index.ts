@@ -7,11 +7,14 @@ import {
   KITTEN_MODEL_BASE_URL,
   KITTEN_MODEL_FILES,
   KITTEN_MODEL_SUBDIR,
+  TTS_DICT_BYTES,
   TTS_DICT_FILENAME,
+  TTS_DICT_SHA256,
   TTS_DICT_URL,
   TTS_PARENT_SUBDIR,
 } from '../../constants';
 import {ttsRuntime} from '../../runtime';
+import {verifyTtsFile, type TtsFileDescriptor} from '../../fileIntegrity';
 import {createEngineStreamingHandle} from '../../streamingHandle';
 import type {Engine, StreamingHandle, Voice} from '../../types';
 import {KITTEN_VOICES} from './voices';
@@ -75,12 +78,20 @@ export class KittenEngine implements Engine {
     await RNFS.mkdir(parentDir, {NSURLIsExcludedFromBackupKey: true});
     await RNFS.mkdir(modelDir, {NSURLIsExcludedFromBackupKey: true});
 
-    const allFiles = [
+    // AI-01: descriptors carry optional sha256/bytes for post-download
+    // verification. Kitten's repo is gated, so its entries carry none yet
+    // (see constants.ts) — verification degrades to file-exists for them.
+    const allFiles: TtsFileDescriptor[] = [
       ...KITTEN_MODEL_FILES.map(f => ({
         name: f.name,
         url: `${KITTEN_MODEL_BASE_URL}/${f.urlPath}`,
       })),
-      {name: TTS_DICT_FILENAME, url: TTS_DICT_URL},
+      {
+        name: TTS_DICT_FILENAME,
+        url: TTS_DICT_URL,
+        sha256: TTS_DICT_SHA256,
+        bytes: TTS_DICT_BYTES,
+      },
     ];
     const perFileProgress = new Array(allFiles.length).fill(0);
     const reportOverall = () => {
@@ -95,8 +106,9 @@ export class KittenEngine implements Engine {
       for (let i = 0; i < allFiles.length; i++) {
         const file = allFiles[i]!;
         const target = this.getFilePath(file.name);
+        // Every kitten entry carries an explicit full URL (see allFiles above).
         const result = await RNFS.downloadFile({
-          fromUrl: file.url,
+          fromUrl: file.url!,
           toFile: target,
           background: false,
           discretionary: false,
@@ -114,6 +126,7 @@ export class KittenEngine implements Engine {
             `Failed to download ${file.name}: HTTP ${result.statusCode}`,
           );
         }
+        await verifyTtsFile(target, file);
         perFileProgress[i] = 1;
         reportOverall();
       }

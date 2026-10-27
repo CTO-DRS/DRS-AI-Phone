@@ -17,6 +17,10 @@ import {
   TTS_PARENT_SUBDIR,
 } from '../../constants';
 import {ttsRuntime} from '../../runtime';
+// Note: per-voice style JSONs (phase 2) are additionally fetched natively
+// by the fork's StyleLoader at play time, so there is no JS-side hook to
+// verify them — core pipeline files below are the verifiable surface.
+import {verifyTtsFile} from '../../fileIntegrity';
 import {createEngineStreamingHandle} from '../../streamingHandle';
 import type {
   Engine,
@@ -208,6 +212,7 @@ export class SupertonicEngine implements Engine {
             `Failed to download ${file.name}: HTTP ${result.statusCode}`,
           );
         }
+        await verifyTtsFile(target, file);
         corePerFile[i] = 1;
         reportCore();
       }
