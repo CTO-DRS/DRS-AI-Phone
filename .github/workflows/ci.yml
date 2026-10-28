@@ -133,6 +133,15 @@ jobs:
       - name: Run unit tests
         run: yarn test --coverage
 
+      # Step 7: ARCH-01/CODE-02 ratchet — madge counts circular import
+      # chains across src/; CI fails if the count exceeds the baseline in
+      # scripts/check-circular-imports.js. Lower the baseline whenever
+      # cycles are broken (audit end state: 0). Runs only when the lint/
+      # typecheck/test steps above have passed, so a broken build never
+      # masks a cycle-count regression.
+      - name: Guard circular imports (ratchet)
+        run: yarn check:circles
+
   # Job for Android build
   build-android:
     runs-on: ubuntu-latest
