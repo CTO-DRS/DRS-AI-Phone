@@ -199,12 +199,21 @@ jobs:
       - name: Verify R8 and the resource shrinker ran
         run: |
           set -euo pipefail
-          for TASK in minifyProdReleaseWithR8 shrinkProdReleaseRes; do
-            if ! grep -q "$TASK" android/android-build.log; then
-              echo "::error::Gradle did not execute :app:${TASK}. R8 / resource shrinking is OFF — check enableProguardInReleaseBuilds and shrinkResources in android/app/build.gradle."
-              exit 1
-            fi
-          done
+          # R8's task name is stable across AGP versions.
+          if ! grep -Eq "> Task :app:minifyProdReleaseWithR8" android/android-build.log; then
+            echo "::error::Gradle did not execute :app:minifyProdReleaseWithR8. R8 minification is OFF — check enableProguardInReleaseBuilds in android/app/build.gradle."
+            exit 1
+          fi
+          # The resource shrinker's task name changed across AGP versions:
+          # legacy AGP ran :app:shrinkProdReleaseRes; AGP 8.4+ runs
+          # :app:convertShrunkResourcesToBinaryProdRelease, which appears only
+          # when shrinkResources is enabled — it is absent from the pre-shrink
+          # CI #219 log, while :app:optimizeProdReleaseResources runs
+          # regardless and is NOT a shrinking indicator.
+          if ! grep -Eq "> Task :app:(shrinkProdReleaseRes|convertShrunkResourcesToBinary)" android/android-build.log; then
+            echo "::error::Gradle executed neither :app:shrinkProdReleaseRes (legacy AGP) nor :app:convertShrunkResourcesToBinaryProdRelease (AGP 8.4+). Resource shrinking is OFF — check shrinkResources in android/app/build.gradle."
+            exit 1
+          fi
           echo "OK: R8 minification and resource shrinking both ran."
 
       - name: Verify APK signature
