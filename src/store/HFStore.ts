@@ -7,7 +7,7 @@ import {fetchGGUFSpecs, fetchModelFilesDetails, fetchModels} from '../api/hf';
 
 import {enrichSiblingsWithStorage} from '../utils';
 import {processHFSearchResults} from '../utils/hf';
-import {ErrorState, createErrorState} from '../utils/errors';
+import {ErrorState, createErrorState} from '../utils/errors-ui';
 
 import {HuggingFaceModel} from '../utils/types';
 import {logger} from '../utils/logger';

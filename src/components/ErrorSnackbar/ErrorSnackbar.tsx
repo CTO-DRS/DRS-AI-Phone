@@ -4,7 +4,7 @@ import {Portal, Snackbar, Text} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import {useTheme} from '../../hooks';
-import {ErrorState} from '../../utils/errors';
+import {ErrorState} from '../../utils/errors-core';
 import {createStyles} from './styles';
 
 interface ErrorSnackbarProps {

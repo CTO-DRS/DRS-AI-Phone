@@ -18,7 +18,7 @@ import {
 import {resolveReasoningCapability} from '../utils/reasoningCapability';
 
 import {MessageType, ModelOrigin, User} from '../utils/types';
-import {createMultimodalWarning} from '../utils/errors';
+import {createMultimodalWarning} from '../utils/errors-core';
 import {
   assembleMessages,
   resolveSystemMessages,

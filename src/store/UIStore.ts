@@ -9,7 +9,7 @@ import {
   initLocale,
   type AvailableLanguage,
 } from '../locales';
-import {ErrorState} from '../utils/errors';
+import {ErrorState} from '../utils/errors-core';
 import {
   INITIAL_ONBOARDING_STATE,
   type OnboardingState,

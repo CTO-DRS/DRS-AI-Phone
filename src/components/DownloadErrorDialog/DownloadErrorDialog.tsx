@@ -7,7 +7,7 @@ import {Model} from '../../utils/types';
 import {useTheme} from '../../hooks';
 import {L10nContext} from '../../utils';
 import {t} from '../../locales';
-import {ErrorState} from '../../utils/errors';
+import {ErrorState} from '../../utils/errors-core';
 import {createStyles} from './styles';
 import {CheckCircleIcon} from '../../assets/icons';
 import {hfStore} from '../../store';

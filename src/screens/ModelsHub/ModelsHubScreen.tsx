@@ -47,7 +47,7 @@ import {
 
 import {L10nContext} from '../../utils';
 import {Model, HuggingFaceModel, ModelFile} from '../../utils/types';
-import {ErrorState} from '../../utils/errors';
+import {ErrorState} from '../../utils/errors-core';
 import {
   ModelCategory,
   classifyModel,

@@ -18,7 +18,11 @@ import {
 
 import {BenchmarkResult} from '../../../utils/types';
 import {formatBytes, formatNumber} from '../../../utils';
-import {NetworkError, AppCheckError, ServerError} from '../../../utils/errors';
+import {
+  NetworkError,
+  AppCheckError,
+  ServerError,
+} from '../../../utils/errors-core';
 
 type Props = {
   result: BenchmarkResult;

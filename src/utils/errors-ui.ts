@@ -1,64 +1,24 @@
 /**
- * Error classes for better error handling throughout the application
+ * Store-dependent error helpers.
+ *
+ * ARCH-01/CODE-02: the former src/utils/errors.ts imported uiStore for
+ * localized messages while store/UIStore.ts imported the ErrorState type
+ * from it — a utils ⇄ store import cycle. The cycle is broken by keeping
+ * every store-free declaration in utils/errors-core.ts (which stores may
+ * safely import) and confining the uiStore coupling to THIS module.
+ * Import it directly when you need createErrorState; do not re-export it
+ * from a module that stores import.
  */
 
 import axios from 'axios';
+
 import {uiStore} from '../store/UIStore';
-/**
- * NetworkError - Used for connectivity-related errors
- * Examples: No internet connection, timeout, etc.
- */
-export class NetworkError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = 'NetworkError';
-  }
-}
+import {type ErrorState, NetworkError, ServerError} from './errors-core';
 
-/**
- * AppCheckError - Used for Firebase App Check verification errors
- * Examples: App not installed from official store, verification failed, etc.
- */
-export class AppCheckError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = 'AppCheckError';
-  }
-}
-
-/**
- * ServerError - Used for backend server errors
- * Examples: 500 errors, API unavailable, etc.
- */
-export class ServerError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = 'ServerError';
-  }
-}
-
-/**
- * Standardized error state interface for consistent error handling across the app
- */
-export interface ErrorState {
-  code:
-    | 'authentication'
-    | 'authorization'
-    | 'network'
-    | 'storage'
-    | 'server'
-    | 'multimodal'
-    | 'unknown';
-  service?: 'huggingface' | 'firebase' | 'localapi';
-  message: string;
-  context: 'search' | 'download' | 'modelDetails' | 'chat' | 'modelInit';
-  recoverable: boolean;
-  severity?: 'error' | 'warning';
-  metadata?: {
-    modelId?: string;
-    [key: string]: any;
-  };
-}
+// Type-only re-export so consumers of createErrorState can pull the state
+// type and the helper from one import site. Erased at compile time — it
+// adds no runtime dependency edge.
+export type {ErrorState} from './errors-core';
 
 /**
  * Helper function to create a standardized error state from any error
@@ -195,21 +155,5 @@ export function createErrorState(
     recoverable,
     severity,
     metadata,
-  };
-}
-
-/**
- * Helper function to create a multimodal warning state
- */
-export function createMultimodalWarning(
-  message: string,
-  context: ErrorState['context'] = 'chat',
-): ErrorState {
-  return {
-    code: 'multimodal',
-    message,
-    context,
-    recoverable: false,
-    severity: 'warning',
   };
 }

@@ -1,11 +1,11 @@
 import axios from 'axios';
+import {createErrorState} from '../errors-ui';
 import {
-  createErrorState,
   createMultimodalWarning,
   NetworkError,
   ServerError,
   AppCheckError,
-} from '../errors';
+} from '../errors-core';
 
 // Mock uiStore
 jest.mock('../../store/UIStore', () => ({

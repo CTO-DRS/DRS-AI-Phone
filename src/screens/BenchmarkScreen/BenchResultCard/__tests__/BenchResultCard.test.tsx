@@ -7,7 +7,7 @@ import {
   NetworkError,
   AppCheckError,
   ServerError,
-} from '../../../../utils/errors';
+} from '../../../../utils/errors-core';
 
 // Mock Linking - need to spy on the actual Linking object
 const mockOpenURL = jest.fn().mockImplementation(() => Promise.resolve());

@@ -12,7 +12,8 @@ import {l10n} from '../../../locales';
 import {uiStore} from '../../../store/UIStore';
 
 uiStore.setLanguage('en');
-import {createErrorState, ErrorState} from '../../../utils/errors';
+import {createErrorState} from '../../../utils/errors-ui';
+import {ErrorState} from '../../../utils/errors-core';
 
 // Mock Linking - need to spy on the actual Linking object
 const mockOpenURL = jest.fn().mockImplementation(() => Promise.resolve());

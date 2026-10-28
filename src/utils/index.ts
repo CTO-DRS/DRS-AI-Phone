@@ -724,7 +724,14 @@ export function getQuantRank(level: string): number {
 }
 
 export * from './cacheUtils';
-export * from './errors';
+// ARCH-01/CODE-02: errors-core is the store-free leaf module (safe for
+// stores to import); errors-ui carries the uiStore coupling. Both halves
+// of the former ./errors stay re-exported here so the barrel's public
+// surface is unchanged — but note the barrel itself now drags in
+// errors-ui (and thus UIStore), so stores must deep-import errors-core
+// instead of this barrel to avoid re-creating the cycle.
+export * from './errors-core';
+export * from './errors-ui';
 export * from './fb';
 export * from './formatters';
 export * from './mtp';

@@ -27,7 +27,7 @@ import {hasVideoCapability} from '../../utils/assistant-capabilities';
 import {L10nContext} from '../../utils';
 import {resolveReasoningCapability} from '../../utils/reasoningCapability';
 import {MessageType} from '../../utils/types';
-import {ErrorState} from '../../utils/errors';
+import {ErrorState} from '../../utils/errors-core';
 import {user, assistant} from '../../utils/chat';
 
 import {VideoAssistantScreen} from './VideoAssistantScreen';

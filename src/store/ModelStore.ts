@@ -85,7 +85,7 @@ import {
   RemoteSessionBinding,
 } from '../utils/types';
 
-import {ErrorState, createErrorState} from '../utils/errors';
+import {ErrorState, createErrorState} from '../utils/errors-ui';
 import {chatSessionRepository} from '../repositories/ChatSessionRepository';
 import {hasEnoughMemory} from '../hooks/useMemoryCheck';
 import {

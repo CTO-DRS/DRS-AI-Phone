@@ -2,8 +2,12 @@ import React from 'react';
 import {render as renderNative} from '@testing-library/react-native';
 import {render, fireEvent} from '../../../../jest/test-utils';
 import {ErrorSnackbar} from '../ErrorSnackbar';
-import {ErrorState, NetworkError, ServerError} from '../../../utils/errors';
-import {createErrorState} from '../../../utils/errors';
+import {
+  ErrorState,
+  NetworkError,
+  ServerError,
+} from '../../../utils/errors-core';
+import {createErrorState} from '../../../utils/errors-ui';
 import {l10n} from '../../../locales';
 // NOTE: the real uiStore singleton (not the jest store barrel mock) —
 // createErrorState() resolves messages through it. Pin English so the
