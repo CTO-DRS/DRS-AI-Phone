@@ -19,6 +19,7 @@ import {resolveReasoningCapability} from '../utils/reasoningCapability';
 
 import {MessageType, ModelOrigin, User} from '../utils/types';
 import {createMultimodalWarning} from '../utils/errors-core';
+import {classifyLlamaError} from '../utils/llamaErrorPatterns';
 import {
   assembleMessages,
   resolveSystemMessages,
@@ -793,31 +794,27 @@ export const useChatSession = (
       });
 
       const errorMessage = (error as Error).message;
-      // Native tool-call parser throws on truncated JSON when the model
-      // ran out of context mid-args (most often `render_html` with a
-      // long string). Detect by error shape and route through the
-      // turn's metadata so the footer can show a friendlier hint
-      // instead of a multi-KB raw error dump.
-      const isToolArgsParseError =
-        /Failed to parse tool call arguments as JSON/i.test(errorMessage);
-      // Prompt-processing overflow: when the prompt itself exceeds n_ctx
-      // (ctx_shift is off — the llama.rn default), the native layer throws
-      // "Context is full" before any token is generated, so it never reaches
-      // run_finished. Treat it as an n_ctx-exhaustion signal so the banner
-      // surfaces instead of a raw error dump.
-      // LLAMARN-DEP: string-coupled to the native throw in RNLlamaJSI.cpp.
-      // No typed flag exists yet; a llama.rn reword would silently stop the
-      // prompt-overflow banner. Re-verify on upgrade; prefer a typed
-      // CompletionResult flag upstream when available.
-      const isContextFullError = /context is full/i.test(errorMessage);
+      // Three native llama.rn failure shapes get a friendlier in-app
+      // surface instead of a multi-KB raw error dump:
+      // - Tool-args parse error: the native tool-call parser threw on
+      //   truncated JSON — almost always context exhaustion mid-args (most
+      //   often `render_html` with a long string); the turn is tagged
+      //   {truncationLikely: true} so the footer can show an actionable
+      //   hint.
+      // - Context full: the prompt itself overflows n_ctx (ctx_shift is
+      //   off — the llama.rn default), so the native layer throws before
+      //   any token is generated and run_finished never fires; treated
+      //   as an n_ctx-exhaustion signal so the banner surfaces.
+      // - Speculative init: low-RAM devices can fail to allocate the MTP
+      //   draft context at first completion (the load-time memory check
+      //   has no term for it).
+      // LLAMARN-DEP: all three are string matches on native throws —
+      // the patterns, their upstream throw sites, and the upgrade
+      // checklist live in ONE place: utils/llamaErrorPatterns (and its
+      // pinned string tests).
+      const {isToolArgsParseError, isContextFullError, isSpeculativeInitError} =
+        classifyLlamaError(errorMessage);
       const treatAsContextFull = isToolArgsParseError || isContextFullError;
-      // Low-RAM devices can fail to allocate the speculative draft context at
-      // first completion (the load-time memory check has no term for it).
-      // LLAMARN-DEP: string-coupled to the throw in rn-completion.cpp; a
-      // reword would silently demote this back to the raw dump.
-      const isSpeculativeInitError = /failed to create MTP draft context/i.test(
-        errorMessage,
-      );
 
       // Error rollback path. The empty/in-flight AssistantTurn row
       // already exists; preserve any partial steps and tag with
