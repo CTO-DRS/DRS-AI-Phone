@@ -1,4 +1,4 @@
-import {useEffect, useState, useContext} from 'react';
+import {useEffect, useState, useContext, useRef} from 'react';
 
 import DeviceInfo from 'react-native-device-info';
 
@@ -33,23 +33,46 @@ export const useStorageCheck = (
     isOk: true,
     message: '',
   });
-  //const [freeDiskStorage, setFreeDiskStorage] = useState<number | null>(null);
+
+  // PERF-03: callers pass a fresh `model` object identity on every render
+  // (ModelCard maps store lists), which used to tear this effect down and
+  // rebuild it — re-running the one-shot storage probe and re-creating the
+  // interval — on each render. The probe only reads the fields destructured
+  // below, so depend on those VALUES instead of the object reference; the
+  // ref keeps the latest object for the fields read at probe time.
+  const modelRef = useRef(model);
+  modelRef.current = model;
+  const {isDownloaded, isLocal, origin, size} = model;
+  // PERF-02: a model already on disk can never be "not enough space" —
+  // gate the whole effect (one-shot probe AND interval) on that state so
+  // the timer stops instead of waking every checkInterval just to return
+  // early. The gate is itself a dependency, so a model deleted while the
+  // card is still mounted re-arms the checks.
+  const isOnDisk = isDownloaded || isLocal || origin === ModelOrigin.LOCAL;
 
   // Effect to check storage and set up periodic checking if enabled
   useEffect(() => {
+    if (isOnDisk) {
+      return;
+    }
+
     const abortController = new AbortController();
 
     const checkStorage = async () => {
       try {
+        const currentModel = modelRef.current;
+        // Belt-and-braces: the effect-level gate above already skips
+        // on-disk models; this guard also covers a download completing
+        // between effect runs (before a re-render re-evaluates the gate).
         if (
-          model.isDownloaded ||
-          model.isLocal ||
-          model.origin === ModelOrigin.LOCAL
+          currentModel.isDownloaded ||
+          currentModel.isLocal ||
+          currentModel.origin === ModelOrigin.LOCAL
         ) {
           return;
         }
 
-        const isEnoughSpace = await hasEnoughSpace(model);
+        const isEnoughSpace = await hasEnoughSpace(currentModel);
         if (abortController.signal.aborted) {
           return;
         }
@@ -62,7 +85,7 @@ export const useStorageCheck = (
 
           // Use localized template string with variables
           const message = t(l10n.storage.lowStorage, {
-            modelSize: formatBytes(model.size),
+            modelSize: formatBytes(currentModel.size),
             freeSpace: formatBytes(freeDisk),
           });
 
@@ -96,7 +119,7 @@ export const useStorageCheck = (
         clearInterval(intervalId);
       }
     };
-  }, [model, enablePeriodicCheck, checkInterval, l10n]);
+  }, [isOnDisk, size, enablePeriodicCheck, checkInterval, l10n]);
 
   return storageStatus;
 };
