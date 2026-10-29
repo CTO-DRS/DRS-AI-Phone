@@ -15,6 +15,7 @@ import React, {
 import {Portal} from 'react-native-paper';
 import DeviceInfo from 'react-native-device-info';
 import {Svg, Path, Rect, Line} from 'react-native-svg';
+import {useIsFocused} from '@react-navigation/native';
 
 import {Surface} from '../ui';
 import {useTheme} from '../../hooks';
@@ -46,6 +47,12 @@ export const UsageStats: React.FC<UsageStatsProps> = ({
   });
   const theme = useTheme();
   const l10n = useContext(L10nContext);
+  // PERF-01: this widget lives in the chat screen header, which stays
+  // mounted while other screens/modals are pushed on top of it. Gate the
+  // sampling loop on screen focus so the 3s memory probe only runs while
+  // the user can actually see the sparkline; the frozen history resumes
+  // appending when the screen regains focus.
+  const isFocused = useIsFocused();
 
   const styles = useMemo(() => createStyles(theme), [theme]);
 
@@ -62,10 +69,13 @@ export const UsageStats: React.FC<UsageStatsProps> = ({
   }, []);
 
   useEffect(() => {
+    if (!isFocused) {
+      return;
+    }
     fetchMemoryStats();
     const intervalId = setInterval(fetchMemoryStats, 3000);
     return () => clearInterval(intervalId);
-  }, [fetchMemoryStats]);
+  }, [isFocused, fetchMemoryStats]);
 
   const generatePath = useCallback(() => {
     if (memoryHistory.length < 2) {

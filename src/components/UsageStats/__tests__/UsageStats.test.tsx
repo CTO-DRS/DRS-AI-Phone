@@ -6,9 +6,22 @@ import {render, fireEvent, act} from '../../../../jest/test-utils';
 
 import {UsageStats} from '../UsageStats';
 
+// PERF-01: the sampling loop is gated on navigation focus. The tests pin
+// the focused state (the default the widget ships with on the chat
+// header) and flip it explicitly for the not-focused behavior test.
+const mockUseIsFocused = jest.fn(() => true);
+jest.mock('@react-navigation/native', () => {
+  const actual = jest.requireActual('@react-navigation/native');
+  return {
+    ...actual,
+    useIsFocused: () => mockUseIsFocused(),
+  };
+});
+
 describe('UsageStats Component', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockUseIsFocused.mockReturnValue(true);
   });
 
   const mockMeasure = jest.fn(callback => {
@@ -103,5 +116,21 @@ describe('UsageStats Component', () => {
     });
 
     expect(queryByTestId('memory-usage-tooltip')).toBeNull();
+  });
+
+  it('does not sample memory while the hosting screen is not focused (PERF-01)', async () => {
+    mockUseIsFocused.mockReturnValue(false);
+    (DeviceInfo.getUsedMemory as jest.Mock).mockClear();
+    (DeviceInfo.getTotalMemory as jest.Mock).mockClear();
+
+    render(<UsageStats width={100} height={50} />);
+
+    await act(async () => {
+      jest.advanceTimersByTime(9000);
+    });
+
+    // No initial fetch and no interval ticks while unfocused.
+    expect(DeviceInfo.getTotalMemory).not.toHaveBeenCalled();
+    expect(DeviceInfo.getUsedMemory).not.toHaveBeenCalled();
   });
 });
