@@ -151,7 +151,8 @@ describe('CalculateEngine', () => {
     expect(result.summary).toMatch(/log\(E\) = 1/);
   });
 
-  // SEC-2: expr-eval defaults `allowMemberAccess: true`, which exposes
+  // SEC-2: the parser lib (expr-eval-fork — security-maintained fork of
+  // expr-eval) defaults `allowMemberAccess: true`, which exposes
   // `(0).constructor.constructor("…")()` as a sandbox escape on any RN
   // runtime where Hermes is disabled and Function() can be invoked. The
   // engine pins the parser to `{allowMemberAccess: false}` so member
