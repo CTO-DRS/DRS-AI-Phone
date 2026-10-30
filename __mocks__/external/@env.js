@@ -6,9 +6,6 @@
   SUPABASE_URL: 'https://test-project.supabase.co',
   SUPABASE_ANON_KEY: 'test-anon-key',
   APP_URL: 'drsai://app',
-  ENABLE_DRSHUB_INTEGRATION: 'true',
-  ENABLE_AUTHENTICATION: 'true',
-  ENABLE_OFFLINE_MODE: 'true',
   GOOGLE_IOS_CLIENT_ID: 'test-google-client-id.apps.googleusercontent.com',
   GOOGLE_WEB_CLIENT_ID: 'test-google-web-client-id.apps.googleusercontent.com',
   FIREBASE_FUNCTIONS_URL: 'https://test-firebase-functions.com',
@@ -31,9 +28,6 @@ Object.keys(mockEnv).forEach(key => {
 export const SUPABASE_URL = 'https://test-project.supabase.co';
 export const SUPABASE_ANON_KEY = 'test-anon-key';
 export const APP_URL = 'drsai://app';
-export const ENABLE_DRSHUB_INTEGRATION = 'true';
-export const ENABLE_AUTHENTICATION = 'true';
-export const ENABLE_OFFLINE_MODE = 'true';
 export const GOOGLE_IOS_CLIENT_ID =
   'test-google-client-id.apps.googleusercontent.com';
 export const GOOGLE_WEB_CLIENT_ID =

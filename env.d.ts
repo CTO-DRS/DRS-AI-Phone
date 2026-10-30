@@ -16,11 +16,6 @@ declare module '@env' {
   // App Configuration
   export const APP_URL: string;
 
-  // Feature Flags
-  export const ENABLE_DRSHUB_INTEGRATION: string;
-  export const ENABLE_AUTHENTICATION: string;
-  export const ENABLE_OFFLINE_MODE: string;
-
   // Google Sign-In Configuration
   export const GOOGLE_IOS_CLIENT_ID: string;
   export const GOOGLE_WEB_CLIENT_ID: string;
