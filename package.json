@@ -199,9 +199,10 @@
     "deepmerge-ts": "8.0.0",
     "path-to-regexp": "8.4.0",
     "yauzl": "3.2.1",
-    "ajv": "8.18.0",
     "diff": "8.0.3",
     "glob": "10.5.0",
-    "on-headers": "1.1.0"
+    "on-headers": "1.1.0",
+    "ajv": "6.12.6",
+    "**/@commitlint/config-validator/ajv": "8.18.0"
   }
 }
