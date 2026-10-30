@@ -1,5 +1,5 @@
 diff --git a/node_modules/react-native-paper/src/components/Menu/Menu.tsx b/node_modules/react-native-paper/src/components/Menu/Menu.tsx
-index 55922c1..fbd3834 100644
+index 669656c..64567c8 100644
 --- a/node_modules/react-native-paper/src/components/Menu/Menu.tsx
 +++ b/node_modules/react-native-paper/src/components/Menu/Menu.tsx
 @@ -303,6 +303,12 @@ const Menu = ({
@@ -15,7 +15,7 @@ index 55922c1..fbd3834 100644
      const windowLayoutResult = Dimensions.get('window');
      const [menuLayoutResult, anchorLayoutResult] = await Promise.all([
        measureMenuLayout(),
-@@ -340,12 +346,13 @@ const Menu = ({
+@@ -340,7 +346,7 @@ const Menu = ({
      });
  
      setWindowLayout({
@@ -24,15 +24,9 @@ index 55922c1..fbd3834 100644
        width: windowLayoutResult.width,
      });
  
-     attachListeners();
-     const { animation } = theme;
-+    await new Promise(resolve => setTimeout(resolve, 1));
-     Animated.parallel([
-       Animated.timing(scaleAnimationRef.current, {
-         toValue: { x: menuLayoutResult.width, y: menuLayoutResult.height },
-@@ -365,13 +372,17 @@ const Menu = ({
+@@ -365,13 +371,17 @@ const Menu = ({
          prevRendered.current = true;
-       }
+       });
      });
 -  }, [anchor, attachListeners, measureAnchorLayout, theme]);
 +  }, [anchor, attachListeners, insets.bottom, measureAnchorLayout, theme]);
@@ -51,24 +45,24 @@ index 55922c1..fbd3834 100644
      Animated.timing(opacityAnimationRef.current, {
        toValue: 0,
        duration: ANIMATION_DURATION * animation.scale,
-@@ -383,6 +394,7 @@ const Menu = ({
-         setRendered(false);
-         prevRendered.current = false;
-         focusFirstDOMNode(anchorRef.current);
-+        callback?.();
-       }
+@@ -382,6 +392,7 @@ const Menu = ({
+       setRendered(false);
+       prevRendered.current = false;
+       focusFirstDOMNode(anchorRef.current);
++      callback?.();
      });
    }, [removeListeners, theme]);
-@@ -640,7 +652,7 @@ const Menu = ({
+ 
+@@ -646,7 +657,7 @@ const Menu = ({
            <Pressable
              accessibilityLabel={overlayAccessibilityLabel}
              accessibilityRole="button"
 -            onPress={onDismiss}
 +            onPress={() => hide(onDismiss)}
+             pointerEvents={visible ? 'auto' : 'none'}
              style={styles.pressableOverlay}
            />
-           <View
-@@ -651,7 +663,7 @@ const Menu = ({
+@@ -658,7 +669,7 @@ const Menu = ({
              accessibilityViewIsModal={visible}
              style={[styles.wrapper, positionStyle, style]}
              pointerEvents={pointerEvents}
