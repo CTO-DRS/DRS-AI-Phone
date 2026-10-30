@@ -66,6 +66,18 @@ jest.mock('react-native-reanimated', () => {
   Reanimated.useAnimatedScrollHandler = jest.fn(() => ({}));
   Reanimated.useAnimatedProps = jest.fn(() => ({}));
   Reanimated.useAnimatedGestureHandler = jest.fn(() => ({}));
+  // Consumed by RNGH v3's reanimatedWrapper when composing gesture event
+  // handlers; the 4.3.x mock predates it. Same semantics as upstream's
+  // NOOP_FACTORY.
+  Reanimated.useComposedEventHandler = jest.fn(() => jest.fn());
+  // RNGH v3 also probes these during gesture config preparation; mirror
+  // upstream's mock semantics (useEvent -> no-op; isSharedValue keeps the
+  // real module's flag check, which is false for mock plain objects).
+  Reanimated.useEvent = jest.fn(() => jest.fn());
+  Reanimated.isSharedValue = jest.fn(
+    (value: unknown) =>
+      (value as Record<string, unknown>)?._isReanimatedSharedValue === true,
+  );
   Reanimated.withTiming = jest.fn(() => ({}));
   Reanimated.withSpring = jest.fn(() => ({}));
   Reanimated.cancelAnimation = jest.fn();
