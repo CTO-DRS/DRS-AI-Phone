@@ -25,6 +25,11 @@ import {
   resolveSystemMessages,
 } from '../utils/systemPromptResolver';
 import {convertToChatMessages, removeThinkingParts} from '../utils/chat';
+import {
+  DEFAULT_GENERATION_RESERVE,
+  trimMessagesToContextBudget,
+} from '../utils/contextBudget';
+import {logger} from '../utils/logger';
 import {activateKeepAwake, deactivateKeepAwake} from '../utils/keepAwake';
 import {
   startGenerationNotification,
@@ -146,14 +151,38 @@ const prepareCompletion = async ({
     maxToolTurns: DEFAULT_MAX_TURNS,
   });
 
-  const messages = assembleMessages(systemMessages, systemPromptFragments, [
-    ...chatMessages,
-    {role: 'user', content: userMessageContent},
-  ]);
+  const assembledMessages = assembleMessages(
+    systemMessages,
+    systemPromptFragments,
+    [...chatMessages, {role: 'user', content: userMessageContent}],
+  );
 
   // Reseed the read_url exfiltration allowlist for this run; the trust policy
-  // (which sources count) lives in the talents module.
-  seedReadUrlAllowlist(messages, currentMessages);
+  // (which sources count) lives in the talents module. Seeded from the FULL
+  // history so trimming below never revokes a URL the user already trusted.
+  seedReadUrlAllowlist(assembledMessages, currentMessages);
+
+  // AI-04 / PERF-05: keep the assembled context inside the active context
+  // window. Token counts are estimates (no JS tokenizer); the oldest turns
+  // are dropped first, and the leading system message plus the current user
+  // turn always survive.
+  const contextTrim = trimMessagesToContextBudget(assembledMessages, {
+    contextSize: modelStore.activeContextSettings?.n_ctx,
+    generationReserve:
+      typeof sessionCompletionSettings?.n_predict === 'number' &&
+      sessionCompletionSettings.n_predict > 0
+        ? sessionCompletionSettings.n_predict
+        : DEFAULT_GENERATION_RESERVE,
+  });
+  if (contextTrim.droppedMessages > 0) {
+    logger.info(
+      `[ChatSession] context budget: dropped ` +
+        `${contextTrim.droppedMessages} oldest message(s) ~` +
+        `${contextTrim.droppedTokens} tok to fit ~` +
+        `${contextTrim.usedTokens}/${contextTrim.budgetTokens}`,
+    );
+  }
+  const messages = contextTrim.messages;
 
   const completionParamsWithAppProps = {
     ...sessionCompletionSettings,
