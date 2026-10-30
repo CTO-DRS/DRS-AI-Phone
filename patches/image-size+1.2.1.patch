@@ -1,0 +1,75 @@
+diff --git a/node_modules/image-size/dist/types/heif.js b/node_modules/image-size/dist/types/heif.js
+index 7997d3f..56832f9 100644
+--- a/node_modules/image-size/dist/types/heif.js
++++ b/node_modules/image-size/dist/types/heif.js
+@@ -29,6 +29,13 @@ exports.HEIF = {
+         const ipcoBox = iprpBox && (0, utils_1.findBox)(input, 'ipco', iprpBox.offset + 8);
+         const ispeBox = ipcoBox && (0, utils_1.findBox)(input, 'ispe', ipcoBox.offset + 8);
+         if (ispeBox) {
++            // GHSA-5p2g-fcmc-qvqq (backport of the 2.0.3 fix): an ispe box
++            // must hold its 8-byte header + 4 version/flags + 4 width +
++            // 4 height. An undersized one used to read width/height from
++            // past the end of the box.
++            if (ispeBox.size < 20) {
++                throw new TypeError('Invalid HEIF');
++            }
+             return {
+                 height: (0, utils_1.readUInt32BE)(input, ispeBox.offset + 16),
+                 width: (0, utils_1.readUInt32BE)(input, ispeBox.offset + 12),
+diff --git a/node_modules/image-size/dist/types/icns.js b/node_modules/image-size/dist/types/icns.js
+index f2bfafe..17d9ead 100644
+--- a/node_modules/image-size/dist/types/icns.js
++++ b/node_modules/image-size/dist/types/icns.js
+@@ -65,6 +65,11 @@ const ICON_TYPE_SIZE = {
+ };
+ function readImageHeader(input, imageOffset) {
+     const imageLengthOffset = imageOffset + ENTRY_LENGTH_OFFSET;
++    // GHSA-w3rx-r6r6-pgpr (backport of the 2.0.3 fix): refuse to read a
++    // header that runs past the buffer instead of returning garbage.
++    if (imageLengthOffset + 4 > input.length) {
++        throw new TypeError('Invalid ICNS');
++    }
+     return [
+         (0, utils_1.toUTF8String)(input, imageOffset, imageLengthOffset),
+         (0, utils_1.readUInt32BE)(input, imageLengthOffset),
+@@ -81,6 +86,12 @@ exports.ICNS = {
+         const fileLength = (0, utils_1.readUInt32BE)(input, FILE_LENGTH_OFFSET);
+         let imageOffset = SIZE_HEADER;
+         let imageHeader = readImageHeader(input, imageOffset);
++        // GHSA-w3rx-r6r6-pgpr (backport of the 2.0.3 fix): an entry length
++        // must cover its own 8-byte header; a zero length never advanced
++        // imageOffset and looped here forever.
++        if (imageHeader[1] < 8) {
++            throw new TypeError('Invalid ICNS');
++        }
+         let imageSize = getImageSize(imageHeader[0]);
+         imageOffset += imageHeader[1];
+         if (imageOffset === fileLength)
+@@ -92,6 +103,9 @@ exports.ICNS = {
+         };
+         while (imageOffset < fileLength && imageOffset < inputLength) {
+             imageHeader = readImageHeader(input, imageOffset);
++            if (imageHeader[1] < 8) {
++                throw new TypeError('Invalid ICNS');
++            }
+             imageSize = getImageSize(imageHeader[0]);
+             imageOffset += imageHeader[1];
+             result.images.push(imageSize);
+diff --git a/node_modules/image-size/dist/types/jxl.js b/node_modules/image-size/dist/types/jxl.js
+index f557b0a..5db3061 100644
+--- a/node_modules/image-size/dist/types/jxl.js
++++ b/node_modules/image-size/dist/types/jxl.js
+@@ -23,6 +23,13 @@ function extractPartialStreams(input) {
+         const jxlpBox = (0, utils_1.findBox)(input, 'jxlp', offset);
+         if (!jxlpBox)
+             break;
++        // GHSA-5p2g-fcmc-qvqq (backport of the 2.0.3 fix): a jxlp box must
++        // carry at least its 12-byte header (size + type + 4-byte jxlp
++        // index). Anything smaller can never advance the offset below, so
++        // a zero-sized box used to loop here forever.
++        if (jxlpBox.size < 12) {
++            throw new TypeError('Invalid JXL');
++        }
+         partialStreams.push(input.slice(jxlpBox.offset + 12, jxlpBox.offset + jxlpBox.size));
+         offset = jxlpBox.offset + jxlpBox.size;
+     }
