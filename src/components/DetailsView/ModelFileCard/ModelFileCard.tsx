@@ -12,9 +12,9 @@ import {
   Chip,
 } from 'react-native-paper';
 
-import {useTheme, useMemoryCheck} from '../../../../../hooks';
+import {useTheme, useMemoryCheck} from '../../../hooks';
 import {createStyles} from './styles';
-import {modelStore} from '../../../../../store';
+import {modelStore} from '../../../store';
 import {
   formatBytes,
   hfAsModel,
@@ -22,17 +22,17 @@ import {
   isProjectionModel,
   getVisionModelSizeBreakdown,
   isVisionRepo,
-} from '../../../../../utils';
-import {t} from '../../../../../locales';
-import {isLegacyQuantization} from '../../../../../utils/modelSettings';
+} from '../../../utils';
+import {t} from '../../../locales';
+import {isLegacyQuantization} from '../../../utils/modelSettings';
 import {
   HuggingFaceModel,
   Model,
   ModelFile,
   ModelOrigin,
-} from '../../../../../utils/types';
-import {VisionDownloadSheet} from '../../../../../components';
-import {ChevronRightIcon} from '../../../../../assets/icons';
+} from '../../../utils/types';
+import {VisionDownloadSheet} from '../../VisionDownloadSheet';
+import {ChevronRightIcon} from '../../../assets/icons';
 
 interface ModelFileCardProps {
   modelFile: ModelFile;

@@ -4,15 +4,16 @@ import {ScrollViewProps, View} from 'react-native';
 import {Text, Chip, Tooltip} from 'react-native-paper';
 import {BottomSheetFlatList} from '@gorhom/bottom-sheet';
 
-import {ModelTypeTag, Sheet} from '../../../../components';
+import {ModelTypeTag} from '../ModelTypeTag';
+import {Sheet} from '../Sheet';
 
-import {urls} from '../../../../config';
-import {useTheme} from '../../../../hooks';
+import {urls} from '../../config';
+import {useTheme} from '../../hooks';
 
 import {createStyles} from './styles';
 import {ModelFileCard} from './ModelFileCard';
 
-import {HuggingFaceModel, ModelFile} from '../../../../utils/types';
+import {HuggingFaceModel, ModelFile} from '../../utils/types';
 import {
   extractHFModelTitle,
   formatNumber,
@@ -22,7 +23,7 @@ import {
   getLLMFiles,
   getMmprojFiles,
   probeRemoteMTPCapability,
-} from '../../../../utils';
+} from '../../utils';
 
 interface DetailsViewProps {
   hfModel: HuggingFaceModel;

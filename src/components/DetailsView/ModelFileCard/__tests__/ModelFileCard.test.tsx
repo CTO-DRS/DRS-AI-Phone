@@ -5,21 +5,21 @@ import {
   render as baseRender,
   fireEvent,
   act,
-} from '../../../../../../../jest/test-utils';
+} from '../../../../../jest/test-utils';
 import {
   hfModel1,
   createModel,
   mockHFModel1,
   modelsList,
-} from '../../../../../../../jest/fixtures/models';
+} from '../../../../../jest/fixtures/models';
 
 import {ModelFileCard} from '../ModelFileCard';
 
-import {downloadManager} from '../../../../../../services/downloads';
+import {downloadManager} from '../../../../services/downloads';
 
-import {modelStore} from '../../../../../../store';
+import {modelStore} from '../../../../store';
 
-import type {Model} from '../../../../../../utils/types';
+import type {Model} from '../../../../utils/types';
 
 const render = (ui: React.ReactElement, options: any = {}) =>
   baseRender(ui, {withBottomSheetProvider: true, ...options});

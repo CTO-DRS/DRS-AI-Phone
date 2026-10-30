@@ -41,7 +41,7 @@ jest.mock('../../../utils', () => {
 // Captures the model it receives so tests can assert the host enriched siblings
 // (canFitInStorage) before handing off.
 let lastDetailsViewModel: any = null;
-jest.mock('../../../screens/ModelsScreen/HFModelSearch/DetailsView', () => ({
+jest.mock('../../DetailsView', () => ({
   DetailsView: ({hfModel}: {hfModel: {id: string}}) => {
     lastDetailsViewModel = hfModel;
     const ReactStub = require('react');

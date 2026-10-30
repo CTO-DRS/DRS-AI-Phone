@@ -18,10 +18,12 @@
 const {execFileSync} = require('child_process');
 const path = require('path');
 
-// Baseline measured on 2026-10-28, immediately after the errors-core /
-// errors-ui split removed the `utils/errors.ts ⇄ store/UIStore.ts`
-// cycle (42 → 41). Lower it as cycles get broken; never raise it.
-const CIRCULAR_IMPORT_BASELINE = 41;
+// Baseline history:
+//   2026-10-28: 42 → 41 (errors-core / errors-ui split, cycle buster)
+//   2026-10-30: 41 → 40 (DetailsView moved screens/ → components/, a
+//              component now imports a component, not a screen)
+// Lower it as cycles get broken; never raise it.
+const CIRCULAR_IMPORT_BASELINE = 40;
 
 const repoRoot = path.resolve(__dirname, '..');
 

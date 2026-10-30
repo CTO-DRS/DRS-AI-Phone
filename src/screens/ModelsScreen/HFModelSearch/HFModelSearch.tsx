@@ -4,7 +4,7 @@ import {observer} from 'mobx-react';
 import debounce from 'lodash/debounce';
 
 import {SearchView} from './SearchView';
-import {DetailsView} from './DetailsView';
+import {DetailsView} from '../../../components/DetailsView';
 
 import {hfStore} from '../../../store';
 

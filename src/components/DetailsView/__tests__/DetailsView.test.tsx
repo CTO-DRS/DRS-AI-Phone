@@ -1,24 +1,13 @@
 import React from 'react';
-import {
-  render as baseRender,
-  waitFor,
-  act,
-} from '../../../../../../jest/test-utils';
+import {render as baseRender, waitFor, act} from '../../../../jest/test-utils';
 import {DetailsView} from '../DetailsView';
-import {
-  mockHFModel1,
-  mockHFModel2,
-} from '../../../../../../jest/fixtures/models';
-import {
-  formatNumber,
-  timeAgo,
-  probeRemoteMTPCapability,
-} from '../../../../../utils';
-import type {MTPRemoteCapability} from '../../../../../utils/mtp';
-import {l10n} from '../../../../../locales';
+import {mockHFModel1, mockHFModel2} from '../../../../jest/fixtures/models';
+import {formatNumber, timeAgo, probeRemoteMTPCapability} from '../../../utils';
+import type {MTPRemoteCapability} from '../../../utils/mtp';
+import {l10n} from '../../../locales';
 
-jest.mock('../../../../../utils', () => ({
-  ...jest.requireActual('../../../../../utils'),
+jest.mock('../../../utils', () => ({
+  ...jest.requireActual('../../../utils'),
   probeRemoteMTPCapability: jest.fn().mockResolvedValue('not-capable'),
 }));
 

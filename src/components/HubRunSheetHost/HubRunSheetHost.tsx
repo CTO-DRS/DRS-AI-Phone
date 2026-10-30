@@ -20,7 +20,7 @@ import {
   resolveHFRepo,
 } from '../../utils';
 import {HuggingFaceModel} from '../../utils/types';
-import {DetailsView} from '../../screens/ModelsScreen/HFModelSearch/DetailsView';
+import {DetailsView} from '../DetailsView';
 
 import {createStyles} from './styles';
 
