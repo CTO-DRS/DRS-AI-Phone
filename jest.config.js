@@ -1,5 +1,9 @@
 module.exports = {
   preset: 'react-native',
+  // reanimated 4.x + worklets 0.13: their jest resolver swaps the
+  // *.native.ts modules for the pure-JS fallbacks when running under jest,
+  // which is what the mock in jest/setup.ts needs to load at all.
+  resolver: require.resolve('react-native-reanimated/jest/resolver'),
   collectCoverage: true,
   collectCoverageFrom: [
     'src/**/*.{ts,tsx}',

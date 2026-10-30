@@ -3,6 +3,38 @@ import mockClipboard from '@react-native-clipboard/clipboard/jest/clipboard-mock
 
 import 'react-native-gesture-handler/jestSetup';
 
+// RNGH v3's ScrollView (and RN's newer ScrollViews) subscribe to Keyboard
+// events on mount and call subscription.remove() on unmount. The
+// auto-mocked NativeEventEmitter below makes Keyboard.addListener return
+// undefined, which crashes those unmount paths. Wrap it so a missing
+// subscription becomes a no-op removable stub; real behavior is untouched.
+import {Keyboard} from 'react-native';
+
+const keyboardAddListener = Keyboard.addListener.bind(Keyboard);
+(Keyboard as {addListener: typeof Keyboard.addListener}).addListener = (
+  ...args: Parameters<typeof Keyboard.addListener>
+) => {
+  const subscription = keyboardAddListener(...args);
+  return (subscription ?? {
+    remove: () => {},
+    removeSubscription: () => {},
+  }) as ReturnType<typeof Keyboard.addListener>;
+};
+
+// RNGH v3's reanimatedWrapper requires react-native-worklets at module load
+// and schedules installUIRuntimeBindings(Worklets.getUIRuntimeHolder). The
+// worklets JS fallback (selected by the jest resolver) throws
+// "getUIRuntimeHolder is not supported on web" from that scheduled callback,
+// which surfaces as an unhandled error after the test body. No test exercises
+// the worklet runtime itself, so stub the holder.
+jest.mock('react-native-worklets', () => {
+  const actual = jest.requireActual('react-native-worklets');
+  return {
+    ...actual,
+    getUIRuntimeHolder: () => ({__workletsJestStub: true}),
+  };
+});
+
 // __E2E__ is a build-time constant in prod/e2e builds (see babel.config.js),
 // but in Jest the transform-define plugin is disabled so it stays a runtime
 // global. Default to true so adapter tests render their components; tests
