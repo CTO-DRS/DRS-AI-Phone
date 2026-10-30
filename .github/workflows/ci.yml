@@ -121,6 +121,15 @@ jobs:
       - name: Verify font registration
         run: node scripts/verify-fonts.js
 
+      # Step 4c: DEP-05 — the vendored TTS package (file: dependency) sits
+      # outside Dependabot and every lockfile; its committed prebuilt lib/
+      # must structurally mirror src/ so an unbuilt source change can never
+      # ship silently. Byte-level rebuild verification runs weekly in
+      # vendors-audit.yml (no vendored lockfile => rebuilds are not
+      # reproducible enough to gate every push on them).
+      - name: Verify vendored package src↔lib consistency (DEP-05)
+        run: node scripts/check-vendors-consistency.mjs
+
       # Step 5: Run linters (ESLint)
       - name: Run ESLint
         run: yarn lint

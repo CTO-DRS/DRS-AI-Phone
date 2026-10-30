@@ -1,0 +1,114 @@
+name: Vendored Package Audit
+
+# DEP-05: @drsai/react-native-speech (vendors/react-native-speech) is a
+# file: dependency — Dependabot and lockfile audits never look at it. This
+# weekly job adds the automation the audit asked for:
+#   1. the structural src↔lib gate (same as CI, blocking here too),
+#   2. an advisory byte-level rebuild diff (bob build vs committed lib/),
+#   3. an OSV scan of the vendored package's runtime dependency as actually
+#      resolved through the ROOT yarn.lock (phonemize) — blocking on any
+#      known advisory.
+# The rebuild diff is advisory: the vendored package ships no lockfile, so
+# toolchain resolution is not reproducible and byte equality cannot be a
+# hard gate. A mismatch still deserves a refresh build + commit.
+
+on:
+  schedule:
+    # Mondays 06:00 UTC — start of the week, before active development.
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: vendors-audit
+  cancel-in-progress: true
+
+jobs:
+  vendors-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '22.21.0'
+
+      - name: Install Yarn (pinned)
+        run: npm install -g yarn@1.22.22
+
+      # 1. Structural gate — same contract CI enforces on every push.
+      - name: Verify vendored package src↔lib consistency (DEP-05)
+        run: node scripts/check-vendors-consistency.mjs
+
+      # 2. Advisory byte-level rebuild diff. Installs the vendored package's
+      #    own toolchain and runs its real build (bob build via prepare).
+      - name: Rebuild vendored package and diff against committed lib/
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          cd vendors/react-native-speech
+          yarn install --ignore-scripts
+          yarn prepare
+          cd ../..
+          if ! git diff --quiet -- vendors/react-native-speech/lib/; then
+            echo "::warning::Rebuilt lib/ differs from the committed lib/. The vendored package has no lockfile, so this can be toolchain drift OR a genuine unrefreshed build. Rebuild locally, verify the diff, and commit the refreshed lib/ together with its src/ change."
+            {
+              echo "### Vendored package rebuild diff"
+              echo ""
+              echo "Rebuilding \`vendors/react-native-speech\` produced output that differs from the committed \`lib/\`:"
+              echo ""
+              echo '```'
+              git diff --stat -- vendors/react-native-speech/lib/
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
+            git diff -- vendors/react-native-speech/lib/ | head -200
+          else
+            echo "Rebuild is byte-identical to the committed lib/."
+          fi
+
+      # 3. OSV scan of the vendored package's only runtime dependency, at
+      #    the version the ROOT yarn.lock actually ships. The root audit
+      #    covers it via the lockfile; this is the belt-and-braces check
+      #    the audit asked for (SCA for the vendored package).
+      - name: OSV scan for vendored runtime dependencies
+        run: |
+          set -euo pipefail
+          RESOLVED=$(node -e "
+            const fs = require('fs');
+            const lock = fs.readFileSync('yarn.lock', 'utf8');
+            const m = lock.match(/^phonemize@\S+:\n(?:  [^\n]*\n)*?  version \"([^\"]+)\"/m);
+            if (!m) { console.error('could not find phonemize in yarn.lock'); process.exit(1); }
+            console.log(m[1]);
+          ")
+          echo "phonemize resolved through the root yarn.lock: ${RESOLVED}"
+          for PKG in "phonemize@${RESOLVED}"; do
+            NAME="${PKG%@*}"
+            VERSION="${PKG#*@}"
+            RESPONSE=$(curl -sS --max-time 30 -X POST \
+              -H "Content-Type: application/json" \
+              -d "{\"package\":{\"name\":\"${NAME}\",\"ecosystem\":\"npm\"},\"version\":\"${VERSION}\"}" \
+              https://api.osv.dev/v1/query) || {
+                echo "::warning::OSV query failed (network) — not failing the audit on a transport error."
+                continue
+              }
+            COUNT=$(node -e "
+              try {
+                const d = JSON.parse(process.argv[1]);
+                console.log((d.vulns || []).length);
+              } catch { console.log(-1); }
+            " "$RESPONSE")
+            if [ "$COUNT" = "-1" ]; then
+              echo "::warning::OSV response was not parseable for ${NAME}@${VERSION}."
+              continue
+            fi
+            if [ "$COUNT" != "0" ]; then
+              echo "::error::OSV reports ${COUNT} known advisories for ${NAME}@${VERSION} (vendored via vendors/react-native-speech)."
+              echo "$RESPONSE" | head -c 4000
+              exit 1
+            fi
+            echo "OK: ${NAME}@${VERSION} — no known OSV advisories."
+          done
