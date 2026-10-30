@@ -56,7 +56,7 @@
     "dayjs": "^1.11.23",
     "expr-eval-fork": "^3.0.3",
     "llama.rn": "0.13.0-rc.5",
-    "marked": "^16.4.0",
+    "marked": "^18.1.1",
     "mobx": "^6.15.0",
     "mobx-persist-store": "^1.1.8",
     "mobx-react": "^9.2.1",
